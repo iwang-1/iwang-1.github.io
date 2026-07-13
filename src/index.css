@@ -1,0 +1,666 @@
+/* ==========================================================================
+   iwang-1.github.io — "First Light" observing-site ledger.
+   Dark-only by design (matches the flagship demo brand). Plain CSS, no
+   framework, system fonts only. Semantic rule: sans = narrative, mono =
+   verifiable fact.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+  /* surfaces — identical to star-catalog-web */
+  --sky: #0a0e17; /* page bg */
+  --sky-panel: #121826; /* cards, chips */
+  --sky-border: #232c3f; /* hairlines */
+  /* text */
+  --ink: #e8ecf4; /* body, ~16:1 on --sky */
+  --ink-muted: #9aa6bd; /* secondary, ~7.9:1 — AA at all sizes */
+  --ink-faint: #66718a; /* DECORATIVE ONLY: rules, connector strokes. NEVER text */
+  --ink-tertiary: #8a94ab; /* small tertiary text substitute for faint — AA-safe */
+  /* accent */
+  --accent: #7cc4ff; /* links, focus rings, pipeline connectors, ~10:1 */
+  --accent-dim: #2b4a66; /* hover/selected fills only, never text */
+  /* status — green means verified/merged and nothing else */
+  --status-merged: #7de2a8;
+  --status-open: #f5c97b;
+  /* rhythm */
+  --space-section: 64px;
+  --radius-panel: 10px;
+  --radius-chip: 999px;
+  --measure: 70ch;
+  --col-max: 920px;
+  --pad-x: 24px;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --space-section: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--sky);
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+p {
+  max-width: var(--measure);
+  margin: 0 0 12px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- headings ---------------------------------------------------------- */
+
+h1 {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.kicker {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin: 0 0 8px;
+}
+
+/* ---- links + focus ------------------------------------------------------ */
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  z-index: 10;
+  padding: 8px 16px;
+  background: var(--sky-panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-chip);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- masthead + star field ---------------------------------------------- */
+
+.masthead {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--sky-border);
+  /* content-driven height, tuned to stay ≤ ~45vh at 1440×900 so the ledger
+     starts above the fold */
+  padding: 48px var(--pad-x) 60px;
+}
+
+@media (max-width: 640px) {
+  .masthead {
+    padding: 32px var(--pad-x) 52px;
+  }
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+}
+
+.masthead-scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 30% 40%,
+    rgba(10, 14, 23, 0.85),
+    rgba(10, 14, 23, 0.35)
+  );
+}
+
+.masthead-content {
+  position: relative;
+  max-width: var(--col-max);
+  margin-inline: auto;
+  width: 100%;
+}
+
+.subhead {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.identity-line {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  max-width: none;
+}
+
+.link-row a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.starfield-caption {
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+/* ---- ledger layout ------------------------------------------------------ */
+
+main {
+  max-width: var(--col-max);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+.ledger-section {
+  padding-block: var(--space-section) 0;
+}
+
+.ledger-section + .ledger-section {
+  margin-top: var(--space-section);
+  border-top: 1px solid var(--sky-border);
+}
+
+.ledger-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 24px;
+  align-items: baseline;
+  padding-block: 12px;
+}
+
+.ledger-row + .ledger-row {
+  border-top: 1px solid var(--sky-border);
+}
+
+.ledger-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ledger-title {
+  font-weight: 600;
+}
+
+.ledger-detail {
+  color: var(--ink-muted);
+}
+
+.ledger-date {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 640px) {
+  .ledger-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.story {
+  font-size: 1.05rem;
+}
+
+/* ---- pipeline rail (signature element B) -------------------------------- */
+
+.rail {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  row-gap: 14px;
+  margin: 24px 0 32px;
+  padding: 18px 14px;
+  border: 1px solid var(--sky-border);
+  border-radius: var(--radius-panel);
+  background: var(--sky-panel);
+}
+
+.rail-node {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+/* connector to the NEXT node — decorative stroke, --ink-faint allowed. Owned
+   by the leading node so that if the rail ever has to wrap, the stub trails
+   the previous row ("continues →") instead of dangling at a row start. */
+.rail-node:has(+ .rail-node:not(.rail-branch))::after {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 2px;
+  margin: 7px 6px 0;
+  background: var(--ink-faint);
+}
+
+.rail-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin: 5px 8px 0 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px 2px rgba(124, 196, 255, 0.45);
+}
+
+.rail-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.rail-label {
+  color: var(--ink);
+}
+
+.rail-metric {
+  color: var(--ink-muted);
+}
+
+.rail-link {
+  display: inline-flex;
+  align-items: flex-start;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.rail-link:hover .rail-label {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* the classifier branch drops from star-catalog-web onto its own row */
+.rail-branch {
+  flex-basis: 100%;
+  margin-top: 2px;
+  padding-left: 44px;
+}
+
+.rail-branch::before {
+  content: "↳" / "";
+  color: var(--ink-faint);
+  margin: 1px 10px 0 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 759px) {
+  .rail {
+    flex-direction: column;
+    row-gap: 14px;
+    border: none;
+    border-left: 2px solid var(--ink-faint);
+    border-radius: 0;
+    background: none;
+    padding: 4px 0 4px 16px;
+  }
+
+  .rail-node:has(+ .rail-node:not(.rail-branch))::after {
+    display: none;
+  }
+
+  .rail-branch {
+    flex-basis: auto;
+    padding-left: 22px;
+  }
+}
+
+/* ---- screenshot figure --------------------------------------------------- */
+
+.screenshot {
+  margin: 0 0 32px;
+}
+
+.screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--sky-border);
+  border-radius: var(--radius-panel);
+}
+
+.screenshot figcaption {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+/* ---- project cards + chips ------------------------------------------------ */
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.project-card,
+.classifier-panel {
+  background: var(--sky-panel);
+  border: 1px solid var(--sky-border);
+  border-radius: var(--radius-panel);
+  padding: 18px 20px;
+}
+
+.project-card h3 {
+  font-size: 0.95rem;
+}
+
+.project-card h3 a {
+  color: inherit;
+}
+
+.card-one-liner {
+  margin-bottom: 8px;
+}
+
+.card-detail {
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  max-width: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  color: var(--ink);
+  background: var(--sky);
+  border: 1px solid var(--sky-border);
+  border-radius: var(--radius-chip);
+  max-width: 100%; /* long chips wrap inside their pill instead of overflowing the card */
+}
+
+.project-card .chip,
+.classifier-panel .chip {
+  background: var(--sky);
+}
+
+a.chip-link {
+  text-decoration: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+a.chip-link:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ---- classifier panel ----------------------------------------------------- */
+
+.key-line {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.comparison {
+  margin: 16px 0;
+  border: 1px solid var(--sky-border);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+
+.comparison-row {
+  margin: 0;
+  max-width: none;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+}
+
+.comparison-model {
+  border-bottom: 1px solid var(--sky-border);
+}
+
+.comparison-baseline {
+  color: var(--ink-muted);
+}
+
+.disclosure {
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+}
+
+/* ---- open source + badges -------------------------------------------------- */
+
+.oss-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-block: 16px;
+}
+
+.oss-row + .oss-row {
+  border-top: 1px solid var(--sky-border);
+}
+
+.oss-row p {
+  margin: 0;
+}
+
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-chip);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* status by text + shape: merged = filled, open = outlined */
+.badge-merged {
+  background: var(--status-merged);
+  border: 1px solid var(--status-merged);
+  color: var(--sky);
+}
+
+.badge-open {
+  background: transparent;
+  border: 1px solid var(--status-open);
+  color: var(--status-open);
+}
+
+@media (max-width: 640px) {
+  .oss-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* ---- skills ---------------------------------------------------------------- */
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 8px 16px;
+  align-items: baseline;
+  padding-block: 8px;
+}
+
+@media (max-width: 640px) {
+  .skill-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+.skill-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.skill-row .chip-row {
+  margin: 0;
+}
+
+.used-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.skills-legend {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+}
+
+/* ---- footer ------------------------------------------------------------------ */
+
+footer {
+  max-width: var(--col-max);
+  margin: var(--space-section) auto 0;
+  padding: var(--space-section) var(--pad-x) 48px;
+  border-top: 1px solid var(--sky-border);
+}
+
+.contact-cta {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+footer .link-row {
+  margin-bottom: 24px;
+}
+
+.colophon {
+  font-size: 0.78rem;
+  color: var(--ink-tertiary);
+}
+
+/* ---- motion (twinkle is the only animation) ----------------------------------- */
+
+@keyframes twinkle {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0.8;
+  }
+}
+
+.twinkle {
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* grayscale print preview stays legible — the extent of light-mode support */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .starfield,
+  .masthead-scrim,
+  .skip-link {
+    display: none;
+  }
+}
