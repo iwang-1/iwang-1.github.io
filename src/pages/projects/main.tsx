@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "../../js-flag";
 import "../../index.css";
 import { ossCardA, ossCardB, person, projects } from "../../content";
 import { CtaBand, ProjectCard } from "../../components/cards";
@@ -40,7 +41,9 @@ function Projects() {
                 <h3>{ossCardA.title}</h3>
                 <p style={{ marginTop: 12 }}>{ossCardA.body}</p>
                 <p className="project-links">
-                  <ExternalLink href={ossCardA.href}>{ossCardA.linkText}</ExternalLink>
+                  <ExternalLink className="cta-text-link" href={ossCardA.href}>
+                    {ossCardA.linkText}
+                  </ExternalLink>
                 </p>
               </article>
             </Reveal>
@@ -49,7 +52,9 @@ function Projects() {
                 <h3>{ossCardB.title}</h3>
                 <p style={{ marginTop: 12 }}>{ossCardB.body}</p>
                 <p className="project-links">
-                  <ExternalLink href={ossCardB.href}>{ossCardB.linkText}</ExternalLink>
+                  <ExternalLink className="cta-text-link" href={ossCardB.href}>
+                    {ossCardB.linkText}
+                  </ExternalLink>
                 </p>
               </article>
             </Reveal>

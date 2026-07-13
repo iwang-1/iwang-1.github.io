@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "../../js-flag";
 import "../../index.css";
 import { communityRoles, engineeringRoles, person } from "../../content";
 import { CtaBand } from "../../components/cards";

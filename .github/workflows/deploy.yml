@@ -20,6 +20,9 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # the post-build prerender step (scripts/prerender.mjs) renders each
+      # page in headless Chromium and inlines the static #root markup
+      - run: npx playwright install --with-deps chromium
       # fact/framing gate (also runs as the build's prestep)
       - run: node scripts/check-facts.mjs
       - run: npm run build

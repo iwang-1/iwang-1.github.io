@@ -3,11 +3,12 @@
 **Live at <https://iwang-1.github.io/>**
 [![deploy](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml)
 
-![Home page — Harbor Ink theme, navy hero band, keycap nav](docs/home-desktop.png)
+![Home page — Midnight Harbor dark theme, navy hero band, keycap nav](docs/home-desktop.png)
 
 Ivan Wang's personal recruiting site — a multi-page React + TypeScript + Vite
-app ("Harbor Ink" — navy bands over a cool near-white field, system fonts,
-keycap-styled interactive elements) deployed to GitHub Pages at
+app ("Midnight Harbor" — a dark-first theme: deep-midnight reading field,
+navy brand bands, near-white ink, system fonts, keycap-styled interactive
+elements) deployed to GitHub Pages at
 <https://iwang-1.github.io/> (user site, so Vite `base: '/'`). No router, no
 chart libraries, no CDN fonts, no trackers.
 
@@ -17,7 +18,7 @@ chart libraries, no CDN fonts, no trackers.
 | --- | --- | --- |
 | `/` | `index.html` | `src/pages/home/main.tsx` — hero, About, Education (`#education`), Skills (`#skills`), Selected work |
 | `/experience/` | `experience/index.html` | `src/pages/experience/main.tsx` — center-spine alternating timeline: 4 engineering + 3 community & teaching roles |
-| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — Star Catalog System (`#star-catalog`), DANN, RAG, Professor Predictor, QNLP, open source |
+| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — DANN, RAG, Professor Predictor, QNLP, open source |
 | `/404.html` | `404.html` | `src/pages/not-found/main.tsx` — branded not-found (GitHub Pages serves it natively; `noindex`) |
 
 Each entry hand-writes its own head (title, description, canonical, OG,
@@ -32,7 +33,7 @@ checked against the human checklist in [`FACTS.md`](FACTS.md) by
 npm install
 npm run dev        # local dev server (MPA: /, /experience/, /projects/)
 npm run check      # fact/framing gate (also runs as prebuild)
-npm run build      # tsc -b && vite build  → dist/
+npm run build      # tsc -b && vite build && prerender  → dist/ (static #root markup)
 npm run verify     # serves dist/ + drives every page in headless Chromium
 npm run lint
 ```

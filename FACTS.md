@@ -55,9 +55,10 @@ invent beyond the resume.
 
 ## Home page extras
 
-v3 design notes: the palette is now "Harbor Ink" (navy brand bands over a cool
-near-white field — src/styles/tokens.css); the hero tri-card "Now" strip
-(nowStrip) was removed — the availability proof-chip carries the who/what/when.
+v4 design notes: the palette is now "Midnight Harbor" (dark-first: deep-midnight
+reading field + navy brand bands — src/styles/tokens.css); the hero tri-card
+"Now" strip (nowStrip) was removed — the availability proof-chip carries the
+who/what/when.
 
 | Rendered | Source |
 | --- | --- |
@@ -66,19 +67,13 @@ near-white field — src/styles/tokens.css); the hero tri-card "Now" strip
 | Max ONE keyboard/climbing metaphor site-wide: the hero headline is it | design spec |
 | Skills rows exactly per resume (Languages / Frameworks / Tools) | resume |
 
-## Star Catalog System (`/projects/#star-catalog`)
+## Star Catalog System — REMOVED
 
-| Rendered | Source |
-| --- | --- |
-| ingest: 101 tests · ~95% cov, mypy --strict, ruff, CI py3.11–3.14, v0.3.2 | facts sheet · PROJECTS |
-| ingest processes telescope-observation CSVs (NOT the HYG dataset) | facts sheet · PROJECTS |
-| api: 66 tests · ~97% cov, Dockerized · smoke-tested in CI, v0.2.3; cone search handles the RA 0/360 seam | facts sheet · PROJECTS |
-| web: 8,920 naked-eye HYG v4.3 stars; Playwright-gated deploy; v0.1.0; live demo iwang-1.github.io/star-catalog-web/ | facts sheet · PROJECTS |
-| classifier: 79.5% accuracy / 0.665 macro-F1 (once-touched hold-out) vs 72.3% zero-parameter physics baseline; O-class recall 0 (support 10) disclosed; 92.6% adjacent-class errors; 52 tests · 98.56% cov, mypy --strict, CI py3.11–3.13, v0.1.0 | facts sheet · PROJECTS |
-| No rounding: 79.5 never becomes 80, 98.56 never becomes 99 | constraint (check-facts) |
-| Test counts stay per-repo — never summed | constraint (check-facts) |
-| Keep every `~` on coverage numbers | constraint (check-facts) |
-| Trained on the SAME 8,920-star HYG snapshot as the web app (sha256-pinned) | facts sheet · PROJECTS |
+The three-repo star-catalog system (ingest / api / web, plus the spectral
+classifier) was removed from the site on 2026-07-13; the underlying GitHub
+repos are deleted and the old live demo URL 404s. Do NOT reintroduce it —
+`verify.mjs` asserts `star-catalog` / `star-spectral` / `sky map` are absent
+from the rendered /projects/ page.
 
 ## Other projects (`/projects/`)
 

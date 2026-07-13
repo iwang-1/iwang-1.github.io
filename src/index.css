@@ -57,7 +57,8 @@ a {
   text-underline-offset: 2px;
 }
 
-a:hover {
+a:hover,
+a:focus-visible {
   color: var(--accent-deep);
 }
 
@@ -76,6 +77,20 @@ a:hover {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Footer pins to the viewport bottom on short pages (404): Nav/main/Footer
+   are direct children of #root on all four pages, and tall pages are
+   unaffected (main already exceeds the viewport). The skip link is
+   absolutely positioned, so it never becomes a flex item. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root > main {
+  flex: 1 0 auto;
 }
 
 .container {
@@ -410,11 +425,6 @@ main {
     border-color var(--t-hover) var(--ease-out);
 }
 
-a.card-link-wrap {
-  color: inherit;
-  text-decoration: none;
-}
-
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -614,11 +624,46 @@ a.card-link-wrap {
   max-width: 62ch;
 }
 
+/* --------------------------------------------------------------- about */
+/* Desktop: the About copy shares the row with a decorative keycap-cluster
+   SVG (echoes the nav monogram / the hero's keyboard thesis), so the right
+   half of the container is not three screen-heights of empty field. */
+.about-visual {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .about-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .about-visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  .about-visual svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
 /* ------------------------------------------------------------- education */
 /* Single entry, no grid: a fuller measure lets the coursework chips flow in
    2 rows instead of 4–5. Reintroduce card-grid when a second entry exists. */
 .edu-card {
   max-width: 720px;
+}
+
+/* Desktop: the lone card spans the full container (a 720px card against a
+   1120px container leaves the right third of the field empty). */
+@media (min-width: 1024px) {
+  .edu-card {
+    max-width: none;
+  }
 }
 
 .edu-card .edu-degree {
@@ -642,6 +687,17 @@ a.card-link-wrap {
   margin-bottom: 24px;
 }
 
+/* Desktop: label rail + chips share the row, so the rails span the full
+   container instead of stacking down the left half. */
+@media (min-width: 768px) {
+  .skills-row {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+}
+
 .skills-label {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
@@ -650,53 +706,7 @@ a.card-link-wrap {
   color: var(--ink-2);
 }
 
-/* -------------------------------------------------------------- featured */
-.featured-card {
-  padding: 32px;
-}
-
-.featured-top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
-  align-items: flex-start;
-}
-
-.featured-copy {
-  flex: 1 1 380px;
-}
-
-.featured-shot {
-  flex: 0 1 420px;
-}
-
-.featured-shot img {
-  display: block;
-  width: 100%;
-  max-width: 420px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-key);
-}
-
-.repo-rows {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-}
-
-.repo-row {
-  border-top: 1px solid var(--border);
-  padding: 20px 0;
-}
-
-.repo-row:last-child {
-  padding-bottom: 0;
-}
-
-.repo-row p {
-  margin: 6px 0 0;
-}
-
+/* -------------------------------------------------------------- projects */
 .no-repo-tag {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
@@ -735,10 +745,14 @@ a.card-link-wrap {
   justify-content: center;
 }
 
-/* Standalone text links used as actions (CTA bands): 44px tap target. */
+/* Standalone text links used as actions (CTA bands, card .project-links):
+   44px tap target. gap restores the word-spacing that inline-flex collapses
+   between the label text and the arrow span; the visually-hidden new-tab
+   span is absolutely positioned, so it contributes no gap. */
 .cta-text-link {
   display: inline-flex;
   align-items: center;
+  gap: 0.3em;
   min-height: 44px;
 }
 
@@ -903,9 +917,12 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .js .page-head > h1 { animation: rise-in 500ms var(--ease-out) both; }
   .js .page-head > .page-dek { animation: rise-in 500ms var(--ease-out) 80ms both; }
 
-  /* timeline dot pop-on-reveal */
+  /* timeline dot pop-on-reveal — fill-mode `backwards` (NOT `both`): it
+     still fills scale(0) through the 200ms delay, but stops applying once
+     the pop ends, so the :hover/:focus-within scale(1.35) rule above can
+     take effect on revealed items. */
   .js .alt-timeline-item.reveal.is-in::before {
-    animation: dot-pop 350ms var(--ease-pop) 200ms both;
+    animation: dot-pop 350ms var(--ease-pop) 200ms backwards;
   }
 }
 @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }

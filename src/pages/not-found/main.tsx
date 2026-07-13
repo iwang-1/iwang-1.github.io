@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "../../js-flag";
 import "../../index.css";
 import { person } from "../../content";
 import { Footer } from "../../components/Footer";

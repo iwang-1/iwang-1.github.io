@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "../../js-flag";
 import "../../index.css";
 import {
   about,
@@ -13,6 +14,7 @@ import { EduCard } from "../../components/cards";
 import { Chip, ProofChip } from "../../components/chips";
 import { Footer } from "../../components/Footer";
 import { Keycap } from "../../components/Keycap";
+import { KeycapCluster } from "../../components/KeycapCluster";
 import { Nav } from "../../components/Nav";
 import { Reveal } from "../../components/Reveal";
 import { Section } from "../../components/Section";
@@ -50,13 +52,23 @@ function Home() {
         </section>
 
         <Section id="about" kicker="01 · ABOUT" title="About me">
-          <p>{about.p1}</p>
-          <p>
-            {about.p2Before}
-            <a href={about.p2LinkHref}>{about.p2LinkText}</a>
-            {about.p2After}
-          </p>
-          <p>{about.p3}</p>
+          {/* Desktop 2-col: copy left, decorative keycap cluster right — it
+              literally illustrates the hero's keyboard thesis and keeps the
+              right half of the container from reading as dead field. */}
+          <div className="about-layout">
+            <div className="about-copy">
+              <p>{about.p1}</p>
+              <p>
+                {about.p2Before}
+                <a href={about.p2LinkHref}>{about.p2LinkText}</a>
+                {about.p2After}
+              </p>
+              <p>{about.p3}</p>
+            </div>
+            <div className="about-visual" aria-hidden="true">
+              <KeycapCluster />
+            </div>
+          </div>
         </Section>
 
         <Section id="education" kicker="02 · EDUCATION" title="Education">
@@ -96,7 +108,7 @@ function Home() {
                     </div>
                   )}
                   <p className="project-links">
-                    <a href={t.href}>
+                    <a className="cta-text-link" href={t.href}>
                       {t.linkText}{" "}
                       <span className="arrow" aria-hidden="true">
                         →

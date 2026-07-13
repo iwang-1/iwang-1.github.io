@@ -95,6 +95,23 @@ if (!/prefers-reduced-motion:\s*reduce/.test(builtCss))
 if (!/prefers-reduced-motion:\s*no-preference/.test(builtCss))
   problems.push("built CSS missing no-preference gate around .reveal hidden state");
 
+// prerender gate: every dist HTML shell must carry full static #root markup
+// (the site stays readable when the JS bundle is blocked or fails), and the
+// static HTML must NOT pre-bake the .js class — the reveal-hiding contract
+// may only activate when the bundle actually executes (src/js-flag.ts).
+for (const f of [
+  "dist/index.html",
+  "dist/experience/index.html",
+  "dist/projects/index.html",
+  "dist/404.html",
+]) {
+  const html = readFileSync(f, "utf8");
+  if (!html.includes("</main>") || !html.includes("</footer>"))
+    problems.push(`${f}: no prerendered #root content — blocked-bundle fallback missing`);
+  if (/<html[^>]*class="[^"]*\bjs\b/.test(html))
+    problems.push(`${f}: .js class baked into static HTML — content would hide without the bundle`);
+}
+
 async function linkOk(href) {
   if (checkedLinks.has(href)) return checkedLinks.get(href);
   let ok = false;
