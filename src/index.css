@@ -486,31 +486,75 @@ a.card-link-wrap {
   max-width: 60ch;
 }
 
-/* -------------------------------------------------------------- timeline */
-.timeline {
-  border-left: 2px solid var(--border);
-  padding-left: 32px;
-  max-width: 68ch;
+/* --------------------------------------------- alternating timeline */
+.alt-timeline {
+  list-style: none;
+  position: relative;
+  margin: 32px 0 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  margin-top: 32px;
+  gap: 32px;
 }
-
-.role-card {
-  position: relative;
-}
-
-.timeline .role-card::before {
+.alt-timeline::before {           /* the spine — left rail on mobile */
   content: "";
   position: absolute;
-  left: -39px;
-  top: 8px;
+  top: 4px;
+  bottom: 4px;
+  left: 7px;
+  width: 2px;
+  background: var(--border);
+}
+.alt-timeline-item { position: relative; margin-left: 36px; }
+.alt-timeline-item::before {      /* dot centered on the rail */
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: -36px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--bg);
+  z-index: 1;
+}
+.alt-timeline-item::after {       /* connector tick, rail → card */
+  content: "";
+  position: absolute;
+  top: 33px;
+  left: -28px;
+  width: 28px;
+  height: 2px;
+  background: var(--border);
+}
+.alt-timeline-label { position: relative; margin-left: 36px; z-index: 1; }
+.alt-timeline-label span {
+  display: inline-block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-chip);
+  padding: 6px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+@media (min-width: 900px) {       /* center spine + alternation */
+  .alt-timeline { gap: 40px; }
+  .alt-timeline::before { left: 50%; margin-left: -1px; }
+  .alt-timeline-item { width: calc(50% - 44px); margin-left: 0; }
+  .alt-timeline-item.tl-left  { align-self: flex-start; }
+  .alt-timeline-item.tl-right { align-self: flex-end; }
+  .alt-timeline-item.tl-left::before  { left: auto; right: -52px; }
+  .alt-timeline-item.tl-right::before { left: -52px; }
+  .alt-timeline-item.tl-left::after   { left: auto; right: -44px; width: 44px; }
+  .alt-timeline-item.tl-right::after  { left: -44px; width: 44px; }
+  .alt-timeline-label { align-self: center; margin-left: 0; }
+}
+
+.role-card {
+  position: relative;
 }
 
 .role-org {
@@ -534,29 +578,6 @@ a.card-link-wrap {
 .role-bullets li {
   margin-bottom: 8px;
   max-width: 62ch;
-}
-
-.role-card.compact .role-bullets li {
-  margin-bottom: 4px;
-}
-
-/* Community & Teaching — compact cards, visually lighter than the
-   engineering timeline (no dot/rule, smaller type), all facts kept. */
-.community-grid {
-  margin-top: 32px;
-}
-
-.role-card.compact {
-  padding: 20px;
-}
-
-.role-card.compact h3 {
-  font-size: 1rem;
-}
-
-.role-card.compact .role-bullets {
-  font-size: 0.9375rem;
-  color: var(--ink-2);
 }
 
 /* ------------------------------------------------------------- education */

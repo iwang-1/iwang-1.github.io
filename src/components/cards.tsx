@@ -3,21 +3,17 @@ import type { Education, Project, Repo, Role } from "../content";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink } from "./Keycap";
 
-/** RoleCard — timeline entry (Experience). `compact` renders a visually
- *  lighter card (Community & Teaching — no timeline dot/rule, smaller type)
- *  so engineering reads as the headline section; `tagTone="teal"` renders
- *  flat teal tags instead of ProofChips. */
+/** RoleCard — surfaced timeline card (Experience alternating timeline);
+ *  `tagTone="teal"` renders flat teal tags instead of ProofChips. */
 export function RoleCard({
   role,
-  compact = false,
   tagTone = "default",
 }: {
   role: Role;
-  compact?: boolean;
   tagTone?: "default" | "teal";
 }) {
   return (
-    <article className={compact ? "card role-card compact" : "role-card"}>
+    <article className={"card role-card"}>
       <h3>{role.role}</h3>
       <p className="role-org">{role.org}</p>
       <p className="role-meta">
