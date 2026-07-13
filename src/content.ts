@@ -21,7 +21,7 @@ export const person = {
 };
 
 // ---------------------------------------------------------------------------
-// Home — hero, Now strip, About.
+// Home — hero, About.
 
 export const hero = {
   kicker: "SOFTWARE ENGINEER · NEW-GRAD 2027",
@@ -30,12 +30,6 @@ export const hero = {
     "CS B.S./M.S. (Departmental Honors), University of Maryland — M.S. expected May 2027 · Software Development Engineer Intern at Amazon Web Services, Summer 2026.",
   availability: "Open to new-grad SWE roles · available Summer 2027",
 };
-
-export const nowStrip = [
-  "Now — SDE Intern @ AWS · Summer 2026",
-  "Next — M.S. Computer Science · expected May 2027",
-  "Looking for — backend systems & ML/NLP teams · Summer 2027",
-];
 
 // About — ≤120 words, first person; max ONE keyboard/climbing metaphor on the
 // whole site (the hero headline is it — P3's closer stays literal).

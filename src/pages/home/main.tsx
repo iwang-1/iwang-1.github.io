@@ -5,12 +5,11 @@ import {
   about,
   education,
   hero,
-  nowStrip,
   person,
   skills,
   teasers,
 } from "../../content";
-import { EduCard, FactTile } from "../../components/cards";
+import { EduCard } from "../../components/cards";
 import { Chip, ProofChip } from "../../components/chips";
 import { Footer } from "../../components/Footer";
 import { Keycap } from "../../components/Keycap";
@@ -46,11 +45,6 @@ function Home() {
               <Keycap href={`mailto:${person.email}`}>Email</Keycap>
             </div>
             <p className="hero-email-plain">{person.email}</p>
-            <div className="now-strip">
-              {nowStrip.map((f) => (
-                <FactTile key={f} label={f} />
-              ))}
-            </div>
           </div>
         </section>
 

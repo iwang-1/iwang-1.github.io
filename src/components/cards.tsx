@@ -130,8 +130,3 @@ export function CtaBand({ heading, children }: { heading: string; children: Reac
     </section>
   );
 }
-
-/** FactTile — Home "Now" strip tile (mono). */
-export function FactTile({ label }: { label: string }) {
-  return <div className="fact-tile">{label}</div>;
-}
