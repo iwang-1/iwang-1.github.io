@@ -177,6 +177,25 @@ async function checkPage(spec, viewport) {
     if (!(await linkOk(clean))) problems.push(`${tag}: internal link does not resolve 200: ${href}`);
   }
 
+  // container-padding regression gate: navy-band headline content must share
+  // the nav brand's left edge. (.hero/.page-head/.not-found sit on the same
+  // element as .container — a restated padding SHORTHAND there zeroes the
+  // container's horizontal padding and the band renders flush left.)
+  const alignSel = {
+    "/": ".hero .kicker",
+    "/experience/": ".page-head h1",
+    "/projects/": ".page-head h1",
+    "/404.html": ".not-found h1",
+  }[spec.path];
+  if (alignSel) {
+    const brand = await page.locator(".nav-brand").boundingBox();
+    const band = await page.locator(alignSel).first().boundingBox();
+    if (!brand || !band || Math.abs(brand.x - band.x) > 1)
+      problems.push(
+        `${tag}: ${alignSel} left edge (${band?.x}) != nav brand left edge (${brand?.x}) — .container padding lost`,
+      );
+  }
+
   // 6. locked facts rendered in the DOM
   const bodyText = await page.locator("body").innerText();
   for (const fact of spec.facts)
@@ -200,6 +219,12 @@ async function checkPage(spec, viewport) {
     if (viewport.name === "desktop") {
       if (!b1 || !b2 || b2.x <= b1.x + 100)
         problems.push(`${tag}: timeline not alternating on desktop (item2 x=${b2?.x} vs item1 x=${b1?.x})`);
+      // TRUE interleaving: the right card must start before the left card
+      // ends (grid row-packing), never in its own blank full-height row.
+      if (b1 && b2 && b2.y >= b1.y + b1.height)
+        problems.push(
+          `${tag}: timeline not interleaving on desktop (item2 y=${b2.y} vs item1 bottom=${b1.y + b1.height})`,
+        );
     } else if (!b1 || !b2 || Math.abs(b2.x - b1.x) > 2) {
       problems.push(`${tag}: mobile timeline must be a single left column`);
     }

@@ -1,2 +1,4 @@
 node_modules
 dist
+# never commit scratch verification scripts
+*.tmp.mjs

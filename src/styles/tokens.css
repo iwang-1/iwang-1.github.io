@@ -10,8 +10,13 @@
   /* surfaces */
   --bg: #F7F9FC;            /* cool near-white page */
   --surface: #FFFFFF;       /* cards */
-  --border: #D9E2EC;        /* hairlines */
-  --shadow-edge: #BFCCDC;   /* keycap bottom edge */
+  --border: #D9E2EC;        /* DECORATIVE hairlines only (cards, chips, spine) */
+  /* Interactive boundary (keycap border + bottom edge). Keycaps and flat
+     chips share the surface recipe, so the boundary is the cue that a keycap
+     is pressable — it must clear WCAG 1.4.11's 3:1 non-text minimum:
+     #7A8FA6 is 3.33:1 on --surface and 3.16:1 on --bg. */
+  --border-interactive: #7A8FA6;
+  --shadow-edge: #BFCCDC;   /* decorative edge (nav monogram) */
   /* ink */
   --ink: #16233A;           /* primary text — navy-black */
   --ink-2: #4E5D74;         /* secondary/mono meta — slate */

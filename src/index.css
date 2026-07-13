@@ -133,7 +133,7 @@ img {
   top: 0;
   z-index: 10;
   height: 64px;
-  background: rgba(16, 42, 74, 0.97);
+  background: rgba(16, 42, 67, 0.97); /* --navy #102A43 at 97% — keep in sync */
   backdrop-filter: saturate(1.2) blur(6px);
   -webkit-backdrop-filter: saturate(1.2) blur(6px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
@@ -263,8 +263,10 @@ img {
   border-radius: var(--r-key);
   background: var(--surface);
   color: var(--ink);
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 0 var(--shadow-edge);
+  /* --border-interactive (≥3:1) — the boundary is what distinguishes a
+     pressable keycap from a flat chip on the same surface. */
+  border: 1px solid var(--border-interactive);
+  box-shadow: 0 2px 0 var(--border-interactive);
   font-family: var(--font-body);
   font-size: 0.9375rem;
   font-weight: 550;
@@ -275,13 +277,13 @@ img {
 
 .keycap:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 0 var(--shadow-edge);
+  box-shadow: 0 3px 0 var(--border-interactive);
   color: var(--ink);
 }
 
 .keycap:active {
   transform: translateY(2px);
-  box-shadow: 0 0 0 var(--shadow-edge);
+  box-shadow: 0 0 0 var(--border-interactive);
 }
 
 /* Exactly ONE accent-filled keycap per page: the Résumé CTA. */
@@ -424,8 +426,12 @@ a.card-link-wrap {
 }
 
 /* ------------------------------------------------------------------ hero */
+/* .hero/.page-head/.not-found sit on the SAME element as .container, so
+   they must only ever set padding LONGHANDS — a `padding: X 0 0` shorthand
+   here zeroes .container's 24px/16px horizontal padding (rendered flush to
+   the viewport edge on mobile). verify.mjs gates this. */
 .hero {
-  padding: 80px 0 0;
+  padding-top: 80px;
 }
 
 .hero .kicker {
@@ -473,7 +479,8 @@ a.card-link-wrap {
 .page-head-band .page-dek { color: var(--navy-ink-2); }
 
 .page-head {
-  padding: 64px 0 0;
+  /* longhand only — shares its element with .container (see .hero note) */
+  padding-top: 64px;
 }
 
 .page-head h1 {
@@ -510,7 +517,9 @@ a.card-link-wrap {
   content: "";
   position: absolute;
   top: 26px;
-  left: -36px;
+  /* rail center = item edge − 36px + 7px + 1px = −28px; 12px dot needs its
+     left edge at −34px (−28 − 6) to center on it. */
+  left: -34px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -528,6 +537,12 @@ a.card-link-wrap {
   background: var(--border);
 }
 .alt-timeline-label { position: relative; margin-left: 36px; z-index: 1; }
+/* The label is a real heading (group boundary for heading navigation) but
+   keeps the pill's body-text look. */
+.alt-timeline-label h3 {
+  margin: 0;
+  font: inherit;
+}
 .alt-timeline-label span {
   display: inline-block;
   background: var(--surface);
@@ -540,17 +555,26 @@ a.card-link-wrap {
   text-transform: uppercase;
   color: var(--ink-2);
 }
-@media (min-width: 900px) {       /* center spine + alternation */
-  .alt-timeline { gap: 40px; }
+@media (min-width: 900px) {       /* center spine + TRUE interleaving */
+  /* Grid row-packing: each card spans 2 auto rows and the next card starts
+     one row later (grid-row set inline by Timeline.tsx — inert in the mobile
+     flex layout), so a right card begins roughly at the vertical midpoint of
+     the left card instead of leaving the opposite half-column blank. */
+  .alt-timeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 88px;               /* 88px column gap = 44px each side of the spine */
+  }
   .alt-timeline::before { left: 50%; margin-left: -1px; }
-  .alt-timeline-item { width: calc(50% - 44px); margin-left: 0; }
-  .alt-timeline-item.tl-left  { align-self: flex-start; }
-  .alt-timeline-item.tl-right { align-self: flex-end; }
-  .alt-timeline-item.tl-left::before  { left: auto; right: -52px; }
-  .alt-timeline-item.tl-right::before { left: -52px; }
+  .alt-timeline-item { margin-left: 0; }
+  .alt-timeline-item.tl-left  { grid-column: 1; }
+  .alt-timeline-item.tl-right { grid-column: 2; }
+  /* card edge → spine center = 44px; +6px half-dot centers the 12px dot */
+  .alt-timeline-item.tl-left::before  { left: auto; right: -50px; }
+  .alt-timeline-item.tl-right::before { left: -50px; }
   .alt-timeline-item.tl-left::after   { left: auto; right: -44px; width: 44px; }
   .alt-timeline-item.tl-right::after  { left: -44px; width: 44px; }
-  .alt-timeline-label { align-self: center; margin-left: 0; }
+  .alt-timeline-label { grid-column: 1 / -1; justify-self: center; margin-left: 0; }
 }
 
 .role-card {
@@ -581,6 +605,12 @@ a.card-link-wrap {
 }
 
 /* ------------------------------------------------------------- education */
+/* Single entry, no grid: a fuller measure lets the coursework chips flow in
+   2 rows instead of 4–5. Reintroduce card-grid when a second entry exists. */
+.edu-card {
+  max-width: 720px;
+}
+
 .edu-card .edu-degree {
   margin-top: 4px;
 }
@@ -755,7 +785,9 @@ a.card-link-wrap {
 
 /* --------------------------------------------------------------- 404 page */
 .not-found {
-  padding: 96px 0;
+  /* longhand only — shares its element with .container (see .hero note) */
+  padding-top: 96px;
+  padding-bottom: 96px;
 }
 
 .not-found h1 {

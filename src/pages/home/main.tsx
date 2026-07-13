@@ -59,11 +59,12 @@ function Home() {
         </Section>
 
         <Section id="education" kicker="02 · EDUCATION" title="Education">
-          <div className="card-grid">
-            {education.map((e) => (
-              <EduCard key={e.school} edu={e} />
-            ))}
-          </div>
+          {/* Single entry — no card-grid (a lone half-width card reads as a
+              missing neighbor on desktop). The .edu-card max-width caps the
+              measure; bring the grid back with a second entry. */}
+          {education.map((e) => (
+            <EduCard key={e.school} edu={e} />
+          ))}
         </Section>
 
         <Section id="skills" kicker="03 · SKILLS" title="Skills">

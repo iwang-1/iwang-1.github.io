@@ -320,8 +320,10 @@ export const starRepos: Repo[] = [
   {
     name: "star-spectral-classifier",
     href: "https://github.com/iwang-1/star-spectral-classifier",
+    // Headline result first, fine-grained caveats in a short second sentence
+    // — every number verbatim (check-facts pins them).
     description:
-      "scikit-learn HistGradientBoosting predicts OBAFGKM class from B–V color on the same sha256-pinned 8,920-star snapshot; 79.5% accuracy / 0.665 macro-F1 on a once-touched hold-out vs a 72.3% zero-parameter physics baseline; O-class recall is 0 (support 10); 92.6% of errors are adjacent-class.",
+      "scikit-learn HistGradientBoosting predicts OBAFGKM class from B–V color on the same sha256-pinned 8,920-star snapshot — 79.5% accuracy / 0.665 macro-F1 on a once-touched hold-out vs a 72.3% zero-parameter physics baseline. Honest caveats: O-class recall is 0 (support 10), and 92.6% of errors are adjacent-class.",
     chips: ["52 tests · 98.56% cov", "mypy --strict", "CI py3.11–3.13", "v0.1.0"],
   },
 ];
