@@ -63,11 +63,12 @@ node scripts/generate-starfield.mjs [path/to/stars.json]
 
 ## Still to do (Ivan)
 
-- [ ] Fill `person.email` in `src/content.ts` (the mail links render only once
-      it is non-empty).
-- [ ] Optionally add a resume PDF under `public/` and set `person.resumeUrl`.
-- [ ] Paste any additional LinkedIn experience entries into the `experience`
-      array in `src/content.ts`.
+- [x] Fill `person.email` in `src/content.ts` (`ivanwang8989@gmail.com`).
+- [x] Resume PDF at `public/Ivan-Wang-Resume.pdf`, linked via
+      `person.resumeUrl` (Résumé button in the masthead + footer). Note: the
+      PDF carries a phone number — replace the file to change what is public.
+- [x] Experience/education/projects/leadership populated from the resume +
+      LinkedIn (2026-07-13).
 - [x] Publish the project repos, then flip `flags.repoLinksEnabled` and
       `flags.showLiveDemo` (verified live and flipped 2026-07-13).
 - [ ] Publish this site: `bash ../publish-site.sh` (sibling of this repo —

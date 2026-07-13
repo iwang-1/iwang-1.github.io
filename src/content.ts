@@ -28,7 +28,9 @@ export const person = {
   github: "https://github.com/iwang-1",
   linkedin: "https://www.linkedin.com/in/ivanwang1",
   email: "ivanwang8989@gmail.com",
-  resumeUrl: "", // TODO: optional — drop a resume PDF in public/ and set the path (e.g. "/Ivan-Wang-Resume.pdf"); the Résumé link renders only when non-empty
+  // NOTE: the hosted PDF includes Ivan's phone number — his call whether that
+  // stays on a public, indexed site. Swap the file in public/ to change it.
+  resumeUrl: "/Ivan-Wang-Resume.pdf",
 };
 
 // ---------------------------------------------------------------------------
