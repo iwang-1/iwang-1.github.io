@@ -10,12 +10,45 @@ describe the rules it enforces.
 
 | Rendered | Source |
 | --- | --- |
-| Ivan Wang; github.com/iwang-1; linkedin.com/in/ivanwang1 | facts sheet · PERSON |
-| CS B.S./M.S., UMD College Park; M.S. expected May 2027 | facts sheet · PERSON |
-| SDE Intern, Amazon Web Services — Summer 2026 | facts sheet · PERSON |
-| "backend systems and cloud infrastructure" (the ONLY AWS description, ever) | facts sheet · PERSON + constraint 1 |
+| Ivan Wang; github.com/iwang-1; linkedin.com/in/ivanwang1; ivanwang8989@gmail.com | resume |
+| CS B.S./M.S. (Honors), UMD College Park; M.S. expected May 2027; GPA 3.6/4.0; minors Data Science + Philosophy | resume |
+| SDE Intern, Amazon Web Services — May–Aug 2026 | resume |
 | seeking new-grad SWE roles (available ~Summer 2027) — keep the `~` | facts sheet · PERSON |
-| email empty; mail UI renders only when non-empty | facts sheet · PERSON |
+
+## Experience (resume bullets, PUBLIC AWS terms only)
+
+| Rendered | Source |
+| --- | --- |
+| AWS: agentic AI system, 8+ tests Scala→JUnit5, 5× migration throughput, AWS EC2 VPC control-plane APIs | resume |
+| AWS: canary infra on SDK v2/CDK/CloudWatch, us-east-1, −40% runtime, −60% flaky, Sev2 alarms, 1M+ customers | resume |
+| UMD Full-Stack (May–Sep 2025): 50,000+ records, REST APIs, ETL 10+ yrs legacy data, −75% runtime, 15+ researchers | resume + LinkedIn |
+| UMD ML (Aug 2023–Jan 2025): +30% NLP accuracy, −25% training time (SPSA/ADAM/SGD) | resume + LinkedIn |
+| Washington Software (Mar 2022–Aug 2023): Selenium/BeautifulSoup automation, −40% manual work, 15+ hrs/wk, Jenkins CI/CD | resume + LinkedIn |
+| CONFIDENTIALITY: AWS bullets use only public AWS product names (EC2, VPC, canary, CloudWatch, CDK, SDK) — never internal codenames. Private pre-push gate blocks codenames. |
+
+## Education
+
+| Rendered | Source |
+| --- | --- |
+| UMD College Park, B.S./M.S. CS (Honors), Aug 2023–May 2027, GPA 3.6, minors DS + Philosophy | resume + LinkedIn |
+| University of Hong Kong, Study Abroad (Exchange), Aug–Dec 2025, coursework Numerical Analysis + Cryptography | LinkedIn |
+
+## Selected projects (resume)
+
+| Rendered | Source |
+| --- | --- |
+| Cross-Domain NLP Sentiment Classifier: 64,000 samples, 16 conditions, DANN on DistilBERT, +26% / 74.2% held-out | resume |
+| RAG Research Assistant: LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
+| ML Professor Rating Predictor: 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
+
+## Leadership (resume + LinkedIn)
+
+| Rendered | Source |
+| --- | --- |
+| Kids For Code VP: 3,000+ students, 400+ lessons, 10+ instructors, 25% enrollment growth | resume + LinkedIn |
+| CodeDay TPM: 500+ participants, 200+ schools, sponsorships incl. Vercel + Brave | resume + LinkedIn |
+| Panda Programmer instructor: Python/JS/Scratch, ages 6–12 | resume + LinkedIn |
+| UMD Climbing Club Secretary: 8 trips/semester, +30% attendance | resume |
 
 ## Star Catalog System
 
@@ -54,10 +87,9 @@ describe the rules it enforces.
 
 ## Skills
 
-Languages / frameworks / tools lists copied verbatim from the verified profile
-README (facts sheet · SKILLS). "Used above" dots only on: Python (primary),
-JavaScript/TypeScript, FastAPI, React, scikit-learn, Docker, GitHub Actions CI,
-pytest, Git, SQLite/PostgreSQL.
+Languages / frameworks / ML-NLP / tools lists from the resume + LinkedIn.
+"Used above" dots mark skills demonstrated in the experience or projects shown
+on the page (see skills.usedAbove in content.ts).
 
 ## Star field
 
@@ -71,5 +103,10 @@ Zero Amazon-internal information anywhere in the repo (or its git history).
 The specific term/URL denylist is deliberately NOT in this repo — a private
 pre-push scan next to the publish script enforces it over the working tree and
 the full history before anything is pushed. `check-facts.mjs` keeps the
-framing/number tripwires. The only permitted Amazon content is the internship
-title line plus the single description constant.
+framing/number tripwires.
+
+AWS content: the two AWS bullets are transcribed verbatim from Ivan's resume
+and use only PUBLIC AWS product terms (EC2, VPC, canary, CloudWatch, CDK, SDK
+v2, us-east-1, Sev2). Internal system/codenames never appear; the private
+pre-push gate blocks them. Every AWS metric (5×, 40%, 60%, 1M+) is a resume
+claim Ivan stands behind — do not add, round, or invent beyond the resume.

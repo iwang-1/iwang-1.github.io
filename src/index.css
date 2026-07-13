@@ -293,6 +293,95 @@ main {
   font-size: 1.05rem;
 }
 
+/* ---- roles / education / side-projects ---------------------------------- */
+
+.role,
+.edu,
+.side-project {
+  padding-block: 16px;
+}
+
+.role + .role,
+.edu + .edu,
+.side-project + .side-project {
+  border-top: 1px solid var(--sky-border);
+}
+
+.role-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2px 24px;
+}
+
+.role-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.role-title {
+  font-weight: 600;
+}
+
+.role-org {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.role-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.role-date {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.role-location {
+  font-size: 0.78rem;
+  color: var(--ink-tertiary);
+  white-space: nowrap;
+}
+
+.role-bullets {
+  margin: 10px 0 0;
+  padding-left: 1.1em;
+  max-width: var(--measure);
+}
+
+.role-bullets li {
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
+.role-bullets li::marker {
+  color: var(--accent);
+}
+
+.edu-detail {
+  margin: 8px 0 2px;
+  color: var(--ink);
+}
+
+.edu-coursework {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .role-meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
 /* ---- pipeline rail (signature element B) -------------------------------- */
 
 .rail {

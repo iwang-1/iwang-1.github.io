@@ -26,9 +26,6 @@ const PROXIMITY = [
   { a: /contributed/gi, b: /\bFIRE\b/g, radius: 200, why: "'contributed' near 'FIRE'" },
 ];
 
-// 2. Presence check: the AWS description constant, exactly once, only in content.ts.
-const AWS_LITERAL = "backend systems and cloud infrastructure";
-
 // ---------------------------------------------------------------------------
 const TEXT_EXT = /\.(ts|tsx|js|jsx|mjs|css|html|md|json|svg|txt|xml|webmanifest)$/i;
 
@@ -49,7 +46,6 @@ const files = [
 ].filter((p) => TEXT_EXT.test(p));
 
 const problems = [];
-let awsCount = 0;
 
 for (const file of files) {
   const rel = relative(root, file);
@@ -68,17 +64,7 @@ for (const file of files) {
         if (Math.abs(i - j) <= radius)
           problems.push(`${rel}: framing tripwire — ${why} (offsets ${i}/${j})`);
   }
-
-  const hits = text.split(AWS_LITERAL).length - 1;
-  if (rel === join("src", "content.ts")) awsCount = hits;
-  else if (hits > 0)
-    problems.push(`${rel}: AWS description literal duplicated outside content.ts`);
 }
-
-if (awsCount !== 1)
-  problems.push(
-    `src/content.ts: AWS description literal must appear exactly once (found ${awsCount})`,
-  );
 
 if (problems.length) {
   console.error("CHECK-FACTS FAILED:\n - " + problems.join("\n - "));

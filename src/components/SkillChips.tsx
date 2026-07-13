@@ -23,6 +23,7 @@ export default function SkillChips() {
     <div className="skills">
       <Row label="Languages" items={skills.languages} />
       <Row label="Frameworks" items={skills.frameworks} />
+      <Row label="ML / NLP" items={skills.mlnlp} />
       <Row label="Tools" items={skills.tools} />
       <p className="skills-legend mono">
         <span className="used-dot" aria-hidden="true" /> · used in the projects above

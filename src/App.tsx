@@ -3,19 +3,24 @@ import {
   education,
   experience,
   flags,
+  leadership,
   openSource,
   projects,
   research,
+  sideProjects,
   starSystem,
 } from "./content";
 import ClassifierPanel from "./components/ClassifierPanel";
+import EducationEntry from "./components/EducationEntry";
 import Footer from "./components/Footer";
 import LedgerRow from "./components/LedgerRow";
 import LedgerSection from "./components/LedgerSection";
 import Masthead from "./components/Masthead";
 import PipelineRail from "./components/PipelineRail";
 import ProjectCard from "./components/ProjectCard";
+import RoleEntry from "./components/RoleEntry";
 import Screenshot from "./components/Screenshot";
+import SideProjectCard from "./components/SideProjectCard";
 import SkillChips from "./components/SkillChips";
 import SkipLink from "./components/SkipLink";
 import StatusBadge from "./components/StatusBadge";
@@ -26,9 +31,15 @@ export default function App() {
       <SkipLink />
       <Masthead />
       <main id="main">
-        <LedgerSection id="experience" kicker="EXPERIENCE & EDUCATION">
-          {[...experience, ...education].map((row) => (
-            <LedgerRow key={row.title} {...row} />
+        <LedgerSection id="experience" kicker="EXPERIENCE">
+          {experience.map((role) => (
+            <RoleEntry key={`${role.org}-${role.title}`} role={role} />
+          ))}
+        </LedgerSection>
+
+        <LedgerSection id="education" kicker="EDUCATION">
+          {education.map((item) => (
+            <EducationEntry key={item.school} item={item} />
           ))}
         </LedgerSection>
 
@@ -47,6 +58,12 @@ export default function App() {
 
         <LedgerSection id="classifier" kicker={classifier.kicker} title={classifier.heading}>
           <ClassifierPanel />
+        </LedgerSection>
+
+        <LedgerSection id="projects" kicker="SELECTED PROJECTS" title="More ML & NLP work">
+          {sideProjects.map((p) => (
+            <SideProjectCard key={p.name} project={p} />
+          ))}
         </LedgerSection>
 
         {/* Heading framing lock: the section holds both merged AND open rows, so
@@ -86,6 +103,12 @@ export default function App() {
               </span>
             ))}
           </p>
+        </LedgerSection>
+
+        <LedgerSection id="leadership" kicker="LEADERSHIP & COMMUNITY">
+          {leadership.map((row) => (
+            <LedgerRow key={row.title} {...row} />
+          ))}
         </LedgerSection>
 
         <LedgerSection id="skills" kicker="SKILLS">

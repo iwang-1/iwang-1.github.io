@@ -25,6 +25,7 @@ const showLiveDemo = /showLiveDemo:\s*true\b/.test(contentSrc);
 const EXPECTED_HEADINGS = [
   "The Star Catalog System",
   "star-spectral-classifier — ML that shows its work",
+  "More ML & NLP work",
   "Open source — upstream work",
   "Quantum NLP — UMD FIRE",
   "Contact",
@@ -86,24 +87,20 @@ async function checkViewport({ width, height, shot }) {
   const stars = await page.locator(".starfield circle").count();
   if (stars !== 150) problems.push(`${tag}: expected 150 star-field dots, got ${stars}`);
 
-  // above-the-fold guarantee: both ledger rows + the FEATURED kicker visible
-  // without scrolling (checked via bounding boxes against the viewport).
-  const ledgerRows = page.locator("#experience .ledger-row");
-  if ((await ledgerRows.count()) !== 2) {
-    problems.push(`${tag}: expected 2 experience/education rows`);
+  // above-the-fold guarantee: the EXPERIENCE kicker and the first role's title
+  // (the AWS internship) are visible without scrolling — the who/what a
+  // recruiter must see in the first screen.
+  const expKicker = await page.locator("#experience .kicker").first().boundingBox();
+  if (!expKicker || expKicker.y > height)
+    problems.push(`${tag}: EXPERIENCE kicker below the fold (y=${expKicker?.y})`);
+  const firstRole = page.locator("#experience .role .role-title").first();
+  if ((await firstRole.count()) === 0) {
+    problems.push(`${tag}: no experience roles rendered`);
   } else {
-    for (let i = 0; i < 2; i++) {
-      const box = await ledgerRows.nth(i).boundingBox();
-      if (!box || box.y + box.height > height)
-        problems.push(`${tag}: ledger row ${i} below the fold (y=${box?.y})`);
-    }
+    const box = await firstRole.boundingBox();
+    if (!box || box.y + box.height > height)
+      problems.push(`${tag}: first role title below the fold (y=${box?.y})`);
   }
-  const kickerBox = await page
-    .locator("#star-system .kicker")
-    .first()
-    .boundingBox();
-  if (!kickerBox || kickerBox.y > height)
-    problems.push(`${tag}: FEATURED kicker below the fold (y=${kickerBox?.y})`);
 
   // launch-flag acceptance: repo links into github.com/iwang-1/<repo> must be
   // absent while repoLinksEnabled=false and present once it flips true (the
