@@ -4,7 +4,7 @@ import "../../index.css";
 import { ossCardA, ossCardB, person, projects, starRepos, starSystem } from "../../content";
 import { CtaBand, ProjectCard, RepoRow } from "../../components/cards";
 import { Footer } from "../../components/Footer";
-import { Keycap } from "../../components/Keycap";
+import { ExternalLink, Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
 
@@ -63,18 +63,14 @@ function Projects() {
               <h3>{ossCardA.title}</h3>
               <p style={{ marginTop: 12 }}>{ossCardA.body}</p>
               <p className="project-links">
-                <a href={ossCardA.href} target="_blank" rel="noopener noreferrer">
-                  {ossCardA.linkText}
-                </a>
+                <ExternalLink href={ossCardA.href}>{ossCardA.linkText}</ExternalLink>
               </p>
             </article>
             <article className="card">
               <h3>{ossCardB.title}</h3>
               <p style={{ marginTop: 12 }}>{ossCardB.body}</p>
               <p className="project-links">
-                <a href={ossCardB.href} target="_blank" rel="noopener noreferrer">
-                  {ossCardB.linkText}
-                </a>
+                <ExternalLink href={ossCardB.href}>{ossCardB.linkText}</ExternalLink>
               </p>
             </article>
           </div>
@@ -85,9 +81,9 @@ function Projects() {
             is a binding restraint rule. */}
         <CtaBand heading="If you're hiring new-grad engineers for Summer 2027, I'd love to talk.">
           <Keycap href={`mailto:${person.email}`}>Email me</Keycap>
-          <a href={person.resumeUrl} target="_blank" rel="noopener noreferrer">
+          <ExternalLink className="cta-text-link" href={person.resumeUrl}>
             Résumé (PDF)
-          </a>
+          </ExternalLink>
         </CtaBand>
       </main>
       <Footer />

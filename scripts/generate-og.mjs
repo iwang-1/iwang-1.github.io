@@ -52,7 +52,7 @@ const html = `<!doctype html>
     <div>
       <h1>Ivan Wang</h1>
       <div class="rule"></div>
-      <p>Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern</p>
+      <p>Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern, Summer 2026</p>
     </div>
   </div>
 </body>

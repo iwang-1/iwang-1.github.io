@@ -17,7 +17,7 @@ const PAGES = [
   {
     path: "/",
     shot: "home",
-    title: "Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern",
+    title: "Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern, Summer 2026",
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
@@ -146,7 +146,7 @@ async function checkPage(spec, viewport) {
 
   // 4. nav structure + active tab
   const tabs = await page
-    .locator('nav[aria-label="Primary"] > a:not([aria-label="Résumé (PDF)"])')
+    .locator('nav[aria-label="Primary"] > a:not([href="/Ivan-Wang-Resume.pdf"])')
     .count();
   if (tabs !== 3) problems.push(`${tag}: expected exactly 3 nav tabs, got ${tabs}`);
   const resume = await page

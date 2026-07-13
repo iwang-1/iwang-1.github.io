@@ -56,9 +56,15 @@ export function Nav({ active }: { active: ActiveTab }) {
       </a>
       <header className="nav">
         <div className="container nav-inner">
-          <a className="nav-brand" href="/">
+          {/* aria-label keeps the accessible name breakpoint-independent: the
+              wordmark span is display:none under 640px and the SVG is
+              aria-hidden, so without it the link's name computes as EMPTY on
+              mobile (WCAG 4.1.2). */}
+          <a className="nav-brand" href="/" aria-label="Ivan Wang — home">
             <Monogram />
-            <span className="nav-wordmark">Ivan Wang</span>
+            <span className="nav-wordmark" aria-hidden="true">
+              Ivan Wang
+            </span>
           </a>
           <nav aria-label="Primary" className="nav-tabs">
             {TABS.map((tab) => (
@@ -71,11 +77,15 @@ export function Nav({ active }: { active: ActiveTab }) {
                 {tab.label}
               </a>
             ))}
+            {/* WCAG 2.5.3 Label in Name: the accessible name must contain the
+                visible label at every breakpoint — "CV" below 640px, "Résumé"
+                above — so both live in the aria-label. Do NOT drop it: with
+                the spans hidden the name would compute as empty on mobile. */}
             <Keycap
               href={person.resumeUrl}
               variant="primary"
               external
-              ariaLabel="Résumé (PDF)"
+              ariaLabel="CV — Résumé (PDF)"
             >
               <span className="nav-resume-full">Résumé</span>
               <span className="nav-resume-compact" aria-hidden="true">

@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 import type { Education, Project, Repo, Role } from "../content";
 import { Chip, ProofChip } from "./chips";
+import { ExternalLink } from "./Keycap";
 
-/** RoleCard — timeline entry (Experience). `compact` for Community &
- *  Teaching; `tagTone="teal"` renders flat teal tags instead of ProofChips. */
+/** RoleCard — timeline entry (Experience). `compact` renders a visually
+ *  lighter card (Community & Teaching — no timeline dot/rule, smaller type)
+ *  so engineering reads as the headline section; `tagTone="teal"` renders
+ *  flat teal tags instead of ProofChips. */
 export function RoleCard({
   role,
   compact = false,
@@ -14,7 +17,7 @@ export function RoleCard({
   tagTone?: "default" | "teal";
 }) {
   return (
-    <article className={compact ? "role-card compact" : "role-card"}>
+    <article className={compact ? "card role-card compact" : "role-card"}>
       <h3>{role.role}</h3>
       <p className="role-org">{role.org}</p>
       <p className="role-meta">
@@ -66,9 +69,7 @@ export function RepoRow({ repo }: { repo: Repo }) {
   return (
     <div className="repo-row">
       <h3>
-        <a href={repo.href} target="_blank" rel="noopener noreferrer">
-          {repo.name}
-        </a>
+        <ExternalLink href={repo.href}>{repo.name}</ExternalLink>
       </h3>
       <p>{repo.description}</p>
       <div className="chip-rail">
@@ -78,9 +79,7 @@ export function RepoRow({ repo }: { repo: Repo }) {
       </div>
       {repo.demoHref && (
         <p className="project-links">
-          <a href={repo.demoHref} target="_blank" rel="noopener noreferrer">
-            Live demo
-          </a>
+          <ExternalLink href={repo.demoHref}>Live demo</ExternalLink>
         </p>
       )}
     </div>
@@ -91,12 +90,10 @@ export function RepoRow({ repo }: { repo: Repo }) {
  *  "private / no public repo" tag instead of a link. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="card">
+    <article className="card" id={project.id}>
       <h3>
         {project.repoHref ? (
-          <a href={project.repoHref} target="_blank" rel="noopener noreferrer">
-            {project.title}
-          </a>
+          <ExternalLink href={project.repoHref}>{project.title}</ExternalLink>
         ) : (
           project.title
         )}

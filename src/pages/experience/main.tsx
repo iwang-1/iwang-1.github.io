@@ -29,8 +29,11 @@ function Experience() {
           </div>
         </Section>
 
+        {/* Community roles render as visually lighter compact cards (per the
+            FACTS.md design spec) — no timeline dot/rule — so engineering
+            reads as the headline section. Every number stays. */}
         <Section kicker="02 · COMMUNITY & TEACHING" title="Community & teaching">
-          <div className="timeline">
+          <div className="card-grid card-grid-3 community-grid">
             {communityRoles.map((r) => (
               <RoleCard key={`${r.role}-${r.org}`} role={r} compact tagTone="teal" />
             ))}
@@ -44,7 +47,9 @@ function Experience() {
           <Keycap href={person.resumeUrl} external>
             Résumé (PDF)
           </Keycap>
-          <a href="/projects/">See the projects →</a>
+          <a className="cta-text-link" href="/projects/">
+            See the projects →
+          </a>
         </CtaBand>
       </main>
       <Footer />

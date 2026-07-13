@@ -179,6 +179,9 @@ img {
   display: none;
 }
 
+/* Mobile nav: the .nav-tabs .keycap selectors out-specify the base .keycap
+   rule (which appears LATER in this file — a bare `.keycap` override here
+   would silently lose the cascade). */
 @media (max-width: 639px) {
   .nav-wordmark {
     display: none;
@@ -196,8 +199,46 @@ img {
     gap: 6px;
   }
 
-  .keycap {
+  .nav-tabs .keycap {
     padding: 8px 10px;
+    font-size: 0.875rem;
+  }
+
+  /* long chips (hero availability) must wrap instead of forcing page
+     scroll — span-qualified to out-specify the later base nowrap rule */
+  span.chip,
+  span.proof-chip {
+    white-space: normal;
+  }
+}
+
+/* Narrow phones: tighten further so brand + 4 caps never overflow. */
+@media (max-width: 479px) {
+  .nav-inner {
+    gap: 8px;
+  }
+
+  .nav-tabs {
+    gap: 4px;
+  }
+
+  .nav-tabs .keycap {
+    padding: 8px 7px;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 379px) {
+  .nav-tabs .keycap {
+    padding: 8px 5px;
+  }
+}
+
+/* Tiny screens (≤359px): the monogram + 4 caps can't fit; the Home tab
+   already duplicates the brand link, so the brand yields. */
+@media (max-width: 359px) {
+  .nav-brand {
+    display: none;
   }
 }
 
@@ -210,6 +251,7 @@ img {
   justify-content: center;
   gap: 8px;
   min-height: 44px;
+  min-width: 44px; /* 44px tap target in BOTH axes (short labels like "CV") */
   padding: 10px 16px;
   border-radius: var(--r-key);
   background: var(--surface);
@@ -507,6 +549,25 @@ a.card-link-wrap {
   margin-bottom: 4px;
 }
 
+/* Community & Teaching — compact cards, visually lighter than the
+   engineering timeline (no dot/rule, smaller type), all facts kept. */
+.community-grid {
+  margin-top: 32px;
+}
+
+.role-card.compact {
+  padding: 20px;
+}
+
+.role-card.compact h3 {
+  font-size: 1rem;
+}
+
+.role-card.compact .role-bullets {
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+
 /* ------------------------------------------------------------- education */
 .edu-card .edu-degree {
   margin-top: 4px;
@@ -622,6 +683,13 @@ a.card-link-wrap {
   justify-content: center;
 }
 
+/* Standalone text links used as actions (CTA bands): 44px tap target. */
+.cta-text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 @media (max-width: 767px) {
   .cta-band {
     margin-top: 64px;
@@ -642,6 +710,11 @@ a.card-link-wrap {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+.footer-email {
+  font-size: 0.875rem;
+  color: var(--ink-2);
 }
 
 .footer-colophon {

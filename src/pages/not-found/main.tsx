@@ -12,8 +12,10 @@ function NotFound() {
       <Nav active={null} />
       <main id="main">
         <div className="not-found container">
-          <h1>That page isn&rsquo;t on the bench.</h1>
-          <p>The link you followed doesn&rsquo;t exist — here&rsquo;s everything that does:</p>
+          {/* Neutral copy: the site allows ONE keyboard/climbing metaphor,
+              and the hero headline already spends it. */}
+          <h1>That page doesn&rsquo;t exist.</h1>
+          <p>The link you followed goes nowhere — here&rsquo;s everything that does:</p>
           <div className="cta-row">
             <Keycap href="/">Home</Keycap>
             <Keycap href="/experience/">Experience</Keycap>

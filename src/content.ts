@@ -34,7 +34,7 @@ export const hero = {
 export const nowStrip = [
   "Now — SDE Intern @ AWS · Summer 2026",
   "Next — M.S. Computer Science · expected May 2027",
-  "Looking for — new-grad SWE · Summer 2027",
+  "Looking for — backend systems & ML/NLP teams · Summer 2027",
 ];
 
 // About — ≤120 words, first person; max ONE keyboard/climbing metaphor on the
@@ -164,13 +164,15 @@ export const teasers: Teaser[] = [
     body: "Four repos, one pipeline, live demo.",
     href: "/projects/#star-catalog",
     linkText: "See the system",
-    proofChips: ["101 tests · ~95% cov", "live demo"],
+    // Per-repo numbers stay labeled per-repo — the 101/~95% pair belongs to
+    // star-catalog-ingest, never to the 4-repo system as a whole.
+    proofChips: ["ingest: 101 tests · ~95% cov", "live demo"],
   },
   {
     title: "Cross-Domain Sentiment Analysis (DANN)",
-    body: "DistilBERT across 4 review domains, 64,000 labeled samples.",
-    href: "/projects/",
-    linkText: "See the projects",
+    body: "DistilBERT across 4 domains (Yelp/Amazon/Twitter/Reddit), 64,000 labeled samples.",
+    href: "/projects/#dann",
+    linkText: "See the project",
   },
 ];
 
@@ -329,7 +331,7 @@ export const starRepos: Repo[] = [
     name: "star-spectral-classifier",
     href: "https://github.com/iwang-1/star-spectral-classifier",
     description:
-      "scikit-learn HistGradientBoosting predicts OBAFGKM class from B–V color on the same sha256-pinned 8,920-star snapshot; 79.5% accuracy / 0.665 macro-F1 on a once-touched hold-out vs a 72.3% zero-parameter physics baseline; O-class recall 0 (support 10) disclosed; 92.6% of errors are adjacent-class.",
+      "scikit-learn HistGradientBoosting predicts OBAFGKM class from B–V color on the same sha256-pinned 8,920-star snapshot; 79.5% accuracy / 0.665 macro-F1 on a once-touched hold-out vs a 72.3% zero-parameter physics baseline; O-class recall is 0 (support 10); 92.6% of errors are adjacent-class.",
     chips: ["52 tests · 98.56% cov", "mypy --strict", "CI py3.11–3.13", "v0.1.0"],
   },
 ];
@@ -338,6 +340,7 @@ export const starRepos: Repo[] = [
 // Projects — the rest.
 
 export interface Project {
+  id?: string;
   title: string;
   date?: string;
   description: string[];
@@ -349,6 +352,7 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "dann",
     title: "Cross-Domain Sentiment Analysis (DANN)",
     repoHref: "https://github.com/iwang-1/cross-domain-sentiment-dann",
     license: "MIT",

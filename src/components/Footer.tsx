@@ -18,10 +18,8 @@ export function Footer() {
           <Keycap href={person.resumeUrl} external>
             Résumé (PDF)
           </Keycap>
-          <a href="/#education">Education</a>
-          <span className="mono" style={{ fontSize: "0.875rem", color: "var(--ink-2)" }}>
-            {person.email}
-          </span>
+          <Keycap href="/#education">Education</Keycap>
+          <span className="mono footer-email">{person.email}</span>
         </div>
         <div className="footer-colophon">
           <p>{footer.colophon}</p>
