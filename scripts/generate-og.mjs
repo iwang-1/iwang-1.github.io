@@ -1,6 +1,6 @@
 // Generates public/og.png — a 1200×630 branded card for summary_large_image
-// social embeds: deep-navy brand background, IW keycap monogram, name,
-// one-line role. Consistent with the site's "Harbor Ink" tokens
+// social embeds: deep-midnight brand background, IW keycap monogram, name,
+// one-line role. Consistent with the site's "Midnight Harbor" tokens
 // (src/styles/tokens.css).
 //
 //   node scripts/generate-og.mjs
@@ -17,8 +17,8 @@ const html = `<!doctype html>
 <style>
   html, body { margin: 0; width: 1200px; height: 630px; }
   body {
-    background: #102A43;
-    color: #F2F6FB;
+    background: #0B1220;
+    color: #E6EDF7;
     font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@ const html = `<!doctype html>
     color: #16233A;
     border: 2px solid #D9E2EC;
     border-radius: 36px;
-    box-shadow: 0 10px 0 #BFCCDC;
+    box-shadow: 0 10px 0 #3A4E6B;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
     font-size: 96px; font-weight: 700; letter-spacing: -0.01em;
@@ -45,7 +45,7 @@ const html = `<!doctype html>
     font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
     font-size: 30px; color: #9FB3C8; margin: 0;
   }
-  .rule { width: 96px; height: 4px; background: #1D4ED8; border-radius: 2px; margin-bottom: 24px; }
+  .rule { width: 96px; height: 4px; background: #60A5FA; border-radius: 2px; margin-bottom: 24px; }
 </style>
 </head>
 <body>
