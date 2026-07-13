@@ -25,4 +25,12 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // MPA page entries mount into #root and export nothing — fast refresh
+    // does not apply to them.
+    files: ["src/pages/**/main.tsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );
