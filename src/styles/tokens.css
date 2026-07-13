@@ -1,29 +1,34 @@
-/* Design tokens — "The Workbench". Light theme only (dark mode is an
-   additive v2 precisely because these are custom properties; do not
-   half-ship it). Contrast pre-verified on --bg and --surface:
-   --ink 15.6:1 (AAA), --ink-2 ~6.9:1 (AA, never below 13px),
-   --accent ~4.8:1 (white-on-accent 5.2:1), --accent-deep ~7:1,
-   --teal ~5.1:1. */
+/* Design tokens — "Harbor Ink" (v3). Cool near-white reading field + deep-navy
+   brand bands (nav, home hero band, page-head bands, footer). Contrast
+   pre-verified (WCAG 2.x): --ink on --bg 14.91:1 (AAA), on --surface 15.72:1
+   (AAA); --ink-2 on --bg 6.34:1 / --surface 6.68:1 (AA); --accent on --bg
+   6.35:1 / --surface 6.70:1 (AA), white-on---accent 6.70:1,
+   white-on---accent-deep 10.36:1; --teal on --surface 5.36:1; --navy-ink on
+   --navy 13.49:1 (AAA); --navy-ink-2 on --navy 6.80:1 (AA). */
 :root {
   color-scheme: light;
   /* surfaces */
-  --bg: #FAF7F2;            /* warm off-white page */
+  --bg: #F7F9FC;            /* cool near-white page */
   --surface: #FFFFFF;       /* cards */
-  --border: #E7E0D6;        /* hairlines */
-  --shadow-edge: #D6CFC3;   /* keycap bottom edge */
+  --border: #D9E2EC;        /* hairlines */
+  --shadow-edge: #BFCCDC;   /* keycap bottom edge */
   /* ink */
-  --ink: #201B16;           /* primary text */
-  --ink-2: #5C544B;         /* secondary/mono meta */
+  --ink: #16233A;           /* primary text — navy-black */
+  --ink-2: #4E5D74;         /* secondary/mono meta — slate */
   /* accents */
-  --accent: #C2410C;        /* burnt orange: links, ONE primary keycap per page */
-  --accent-deep: #9A3412;   /* hover/pressed */
-  --teal: #0F766E;          /* Community & Teaching tags, coursework chips */
+  --accent: #1D4ED8;        /* blue: links, ONE primary keycap per page, timeline dots */
+  --accent-deep: #1E3A8A;   /* hover/pressed */
+  --teal: #0E7490;          /* Community & Teaching tags, coursework chips */
   --status: #047857;        /* emerald proof-chip dot + availability dot */
+  /* brand band (navy signature) */
+  --navy: #102A43;          /* nav bar, home hero band, page-head bands, footer */
+  --navy-ink: #F2F6FB;      /* headline text on navy */
+  --navy-ink-2: #9FB3C8;    /* secondary text on navy */
   /* radii & shadow */
   --r-card: 12px;
   --r-key: 8px;
   --r-chip: 999px;
-  --shadow-card: 0 1px 2px rgba(32, 27, 22, 0.06);
+  --shadow-card: 0 1px 2px rgba(22, 35, 58, 0.06);
   /* type — system fonts only (no CDN fonts, zero font bytes) */
   --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
     'Times New Roman', serif;

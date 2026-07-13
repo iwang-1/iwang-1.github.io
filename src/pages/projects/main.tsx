@@ -13,11 +13,13 @@ function Projects() {
     <>
       <Nav active="projects" />
       <main id="main">
-        <div className="page-head container">
-          <h1>Projects</h1>
-          <p className="page-dek">
-            Everything below with a link is a live, public repo — stats are exact, not rounded.
-          </p>
+        <div className="page-head-band">
+          <div className="page-head container">
+            <h1>Projects</h1>
+            <p className="page-dek">
+              Everything below with a link is a live, public repo — stats are exact, not rounded.
+            </p>
+          </div>
         </div>
 
         <Section id="star-catalog" kicker="01 · FEATURED" title={starSystem.heading}>

@@ -133,15 +133,15 @@ img {
   top: 0;
   z-index: 10;
   height: 64px;
-  background: rgba(250, 247, 242, 0.97);
+  background: rgba(16, 42, 74, 0.97);
   backdrop-filter: saturate(1.2) blur(6px);
   -webkit-backdrop-filter: saturate(1.2) blur(6px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 @supports not (backdrop-filter: blur(6px)) {
   .nav {
-    background: var(--bg);
+    background: var(--navy);
   }
 }
 
@@ -168,6 +168,13 @@ img {
   font-size: 1.25rem;
   color: var(--ink);
 }
+
+.nav-brand, .nav-wordmark { color: var(--navy-ink); }
+.nav .keycap-pressed, .nav .keycap-pressed:hover { border-color: rgba(255, 255, 255, 0.38); }
+
+/* Focus visibility on navy bands — --accent blue is ~1.9:1 against navy;
+   #93C5FD on #102A43 is 8.9:1 (non-text needs 3:1). */
+.nav :focus-visible, .hero-band :focus-visible, .footer :focus-visible { outline-color: #93C5FD; }
 
 .nav-tabs {
   display: flex;
@@ -480,7 +487,17 @@ a.card-link-wrap {
   color: var(--ink-2);
 }
 
+/* Home hero band — structural navy band wrapping the hero. */
+.hero-band { background: var(--navy); padding-bottom: 64px; }
+.hero .kicker { color: var(--navy-ink-2); }
+.hero h1, .hero-subhead { color: var(--navy-ink); }
+.hero-band .hero-email-plain { color: var(--navy-ink-2); }
+
 /* ------------------------------------------------------------ page heads */
+.page-head-band { background: var(--navy); padding-bottom: 48px; }
+.page-head-band h1 { color: var(--navy-ink); }
+.page-head-band .page-dek { color: var(--navy-ink-2); }
+
 .page-head {
   padding: 64px 0 0;
 }
@@ -699,8 +716,8 @@ a.card-link-wrap {
 
 /* ---------------------------------------------------------------- footer */
 .footer {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
+  background: var(--navy);
+  border-top: none;
   padding: 48px 0;
   margin-top: 96px;
 }
@@ -732,6 +749,8 @@ a.card-link-wrap {
   margin: 0;
   max-width: none;
 }
+
+.footer-email, .footer-colophon { color: var(--navy-ink-2); }
 
 @media (max-width: 767px) {
   .footer {

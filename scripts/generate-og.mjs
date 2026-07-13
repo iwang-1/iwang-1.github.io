@@ -1,6 +1,7 @@
 // Generates public/og.png — a 1200×630 branded card for summary_large_image
-// social embeds: warm --bg background, IW keycap monogram, name, one-line
-// role. Consistent with the site's "Workbench" tokens (src/styles/tokens.css).
+// social embeds: deep-navy brand background, IW keycap monogram, name,
+// one-line role. Consistent with the site's "Harbor Ink" tokens
+// (src/styles/tokens.css).
 //
 //   node scripts/generate-og.mjs
 import { dirname, join } from "node:path";
@@ -16,8 +17,8 @@ const html = `<!doctype html>
 <style>
   html, body { margin: 0; width: 1200px; height: 630px; }
   body {
-    background: #FAF7F2;
-    color: #201B16;
+    background: #102A43;
+    color: #F2F6FB;
     font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     align-items: center;
@@ -27,9 +28,10 @@ const html = `<!doctype html>
   .keycap {
     width: 220px; height: 220px; flex: none;
     background: #FFFFFF;
-    border: 2px solid #E7E0D6;
+    color: #16233A;
+    border: 2px solid #D9E2EC;
     border-radius: 36px;
-    box-shadow: 0 10px 0 #D6CFC3;
+    box-shadow: 0 10px 0 #BFCCDC;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
     font-size: 96px; font-weight: 700; letter-spacing: -0.01em;
@@ -41,9 +43,9 @@ const html = `<!doctype html>
   }
   p {
     font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
-    font-size: 30px; color: #5C544B; margin: 0;
+    font-size: 30px; color: #9FB3C8; margin: 0;
   }
-  .rule { width: 96px; height: 4px; background: #C2410C; border-radius: 2px; margin-bottom: 24px; }
+  .rule { width: 96px; height: 4px; background: #1D4ED8; border-radius: 2px; margin-bottom: 24px; }
 </style>
 </head>
 <body>

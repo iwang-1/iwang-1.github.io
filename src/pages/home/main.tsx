@@ -22,33 +22,35 @@ function Home() {
     <>
       <Nav active="home" />
       <main id="main">
-        <section className="hero container">
-          <p className="kicker">{hero.kicker}</p>
-          <h1>{hero.headline}</h1>
-          <p className="hero-subhead">{hero.subhead}</p>
-          <p className="hero-availability">
-            <ProofChip label={hero.availability} />
-          </p>
-          {/* The shared nav already carries this page's single accent keycap
-              (Résumé) — "exactly ONE accent-filled keycap per page" is a
-              binding restraint rule, so the hero caps stay default. */}
-          <div className="cta-row">
-            <Keycap href={person.resumeUrl} external>
-              Résumé (PDF)
-            </Keycap>
-            <Keycap href={person.github} external>
-              GitHub
-            </Keycap>
-            <Keycap href={person.linkedin} external>
-              LinkedIn
-            </Keycap>
-            <Keycap href={`mailto:${person.email}`}>Email</Keycap>
-          </div>
-          <p className="hero-email-plain">{person.email}</p>
-          <div className="now-strip">
-            {nowStrip.map((f) => (
-              <FactTile key={f} label={f} />
-            ))}
+        <section className="hero-band">
+          <div className="hero container">
+            <p className="kicker">{hero.kicker}</p>
+            <h1>{hero.headline}</h1>
+            <p className="hero-subhead">{hero.subhead}</p>
+            <p className="hero-availability">
+              <ProofChip label={hero.availability} />
+            </p>
+            {/* The shared nav already carries this page's single accent keycap
+                (Résumé) — "exactly ONE accent-filled keycap per page" is a
+                binding restraint rule, so the hero caps stay default. */}
+            <div className="cta-row">
+              <Keycap href={person.resumeUrl} external>
+                Résumé (PDF)
+              </Keycap>
+              <Keycap href={person.github} external>
+                GitHub
+              </Keycap>
+              <Keycap href={person.linkedin} external>
+                LinkedIn
+              </Keycap>
+              <Keycap href={`mailto:${person.email}`}>Email</Keycap>
+            </div>
+            <p className="hero-email-plain">{person.email}</p>
+            <div className="now-strip">
+              {nowStrip.map((f) => (
+                <FactTile key={f} label={f} />
+              ))}
+            </div>
           </div>
         </section>
 
