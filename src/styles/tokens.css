@@ -1,39 +1,48 @@
-/* Design tokens — "Harbor Ink" (v3). Cool near-white reading field + deep-navy
-   brand bands (nav, home hero band, page-head bands, footer). Contrast
-   pre-verified (WCAG 2.x): --ink on --bg 14.91:1 (AAA), on --surface 15.72:1
-   (AAA); --ink-2 on --bg 6.34:1 / --surface 6.68:1 (AA); --accent on --bg
-   6.35:1 / --surface 6.70:1 (AA), white-on---accent 6.70:1,
-   white-on---accent-deep 10.36:1; --teal on --surface 5.36:1; --navy-ink on
-   --navy 13.49:1 (AAA); --navy-ink-2 on --navy 6.80:1 (AA). */
+/* Design tokens — "Midnight Harbor" (v4 dark). Deep-midnight reading field +
+   navy brand bands (nav, home hero band, page-head bands, footer). Contrast
+   pre-verified (WCAG 2.x): --ink on --bg 15.89:1 / on --surface 13.34:1 (AAA);
+   --ink-2 on --bg 8.70:1 / on --surface 7.30:1 (AAA); --accent on --bg 7.36:1,
+   on --surface 6.18:1, on --navy 5.48:1 (AA+); --bg-on---accent 7.36:1,
+   --bg-on---accent-deep 10.38:1; --teal on --surface 8.70:1; --status on
+   --surface 8.18:1 / on --bg 9.74:1; --navy-ink on --navy 12.84:1 (AAA);
+   --navy-ink-2 on --navy 6.47:1 (AA). Non-text (1.4.11 ≥3:1):
+   --border-interactive 4.72:1 on --surface / 5.62:1 on --bg; band focus
+   #93C5FD on --navy 7.73:1. Hover goes LIGHTER, never darker, on dark. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   /* surfaces */
-  --bg: #F7F9FC;            /* cool near-white page */
-  --surface: #FFFFFF;       /* cards */
-  --border: #D9E2EC;        /* DECORATIVE hairlines only (cards, chips, spine) */
-  /* Interactive boundary (keycap border + bottom edge). Keycaps and flat
-     chips share the surface recipe, so the boundary is the cue that a keycap
-     is pressable — it must clear WCAG 1.4.11's 3:1 non-text minimum:
-     #7A8FA6 is 3.33:1 on --surface and 3.16:1 on --bg. */
+  --bg: #0B1220;            /* deep midnight page */
+  --surface: #16233A;       /* cards — lighter navy, one step up from bg */
+  --border: #26374F;        /* DECORATIVE hairlines only (cards, chips, spine) */
+  /* Interactive boundary (keycap border + bottom edge) — clears WCAG
+     1.4.11's 3:1: #7A8FA6 is 4.72:1 on --surface and 5.62:1 on --bg. */
   --border-interactive: #7A8FA6;
-  --shadow-edge: #BFCCDC;   /* decorative edge (nav monogram) */
+  --shadow-edge: #3A4E6B;   /* decorative edge (nav monogram) */
   /* ink */
-  --ink: #16233A;           /* primary text — navy-black */
-  --ink-2: #4E5D74;         /* secondary/mono meta — slate */
+  --ink: #E6EDF7;           /* primary text — near-white */
+  --ink-2: #9FB3C8;         /* secondary/mono meta — slate */
   /* accents */
-  --accent: #1D4ED8;        /* blue: links, ONE primary keycap per page, timeline dots */
-  --accent-deep: #1E3A8A;   /* hover/pressed */
-  --teal: #0E7490;          /* Community & Teaching tags, coursework chips */
-  --status: #047857;        /* emerald proof-chip dot + availability dot */
+  --accent: #60A5FA;        /* blue: links, ONE primary keycap per page, timeline dots */
+  --accent-deep: #93C5FD;   /* hover/pressed — LIGHTER, not darker, on dark */
+  --teal: #22D3EE;          /* Community & Teaching tags, coursework chips */
+  --status: #34D399;        /* emerald proof-chip dot + availability dot */
   /* brand band (navy signature) */
-  --navy: #102A43;          /* nav bar, home hero band, page-head bands, footer */
+  --navy: #132D4C;          /* nav bar, home hero band, page-head bands, footer */
   --navy-ink: #F2F6FB;      /* headline text on navy */
   --navy-ink-2: #9FB3C8;    /* secondary text on navy */
   /* radii & shadow */
   --r-card: 12px;
   --r-key: 8px;
   --r-chip: 999px;
-  --shadow-card: 0 1px 2px rgba(22, 35, 58, 0.06);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.55);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.35);
+  --border-hover: color-mix(in srgb, var(--accent) 35%, var(--border));
+  /* motion (Keyswitch layer) */
+  --t-tap: 120ms;
+  --t-hover: 180ms;
+  --t-reveal: 450ms;
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   /* type — system fonts only (no CDN fonts, zero font bytes) */
   --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
     'Times New Roman', serif;
