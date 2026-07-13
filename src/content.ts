@@ -27,7 +27,7 @@ export const hero = {
   kicker: "SOFTWARE ENGINEER · NEW-GRAD 2027",
   headline: "I build software the way I build keyboards — carefully, end to end.",
   subhead:
-    "CS B.S./M.S. (Honors Program), University of Maryland — M.S. expected May 2027 · Software Development Engineer Intern at Amazon Web Services, Summer 2026.",
+    "CS B.S./M.S. (Departmental Honors), University of Maryland — M.S. expected May 2027 · Software Development Engineer Intern at Amazon Web Services, Summer 2026.",
   availability: "Open to new-grad SWE roles · available Summer 2027",
 };
 
@@ -63,9 +63,12 @@ export interface Education {
 export const education: Education[] = [
   {
     school: "University of Maryland, College Park",
-    degree: "B.S./M.S. in Computer Science (CS Honors Program)",
+    degree: "B.S./M.S. in Computer Science — Departmental Honors (research track)",
     dates: "Aug 2023 – May 2027",
-    detailLines: ["Minors in Data Science and Philosophy"],
+    detailLines: [
+      "CS Departmental Honors — faculty-mentored research track",
+      "Minors in Data Science and Philosophy",
+    ],
     proofChip: "GPA 3.6/4.0",
     coursework: [
       "Algorithms",
@@ -79,13 +82,6 @@ export const education: Education[] = [
       "Distributed Systems",
       "Computer Vision",
     ],
-  },
-  {
-    school: "The University of Hong Kong",
-    degree: "Study Abroad (Exchange Program), Computer Science",
-    dates: "Aug – Dec 2025",
-    detailLines: [],
-    coursework: ["Numerical Analysis", "Cryptography"],
   },
 ];
 
