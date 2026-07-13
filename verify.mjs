@@ -7,7 +7,7 @@
 //
 //   npm run build && npm run verify
 import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { chromium } from "playwright";
 
 const PORT = 4173;
@@ -87,6 +87,14 @@ const browser = await chromium.launch();
 const problems = [];
 const checkedLinks = new Map(); // href -> ok
 
+// build-artifact gates: the motion contract must survive the CSS build.
+const cssFile = readdirSync("dist/assets").find((f) => f.endsWith(".css"));
+const builtCss = readFileSync(`dist/assets/${cssFile}`, "utf8");
+if (!/prefers-reduced-motion:\s*reduce/.test(builtCss))
+  problems.push("built CSS missing prefers-reduced-motion: reduce block");
+if (!/prefers-reduced-motion:\s*no-preference/.test(builtCss))
+  problems.push("built CSS missing no-preference gate around .reveal hidden state");
+
 async function linkOk(href) {
   if (checkedLinks.has(href)) return checkedLinks.get(href);
   let ok = false;
@@ -120,6 +128,14 @@ async function checkPage(spec, viewport) {
   });
 
   await page.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+
+  // dark-theme gate: body background luminance must be dark (#0B1220 ≈ 0.007)
+  const lum = await page.evaluate(() => {
+    const [r, g, b] = getComputedStyle(document.body).backgroundColor.match(/\d+/g).map(Number);
+    const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  });
+  if (lum > 0.05) problems.push(`${tag}: body background not dark (luminance ${lum.toFixed(3)})`);
 
   // 3. head metadata
   const title = await page.title();
@@ -268,7 +284,38 @@ async function checkPage(spec, viewport) {
   if ((await page.locator('a[href="/Ivan-Wang-Resume.pdf"]').count()) === 0)
     problems.push(`${tag}: resume PDF link missing`);
 
-  // 9. screenshot (before the skip-link focus test so it stays hidden)
+  // reveal gate: full scroll must leave no .reveal without .is-in
+  // (instant scrolls — html has scroll-behavior: smooth, and an animated
+  // scroll would leave the sticky nav mid-viewport in the screenshots)
+  await page.evaluate(async () => {
+    for (let y = 0; y <= document.body.scrollHeight; y += 600) {
+      window.scrollTo({ top: y, behavior: "instant" });
+      await new Promise((r) => setTimeout(r, 60));
+    }
+  });
+  await page.waitForTimeout(600); // let 450ms transitions finish
+  const unrevealed = await page.$$eval(".reveal:not(.is-in)", (els) => els.length);
+  if (unrevealed) problems.push(`${tag}: ${unrevealed} .reveal never gained .is-in after full scroll`);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await page.waitForTimeout(100);
+
+  // footer exemption: the footer must never reveal (always visible)
+  if (await page.locator("footer .reveal").count())
+    problems.push(`${tag}: footer must never reveal`);
+
+  // reduced-motion gate: everything visible immediately, no hidden frame
+  const rm = await browser.newPage({
+    viewport: { width: viewport.width, height: viewport.height },
+  });
+  await rm.emulateMedia({ reducedMotion: "reduce" });
+  await rm.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+  const hiddenRM = await rm.$$eval(".reveal, .hero > *, .page-head > *", (els) =>
+    els.filter((e) => getComputedStyle(e).opacity !== "1").length);
+  if (hiddenRM) problems.push(`${tag}: ${hiddenRM} element(s) hidden under reduced motion`);
+  await rm.close();
+
+  // 9. screenshot (before the skip-link focus test so it stays hidden; after
+  //    the full-scroll reveal pass so docs/ shots show revealed content)
   const shot = `docs/${spec.shot}-${viewport.name}.png`;
   await page.screenshot({ path: shot, fullPage: true });
 
