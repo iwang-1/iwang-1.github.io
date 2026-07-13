@@ -186,10 +186,10 @@ export const engineeringRoles: Role[] = [
   {
     role: "Software Development Engineer Intern",
     org: "Amazon Web Services (AWS)",
-    dates: "May – Aug 2026",
+    dates: "May 2026 – Present",
     location: "Herndon, VA",
     bullets: [
-      "Architected an agentic AI system with custom skill packages to autonomously migrate 8+ production tests from Scala to JUnit5, boosting migration throughput 5x for AWS EC2 VPC control-plane APIs.",
+      "Architected an agentic AI system with custom skill packages to autonomously migrate 8 production tests from Scala to JUnit5, boosting migration throughput 5x for AWS EC2 VPC control-plane APIs.",
       "Designed and shipped canary infrastructure on AWS SDK v2, CDK, and CloudWatch in us-east-1, cutting test runtime 40% and flaky failures 60% via CI/CD pipelines and Sev2 alarms for services used by 1M+ customers.",
     ],
     chips: ["5x migration throughput", "−40% test runtime", "−60% flaky failures"],
