@@ -1,101 +1,94 @@
 # FACTS.md — rendered-number checklist
 
-Human companion to `scripts/check-facts.mjs`. Every number or claim rendered on
-the site maps to a line of the verified facts sheet (2026-07-13). Re-verify
-this table before every deploy. This file is intentionally OUTSIDE the
-check-facts scan set (`src/`, `index.html`, `public/`, `README.md`) so it can
-describe the rules it enforces.
+Human companion to `scripts/check-facts.mjs`. Every number or claim rendered
+anywhere on the multi-page site maps to a line of the verified facts sheet
+(2026-07-13). Re-verify this table before every deploy. This file is
+intentionally OUTSIDE the check-facts scan set (`src/`, the four HTML entries,
+`public/`, `README.md`) so it can describe the rules it enforces.
 
 ## Person
 
 | Rendered | Source |
 | --- | --- |
 | Ivan Wang; github.com/iwang-1; linkedin.com/in/ivanwang1; ivanwang8989@gmail.com | resume |
-| CS B.S./M.S. (Honors), UMD College Park; M.S. expected May 2027; GPA 3.6/4.0; minors Data Science + Philosophy | resume |
-| SDE Intern, Amazon Web Services — May–Aug 2026 | resume |
-| seeking new-grad SWE roles (available ~Summer 2027) — keep the `~` | facts sheet · PERSON |
+| CS B.S./M.S. (Honors Program), UMD College Park; M.S. expected May 2027; GPA 3.6/4.0; minors Data Science + Philosophy | resume |
+| SDE Intern, Amazon Web Services — May–Aug 2026 (always date-anchored "Summer 2026", never "currently") | resume |
+| Open to new-grad SWE roles · available Summer 2027 | facts sheet · PERSON |
+| NO phone number anywhere in site text (it exists only inside the resume PDF) | constraint 3 |
 
-## Experience (resume bullets, PUBLIC AWS terms only)
+## Experience — the complete 7-entry inventory (`/experience/`)
 
-| Rendered | Source |
-| --- | --- |
-| AWS: agentic AI system, 8+ tests Scala→JUnit5, 5× migration throughput, AWS EC2 VPC control-plane APIs | resume |
-| AWS: canary infra on SDK v2/CDK/CloudWatch, us-east-1, −40% runtime, −60% flaky, Sev2 alarms, 1M+ customers | resume |
-| UMD Full-Stack (May–Sep 2025): 50,000+ records, REST APIs, ETL 10+ yrs legacy data, −75% runtime, 15+ researchers | resume + LinkedIn |
-| UMD ML (Aug 2023–Jan 2025): +30% NLP accuracy, −25% training time (SPSA/ADAM/SGD) | resume + LinkedIn |
-| Washington Software (Mar 2022–Aug 2023): Selenium/BeautifulSoup automation, −40% manual work, 15+ hrs/wk, Jenkins CI/CD | resume + LinkedIn |
-| CONFIDENTIALITY: AWS bullets use only public AWS product names (EC2, VPC, canary, CloudWatch, CDK, SDK) — never internal codenames. Private pre-push gate blocks codenames. |
+Engineering (timeline, reverse-chron), with ProofChips:
 
-## Education
+| # | Rendered | Source |
+| --- | --- | --- |
+| 1 | AWS SDE Intern, May–Aug 2026, Herndon VA: agentic AI system, 8+ tests Scala→JUnit5, 5x migration throughput, EC2 VPC control-plane APIs; canary infra on SDK v2/CDK/CloudWatch, us-east-1, −40% test runtime, −60% flaky failures, Sev2 alarms, 1M+ customers | resume |
+| 2 | UMD Full-Stack SWE Intern, May–Sep 2025, College Park (Remote): 50,000+ records, REST APIs, ETL over 10+ yrs legacy data via cron, −75% pipeline runtime | resume + LinkedIn |
+| 3 | UMD ML Engineer Intern, Aug 2023–Jan 2025, College Park: +30% NLP accuracy, −25% training time (SPSA/ADAM/SGD) | resume + LinkedIn |
+| 4 | Washington Software Inc. SWE Intern, Mar 2022–Aug 2023, Gaithersburg: Selenium/BeautifulSoup automation, −40% manual work, 15+ hrs/week saved, Jenkins CI/CD | resume + LinkedIn |
 
-| Rendered | Source |
-| --- | --- |
-| UMD College Park, B.S./M.S. CS (Honors), Aug 2023–May 2027, GPA 3.6, minors DS + Philosophy | resume + LinkedIn |
-| University of Hong Kong, Study Abroad (Exchange), Aug–Dec 2025, coursework Numerical Analysis + Cryptography | LinkedIn |
+Community & Teaching (compact cards, teal tags):
 
-## Selected projects (resume)
+| # | Rendered | Source |
+| --- | --- | --- |
+| 5 | Kids For Code VP, Dec 2021–May 2023, Remote: 3,000+ students, 400+ lessons, 10+ instructors, 25% enrollment growth | resume + LinkedIn |
+| 6 | CodeDay TPM, Nov 2019–Dec 2022, DC–Baltimore: 500+ participants, 200+ schools, sponsorships incl. Vercel + Brave | resume + LinkedIn |
+| 7 | Panda Programmer Instructor, Mar–Nov 2022, Gaithersburg: Python/JS/Scratch, ages 6–12 | resume + LinkedIn |
 
-| Rendered | Source |
-| --- | --- |
-| Cross-Domain NLP Sentiment Classifier: 64,000 samples, 16 conditions, DANN on DistilBERT, +26% / 74.2% held-out | resume |
-| RAG Research Assistant: LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
-| ML Professor Rating Predictor: 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
+CONFIDENTIALITY: the AWS bullets use only public AWS product names (EC2, VPC,
+canary, CloudWatch, CDK, SDK v2, us-east-1, Sev2) — never internal
+system/codenames. A private pre-push gate (outside this repo) blocks the
+codenames over the working tree and full git history. Every AWS metric (5x,
+40%, 60%, 1M+) is a resume claim Ivan stands behind — do not add, round, or
+invent beyond the resume.
 
-## Leadership (resume + LinkedIn)
-
-| Rendered | Source |
-| --- | --- |
-| Kids For Code VP: 3,000+ students, 400+ lessons, 10+ instructors, 25% enrollment growth | resume + LinkedIn |
-| CodeDay TPM: 500+ participants, 200+ schools, sponsorships incl. Vercel + Brave | resume + LinkedIn |
-| Panda Programmer instructor: Python/JS/Scratch, ages 6–12 | resume + LinkedIn |
-| UMD Climbing Club Secretary: 8 trips/semester, +30% attendance | resume |
-
-## Star Catalog System
+## Education (Home `#education`)
 
 | Rendered | Source |
 | --- | --- |
-| ingest: 101 tests, ~95% cov, mypy --strict, ruff, CI py3.11–3.14, v0.3.2 | facts sheet · PROJECTS |
+| UMD College Park, B.S./M.S. CS (CS Honors Program), Aug 2023–May 2027, GPA 3.6/4.0, minors DS + Philosophy, 10 coursework chips | resume + LinkedIn |
+| University of Hong Kong, Study Abroad (Exchange Program), Aug–Dec 2025, coursework Numerical Analysis + Cryptography | LinkedIn |
+
+## Home page extras
+
+| Rendered | Source |
+| --- | --- |
+| Secretary of the UMD Climbing Club — 8 trips a semester, grew attendance 30% | resume |
+| Mechanical keyboards + custom PCs hobby line (About P3) | facts sheet · ABOUT |
+| Max ONE keyboard/climbing metaphor site-wide: the hero headline is it | design spec |
+| Skills rows exactly per resume (Languages / Frameworks / Tools) | resume |
+
+## Star Catalog System (`/projects/#star-catalog`)
+
+| Rendered | Source |
+| --- | --- |
+| ingest: 101 tests · ~95% cov, mypy --strict, ruff, CI py3.11–3.14, v0.3.2 | facts sheet · PROJECTS |
 | ingest processes telescope-observation CSVs (NOT the HYG dataset) | facts sheet · PROJECTS |
-| api: 66 tests, ~97% cov, Dockerized — built + smoke-tested in CI, v0.2.3 | facts sheet · PROJECTS |
-| api: cone search handles the RA 0/360 seam | facts sheet · PROJECTS |
-| web: 8,920 naked-eye HYG v4.3 stars; Playwright-gated deploy; v0.1.0 | facts sheet · PROJECTS |
-| Test counts stay per-repo — never summed (101+66+52 must not appear) | constraint 3 |
-| Keep every `~` on coverage numbers | constraint 3 |
-
-## Classifier
-
-| Rendered | Source |
-| --- | --- |
-| 79.5% accuracy / 0.665 macro-F1, once-touched hold-out | facts sheet · PROJECTS |
-| 72.3% zero-parameter physics baseline | facts sheet · PROJECTS |
-| O-class recall 0 (support 10), disclosed; 92.6% adjacent-class errors | facts sheet · PROJECTS |
-| 52 tests, 98.56% cov, mypy --strict, CI py3.11–3.13, v0.1.0 | facts sheet · PROJECTS |
-| No rounding: 79.5 never becomes 80, 98.56 never becomes 99 | constraint 3 |
+| api: 66 tests · ~97% cov, Dockerized · smoke-tested in CI, v0.2.3; cone search handles the RA 0/360 seam | facts sheet · PROJECTS |
+| web: 8,920 naked-eye HYG v4.3 stars; Playwright-gated deploy; v0.1.0; live demo iwang-1.github.io/star-catalog-web/ | facts sheet · PROJECTS |
+| classifier: 79.5% accuracy / 0.665 macro-F1 (once-touched hold-out) vs 72.3% zero-parameter physics baseline; O-class recall 0 (support 10) disclosed; 92.6% adjacent-class errors; 52 tests · 98.56% cov, mypy --strict, CI py3.11–3.13, v0.1.0 | facts sheet · PROJECTS |
+| No rounding: 79.5 never becomes 80, 98.56 never becomes 99 | constraint (check-facts) |
+| Test counts stay per-repo — never summed | constraint (check-facts) |
+| Keep every `~` on coverage numbers | constraint (check-facts) |
 | Trained on the SAME 8,920-star HYG snapshot as the web app (sha256-pinned) | facts sheet · PROJECTS |
 
-## Open source (framing locks)
+## Other projects (`/projects/`)
 
 | Rendered | Source |
 | --- | --- |
-| 4 MERGED PRs to warnerem/CCD-data-archive — the ONLY "contributed to an open source project" claim | facts sheet · OPEN SOURCE |
-| CCD link = pre-filtered merged-PR query on warnerem's repo (safe from day one) | facts sheet · OPEN SOURCE |
-| lambeq #259 = 1 OPEN PR, "OPEN — UNDER REVIEW"; the word "merged" never appears near it | facts sheet · OPEN SOURCE |
-| FIRE-QML-WINNERS-QNLP = "co-built and open-sourced (GPL-3.0)", never a "contribution" | facts sheet · OPEN SOURCE |
-| FIRE role: dataset preparation and integration, and project documentation | facts sheet · OPEN SOURCE |
-| FIRE result: ~30-pp win over out-of-the-box standard-SPSA, qualifier "(exact noiseless simulation)" welded on | facts sheet · OPEN SOURCE |
+| DANN (cross-domain-sentiment-dann, MIT): DistilBERT, LODO across Yelp/Amazon/Twitter/Reddit, 64,000 labeled samples, 16 experimental conditions, DANN moonshot, Financial PhraseBank OOD probe | repo README |
+| DANN result line EXACTLY: "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains." — never "+26%", never an unqualified "74.2% on held-out domains" (74.2% is Yelp-only per repo README / report Table 2) | repo README · Table 2 |
+| RAG Research Assistant (Jan 2025, private / no public repo — no link): LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
+| ML Professor Rating Predictor (Apr 2025, private / no public repo — no link): 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
+| QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): 3-person UMD FIRE project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
+
+## Open source (framing locks — two SEPARATE cards)
+
+| Rendered | Source |
+| --- | --- |
+| Card A: "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive" — the site's ONLY contributed-to claim; link = pre-filtered merged-PR query | facts sheet · OPEN SOURCE |
+| Card B: lambeq #259 = 1 OPEN PR, "under review"; the word "merged" never appears within 200 chars of "lambeq" (check-facts enforces per file; verify.mjs enforces on the rendered page text) | facts sheet · OPEN SOURCE |
 | The qnlp_lorenz fork appears nowhere | facts sheet · OPEN SOURCE |
-
-## Skills
-
-Languages / frameworks / ML-NLP / tools lists from the resume + LinkedIn.
-"Used above" dots mark skills demonstrated in the experience or projects shown
-on the page (see skills.usedAbove in content.ts).
-
-## Star field
-
-150 brightest stars of the 8,920-star HYG snapshot, committed in
-`src/starfield-data.ts`; caption on the masthead states the provenance.
-Attribution in the footer colophon: HYG database (Astronomy Nexus), CC BY-SA.
 
 ## Confidentiality
 
@@ -103,10 +96,5 @@ Zero Amazon-internal information anywhere in the repo (or its git history).
 The specific term/URL denylist is deliberately NOT in this repo — a private
 pre-push scan next to the publish script enforces it over the working tree and
 the full history before anything is pushed. `check-facts.mjs` keeps the
-framing/number tripwires.
-
-AWS content: the two AWS bullets are transcribed verbatim from Ivan's resume
-and use only PUBLIC AWS product terms (EC2, VPC, canary, CloudWatch, CDK, SDK
-v2, us-east-1, Sev2). Internal system/codenames never appear; the private
-pre-push gate blocks them. Every AWS metric (5×, 40%, 60%, 1M+) is a resume
-claim Ivan stands behind — do not add, round, or invent beyond the resume.
+framing/number tripwires, required-string list, phone-number tripwire, and
+banned voice words.
