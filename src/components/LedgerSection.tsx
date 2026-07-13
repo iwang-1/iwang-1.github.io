@@ -12,15 +12,23 @@ export default function LedgerSection({ id, kicker, title, children }: Props) {
   const headingId = `${id}-heading`;
   return (
     <section id={id} className="ledger-section" aria-labelledby={headingId}>
-      <p className="kicker mono" aria-hidden="true">
-        {kicker}
-      </p>
       {title ? (
-        <h2 id={headingId}>{title}</h2>
+        <>
+          {/* Visible h2 follows, so the kicker stays in the accessibility tree. */}
+          <p className="kicker mono">{kicker}</p>
+          <h2 id={headingId}>{title}</h2>
+        </>
       ) : (
-        <h2 id={headingId} className="visually-hidden">
-          {kicker}
-        </h2>
+        <>
+          {/* No visible title: the kicker text doubles as the hidden h2, so the
+              visible copy is aria-hidden to avoid AT double-announcement. */}
+          <p className="kicker mono" aria-hidden="true">
+            {kicker}
+          </p>
+          <h2 id={headingId} className="visually-hidden">
+            {kicker}
+          </h2>
+        </>
       )}
       {children}
     </section>

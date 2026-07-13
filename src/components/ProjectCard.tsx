@@ -16,8 +16,10 @@ export default function ProjectCard({ project }: { project: Project }) {
         </p>
       ))}
       <p className="chip-row">
+        {/* Chips are plain text even when linking is enabled: the h3 above is
+            the card's single repo link (one tab stop per card, clear purpose). */}
         {project.chips.map((c) => (
-          <MetricChip key={c.label} label={c.label} href={linked ? project.repoUrl : undefined} />
+          <MetricChip key={c.label} label={c.label} />
         ))}
       </p>
     </article>

@@ -36,7 +36,8 @@ export default function App() {
           <p className="story">{starSystem.story}</p>
           <PipelineRail />
           <Screenshot />
-          {/* Three repos, one system — test counts stay per-repo, never summed. */}
+          {/* Three cards here; the system's fourth repo (the classifier) has its
+              own section below. Test counts stay per-repo, never summed. */}
           <div className="project-grid">
             {projects.map((p) => (
               <ProjectCard key={p.name} project={p} />
@@ -48,7 +49,9 @@ export default function App() {
           <ClassifierPanel />
         </LedgerSection>
 
-        <LedgerSection id="open-source" kicker="OPEN SOURCE" title="Open source — merged upstream">
+        {/* Heading framing lock: the section holds both merged AND open rows, so
+            the title must stay status-neutral — the per-row badges carry status. */}
+        <LedgerSection id="open-source" kicker="OPEN SOURCE" title="Open source — upstream work">
           {openSource.map((row) => (
             <div key={row.badge} className="oss-row">
               <StatusBadge status={row.status} label={row.badge} />
@@ -72,7 +75,7 @@ export default function App() {
             ) : (
               <span className="mono">{research.repoName}</span>
             )}
-            {research.summary.slice(research.repoName.length)}
+            {research.summaryAfterName}
           </p>
           <p>{research.role}</p>
           <p>{research.result}</p>

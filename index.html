@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern</title>
+    <!-- ≤160 chars so the SERP snippet never truncates mid-sentence. -->
     <meta
       name="description"
-      content="Ivan Wang — CS B.S./M.S. at the University of Maryland (M.S. May 2027), SDE Intern at Amazon Web Services (Summer 2026). Builder of the star-catalog system: an ETL pipeline, typed FastAPI service, interactive sky map, and an honestly evaluated ML classifier. Seeking new-grad software engineering roles (~Summer 2027)."
+      content="Ivan Wang — UMD CS B.S./M.S., AWS SDE intern. Built the star-catalog system: ETL, FastAPI, sky map, ML classifier. Seeking new-grad SWE roles (~Summer 2027)."
     />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0a0e17" />
@@ -17,12 +18,26 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://iwang-1.github.io/" />
-    <meta property="og:title" content="Ivan Wang — Software Engineer" />
+    <meta property="og:site_name" content="Ivan Wang" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern"
+    />
     <meta
       property="og:description"
       content="End-to-end star-catalog system: ETL → SQLite → FastAPI → React sky map → ML classifier. UMD CS B.S./M.S.; AWS SDE Intern, Summer 2026."
     />
-    <meta property="og:image" content="https://iwang-1.github.io/star-catalog-web.png" />
+    <!-- og.png is a dedicated 1200×630 (1.91:1) crop of the app screenshot, so
+         summary_large_image cards render it without center-cropping surprises.
+         Regenerate with: node scripts/generate-og.mjs -->
+    <meta property="og:image" content="https://iwang-1.github.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="star-catalog-web — interactive sky map and searchable catalog table"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json">
       {
@@ -34,10 +49,11 @@
           "https://github.com/iwang-1",
           "https://www.linkedin.com/in/ivanwang1"
         ],
-        "alumniOf": {
+        "affiliation": {
           "@type": "CollegeOrUniversity",
           "name": "University of Maryland, College Park"
         },
+        "description": "CS B.S./M.S. student at the University of Maryland, College Park (M.S. expected May 2027).",
         "knowsAbout": [
           "Python",
           "TypeScript",
@@ -46,7 +62,11 @@
           "scikit-learn",
           "Docker"
         ],
-        "jobTitle": "Software Development Engineer Intern"
+        "jobTitle": "Software Development Engineer Intern",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Amazon Web Services"
+        }
       }
     </script>
   </head>

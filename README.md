@@ -13,24 +13,36 @@ in [`FACTS.md`](FACTS.md) by `scripts/check-facts.mjs` on every build.
 ```bash
 npm install
 npm run dev        # local dev server
-npm run check      # fact/confidentiality gate (also runs as prebuild)
+npm run check      # fact/framing gate (also runs as prebuild)
 npm run build      # tsc -b && vite build  → dist/
 npm run verify     # serves dist/ + headless-Chromium smoke test + screenshots
 npm run lint
 ```
 
 `npm run verify` requires the Playwright Chromium browser
-(`npx playwright install chromium` once, if it is not already cached).
+(`npx playwright install chromium` once, if it is not already cached). It
+refreshes `docs/screenshot.png` and `docs/screenshot-mobile.png` from the
+built site; the PNG bytes are not deterministic, so commit them when they
+change meaningfully and otherwise `git checkout -- docs` to keep the tree
+clean.
+
+The publish script additionally runs a private pre-push scan (kept outside
+this repo on purpose) before anything is pushed.
 
 ## Launch flags (`src/content.ts`)
 
-- `flags.repoLinksEnabled` — `false` until the project repos are public. While
-  false, project names and metric chips render as plain text: zero dead links.
-- `flags.showLiveDemo` — `false` until the star-catalog-web Pages deploy is
-  live at `https://iwang-1.github.io/star-catalog-web/`.
+Both flags are currently `true` (repos and the demo were verified live on
+2026-07-13). Flip one back to `false` if the corresponding target ever goes
+away — the site then renders plain text instead of dead links:
 
-Publish order: project repos → star-catalog-web Pages deploy → flip both flags
-→ push this site.
+- `flags.repoLinksEnabled` — gates every `github.com/iwang-1/<repo>` link
+  (project names, the classifier repo link, the site-source link).
+- `flags.showLiveDemo` — gates the live-demo link to
+  `https://iwang-1.github.io/star-catalog-web/`.
+
+`npm run verify` reads the flags and asserts the matching link state either
+way. Publish order: project repos → star-catalog-web Pages deploy → flip both
+flags → push this site.
 
 ## Deploy
 
@@ -56,8 +68,8 @@ node scripts/generate-starfield.mjs [path/to/stars.json]
 - [ ] Optionally add a resume PDF under `public/` and set `person.resumeUrl`.
 - [ ] Paste any additional LinkedIn experience entries into the `experience`
       array in `src/content.ts`.
-- [ ] Publish the project repos, then flip `flags.repoLinksEnabled` and
-      `flags.showLiveDemo`.
+- [x] Publish the project repos, then flip `flags.repoLinksEnabled` and
+      `flags.showLiveDemo` (verified live and flipped 2026-07-13).
 - [ ] Publish this site: `bash ../publish-site.sh` (sibling of this repo —
-      creates the GitHub repo, pushes `main`, enables Pages, waits for the
-      deploy, curl-checks the live URL).
+      runs the private pre-push scan, creates the GitHub repo, pushes `main`,
+      enables Pages, waits for the deploy, curl-checks the live URL).

@@ -1,20 +1,31 @@
 // Serves the built dist/ with `vite preview` and drives it in headless Chromium
 // at desktop and phone viewports: asserts the hero + every section heading is
-// visible, no console errors, no premature repo links while the launch flags
-// are off, and captures the README screenshots.
+// visible, no console errors, repo/demo links match the launch flags (absent
+// while a flag is off, present once it is on), and captures the README
+// screenshots (docs/screenshot*.png — commit them when they change).
 //
 //   npm run build && npm run verify
 import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const PORT = 4173;
 const URL = process.env.VERIFY_URL ?? `http://localhost:${PORT}/`;
 
+// Launch flags, read straight from the source of truth so these assertions
+// flip automatically with src/content.ts. (join/fileURLToPath because the
+// VERIFY_URL constant above shadows the global URL constructor.)
+const here = dirname(fileURLToPath(import.meta.url));
+const contentSrc = readFileSync(join(here, "src", "content.ts"), "utf8");
+const repoLinksEnabled = /repoLinksEnabled:\s*true\b/.test(contentSrc);
+const showLiveDemo = /showLiveDemo:\s*true\b/.test(contentSrc);
+
 const EXPECTED_HEADINGS = [
   "The Star Catalog System",
   "star-spectral-classifier — ML that shows its work",
-  "Open source — merged upstream",
+  "Open source — upstream work",
   "Quantum NLP — UMD FIRE",
   "Contact",
 ];
@@ -94,15 +105,21 @@ async function checkViewport({ width, height, shot }) {
   if (!kickerBox || kickerBox.y > height)
     problems.push(`${tag}: FEATURED kicker below the fold (y=${kickerBox?.y})`);
 
-  // launch-flag acceptance: with repoLinksEnabled=false there must be no links
-  // into github.com/iwang-1/<repo> (the bare profile link is expected).
+  // launch-flag acceptance: repo links into github.com/iwang-1/<repo> must be
+  // absent while repoLinksEnabled=false and present once it flips true (the
+  // bare profile link is expected either way).
   const hrefs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
-  const premature = hrefs.filter((h) => /github\.com\/iwang-1\//.test(h ?? ""));
-  if (premature.length)
-    problems.push(`${tag}: premature repo links while flags are off: ${premature.join(", ")}`);
-  // ...and with showLiveDemo=false, no live-demo URL either.
+  const repoLinks = hrefs.filter((h) => /github\.com\/iwang-1\//.test(h ?? ""));
+  if (!repoLinksEnabled && repoLinks.length)
+    problems.push(`${tag}: premature repo links while flags are off: ${repoLinks.join(", ")}`);
+  if (repoLinksEnabled && repoLinks.length === 0)
+    problems.push(`${tag}: repoLinksEnabled=true but no repo links rendered`);
+  // ...same contract for the live-demo URL.
   const demo = hrefs.filter((h) => (h ?? "").includes("iwang-1.github.io/star-catalog-web"));
-  if (demo.length) problems.push(`${tag}: premature live-demo link: ${demo.join(", ")}`);
+  if (!showLiveDemo && demo.length)
+    problems.push(`${tag}: premature live-demo link: ${demo.join(", ")}`);
+  if (showLiveDemo && demo.length === 0)
+    problems.push(`${tag}: showLiveDemo=true but no live-demo link rendered`);
 
   // exactly one h1
   const h1Count = await page.locator("h1").count();

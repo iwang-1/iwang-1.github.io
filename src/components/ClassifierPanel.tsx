@@ -13,10 +13,19 @@ export default function ClassifierPanel() {
       </div>
       <p className="disclosure">{classifier.oClass}</p>
       <p className="chip-row">
+        {/* Chips stay plain text; the single repo link below carries the URL. */}
         {classifier.chips.map((label) => (
-          <MetricChip key={label} label={label} href={linked ? classifier.repoUrl : undefined} />
+          <MetricChip key={label} label={label} />
         ))}
       </p>
+      {linked && (
+        <p>
+          <a href={classifier.repoUrl}>
+            View star-spectral-classifier on GitHub
+            <span aria-hidden="true"> ↗</span>
+          </a>
+        </p>
+      )}
     </article>
   );
 }

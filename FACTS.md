@@ -67,6 +67,9 @@ Attribution in the footer colophon: HYG database (Astronomy Nexus), CC BY-SA.
 
 ## Confidentiality
 
-Zero Amazon-internal information anywhere in the repo. `check-facts.mjs`
-blocks the specific internal terms and URL patterns; the only permitted Amazon
-content is the internship title line plus the single description constant.
+Zero Amazon-internal information anywhere in the repo (or its git history).
+The specific term/URL denylist is deliberately NOT in this repo — a private
+pre-push scan next to the publish script enforces it over the working tree and
+the full history before anything is pushed. `check-facts.mjs` keeps the
+framing/number tripwires. The only permitted Amazon content is the internship
+title line plus the single description constant.

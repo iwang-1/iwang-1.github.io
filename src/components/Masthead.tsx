@@ -25,7 +25,11 @@ export default function Masthead() {
       <div className="masthead-content">
         <h1>{person.name}</h1>
         <p className="subhead">{person.subhead}</p>
-        <p className="identity-line mono">{person.identityLine}</p>
+        {person.identityLines.map((line) => (
+          <p key={line} className="identity-line mono">
+            {line}
+          </p>
+        ))}
         <nav className="link-row" aria-label="Profiles">
           <a href={person.github}>
             <Icon path={GITHUB_PATH} /> GitHub

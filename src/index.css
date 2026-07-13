@@ -200,6 +200,10 @@ a:hover {
 .identity-line {
   font-size: 0.82rem;
   color: var(--ink-muted);
+  margin-bottom: 4px;
+}
+
+.identity-line:last-of-type {
   margin-bottom: 16px;
 }
 
@@ -224,6 +228,11 @@ a:hover {
   margin: 0;
   font-size: 0.78rem;
   color: var(--ink-muted);
+  /* Local backdrop: the masthead scrim is weakest at this corner, so bright
+     star dots could otherwise pass behind the glyphs and sink contrast. */
+  background: rgba(10, 14, 23, 0.75);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 /* ---- ledger layout ------------------------------------------------------ */

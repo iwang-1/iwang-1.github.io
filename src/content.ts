@@ -5,18 +5,22 @@
 // mechanical parts of this on every build.
 
 export const flags = {
-  /** Flip true after the project repos are pushed public. Until then every
+  /** True while the project repos are public (verified returning 200 on
+   *  2026-07-13). If a repo is ever taken private again, flip false: every
    *  github.com/iwang-1/<repo> link renders as plain text — zero dead links. */
-  repoLinksEnabled: false,
-  /** Flip true after the star-catalog-web Pages deploy is live. */
-  showLiveDemo: false,
+  repoLinksEnabled: true,
+  /** True while the star-catalog-web Pages deploy is live (verified 200 on
+   *  2026-07-13). */
+  showLiveDemo: true,
 };
 
 export const person = {
   name: "Ivan Wang",
   subhead: "Software engineer — backend systems, ML/NLP, and research software.",
-  identityLine:
-    "CS B.S./M.S. · University of Maryland, College Park · M.S. May 2027 — SDE Intern @ Amazon Web Services, Summer 2026 — seeking new-grad SWE roles (available ~Summer 2027)",
+  identityLines: [
+    "CS B.S./M.S. · University of Maryland, College Park · M.S. expected May 2027",
+    "SDE Intern @ Amazon Web Services, Summer 2026 · seeking new-grad SWE roles (available ~Summer 2027)",
+  ],
   github: "https://github.com/iwang-1",
   linkedin: "https://www.linkedin.com/in/ivanwang1",
   email: "", // TODO: fill when available; email UI renders only when non-empty
@@ -44,7 +48,7 @@ export const experience: LedgerEntry[] = [
 export const education: LedgerEntry[] = [
   {
     title: "B.S./M.S., Computer Science — University of Maryland, College Park",
-    detail: "M.S. expected May 2027",
+    detail: "M.S. expected",
     date: "May 2027",
   },
 ];
@@ -53,7 +57,7 @@ export const starSystem = {
   kicker: "FEATURED — FOUR REPOS, ONE SYSTEM",
   heading: "The Star Catalog System",
   story:
-    "Telescope observation CSVs go in one end; a validated catalog, a typed API, and an interactive sky map come out the other — and the map's own star snapshot trains an ML classifier.",
+    "Telescope observation CSVs go in one end; a validated catalog, a typed API, and an interactive sky map come out the other — and the map's own star snapshot trains the fourth repo, the ML classifier below.",
 };
 
 export interface Chip {
@@ -152,7 +156,7 @@ export interface OpenSourceRow {
 const ccdRow: OpenSourceRow = {
   status: "merged",
   badge: "MERGED ×4",
-  text: "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive — a Python/Flask/SQLite archive of UMD Observatory CCD astronomy data. Working with this data inspired the star-catalog system above.",
+  text: "4 merged pull requests to warnerem/CCD-data-archive — a Python/Flask/SQLite archive of UMD Observatory CCD astronomy data. Working with this data inspired the star-catalog system above.",
   url: "https://github.com/warnerem/CCD-data-archive/pulls?q=is%3Apr+author%3Aiwang-1+is%3Amerged",
   linkLabel: "See the pull requests",
 };
@@ -176,13 +180,15 @@ export const openSource: OpenSourceRow[] = [ccdRow, lambeqRow];
 export const research = {
   kicker: "RESEARCH",
   heading: "Quantum NLP — UMD FIRE",
-  summary:
-    "FIRE-QML-WINNERS-QNLP — a 3-person UMD FIRE research project on quantum natural language processing that the team co-built and open-sourced (GPL-3.0).",
+  repoName: "FIRE-QML-WINNERS-QNLP",
+  // Rendered immediately after repoName — kept as a separate field so App.tsx
+  // never has to slice the repo name off the front of a sentence.
+  summaryAfterName:
+    " — a 3-person project in UMD's FIRE (First-year Innovation & Research Experience) research program on quantum natural language processing that the team co-built and open-sourced (GPL-3.0).",
   role: "My role: dataset preparation and integration, and project documentation.",
   result:
     "Enhanced optimizers beat an out-of-the-box standard-SPSA baseline by roughly 30 percentage points of train/test accuracy (exact noiseless simulation).",
   tech: ["Python", "Jupyter", "DisCoPy", "Qiskit", "pytket"],
-  repoName: "FIRE-QML-WINNERS-QNLP",
   repoUrl: "https://github.com/iwang-1/FIRE-QML-WINNERS-QNLP",
 };
 
@@ -206,9 +212,9 @@ export const skills = {
 
 export const contact = {
   heading: "Contact",
-  cta: "Hiring new-grad software engineers for ~Summer 2027? Let's talk.",
+  cta: "Hiring new-grad software engineers for ~Summer 2027? Message me on LinkedIn.",
   colophon:
-    "Built with React + TypeScript + Vite. System fonts, no trackers. Star data in the demo: HYG database (Astronomy Nexus), CC BY-SA.",
+    "Built with React + TypeScript + Vite. System fonts, no trackers. Star data (masthead star field and sky map): HYG database (Astronomy Nexus), CC BY-SA.",
   siteSourceUrl: "https://github.com/iwang-1/iwang-1.github.io",
 };
 

@@ -1,17 +1,6 @@
-interface Props {
-  label: string;
-  /** Proof-chip behavior: when set, the whole chip links to the repo. */
-  href?: string;
-}
-
-export default function MetricChip({ label, href }: Props) {
-  if (href) {
-    return (
-      <a className="chip chip-link mono" href={href}>
-        {label}
-        <span aria-hidden="true"> ↗</span>
-      </a>
-    );
-  }
+// Chips are always plain text — never links. Each card/panel exposes exactly
+// one repo link (its heading or an explicit "View … on GitHub" link), so
+// keyboard users get one tab stop per repo instead of one per chip.
+export default function MetricChip({ label }: { label: string }) {
   return <span className="chip mono">{label}</span>;
 }
