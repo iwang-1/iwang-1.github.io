@@ -14,6 +14,7 @@ import { Chip, ProofChip } from "../../components/chips";
 import { Footer } from "../../components/Footer";
 import { Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
+import { Reveal } from "../../components/Reveal";
 import { Section } from "../../components/Section";
 
 function Home() {
@@ -82,21 +83,28 @@ function Home() {
 
         <Section kicker="04 · SELECTED WORK" title="Selected work">
           <div className="card-grid card-grid-3">
-            {teasers.map((t) => (
-              <article className="card" key={t.title}>
-                <h3>{t.title}</h3>
-                <p style={{ marginTop: 8 }}>{t.body}</p>
-                {t.proofChips && (
-                  <div className="chip-rail">
-                    {t.proofChips.map((c) => (
-                      <ProofChip key={c} label={c} />
-                    ))}
-                  </div>
-                )}
-                <p className="project-links">
-                  <a href={t.href}>{t.linkText} →</a>
-                </p>
-              </article>
+            {teasers.map((t, i) => (
+              <Reveal key={t.title} delay={i}>
+                <article className="card card-live">
+                  <h3>{t.title}</h3>
+                  <p style={{ marginTop: 8 }}>{t.body}</p>
+                  {t.proofChips && (
+                    <div className="chip-rail">
+                      {t.proofChips.map((c) => (
+                        <ProofChip key={c} label={c} />
+                      ))}
+                    </div>
+                  )}
+                  <p className="project-links">
+                    <a href={t.href}>
+                      {t.linkText}{" "}
+                      <span className="arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  </p>
+                </article>
+              </Reveal>
             ))}
           </div>
         </Section>

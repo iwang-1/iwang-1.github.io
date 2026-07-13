@@ -808,6 +808,108 @@ a.card-link-wrap {
   margin-top: 32px;
 }
 
+/* ------------------------------------------------------------------ motion */
+/* "Keyswitch" layer. Hover and focus are twins: every :hover ships grouped
+   with :focus-visible (self-focusable) or :focus-within (cards/timeline). */
+
+/* keycaps — deepen the lift (:not(.keycap-pressed) keeps the current-tab
+   bottomed-out cap inert; this rule sits after .keycap-pressed:hover in the
+   cascade and would otherwise out-compete it at equal specificity) */
+.keycap:not(.keycap-pressed):hover,
+.keycap:not(.keycap-pressed):focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--border-interactive);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+/* :active bottom-out and .keycap-pressed inertness already exist — keep. */
+
+/* résumé keycap — accent object, no glow */
+.keycap-primary:hover, .keycap-primary:focus-visible {
+  background: var(--accent-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--accent-deep);
+}
+
+/* nav monogram */
+.nav-brand svg { transition: transform var(--t-tap) ease; }
+.nav-brand:hover svg, .nav-brand:focus-visible svg { transform: translateY(-1px); }
+
+/* link-bearing cards (.card-live added in JSX) */
+.card-live:hover, .card-live:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-hover);
+}
+.card-live:hover h3 a, .card-live:focus-within h3 a { text-decoration-thickness: 2px; }
+
+/* non-link cards — attention, not invitation */
+.role-card:hover, .edu-card:hover {
+  border-color: var(--border-interactive);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* timeline */
+.alt-timeline-item::before { transition: transform 250ms var(--ease-pop); }
+.alt-timeline-item::after  { transition: background-color var(--t-hover) ease; }
+.alt-timeline-item:hover::before, .alt-timeline-item:focus-within::before { transform: scale(1.35); }
+.alt-timeline-item:hover::after,  .alt-timeline-item:focus-within::after  {
+  background: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+/* chips — non-interactive: no lift, no cursor, no shadow */
+.chip, .proof-chip { transition: border-color 150ms ease, background-color 150ms ease; }
+.chip:hover {
+  border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+}
+.chip-teal:hover {
+  border-color: color-mix(in srgb, var(--teal) 25%, var(--border));
+  background: color-mix(in srgb, var(--teal) 4%, var(--surface));
+}
+.proof-chip .dot { transition: transform 250ms var(--ease-pop); }
+.proof-chip:hover .dot { transform: scale(1.4); }
+
+/* inline text links */
+a { transition: color var(--t-tap) ease, text-decoration-thickness var(--t-tap) ease; }
+a:hover, a:focus-visible { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* arrow nudge — <span class="arrow" aria-hidden="true">→</span> in JSX */
+.arrow { display: inline-block; transition: transform var(--t-hover) var(--ease-out); }
+a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
+
+/* Reveal wrappers are grid children on card grids: the inner card fills the
+   stretched wrapper so rows keep equal-height cards. */
+.card-grid > .reveal > .card { height: 100%; }
+
+/* scroll-reveal contract — gated on root .js class AND no-preference:
+   without JS (no .js) or with reduced motion, .reveal has NO hidden state. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--t-reveal) ease-out, transform var(--t-reveal) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+
+  /* hero entrance cascade */
+  .js .hero > * { animation: rise-in 500ms var(--ease-out) both; }
+  .js .hero > *:nth-child(1) { animation-delay: 0ms; }
+  .js .hero > *:nth-child(2) { animation-delay: 70ms; }
+  .js .hero > *:nth-child(3) { animation-delay: 140ms; }
+  .js .hero > *:nth-child(4) { animation-delay: 210ms; }
+  .js .hero > *:nth-child(5) { animation-delay: 280ms; }
+  .js .hero > *:nth-child(6) { animation-delay: 350ms; }
+  .js .page-head > h1 { animation: rise-in 500ms var(--ease-out) both; }
+  .js .page-head > .page-dek { animation: rise-in 500ms var(--ease-out) 80ms both; }
+
+  /* timeline dot pop-on-reveal */
+  .js .alt-timeline-item.reveal.is-in::before {
+    animation: dot-pop 350ms var(--ease-pop) 200ms both;
+  }
+}
+@keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes dot-pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
 /* --------------------------------------------------------- reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -823,8 +925,21 @@ a.card-link-wrap {
     transition: none !important;
   }
 
-  .keycap:hover,
-  .keycap:active {
+  /* second lock: reveal content is always visible (the .js .reveal hidden
+     state is also gated on no-preference, so this is belt-and-braces) */
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* :not() matches the motion rules' specificity so transform: none wins */
+  .keycap:not(.keycap-pressed):hover,
+  .keycap:not(.keycap-pressed):focus-visible,
+  .keycap:active,
+  .keycap-primary:hover,
+  .keycap-primary:focus-visible,
+  .card-live:hover,
+  .card-live:focus-within {
     transform: none;
   }
 

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { Education, Project, Role } from "../content";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink } from "./Keycap";
+import { Reveal } from "./Reveal";
 
 /** RoleCard — surfaced timeline card (Experience alternating timeline);
  *  `tagTone="teal"` renders flat teal tags instead of ProofChips. */
@@ -64,7 +65,7 @@ export function EduCard({ edu }: { edu: Education }) {
  *  "private / no public repo" tag instead of a link. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="card" id={project.id}>
+    <article className="card card-live" id={project.id}>
       <h3>
         {project.repoHref ? (
           <ExternalLink href={project.repoHref}>{project.title}</ExternalLink>
@@ -93,14 +94,14 @@ export function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-/** CtaBand — end-of-page call-to-action band. */
+/** CtaBand — end-of-page call-to-action band (scroll-reveals as a unit). */
 export function CtaBand({ heading, children }: { heading: string; children: ReactNode }) {
   return (
     <section className="container">
-      <div className="cta-band">
+      <Reveal className="cta-band">
         <h2>{heading}</h2>
         <div className="cta-row">{children}</div>
-      </div>
+      </Reveal>
     </section>
   );
 }

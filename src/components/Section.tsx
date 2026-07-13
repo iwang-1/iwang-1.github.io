@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
+import { Reveal } from "./Reveal";
 
 /** Section — mono kicker + serif H2 + container (kickers are numbered on
- *  Home: "01 · ABOUT", …). */
+ *  Home: "01 · ABOUT", …). Section heads scroll-reveal (below-the-fold). */
 export function Section({
   id,
   kicker,
@@ -16,10 +17,10 @@ export function Section({
   return (
     <section id={id} className="section">
       <div className="container">
-        <div className="section-head">
+        <Reveal className="section-head">
           <p className="kicker">{kicker}</p>
           <h2>{title}</h2>
-        </div>
+        </Reveal>
         {children}
       </div>
     </section>

@@ -45,7 +45,10 @@ function Experience() {
             Résumé (PDF)
           </Keycap>
           <a className="cta-text-link" href="/projects/">
-            See the projects →
+            See the projects{" "}
+            <span className="arrow" aria-hidden="true">
+              →
+            </span>
           </a>
         </CtaBand>
       </main>

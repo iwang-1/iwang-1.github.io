@@ -6,6 +6,7 @@ import { CtaBand, ProjectCard } from "../../components/cards";
 import { Footer } from "../../components/Footer";
 import { ExternalLink, Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
+import { Reveal } from "../../components/Reveal";
 import { Section } from "../../components/Section";
 
 function Projects() {
@@ -24,28 +25,34 @@ function Projects() {
 
         <Section kicker="01 · PROJECTS" title="Selected projects">
           <div className="card-grid">
-            {projects.map((p) => (
-              <ProjectCard key={p.title} project={p} />
+            {projects.map((p, i) => (
+              <Reveal key={p.title} delay={i}>
+                <ProjectCard project={p} />
+              </Reveal>
             ))}
           </div>
         </Section>
 
         <Section kicker="02 · OPEN SOURCE" title="Open source">
           <div className="card-grid">
-            <article className="card">
-              <h3>{ossCardA.title}</h3>
-              <p style={{ marginTop: 12 }}>{ossCardA.body}</p>
-              <p className="project-links">
-                <ExternalLink href={ossCardA.href}>{ossCardA.linkText}</ExternalLink>
-              </p>
-            </article>
-            <article className="card">
-              <h3>{ossCardB.title}</h3>
-              <p style={{ marginTop: 12 }}>{ossCardB.body}</p>
-              <p className="project-links">
-                <ExternalLink href={ossCardB.href}>{ossCardB.linkText}</ExternalLink>
-              </p>
-            </article>
+            <Reveal delay={0}>
+              <article className="card card-live">
+                <h3>{ossCardA.title}</h3>
+                <p style={{ marginTop: 12 }}>{ossCardA.body}</p>
+                <p className="project-links">
+                  <ExternalLink href={ossCardA.href}>{ossCardA.linkText}</ExternalLink>
+                </p>
+              </article>
+            </Reveal>
+            <Reveal delay={1}>
+              <article className="card card-live">
+                <h3>{ossCardB.title}</h3>
+                <p style={{ marginTop: 12 }}>{ossCardB.body}</p>
+                <p className="project-links">
+                  <ExternalLink href={ossCardB.href}>{ossCardB.linkText}</ExternalLink>
+                </p>
+              </article>
+            </Reveal>
           </div>
         </Section>
 
