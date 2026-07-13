@@ -1,142 +1,279 @@
-// Serves the built dist/ with `vite preview` and drives it in headless Chromium
-// at desktop and phone viewports: asserts the hero + every section heading is
-// visible, no console errors, repo/demo links match the launch flags (absent
-// while a flag is off, present once it is on), and captures the README
-// screenshots (docs/screenshot*.png — commit them when they change).
+// Multi-page verification: serves the built dist/ with `vite preview` and
+// drives every page in headless Chromium at desktop (1366x900) and mobile
+// (390x844) viewports. Fails on any console/page error, any failed or 4xx/5xx
+// same-origin request, wrong head metadata, wrong nav state, a dead internal
+// link, a missing locked fact, or an a11y-gate breach. Refreshes the README
+// screenshots in docs/ (commit them when they change meaningfully).
 //
 //   npm run build && npm run verify
 import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { mkdirSync } from "node:fs";
 import { chromium } from "playwright";
 
 const PORT = 4173;
-const URL = process.env.VERIFY_URL ?? `http://localhost:${PORT}/`;
+const ORIGIN = `http://localhost:${PORT}`;
 
-// Launch flags, read straight from the source of truth so these assertions
-// flip automatically with src/content.ts. (join/fileURLToPath because the
-// VERIFY_URL constant above shadows the global URL constructor.)
-const here = dirname(fileURLToPath(import.meta.url));
-const contentSrc = readFileSync(join(here, "src", "content.ts"), "utf8");
-const repoLinksEnabled = /repoLinksEnabled:\s*true\b/.test(contentSrc);
-const showLiveDemo = /showLiveDemo:\s*true\b/.test(contentSrc);
+const PAGES = [
+  {
+    path: "/",
+    shot: "home",
+    title: "Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern",
+    canonical: "https://iwang-1.github.io/",
+    noindex: false,
+    activeTab: "/",
+    facts: ["M.S. expected May 2027", "Secretary of the UMD Climbing Club"],
+  },
+  {
+    path: "/experience/",
+    shot: "experience",
+    title: "Experience — Ivan Wang",
+    canonical: "https://iwang-1.github.io/experience/",
+    noindex: false,
+    activeTab: "/experience/",
+    facts: ["1M+ customers", "3,000+ students"],
+  },
+  {
+    path: "/projects/",
+    shot: "projects",
+    title: "Projects — Ivan Wang",
+    canonical: "https://iwang-1.github.io/projects/",
+    noindex: false,
+    activeTab: "/projects/",
+    facts: ["79.5%", "~95%", "under review"],
+  },
+  {
+    path: "/404.html",
+    shot: "404",
+    title: "Page not found — Ivan Wang",
+    canonical: null,
+    noindex: true,
+    activeTab: null,
+    facts: [],
+  },
+];
 
-const EXPECTED_HEADINGS = [
-  "The Star Catalog System",
-  "star-spectral-classifier — ML that shows its work",
-  "More ML & NLP work",
-  "Open source — upstream work",
-  "Quantum NLP — UMD FIRE",
-  "Contact",
+const VIEWPORTS = [
+  { width: 1366, height: 900, name: "desktop" },
+  { width: 390, height: 844, name: "mobile" },
 ];
 
 mkdirSync("docs", { recursive: true });
 
-// --- serve dist/ ------------------------------------------------------------
+// --- serve dist/ -------------------------------------------------------------
 const server = spawn("npx", ["vite", "preview", "--port", String(PORT), "--strictPort"], {
   stdio: ["ignore", "pipe", "pipe"],
 });
 const kill = () => server.kill("SIGTERM");
 process.on("exit", kill);
 
-// wait for the preview server to answer
 let up = false;
 for (let i = 0; i < 50 && !up; i++) {
   await new Promise((r) => setTimeout(r, 200));
   try {
-    const res = await fetch(URL);
-    up = res.ok;
+    up = (await fetch(ORIGIN + "/")).ok;
   } catch {
     /* not up yet */
   }
 }
 if (!up) {
-  console.error("VERIFY FAILED: vite preview never came up on " + URL);
+  console.error("VERIFY FAILED: vite preview never came up on " + ORIGIN);
   process.exit(1);
 }
 
 const browser = await chromium.launch();
 const problems = [];
+const checkedLinks = new Map(); // href -> ok
 
-async function checkViewport({ width, height, shot }) {
-  const page = await browser.newPage({ viewport: { width, height } });
+async function linkOk(href) {
+  if (checkedLinks.has(href)) return checkedLinks.get(href);
+  let ok = false;
+  try {
+    const res = await fetch(ORIGIN + href, { method: "GET" });
+    ok = res.status === 200;
+  } catch {
+    ok = false;
+  }
+  checkedLinks.set(href, ok);
+  return ok;
+}
+
+async function checkPage(spec, viewport) {
+  const tag = `${spec.path} @ ${viewport.name}`;
+  const page = await browser.newPage({
+    viewport: { width: viewport.width, height: viewport.height },
+  });
   const errors = [];
+  const badRequests = [];
   page.on("console", (m) => {
     if (m.type() === "error") errors.push(m.text());
   });
   page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("requestfailed", (req) => {
+    if (req.url().startsWith(ORIGIN)) badRequests.push(`failed: ${req.url()}`);
+  });
+  page.on("response", (res) => {
+    if (res.url().startsWith(ORIGIN) && res.status() >= 400)
+      badRequests.push(`${res.status()}: ${res.url()}`);
+  });
 
-  await page.goto(URL, { waitUntil: "networkidle" });
+  await page.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
 
-  const tag = `${width}x${height}`;
-
-  // hero
-  const h1 = (await page.locator("h1").textContent())?.trim();
-  if (h1 !== "Ivan Wang") problems.push(`${tag}: h1 is ${JSON.stringify(h1)}`);
-  if (!(await page.locator("h1").isVisible())) problems.push(`${tag}: h1 not visible`);
-
-  // every section heading present + visible
-  for (const heading of EXPECTED_HEADINGS) {
-    const loc = page.locator("h2", { hasText: heading }).first();
-    if ((await loc.count()) === 0 || !(await loc.isVisible()))
-      problems.push(`${tag}: heading not visible: ${heading}`);
+  // 3. head metadata
+  const title = await page.title();
+  if (title !== spec.title)
+    problems.push(`${tag}: title ${JSON.stringify(title)} != ${JSON.stringify(spec.title)}`);
+  const canonical = await page
+    .locator('link[rel="canonical"]')
+    .first()
+    .getAttribute("href")
+    .catch(() => null);
+  if (spec.canonical) {
+    if (canonical !== spec.canonical)
+      problems.push(`${tag}: canonical ${JSON.stringify(canonical)} != ${spec.canonical}`);
+  } else if (canonical) {
+    problems.push(`${tag}: unexpected canonical ${canonical}`);
+  }
+  const robots = await page.locator('meta[name="robots"]').count();
+  if (spec.noindex) {
+    const content =
+      robots > 0
+        ? await page.locator('meta[name="robots"]').first().getAttribute("content")
+        : null;
+    if (!content || !content.includes("noindex")) problems.push(`${tag}: missing noindex`);
+  } else if (robots > 0) {
+    problems.push(`${tag}: unexpected meta robots on an indexed page`);
   }
 
-  // the star field renders its committed 150 stars
-  const stars = await page.locator(".starfield circle").count();
-  if (stars !== 150) problems.push(`${tag}: expected 150 star-field dots, got ${stars}`);
-
-  // above-the-fold guarantee: the EXPERIENCE kicker and the first role's title
-  // (the AWS internship) are visible without scrolling — the who/what a
-  // recruiter must see in the first screen.
-  const expKicker = await page.locator("#experience .kicker").first().boundingBox();
-  if (!expKicker || expKicker.y > height)
-    problems.push(`${tag}: EXPERIENCE kicker below the fold (y=${expKicker?.y})`);
-  const firstRole = page.locator("#experience .role .role-title").first();
-  if ((await firstRole.count()) === 0) {
-    problems.push(`${tag}: no experience roles rendered`);
-  } else {
-    const box = await firstRole.boundingBox();
-    if (!box || box.y + box.height > height)
-      problems.push(`${tag}: first role title below the fold (y=${box?.y})`);
+  // 4. nav structure + active tab
+  const tabs = await page
+    .locator('nav[aria-label="Primary"] > a:not([aria-label="Résumé (PDF)"])')
+    .count();
+  if (tabs !== 3) problems.push(`${tag}: expected exactly 3 nav tabs, got ${tabs}`);
+  const resume = await page
+    .locator('nav[aria-label="Primary"] a[href="/Ivan-Wang-Resume.pdf"]')
+    .count();
+  if (resume !== 1) problems.push(`${tag}: expected 1 Résumé keycap in nav, got ${resume}`);
+  const current = page.locator('a[aria-current="page"]');
+  const currentCount = await current.count();
+  if (spec.activeTab) {
+    if (currentCount !== 1) {
+      problems.push(`${tag}: expected exactly one aria-current tab, got ${currentCount}`);
+    } else {
+      const href = await current.first().getAttribute("href");
+      if (href !== spec.activeTab)
+        problems.push(`${tag}: aria-current tab points at ${href}, expected ${spec.activeTab}`);
+    }
+  } else if (currentCount !== 0) {
+    problems.push(`${tag}: 404 page must not mark any tab aria-current (got ${currentCount})`);
   }
 
-  // launch-flag acceptance: repo links into github.com/iwang-1/<repo> must be
-  // absent while repoLinksEnabled=false and present once it flips true (the
-  // bare profile link is expected either way).
-  const hrefs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
-  const repoLinks = hrefs.filter((h) => /github\.com\/iwang-1\//.test(h ?? ""));
-  if (!repoLinksEnabled && repoLinks.length)
-    problems.push(`${tag}: premature repo links while flags are off: ${repoLinks.join(", ")}`);
-  if (repoLinksEnabled && repoLinks.length === 0)
-    problems.push(`${tag}: repoLinksEnabled=true but no repo links rendered`);
-  // ...same contract for the live-demo URL.
-  const demo = hrefs.filter((h) => (h ?? "").includes("iwang-1.github.io/star-catalog-web"));
-  if (!showLiveDemo && demo.length)
-    problems.push(`${tag}: premature live-demo link: ${demo.join(", ")}`);
-  if (showLiveDemo && demo.length === 0)
-    problems.push(`${tag}: showLiveDemo=true but no live-demo link rendered`);
+  // 5. every same-origin link resolves 200 (résumé PDF included)
+  const hrefs = await page.$$eval('a[href^="/"]', (as) => as.map((a) => a.getAttribute("href")));
+  for (const href of new Set(hrefs)) {
+    const clean = href.split("#")[0] || "/";
+    if (!(await linkOk(clean))) problems.push(`${tag}: internal link does not resolve 200: ${href}`);
+  }
 
-  // exactly one h1
+  // 6. locked facts rendered in the DOM
+  const bodyText = await page.locator("body").innerText();
+  for (const fact of spec.facts)
+    if (!bodyText.includes(fact)) problems.push(`${tag}: locked fact missing from DOM: ${fact}`);
+  if (spec.path === "/projects/") {
+    // "under review" must live inside the lambeq card, and "merged" must stay
+    // >200 rendered characters away from "lambeq".
+    const lambeqCard = await page
+      .locator(".card", { hasText: "lambeq" })
+      .first()
+      .innerText()
+      .catch(() => "");
+    if (!lambeqCard.toLowerCase().includes("under review"))
+      problems.push(`${tag}: "under review" not inside the lambeq card`);
+    if (/merged/i.test(lambeqCard)) problems.push(`${tag}: "merged" inside the lambeq card`);
+    const flat = bodyText.replace(/\s+/g, " ");
+    const mergedIdx = [...flat.matchAll(/merged/gi)].map((m) => m.index);
+    const lambeqIdx = [...flat.matchAll(/lambeq/gi)].map((m) => m.index);
+    for (const i of mergedIdx)
+      for (const j of lambeqIdx)
+        if (Math.abs(i - j) <= 200)
+          problems.push(`${tag}: "merged" within 200 rendered chars of "lambeq" (${i}/${j})`);
+    // 7. star screenshot attributes
+    const img = page.locator('img[src="/star-catalog-web.png"]');
+    if ((await img.count()) !== 1) {
+      problems.push(`${tag}: star screenshot img missing`);
+    } else {
+      for (const attr of ["alt", "width", "height"]) {
+        const v = await img.getAttribute(attr);
+        if (!v) problems.push(`${tag}: star screenshot missing ${attr}`);
+      }
+    }
+  }
+  if (spec.path === "/404.html") {
+    for (const href of ["/", "/experience/", "/projects/"])
+      if (!hrefs.includes(href)) problems.push(`${tag}: 404 recovery link missing: ${href}`);
+    if (!hrefs.some((h) => h === "/Ivan-Wang-Resume.pdf"))
+      problems.push(`${tag}: 404 résumé link missing`);
+  }
+
+  // footer contact links + mailto on every page
+  for (const needle of ["github.com/iwang-1", "linkedin.com/in/ivanwang1"]) {
+    const n = await page.locator(`footer a[href*="${needle}"]`).count();
+    if (n === 0) problems.push(`${tag}: footer link missing: ${needle}`);
+  }
+  if ((await page.locator('a[href^="mailto:ivanwang8989@gmail.com"]').count()) === 0)
+    problems.push(`${tag}: mailto link missing`);
+  if ((await page.locator('a[href="/Ivan-Wang-Resume.pdf"]').count()) === 0)
+    problems.push(`${tag}: resume PDF link missing`);
+
+  // 9. screenshot (before the skip-link focus test so it stays hidden)
+  const shot = `docs/${spec.shot}-${viewport.name}.png`;
+  await page.screenshot({ path: shot, fullPage: true });
+
+  // 8. a11y gates
   const h1Count = await page.locator("h1").count();
   if (h1Count !== 1) problems.push(`${tag}: expected exactly one h1, got ${h1Count}`);
+  if (!(await page.locator("h1").first().isVisible())) problems.push(`${tag}: h1 not visible`);
+  await page.keyboard.press("Tab");
+  const firstFocus = await page.evaluate(() => document.activeElement?.textContent?.trim());
+  if (firstFocus !== "Skip to content")
+    problems.push(`${tag}: first focusable is ${JSON.stringify(firstFocus)}, not the skip link`);
+  const badAlts = await page.$$eval("img", (imgs) =>
+    imgs.filter((i) => !i.getAttribute("alt")).length,
+  );
+  if (badAlts > 0) problems.push(`${tag}: ${badAlts} img(s) missing alt`);
 
-  await page.screenshot({ path: shot, fullPage: false });
-  console.log(`${tag}: h1 ok, ${stars} stars, screenshot -> ${shot}`);
+  // landmarks
+  for (const sel of ["nav", "main", "footer"])
+    if ((await page.locator(sel).count()) === 0) problems.push(`${tag}: missing <${sel}>`);
 
+  // 1 & 2. console errors and bad requests
   if (errors.length) problems.push(`${tag}: console errors: ${errors.join("; ")}`);
+  if (badRequests.length) problems.push(`${tag}: bad requests: ${badRequests.join("; ")}`);
+
   await page.close();
 }
 
-await checkViewport({ width: 1366, height: 900, shot: "docs/screenshot.png" });
-await checkViewport({ width: 390, height: 844, shot: "docs/screenshot-mobile.png" });
+const failCountAt = {};
+for (const spec of PAGES) {
+  for (const viewport of VIEWPORTS) {
+    const preCount = problems.length;
+    await checkPage(spec, viewport);
+    failCountAt[`${spec.path} @ ${viewport.name}`] = problems.length - preCount;
+  }
+}
 
 await browser.close();
 kill();
 
+// pass/fail table
+console.log("\n page                 viewport   result");
+console.log(" ------------------------------------------");
+for (const [key, fails] of Object.entries(failCountAt)) {
+  const [p, v] = key.split(" @ ");
+  console.log(` ${p.padEnd(20)} ${v.padEnd(10)} ${fails === 0 ? "PASS" : `FAIL (${fails})`}`);
+}
+
 if (problems.length) {
-  console.error("VERIFY FAILED:\n - " + problems.join("\n - "));
+  console.error("\nVERIFY FAILED:\n - " + problems.join("\n - "));
   process.exit(1);
 }
-console.log("VERIFY OK");
+console.log("\nVERIFY OK — screenshots refreshed in docs/");

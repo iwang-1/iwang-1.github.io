@@ -1,30 +1,74 @@
-// Fact/framing gate — run before every build and in CI before deploy.
-// Scans src/, index.html, public/ (text files), and README.md. Exits 1 on any
-// hit. Human companion checklist: FACTS.md (maps every rendered number to its
-// source).
+// Fact/framing gate — runs as `prebuild` and in CI before deploy.
 //
-// Note: a separate, private pre-push scan (deliberately NOT part of this repo
-// or its history) is run by the publish script before anything is pushed.
-import { readFileSync, readdirSync, statSync } from "node:fs";
+// Scans src/**/*.{ts,tsx,css}, every HTML entry (index.html, experience/,
+// projects/, 404.html), text files in public/, and README.md.
+//   1. REQUIRED exact strings — the locked numbers/claims must appear
+//      somewhere in the scanned corpus (they live in src/content.ts).
+//   2. FORBIDDEN patterns — per-file, reported with line numbers.
+//   3. PROXIMITY locks — "merged" may never appear within 200 characters of
+//      "lambeq" (checked per file, and on dist/projects/index.html if built).
+//   4. "contributed to" is allowed ONLY inside the one CCD-data-archive
+//      sentence (exact-string allowlist).
+//
+// Human companion checklist: FACTS.md (maps every rendered number to its
+// source). FACTS.md is deliberately OUTSIDE the scan set so it can describe
+// the rules it enforces. A separate, private pre-push confidentiality scan
+// (deliberately NOT part of this repo) runs before anything is pushed.
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // ---------------------------------------------------------------------------
-// 1. Framing tripwires.
-const TRIPWIRES = [
-  /qnlp_lorenz/i, // the fork must appear nowhere
-  /(?<![\d.])219(?![\d.])/, // summed test count (bare integer; star coords like 219.91 are fine)
-  /\b80(\.0)?\s?%/, // rounded classifier accuracy
-  /\b99(\.0+)?\s?%/, // rounded classifier coverage
+// 1. REQUIRED exact strings (locked facts).
+const REQUIRED = [
+  "79.5%",
+  "0.665 macro-F1",
+  "72.3%",
+  "92.6%",
+  "98.56%",
+  "~95%",
+  "~97%",
+  "101 tests",
+  "66 tests",
+  "52 tests",
+  "8,920",
+  "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains",
+  "co-built and open-sourced",
+  "under review",
+  "GPA 3.6/4.0",
+  "May 2027",
+  "ivanwang8989@gmail.com",
 ];
 
-// Proximity tripwires: word A within `radius` chars of word B.
-const PROXIMITY = [
-  { a: /merged/gi, b: /lambeq/gi, radius: 200, why: "'merged' near 'lambeq'" },
-  { a: /contributed/gi, b: /\bFIRE\b/g, radius: 200, why: "'contributed' near 'FIRE'" },
+// ---------------------------------------------------------------------------
+// 2. FORBIDDEN patterns (per file).
+const FORBIDDEN = [
+  { re: /\+26%/, why: "inflated DANN delta (+26%) — use the exact Table-2 numbers" },
+  { re: /qnlp_lorenz/i, why: "the qnlp_lorenz fork must appear nowhere" },
+  {
+    re: /(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/,
+    why: "phone-number-shaped string (no phone number anywhere in site text)",
+  },
+  { re: /\b80(\.0)?\s?%/, why: "rounded classifier accuracy (79.5% never becomes 80%)" },
+  { re: /\b99(\.\d+)?\s?%/, why: "rounded coverage (98.56% never becomes 99%)" },
+  { re: /(?<![\d.])219(?![\d.])/, why: "summed test count (101+66+52) — counts stay per-repo" },
+  { re: /(?<![\d.])271(?![\d.])/, why: "summed test count — counts stay per-repo" },
+  { re: /(?<![\d.])167(?![\d.])/, why: "summed test count (101+66) — counts stay per-repo" },
+  {
+    re: /passionate|results-driven|detail-oriented|rockstar|ninja|cutting-edge/i,
+    why: "banned voice word",
+  },
 ];
+
+// "contributed to" is allowed only inside this exact sentence (Card A).
+const CCD_ALLOWLIST =
+  "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive";
+const CONTRIBUTED = /contributed to/gi;
+
+// PROXIMITY lock: "merged" within 200 chars of "lambeq".
+const PROXIMITY = [{ a: /merged/gi, b: /lambeq/gi, radius: 200, why: "'merged' near 'lambeq'" }];
 
 // ---------------------------------------------------------------------------
 const TEXT_EXT = /\.(ts|tsx|js|jsx|mjs|css|html|md|json|svg|txt|xml|webmanifest)$/i;
@@ -42,19 +86,30 @@ const files = [
   ...walk(join(root, "src")),
   ...walk(join(root, "public")),
   join(root, "index.html"),
+  join(root, "experience", "index.html"),
+  join(root, "projects", "index.html"),
+  join(root, "404.html"),
   join(root, "README.md"),
-].filter((p) => TEXT_EXT.test(p));
+].filter((p) => TEXT_EXT.test(p) && existsSync(p));
 
 const problems = [];
+const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
-for (const file of files) {
-  const rel = relative(root, file);
-  const text = readFileSync(file, "utf8");
-
-  for (const re of TRIPWIRES) {
+function scan(rel, text) {
+  for (const { re, why } of FORBIDDEN) {
     const m = text.match(re);
-    if (m) problems.push(`${rel}: forbidden pattern ${re} (matched ${JSON.stringify(m[0])})`);
+    if (m)
+      problems.push(
+        `${rel}:${lineOf(text, m.index)}: forbidden — ${why} (matched ${JSON.stringify(m[0])})`,
+      );
   }
+
+  // "contributed to" outside the allowlisted CCD sentence.
+  const scrubbed = text.split(CCD_ALLOWLIST).join("");
+  for (const m of scrubbed.matchAll(CONTRIBUTED))
+    problems.push(
+      `${rel}: "contributed to" outside the one allowed CCD-data-archive sentence (near offset ${m.index})`,
+    );
 
   for (const { a, b, radius, why } of PROXIMITY) {
     const posA = [...text.matchAll(a)].map((m) => m.index);
@@ -62,7 +117,37 @@ for (const file of files) {
     for (const i of posA)
       for (const j of posB)
         if (Math.abs(i - j) <= radius)
-          problems.push(`${rel}: framing tripwire — ${why} (offsets ${i}/${j})`);
+          problems.push(
+            `${rel}:${lineOf(text, Math.min(i, j))}: framing tripwire — ${why} (offsets ${i}/${j})`,
+          );
+  }
+}
+
+let corpus = "";
+for (const file of files) {
+  const text = readFileSync(file, "utf8");
+  corpus += text + "\n";
+  scan(relative(root, file), text);
+}
+
+for (const s of REQUIRED)
+  if (!corpus.includes(s))
+    problems.push(`REQUIRED string missing from the scanned corpus: ${JSON.stringify(s)}`);
+
+// Rendered-text lock on the built projects page, if a build exists. The built
+// entry is a client-rendered shell, so this mostly guards inlined head/meta
+// text; verify.mjs re-checks the same lock on the fully rendered DOM.
+const distProjects = join(root, "dist", "projects", "index.html");
+if (existsSync(distProjects)) {
+  const html = readFileSync(distProjects, "utf8");
+  const rendered = html.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<[^>]+>/g, " ");
+  for (const { a, b, radius, why } of PROXIMITY) {
+    const posA = [...rendered.matchAll(a)].map((m) => m.index);
+    const posB = [...rendered.matchAll(b)].map((m) => m.index);
+    for (const i of posA)
+      for (const j of posB)
+        if (Math.abs(i - j) <= radius)
+          problems.push(`dist/projects/index.html: framing tripwire — ${why}`);
   }
 }
 
@@ -70,4 +155,4 @@ if (problems.length) {
   console.error("CHECK-FACTS FAILED:\n - " + problems.join("\n - "));
   process.exit(1);
 }
-console.log(`check-facts OK (${files.length} files scanned)`);
+console.log(`check-facts OK (${files.length} files scanned, ${REQUIRED.length} required strings)`);
