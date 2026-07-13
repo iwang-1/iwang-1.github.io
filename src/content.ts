@@ -383,6 +383,16 @@ export const projects: Project[] = [
     ],
     chips: ["Python", "Jupyter", "DisCoPy", "Qiskit", "pytket"],
   },
+  {
+    id: "this-site",
+    title: "This site",
+    repoHref: "https://github.com/iwang-1/iwang-1.github.io",
+    license: "MIT",
+    description: [
+      "The page you're reading: a multi-page React + TypeScript + Vite site deployed to GitHub Pages. Every number on it is gated in CI by a fact-check script (required exact strings, forbidden rounded or inflated variants) and a Playwright pass that drives all four pages at two viewports before deploy.",
+    ],
+    chips: ["React + TypeScript + Vite", "fact-gate in CI", "Playwright-verified", "no trackers"],
+  },
 ];
 
 // ---------------------------------------------------------------------------
