@@ -23,17 +23,6 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 // ---------------------------------------------------------------------------
 // 1. REQUIRED exact strings (locked facts).
 const REQUIRED = [
-  "79.5%",
-  "0.665 macro-F1",
-  "72.3%",
-  "92.6%",
-  "98.56%",
-  "~95%",
-  "~97%",
-  "101 tests",
-  "66 tests",
-  "52 tests",
-  "8,920",
   "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains",
   "co-built and open-sourced",
   "under review",

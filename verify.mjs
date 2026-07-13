@@ -41,8 +41,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/projects/",
     noindex: false,
     activeTab: "/projects/",
-    facts: ["79.5%", "~95%", "under review", "This site"],
-    absent: ["Hong Kong"],
+    facts: ["74.2% on Yelp", "under review", "This site"],
+    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map"],
   },
   {
     path: "/404.html",
@@ -250,16 +250,6 @@ async function checkPage(spec, viewport) {
       for (const j of lambeqIdx)
         if (Math.abs(i - j) <= 200)
           problems.push(`${tag}: "merged" within 200 rendered chars of "lambeq" (${i}/${j})`);
-    // 7. star screenshot attributes
-    const img = page.locator('img[src="/star-catalog-web.png"]');
-    if ((await img.count()) !== 1) {
-      problems.push(`${tag}: star screenshot img missing`);
-    } else {
-      for (const attr of ["alt", "width", "height"]) {
-        const v = await img.getAttribute(attr);
-        if (!v) problems.push(`${tag}: star screenshot missing ${attr}`);
-      }
-    }
   }
   if (spec.path === "/404.html") {
     for (const href of ["/", "/experience/", "/projects/"])

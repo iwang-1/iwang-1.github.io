@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Education, Project, Repo, Role } from "../content";
+import type { Education, Project, Role } from "../content";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink } from "./Keycap";
 
@@ -60,29 +60,7 @@ export function EduCard({ edu }: { edu: Education }) {
   );
 }
 
-/** RepoRow — Star Catalog sub-entries inside the featured card. */
-export function RepoRow({ repo }: { repo: Repo }) {
-  return (
-    <div className="repo-row">
-      <h3>
-        <ExternalLink href={repo.href}>{repo.name}</ExternalLink>
-      </h3>
-      <p>{repo.description}</p>
-      <div className="chip-rail">
-        {repo.chips.map((c) => (
-          <ProofChip key={c} label={c} />
-        ))}
-      </div>
-      {repo.demoHref && (
-        <p className="project-links">
-          <ExternalLink href={repo.demoHref}>Live demo</ExternalLink>
-        </p>
-      )}
-    </div>
-  );
-}
-
-/** ProjectCard — non-featured projects. `noRepo` renders a mono
+/** ProjectCard — project cards. `noRepo` renders a mono
  *  "private / no public repo" tag instead of a link. */
 export function ProjectCard({ project }: { project: Project }) {
   return (

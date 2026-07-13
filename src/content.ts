@@ -1,9 +1,9 @@
 // SINGLE SOURCE OF TRUTH for everything the site renders, consumed by all
 // four page entries. AS OF 2026-07-13. Numbers come from Ivan's resume /
 // LinkedIn / the verified portfolio facts sheet — re-verify against FACTS.md
-// before every deploy. NEVER: sum the star-catalog per-repo test counts,
-// round 79.5→80 or 98.56→99, or drop a '~'. scripts/check-facts.mjs enforces
-// the mechanical parts (it runs as `prebuild`).
+// before every deploy. Keep the DANN result line verbatim (report Table 2)
+// and never inflate it. scripts/check-facts.mjs enforces the mechanical parts
+// (it runs as `prebuild`).
 //
 // Confidentiality: the AWS bullets below use only PUBLIC AWS product terms
 // (EC2, VPC, canary, CloudWatch, CDK, SDK) exactly as they appear on Ivan's
@@ -150,19 +150,17 @@ export const teasers: Teaser[] = [
     linkText: "See the experience",
   },
   {
-    title: "The Star Catalog System",
-    body: "Four repos, one pipeline, live demo.",
-    href: "/projects/#star-catalog",
-    linkText: "See the system",
-    // Per-repo numbers stay labeled per-repo — the 101/~95% pair belongs to
-    // star-catalog-ingest, never to the 4-repo system as a whole.
-    proofChips: ["ingest: 101 tests · ~95% cov", "live demo"],
-  },
-  {
     title: "Cross-Domain Sentiment Analysis (DANN)",
-    body: "DistilBERT across 4 domains (Yelp/Amazon/Twitter/Reddit), 64,000 labeled samples.",
+    body: "DistilBERT across 4 domains (Yelp/Amazon/Twitter/Reddit), 64,000 labeled samples, with a domain-adversarial moonshot.",
     href: "/projects/#dann",
     linkText: "See the project",
+    proofChips: ["PyTorch", "MIT · public repo"],
+  },
+  {
+    title: "Open source",
+    body: "Merged pull requests to a UMD Observatory data archive, plus an open PR under review upstream at Quantinuum.",
+    href: "/projects/",
+    linkText: "See the projects",
   },
 ];
 
@@ -271,65 +269,7 @@ export const communityRoles: Role[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Projects — featured Star Catalog System.
-
-export const starSystem = {
-  heading: "The Star Catalog System",
-  intro:
-    "Four repos, one pipeline: telescope CSVs → validated SQLite → typed API → interactive sky map, plus a spectral classifier. It grew out of pull requests to a UMD Observatory archive.",
-  demoUrl: "https://iwang-1.github.io/star-catalog-web/",
-  screenshot: {
-    src: "/star-catalog-web.png",
-    alt: "Screenshot of the star-catalog-web sky map and searchable catalog",
-    width: 1200,
-    height: 820,
-  },
-};
-
-export interface Repo {
-  name: string;
-  href: string;
-  description: string;
-  chips: string[];
-  demoHref?: string;
-}
-
-export const starRepos: Repo[] = [
-  {
-    name: "star-catalog-ingest",
-    href: "https://github.com/iwang-1/star-catalog-ingest",
-    description:
-      "Python ETL CLI: telescope observation CSVs → validated, deduplicated SQLite.",
-    chips: ["101 tests · ~95% cov", "mypy --strict", "ruff", "CI py3.11–3.14", "v0.3.2"],
-  },
-  {
-    name: "star-catalog-api",
-    href: "https://github.com/iwang-1/star-catalog-api",
-    description:
-      "Typed FastAPI service: name search, magnitude/designation filters, cone search (handles the RA 0/360 seam), pagination, stats.",
-    chips: ["66 tests · ~97% cov", "Dockerized · smoke-tested in CI", "v0.2.3"],
-  },
-  {
-    name: "star-catalog-web",
-    href: "https://github.com/iwang-1/star-catalog-web",
-    description:
-      "Interactive sky map + searchable catalog of 8,920 naked-eye HYG v4.3 stars (React + TS + Vite), Playwright-gated Pages deploy.",
-    chips: ["Playwright-gated deploy", "v0.1.0"],
-    demoHref: "https://iwang-1.github.io/star-catalog-web/",
-  },
-  {
-    name: "star-spectral-classifier",
-    href: "https://github.com/iwang-1/star-spectral-classifier",
-    // Headline result first, fine-grained caveats in a short second sentence
-    // — every number verbatim (check-facts pins them).
-    description:
-      "scikit-learn HistGradientBoosting predicts OBAFGKM class from B–V color on the same sha256-pinned 8,920-star snapshot — 79.5% accuracy / 0.665 macro-F1 on a once-touched hold-out vs a 72.3% zero-parameter physics baseline. Honest caveats: O-class recall is 0 (support 10), and 92.6% of errors are adjacent-class.",
-    chips: ["52 tests · 98.56% cov", "mypy --strict", "CI py3.11–3.13", "v0.1.0"],
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Projects — the rest.
+// Projects.
 
 export interface Project {
   id?: string;
@@ -411,7 +351,7 @@ export interface OpenSourceCard {
 
 export const ossCardA: OpenSourceCard = {
   title: "Merged upstream",
-  body: "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive — a Python/Flask/SQLite archive of UMD Observatory CCD data. Working with this archive is what inspired the star-catalog system above.",
+  body: "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive — a Python/Flask/SQLite archive of UMD Observatory CCD astronomy data.",
   href: "https://github.com/warnerem/CCD-data-archive/pulls?q=is%3Apr+author%3Aiwang-1+is%3Amerged",
   linkText: "View the pull requests on GitHub",
 };
