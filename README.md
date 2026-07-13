@@ -3,20 +3,20 @@
 **Live at <https://iwang-1.github.io/>**
 [![deploy](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml)
 
-![Home page — warm light theme, keycap nav](docs/home-desktop.png)
+![Home page — Harbor Ink theme, navy hero band, keycap nav](docs/home-desktop.png)
 
 Ivan Wang's personal recruiting site — a multi-page React + TypeScript + Vite
-app ("The Workbench": warm light theme, system fonts, keycap-styled
-interactive elements) deployed to GitHub Pages at <https://iwang-1.github.io/>
-(user site, so Vite `base: '/'`). No router, no chart libraries, no CDN fonts,
-no trackers.
+app ("Harbor Ink" — navy bands over a cool near-white field, system fonts,
+keycap-styled interactive elements) deployed to GitHub Pages at
+<https://iwang-1.github.io/> (user site, so Vite `base: '/'`). No router, no
+chart libraries, no CDN fonts, no trackers.
 
 ## Page map (Vite MPA — `build.rollupOptions.input`)
 
 | Route | Entry | Page module |
 | --- | --- | --- |
-| `/` | `index.html` | `src/pages/home/main.tsx` — hero, Now strip, About, Education (`#education`), Skills (`#skills`), Selected work |
-| `/experience/` | `experience/index.html` | `src/pages/experience/main.tsx` — 4 engineering + 3 community & teaching roles |
+| `/` | `index.html` | `src/pages/home/main.tsx` — hero, About, Education (`#education`), Skills (`#skills`), Selected work |
+| `/experience/` | `experience/index.html` | `src/pages/experience/main.tsx` — center-spine alternating timeline: 4 engineering + 3 community & teaching roles |
 | `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — Star Catalog System (`#star-catalog`), DANN, RAG, Professor Predictor, QNLP, open source |
 | `/404.html` | `404.html` | `src/pages/not-found/main.tsx` — branded not-found (GitHub Pages serves it natively; `noindex`) |
 

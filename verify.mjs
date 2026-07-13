@@ -21,7 +21,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
-    facts: ["M.S. expected May 2027", "Secretary of the UMD Climbing Club"],
+    facts: ["M.S. expected May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors"],
+    absent: ["Hong Kong", "Now — SDE Intern"],
   },
   {
     path: "/experience/",
@@ -30,7 +31,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/experience/",
     noindex: false,
     activeTab: "/experience/",
-    facts: ["1M+ customers", "3,000+ students"],
+    facts: ["1M+ customers", "3,000+ students", "50,000+ records"],
+    absent: ["Hong Kong"],
   },
   {
     path: "/projects/",
@@ -39,7 +41,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/projects/",
     noindex: false,
     activeTab: "/projects/",
-    facts: ["79.5%", "~95%", "under review"],
+    facts: ["79.5%", "~95%", "under review", "This site"],
+    absent: ["Hong Kong"],
   },
   {
     path: "/404.html",
@@ -178,6 +181,32 @@ async function checkPage(spec, viewport) {
   const bodyText = await page.locator("body").innerText();
   for (const fact of spec.facts)
     if (!bodyText.includes(fact)) problems.push(`${tag}: locked fact missing from DOM: ${fact}`);
+  for (const a of spec.absent ?? [])
+    if (bodyText.includes(a)) problems.push(`${tag}: forbidden text rendered in DOM: ${a}`);
+  if (spec.path === "/") {
+    // page.content() catches JSON-LD, which innerText misses.
+    const html = await page.content();
+    if (/hong\s?kong/i.test(html))
+      problems.push(`${tag}: "Hong Kong" present in page HTML (JSON-LD?)`);
+  }
+  if (spec.path === "/experience/") {
+    // timeline structural gate: 7 role cards; alternating L/R on desktop,
+    // single left column on mobile; Community & Teaching label on the spine.
+    const items = page.locator(".alt-timeline-item");
+    if ((await items.count()) !== 7)
+      problems.push(`${tag}: expected 7 timeline items, got ${await items.count()}`);
+    const b1 = await items.nth(0).boundingBox();
+    const b2 = await items.nth(1).boundingBox();
+    if (viewport.name === "desktop") {
+      if (!b1 || !b2 || b2.x <= b1.x + 100)
+        problems.push(`${tag}: timeline not alternating on desktop (item2 x=${b2?.x} vs item1 x=${b1?.x})`);
+    } else if (!b1 || !b2 || Math.abs(b2.x - b1.x) > 2) {
+      problems.push(`${tag}: mobile timeline must be a single left column`);
+    }
+    const label = await page.locator(".alt-timeline-label").first().innerText().catch(() => "");
+    if (!/community & teaching/i.test(label))
+      problems.push(`${tag}: Community & Teaching spine label missing`);
+  }
   if (spec.path === "/projects/") {
     // "under review" must live inside the lambeq card, and "merged" must stay
     // >200 rendered characters away from "lambeq".

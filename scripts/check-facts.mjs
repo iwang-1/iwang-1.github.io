@@ -40,6 +40,8 @@ const REQUIRED = [
   "GPA 3.6/4.0",
   "May 2027",
   "ivanwang8989@gmail.com",
+  "Departmental Honors (research track)",
+  "faculty-mentored research track",
 ];
 
 // ---------------------------------------------------------------------------
@@ -59,6 +61,11 @@ const FORBIDDEN = [
   {
     re: /passionate|results-driven|detail-oriented|rockstar|ninja|cutting-edge/i,
     why: "banned voice word",
+  },
+  { re: /hong\s?kong|\bHKU\b/i, why: "HKU removed — education is UMD only" },
+  {
+    re: /honors\s+thesis|thesis\s+defen/i,
+    why: "no thesis claim — honors = research-track membership only",
   },
 ];
 

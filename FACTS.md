@@ -11,14 +11,19 @@ intentionally OUTSIDE the check-facts scan set (`src/`, the four HTML entries,
 | Rendered | Source |
 | --- | --- |
 | Ivan Wang; github.com/iwang-1; linkedin.com/in/ivanwang1; ivanwang8989@gmail.com | resume |
-| CS B.S./M.S. (Honors Program), UMD College Park; M.S. expected May 2027; GPA 3.6/4.0; minors Data Science + Philosophy | resume |
+| CS B.S./M.S. — Departmental Honors (research track: faculty-mentored, eligibility 3.5 CS-GPA / 3.25 overall; NEVER a thesis claim), UMD College Park; M.S. expected May 2027; GPA 3.6/4.0; minors Data Science + Philosophy | UMD CS departmental honors page + resume |
 | SDE Intern, Amazon Web Services — May–Aug 2026 (always date-anchored "Summer 2026", never "currently") | resume |
 | Open to new-grad SWE roles · available Summer 2027 | facts sheet · PERSON |
 | NO phone number anywhere in site text (it exists only inside the resume PDF) | constraint 3 |
 
 ## Experience — the complete 7-entry inventory (`/experience/`)
 
-Engineering (timeline, reverse-chron), with ProofChips:
+One center-spine alternating timeline (single left column on mobile):
+engineering roles reverse-chron with ProofChips, then a "Community & Teaching"
+spine label, then the community roles (teal tags). Non-AWS bullet copy is the
+LinkedIn verbatim text; AWS keeps its resume bullets (LinkedIn has none).
+
+Engineering (reverse-chron), with ProofChips:
 
 | # | Rendered | Source |
 | --- | --- | --- |
@@ -27,12 +32,12 @@ Engineering (timeline, reverse-chron), with ProofChips:
 | 3 | UMD ML Engineer Intern, Aug 2023–Jan 2025, College Park: +30% NLP accuracy, −25% training time (SPSA/ADAM/SGD) | resume + LinkedIn |
 | 4 | Washington Software Inc. SWE Intern, Mar 2022–Aug 2023, Gaithersburg: Selenium/BeautifulSoup automation, −40% manual work, 15+ hrs/week saved, Jenkins CI/CD | resume + LinkedIn |
 
-Community & Teaching (compact cards, teal tags):
+Community & Teaching (timeline cards after the spine label, teal tags):
 
 | # | Rendered | Source |
 | --- | --- | --- |
 | 5 | Kids For Code VP, Dec 2021–May 2023, Remote: 3,000+ students, 400+ lessons, 10+ instructors, 25% enrollment growth | resume + LinkedIn |
-| 6 | CodeDay TPM, Nov 2019–Dec 2022, DC–Baltimore: 500+ participants, 200+ schools, sponsorships incl. Vercel + Brave | resume + LinkedIn |
+| 6 | CodeDay TPM, Nov 2019–Dec 2022, DC–Baltimore: 500+ participants, 200+ schools, partnerships/sponsorships (the "(including Vercel and Brave)" parenthetical was dropped — LinkedIn is the verbatim source; removing a claim is safe) | LinkedIn |
 | 7 | Panda Programmer Instructor, Mar–Nov 2022, Gaithersburg: Python/JS/Scratch, ages 6–12 | resume + LinkedIn |
 
 CONFIDENTIALITY: the AWS bullets use only public AWS product names (EC2, VPC,
@@ -46,10 +51,13 @@ invent beyond the resume.
 
 | Rendered | Source |
 | --- | --- |
-| UMD College Park, B.S./M.S. CS (CS Honors Program), Aug 2023–May 2027, GPA 3.6/4.0, minors DS + Philosophy, 10 coursework chips | resume + LinkedIn |
-| University of Hong Kong, Study Abroad (Exchange Program), Aug–Dec 2025, coursework Numerical Analysis + Cryptography | LinkedIn |
+| UMD College Park, B.S./M.S. CS — Departmental Honors (research track), Aug 2023–May 2027, GPA 3.6/4.0, minors DS + Philosophy, 10 coursework chips | UMD CS departmental honors page + resume |
 
 ## Home page extras
+
+v3 design notes: the palette is now "Harbor Ink" (navy brand bands over a cool
+near-white field — src/styles/tokens.css); the hero tri-card "Now" strip
+(nowStrip) was removed — the availability proof-chip carries the who/what/when.
 
 | Rendered | Source |
 | --- | --- |
@@ -81,6 +89,7 @@ invent beyond the resume.
 | RAG Research Assistant (Jan 2025, private / no public repo — no link): LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
 | ML Professor Rating Predictor (Apr 2025, private / no public repo — no link): 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
 | QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): 3-person UMD FIRE project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
+| This site — public repo iwang-1/iwang-1.github.io, MIT, CI = check-facts + verify (no `date` field — none invented) | repo + this file |
 
 ## Open source (framing locks — two SEPARATE cards)
 
