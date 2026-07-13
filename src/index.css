@@ -1,0 +1,705 @@
+@import "./styles/tokens.css";
+
+/* ------------------------------------------------------------------ base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+}
+
+h3 {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-weight: 650;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 16px;
+  max-width: 68ch;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--accent-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — first focusable element on every page */
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -64px;
+  z-index: 100;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--r-key);
+  padding: 10px 16px;
+  transition: top 120ms ease;
+}
+
+.skip-link:focus-visible {
+  top: 12px;
+}
+
+/* ------------------------------------------------------------------- nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 64px;
+  background: rgba(250, 247, 242, 0.97);
+  backdrop-filter: saturate(1.2) blur(6px);
+  -webkit-backdrop-filter: saturate(1.2) blur(6px);
+  border-bottom: 1px solid var(--border);
+}
+
+@supports not (backdrop-filter: blur(6px)) {
+  .nav {
+    background: var(--bg);
+  }
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 64px;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  min-height: 44px;
+}
+
+.nav-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-resume-compact {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .nav-wordmark {
+    display: none;
+  }
+
+  .nav-resume-full {
+    display: none;
+  }
+
+  .nav-resume-compact {
+    display: inline;
+  }
+
+  .nav-tabs {
+    gap: 6px;
+  }
+
+  .keycap {
+    padding: 8px 10px;
+  }
+}
+
+/* ---------------------------------------------------------------- keycap */
+/* Interactive elements ONLY — nav tabs, CTA buttons, footer link buttons.
+   Pressability = honest affordance: non-interactive chips are flat pills. */
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--r-key);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 0 var(--shadow-edge);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 550;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.keycap:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--shadow-edge);
+  color: var(--ink);
+}
+
+.keycap:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--shadow-edge);
+}
+
+/* Exactly ONE accent-filled keycap per page: the Résumé CTA. */
+.keycap-primary {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  color: #ffffff;
+  box-shadow: 0 2px 0 var(--accent-deep);
+}
+
+.keycap-primary:hover {
+  background: var(--accent-deep);
+  color: #ffffff;
+  box-shadow: 0 3px 0 var(--accent-deep);
+}
+
+.keycap-primary:active {
+  box-shadow: 0 0 0 var(--accent-deep);
+}
+
+/* Current nav tab = bottomed-out pressed cap. */
+.keycap-pressed,
+.keycap-pressed:hover {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--shadow-edge),
+    inset 0 2px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* ----------------------------------------------------------- chips/pills */
+.chip,
+.proof-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--r-chip);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.chip-teal {
+  color: var(--teal);
+  border-color: color-mix(in srgb, var(--teal) 30%, var(--border));
+}
+
+.proof-chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status);
+  flex: none;
+  animation: dot-in 300ms ease-out;
+}
+
+@keyframes dot-in {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+.chip-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* -------------------------------------------------------------- sections */
+.section {
+  padding: 96px 0 0;
+}
+
+.section-head {
+  margin-bottom: 32px;
+}
+
+.section-head h2 {
+  margin-top: 8px;
+}
+
+main {
+  padding-bottom: 96px;
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-top: 64px;
+  }
+
+  main {
+    padding-bottom: 64px;
+  }
+}
+
+/* ----------------------------------------------------------------- cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+a.card-link-wrap {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card h3 a {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ hero */
+.hero {
+  padding: 80px 0 0;
+}
+
+.hero .kicker {
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  max-width: 22ch;
+  margin-bottom: 24px;
+}
+
+.hero-subhead {
+  font-size: 1.125rem;
+  max-width: 58ch;
+  margin-bottom: 24px;
+}
+
+.hero-availability {
+  margin-bottom: 32px;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-email-plain {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  margin-top: 16px;
+}
+
+/* ------------------------------------------------------------- Now strip */
+.now-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 48px;
+}
+
+@media (min-width: 768px) {
+  .now-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fact-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+/* ------------------------------------------------------------ page heads */
+.page-head {
+  padding: 64px 0 0;
+}
+
+.page-head h1 {
+  margin-bottom: 16px;
+}
+
+.page-dek {
+  font-size: 1.125rem;
+  color: var(--ink-2);
+  max-width: 60ch;
+}
+
+/* -------------------------------------------------------------- timeline */
+.timeline {
+  border-left: 2px solid var(--border);
+  padding-left: 32px;
+  max-width: 68ch;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-top: 32px;
+}
+
+.role-card {
+  position: relative;
+}
+
+.timeline .role-card::before {
+  content: "";
+  position: absolute;
+  left: -39px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+
+.role-org {
+  font-weight: 550;
+  margin-top: 2px;
+}
+
+.role-meta {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+.role-bullets {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.role-bullets li {
+  margin-bottom: 8px;
+  max-width: 62ch;
+}
+
+.role-card.compact .role-bullets li {
+  margin-bottom: 4px;
+}
+
+/* ------------------------------------------------------------- education */
+.edu-card .edu-degree {
+  margin-top: 4px;
+}
+
+.edu-card .role-meta {
+  margin-top: 6px;
+}
+
+.edu-detail {
+  margin: 8px 0 0;
+  font-size: 0.9375rem;
+}
+
+/* ---------------------------------------------------------------- skills */
+.skills-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.skills-label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* -------------------------------------------------------------- featured */
+.featured-card {
+  padding: 32px;
+}
+
+.featured-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.featured-copy {
+  flex: 1 1 380px;
+}
+
+.featured-shot {
+  flex: 0 1 420px;
+}
+
+.featured-shot img {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-key);
+}
+
+.repo-rows {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.repo-row {
+  border-top: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.repo-row:last-child {
+  padding-bottom: 0;
+}
+
+.repo-row p {
+  margin: 6px 0 0;
+}
+
+.no-repo-tag {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.project-links {
+  margin-top: 12px;
+  font-size: 0.9375rem;
+}
+
+/* -------------------------------------------------------------- CTA band */
+.cta-band {
+  margin-top: 96px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.cta-band h2 {
+  margin-bottom: 24px;
+}
+
+.cta-band .cta-row {
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .cta-band {
+    margin-top: 64px;
+    padding: 32px 20px;
+  }
+}
+
+/* ---------------------------------------------------------------- footer */
+.footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 48px 0;
+  margin-top: 96px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-colophon {
+  margin-top: 32px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.footer-colophon p {
+  margin: 0;
+  max-width: none;
+}
+
+@media (max-width: 767px) {
+  .footer {
+    margin-top: 64px;
+  }
+}
+
+/* --------------------------------------------------------------- 404 page */
+.not-found {
+  padding: 96px 0;
+}
+
+.not-found h1 {
+  margin-bottom: 16px;
+}
+
+.not-found .cta-row {
+  margin-top: 32px;
+}
+
+/* --------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .keycap:hover,
+  .keycap:active {
+    transform: none;
+  }
+
+  /* state still never color-only: border/background change remains */
+  .keycap:hover {
+    border-color: var(--ink-2);
+  }
+}
