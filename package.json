@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Personal recruiting site for Ivan Wang — single-page 'observing site' ledger built with React + TypeScript + Vite.",
+  "description": "Personal recruiting site for Ivan Wang — multi-page React + TypeScript + Vite site on GitHub Pages.",
   "license": "MIT",
   "repository": {
     "type": "git",
