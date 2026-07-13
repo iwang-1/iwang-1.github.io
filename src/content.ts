@@ -142,19 +142,22 @@ export interface Teaser {
   proofChips?: string[];
 }
 
+// Home teasers are PROJECTS ONLY — the AWS internship lives in the hero
+// subhead and on /experience/, never framed as a project here.
 export const teasers: Teaser[] = [
-  {
-    title: "AWS internship",
-    body: "Agentic AI test migration + canary infrastructure for EC2 VPC control-plane APIs.",
-    href: "/experience/",
-    linkText: "See the experience",
-  },
   {
     title: "Cross-Domain Sentiment Analysis (DANN)",
     body: "DistilBERT across 4 domains (Yelp/Amazon/Twitter/Reddit), 64,000 labeled samples, with a domain-adversarial moonshot.",
     href: "/projects/#dann",
     linkText: "See the project",
     proofChips: ["PyTorch", "MIT · public repo"],
+  },
+  {
+    title: "RAG-Based Research Assistant",
+    body: "Retrieval-augmented chatbot over 25+ research papers — LangChain + FAISS, tuned chunking and top-k, Streamlit UI.",
+    href: "/projects/#rag",
+    linkText: "See the project",
+    proofChips: ["LangChain", "FAISS"],
   },
   {
     title: "Open source",
@@ -297,6 +300,7 @@ export const projects: Project[] = [
     chips: ["PyTorch", "DistilBERT", "HuggingFace"],
   },
   {
+    id: "rag",
     title: "RAG-Based Research Assistant",
     date: "Jan 2025",
     noRepo: true,

@@ -16,7 +16,7 @@ const ROWS: string[][] = [
 
 function Key({ x, y, label }: { x: number; y: number; label: string }) {
   return (
-    <g>
+    <g className="kc-key">
       <rect x={x} y={y + DROP} width={KEY} height={KEY - DROP} rx="9" fill="var(--shadow-edge)" />
       <rect
         x={x}
@@ -49,6 +49,7 @@ export function KeycapCluster() {
   const height = 2 * KEY + GAP + 16;
   return (
     <svg
+      className="kc-cluster"
       viewBox={`0 0 ${width} ${height}`}
       width={width}
       height={height}

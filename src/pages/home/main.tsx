@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "../../js-flag";
+import "../../enhance";
 import "../../index.css";
 import {
   about,
@@ -93,7 +94,7 @@ function Home() {
           ))}
         </Section>
 
-        <Section kicker="04 · SELECTED WORK" title="Selected work">
+        <Section kicker="04 · SELECTED PROJECTS" title="Selected projects">
           <div className="card-grid card-grid-3">
             {teasers.map((t, i) => (
               <Reveal key={t.title} delay={i}>

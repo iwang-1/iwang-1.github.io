@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "../../js-flag";
+import "../../enhance";
 import "../../index.css";
 import { ossCardA, ossCardB, person, projects } from "../../content";
 import { CtaBand, ProjectCard } from "../../components/cards";

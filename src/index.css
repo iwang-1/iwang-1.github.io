@@ -895,6 +895,171 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
    stretched wrapper so rows keep equal-height cards. */
 .card-grid > .reveal > .card { height: 100%; }
 
+/* -------------------------------------------------- progressive enhancement */
+/* All three widgets below are injected by src/enhance.ts at runtime and live
+   OUTSIDE #root — they never appear in the prerendered static HTML, so the
+   no-JS fallback is unchanged. Styles are inert until the nodes exist. */
+
+/* reading-progress rail — a thin accent bar pinned under the sticky nav,
+   scaled by scroll fraction (transform-only, GPU-cheap). */
+#progress-rail {
+  position: fixed;
+  top: 64px; /* == nav height */
+  left: 0;
+  right: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--accent), var(--teal));
+  z-index: 9;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* reactive keycap cluster — the lift set inline by enhance.ts eases in/out. */
+.kc-key {
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+/* floating "keyboard shortcuts" button */
+.kbd-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 30;
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-key);
+  background: var(--surface);
+  color: var(--ink-2);
+  border: 1px solid var(--border-interactive);
+  box-shadow: 0 2px 0 var(--border-interactive), var(--shadow-card);
+  cursor: pointer;
+  transition: transform var(--t-hover) var(--ease-out),
+    box-shadow var(--t-hover) var(--ease-out), color var(--t-hover) ease;
+}
+
+.kbd-fab:hover,
+.kbd-fab:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--border-interactive), var(--shadow-card-hover);
+  color: var(--accent);
+}
+
+.kbd-fab:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 0 var(--border-interactive);
+}
+
+@media (max-width: 639px) {
+  .kbd-fab { right: 14px; bottom: 14px; }
+}
+
+/* command-palette / help overlay */
+.kbd-help {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity var(--t-hover) ease;
+}
+
+.kbd-help.is-open { opacity: 1; }
+.kbd-help[hidden] { display: none; }
+
+.kbd-help-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 9, 18, 0.66);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.kbd-help-card {
+  position: relative;
+  width: min(420px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card-hover);
+  padding: 24px;
+  transform: translateY(8px) scale(0.98);
+  transition: transform var(--t-hover) var(--ease-out);
+}
+
+.kbd-help.is-open .kbd-help-card { transform: none; }
+
+.kbd-help-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.kbd-help-list {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kbd-help-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: var(--r-key);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color var(--t-tap) ease;
+}
+
+.kbd-help-list a:hover,
+.kbd-help-list a:focus-visible {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--ink);
+}
+
+.kbd-combo { display: inline-flex; gap: 4px; flex: none; }
+
+.kbd-help kbd,
+.kbd-help-foot kbd {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  min-width: 22px;
+  padding: 5px 6px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--border-interactive);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 var(--border-interactive);
+}
+
+.kbd-help-foot {
+  margin: 8px 0 20px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.kbd-help-close { width: 100%; }
+
 /* scroll-reveal contract — gated on root .js class AND no-preference:
    without JS (no .js) or with reduced motion, .reveal has NO hidden state. */
 @media (prefers-reduced-motion: no-preference) {
@@ -956,9 +1121,18 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .keycap-primary:hover,
   .keycap-primary:focus-visible,
   .card-live:hover,
-  .card-live:focus-within {
+  .card-live:focus-within,
+  .kbd-fab:hover,
+  .kbd-fab:focus-visible,
+  .kbd-fab:active,
+  .kbd-help-card,
+  .kbd-help.is-open .kbd-help-card {
     transform: none;
   }
+
+  /* the help overlay still fades in via opacity (opacity-only is allowed
+     under reduced motion), but the reactive cluster lift is JS-guarded off
+     in enhance.ts, so .kc-key never gets an inline transform here. */
 
   /* state still never color-only: border/background change remains */
   .keycap:hover {
