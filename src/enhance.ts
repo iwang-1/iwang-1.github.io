@@ -255,10 +255,66 @@ function mountReactiveCluster(): void {
   svg.addEventListener("pointerleave", reset);
 }
 
+// -------------------------------------------------- hero cursor backlight
+// The hero band reads as a backlit keyboard: a faint keycap grid (CSS
+// ::before) lights under the pointer. This drives the light "puck" position
+// via --kx/--ky. Guarded off under reduced motion and on touch/no-hover
+// devices; no-op on pages without a .hero-band (Experience/Projects/404).
+function mountHeroBacklight(): void {
+  if (prefersReduced()) return;
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  if (!window.matchMedia("(hover: hover)").matches) return;
+  const band = document.querySelector<HTMLElement>(".hero-band");
+  if (!band) return;
+
+  let rect: DOMRect | null = null; // cached; recomputed lazily inside paint
+  let ticking = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  const paint = () => {
+    ticking = false;
+    if (!rect) rect = band.getBoundingClientRect();
+    band.style.setProperty("--kx", `${lastX - rect.left}px`);
+    band.style.setProperty("--ky", `${lastY - rect.top}px`);
+  };
+  const onMove = (e: PointerEvent) => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(paint);
+  };
+  const reset = () => {
+    band.style.setProperty("--kx", "-999px");
+    band.style.setProperty("--ky", "-999px");
+  };
+  const invalidate = () => {
+    rect = null;
+  };
+
+  band.addEventListener("pointermove", onMove);
+  band.addEventListener("pointerleave", reset);
+  window.addEventListener("resize", invalidate, { passive: true });
+  window.addEventListener("scroll", invalidate, { passive: true });
+
+  // Inline custom properties are NOT reset by the CSS reduced-motion block, so
+  // if the user flips the preference mid-session, detach and park the puck.
+  window
+    .matchMedia("(prefers-reduced-motion: reduce)")
+    .addEventListener("change", (e) => {
+      if (!e.matches) return;
+      band.removeEventListener("pointermove", onMove);
+      band.removeEventListener("pointerleave", reset);
+      reset();
+    });
+}
+
 function init(): void {
   mountProgressRail();
   mountCommandPalette();
   mountReactiveCluster();
+  mountHeroBacklight();
 }
 
 // ES imports are hoisted, so this module evaluates BEFORE the page entry's

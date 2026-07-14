@@ -285,11 +285,15 @@ img {
   padding: 10px 16px;
   border-radius: var(--r-key);
   background: var(--surface);
+  /* PBT keycap finish — a faint top-down sheen so caps read as molded plastic,
+     not flat rectangles (static, no motion). */
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%);
   color: var(--ink);
   /* --border-interactive (≥3:1) — the boundary is what distinguishes a
-     pressable keycap from a flat chip on the same surface. */
+     pressable keycap from a flat chip on the same surface. The inset highlight
+     is the molded top edge catching light. */
   border: 1px solid var(--border-interactive);
-  box-shadow: 0 2px 0 var(--border-interactive);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--border-interactive);
   font-family: var(--font-body);
   font-size: 0.9375rem;
   font-weight: 550;
@@ -300,13 +304,15 @@ img {
 
 .keycap:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 0 var(--border-interactive);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 0 var(--border-interactive);
   color: var(--ink);
 }
 
 .keycap:active {
   transform: translateY(2px);
-  box-shadow: 0 0 0 var(--border-interactive);
+  /* deeper bottom-out — the pressed cap visibly compresses (matches the
+     .keycap-pressed inset treatment); the top highlight drops while pressed. */
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--border-interactive);
 }
 
 /* Exactly ONE accent-filled keycap per page: the Résumé CTA. */
@@ -314,28 +320,32 @@ img {
   background: var(--accent);
   border-color: var(--accent-deep);
   color: var(--bg);
-  box-shadow: 0 2px 0 var(--accent-deep);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--accent-deep);
 }
 
 .keycap-primary:hover {
   background: var(--accent-deep);
   color: var(--bg);
-  box-shadow: 0 3px 0 var(--accent-deep);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 0 var(--accent-deep);
 }
 
 .keycap-primary:active {
-  box-shadow: 0 0 0 var(--accent-deep);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--accent-deep);
 }
 
-/* Current nav tab = bottomed-out pressed cap. */
+/* Current nav tab = bottomed-out pressed cap, with a lit accent switch under
+   it (the inset -2px accent line reads as backlight leaking from the pressed
+   key — ties the nav into the backlit-board story; non-text, decorative). */
 .keycap-pressed,
 .keycap-pressed:hover {
   background: var(--ink);
+  background-image: none;
   color: var(--bg);
   border-color: var(--ink);
   transform: translateY(2px);
   box-shadow: 0 0 0 var(--shadow-edge),
-    inset 0 2px 3px rgba(0, 0, 0, 0.45);
+    inset 0 2px 3px rgba(0, 0, 0, 0.45),
+    inset 0 -2px 0 var(--accent);
 }
 
 /* ----------------------------------------------------------- chips/pills */
@@ -487,14 +497,87 @@ main {
   margin-top: 16px;
 }
 
-/* Home hero band — structural navy band wrapping the hero. */
-.hero-band { background: var(--navy); padding-bottom: 64px; }
+/* Home hero band — structural navy band wrapping the hero. The containment
+   props are visually inert without JS; they set up the "Backlight Boot" layer
+   (see below) so its pseudo-elements paint behind the content and repaints
+   stay scoped to this band. */
+.hero-band {
+  background: var(--navy);
+  padding-bottom: 64px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  contain: paint;
+}
 .hero .kicker { color: var(--navy-ink-2); }
 .hero h1, .hero-subhead { color: var(--navy-ink); }
 .hero-band .hero-email-plain { color: var(--navy-ink-2); }
 
+/* --------------------------------------------------- Backlight Boot (hero) */
+/* The one bold moment: the flat navy band reads as a backlit mechanical
+   keyboard. Two pseudo-elements, both gated on the runtime .js class and both
+   at z-index:-1 inside the band's isolated stacking context, so they paint
+   above the --navy fill but always below the hero content — text contrast is
+   untouched. With JS blocked neither renders (today's flat navy, byte-identical
+   prerendered HTML). ::before is a faint keycap grid that lights under the
+   cursor (the puck is driven by --kx/--ky from enhance.ts, offscreen by
+   default). ::after is a diagonal light blade that sweeps once on load. */
+.js .hero-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(240px circle at var(--kx, -999px) var(--ky, -999px),
+      var(--backlight-1), var(--backlight-2) 45%, transparent 70%),
+    linear-gradient(var(--keyghost), var(--keyghost));
+  -webkit-mask-image: var(--keycap-tile);
+  mask-image: var(--keycap-tile);
+  -webkit-mask-size: 56px 56px;
+  mask-size: 56px 56px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
+.js .hero-band::after {
+  content: "";
+  position: absolute;
+  top: -15%;
+  bottom: -15%;
+  left: 0;
+  width: 55%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0; /* invisible at rest; only the one-shot boot sweep reveals it */
+  transform: translateX(-120%) skewX(-12deg);
+  background: linear-gradient(105deg, transparent, var(--backlight-1) 35%, var(--backlight-2) 65%, transparent);
+  will-change: transform;
+}
+
 /* ------------------------------------------------------------ page heads */
-.page-head-band { background: var(--navy); padding-bottom: 48px; }
+.page-head-band {
+  background: var(--navy);
+  padding-bottom: 48px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+/* Interior pages echo the powered board at half strength — static grid only,
+   no cursor puck, no sweep — so they feel like the same object as the hero. */
+.js .page-head-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(var(--keyghost-dim), var(--keyghost-dim));
+  -webkit-mask-image: var(--keycap-tile);
+  mask-image: var(--keycap-tile);
+  -webkit-mask-size: 56px 56px;
+  mask-size: 56px 56px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
 .page-head-band h1 { color: var(--navy-ink); }
 .page-head-band .page-dek { color: var(--navy-ink-2); }
 
@@ -1095,9 +1178,49 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .js .alt-timeline-item.reveal.is-in::before {
     animation: dot-pop 350ms var(--ease-pop) 200ms backwards;
   }
+
+  /* Backlight Boot — one-shot power-on blade (250–1550ms) then the typed
+     wave walks the CTA row (850–1280ms), landing as the rise-in cascade
+     settles. Both are one-shot; the global reduced-motion block below kills
+     them, and living inside this no-preference block is the belt-and-braces
+     second lock. fill-mode: none leaves the caps in their resting state. */
+  .js .hero-band::after {
+    animation: hero-boot var(--t-boot) cubic-bezier(0.22, 0.61, 0.36, 1) 250ms 1 both;
+  }
+  .js .hero .cta-row .keycap {
+    animation: key-tap 160ms ease-out none;
+  }
+  .js .hero .cta-row .keycap:nth-child(1) { animation-delay: 850ms; }
+  .js .hero .cta-row .keycap:nth-child(2) { animation-delay: 940ms; }
+  .js .hero .cta-row .keycap:nth-child(3) { animation-delay: 1030ms; }
+  .js .hero .cta-row .keycap:nth-child(4) { animation-delay: 1120ms; }
 }
 @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes dot-pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+/* Backlight Boot — the hero "powers on": a diagonal light blade crosses the
+   band once, ~250–1550ms, overlapping the tail of the rise-in cascade. */
+@keyframes hero-boot {
+  from { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  to   { transform: translateX(320%) skewX(-12deg); opacity: 0; }
+}
+/* Typed wave — after the board powers on, it "types" once across the four
+   hero CTA keycaps: each bottoms out and releases in turn. Frame 0 == the
+   keycap's resting box-shadow, so this is safe to run with fill-mode: none
+   (it leaves the cap in its normal state and never touches :hover). NO opacity
+   here — a CTA can never be held hidden. */
+@keyframes key-tap {
+  0%, 100% {
+    transform: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--border-interactive);
+  }
+  45% {
+    transform: translateY(2px);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--border-interactive);
+  }
+}
 
 /* ---------------------------------------------------------------- print */
 /* Scroll-reveal hides content until it enters the viewport (via the .js

@@ -41,8 +41,20 @@
   --t-tap: 120ms;
   --t-hover: 180ms;
   --t-reveal: 450ms;
+  --t-boot: 1300ms;         /* hero "power-on" light sweep (one-shot) */
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Backlight Boot — the hero band lights like a backlit keyboard. All hues
+     derived from the existing palette; nothing new enters. Combined pseudo
+     alpha stays ≤0.16 over --navy so --navy-ink keeps >8:1 even unmasked. */
+  --backlight-1: rgba(147, 197, 253, 0.16);   /* puck/blade core — from --accent-deep */
+  --backlight-2: rgba(34, 211, 238, 0.08);    /* puck/blade falloff — from --teal */
+  --keyghost: rgba(122, 143, 166, 0.12);      /* hero ghost-grid fill — from --border-interactive */
+  --keyghost-dim: rgba(122, 143, 166, 0.06);  /* page-head echo, half strength */
+  /* one keycap double-rect (same double-rect language as the Keycap component
+     / nav monogram), URL-encoded so '#' never appears raw; used as a mask so
+     paint lands only on the keycap outlines. */
+  --keycap-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.5'%3E%3Crect x='4' y='6' width='48' height='44' rx='8'/%3E%3Crect x='8' y='10' width='40' height='32' rx='6'/%3E%3C/g%3E%3C/svg%3E");
   /* type — system fonts only (no CDN fonts, zero font bytes) */
   --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
     'Times New Roman', serif;
