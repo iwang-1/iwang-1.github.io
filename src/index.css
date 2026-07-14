@@ -958,6 +958,12 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .kbd-fab { right: 14px; bottom: 14px; }
 }
 
+/* The g-chord palette is a keyboard-only affordance and the fixed button
+   overlaps the text column on phones — hide it where there's no keyboard. */
+@media (pointer: coarse), (max-width: 639px) {
+  .kbd-fab { display: none; }
+}
+
 /* command-palette / help overlay */
 .kbd-help {
   position: fixed;
@@ -1092,6 +1098,28 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 }
 @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes dot-pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+/* ---------------------------------------------------------------- print */
+/* Scroll-reveal hides content until it enters the viewport (via the .js
+   .reveal rule above). When printing / saving to PDF from a fresh load, the
+   IntersectionObserver never fires for below-the-fold sections, so force
+   every revealable block visible and drop the injected chrome from the page. */
+@media print {
+  .js .reveal,
+  .js .hero > *,
+  .js .page-head > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  #progress-rail,
+  .kbd-fab,
+  .kbd-help {
+    display: none !important;
+  }
+}
 
 /* --------------------------------------------------------- reduced motion */
 @media (prefers-reduced-motion: reduce) {
