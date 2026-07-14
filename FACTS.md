@@ -83,7 +83,7 @@ from the rendered /projects/ page.
 | DANN result line EXACTLY: "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains." — never "+26%", never an unqualified "74.2% on held-out domains" (74.2% is Yelp-only per repo README / report Table 2) | repo README · Table 2 |
 | RAG Research Assistant (Jan 2025, private / no public repo — no link): LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
 | ML Professor Rating Predictor (Apr 2025, private / no public repo — no link): 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
-| QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): 3-person UMD FIRE project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
+| QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): 3-person project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
 | This site — public repo iwang-1/iwang-1.github.io, MIT, CI = check-facts + verify (no `date` field — none invented) | repo + this file |
 
 ## Open source (framing locks — two SEPARATE cards)

@@ -292,7 +292,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/cross-domain-sentiment-dann",
     license: "MIT",
     description: [
-      "CMSC472 group deep-learning project: DistilBERT with leave-one-domain-out evaluation across Yelp/Amazon/Twitter/Reddit (64,000 labeled samples, 16 experimental conditions), a DANN domain-adversarial moonshot, and a Financial PhraseBank OOD probe.",
+      "Group deep-learning project: DistilBERT with leave-one-domain-out evaluation across Yelp/Amazon/Twitter/Reddit (64,000 labeled samples, 16 experimental conditions), a DANN domain-adversarial moonshot, and a Financial PhraseBank OOD probe.",
       // Result line is LOCKED — the repo README cites report Table 2. Never
       // an inflated delta, never an unqualified "74.2% on held-out domains".
       "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains.",
@@ -324,7 +324,7 @@ export const projects: Project[] = [
     license: "GPL-3.0",
     description: [
       // FRAMING LOCK: "co-built and open-sourced" — never a "contribution".
-      "3-person project in UMD's FIRE (First-year Innovation & Research Experience) program, co-built and open-sourced. My role: dataset preparation and integration, and project documentation.",
+      "3-person research project, co-built and open-sourced. My role: dataset preparation and integration, and project documentation.",
       "Enhanced optimizers beat an out-of-the-box standard-SPSA baseline by roughly 30 percentage points of train/test accuracy (exact noiseless simulation).",
     ],
     chips: ["Python", "Jupyter", "DisCoPy", "Qiskit", "pytket"],
