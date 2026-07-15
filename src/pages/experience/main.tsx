@@ -35,7 +35,7 @@ function Experience() {
           </div>
         </div>
 
-        <Section kicker="01 · TIMELINE" title="Engineering & community">
+        <Section title="Engineering & community">
           <Timeline entries={entries} />
         </Section>
 

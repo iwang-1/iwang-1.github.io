@@ -16,7 +16,7 @@ function Monogram() {
       width="36"
       height="36"
       viewBox="0 0 36 36"
-      role="img"
+      role="presentation"
       aria-hidden="true"
       focusable="false"
     >

@@ -21,8 +21,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
-    facts: ["M.S. expected May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors"],
-    absent: ["Hong Kong", "Now — SDE Intern"],
+    facts: ["May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors", "1,400"],
+    absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000"],
   },
   {
     path: "/experience/",
@@ -31,8 +31,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/experience/",
     noindex: false,
     activeTab: "/experience/",
-    facts: ["1M+ customers", "3,000+ students", "50,000+ records"],
-    absent: ["Hong Kong"],
+    facts: ["7 agent-migrated tests", "3,000+ students", "50,000+ records"],
+    absent: ["Hong Kong", "1M+ customers"],
   },
   {
     path: "/projects/",
@@ -41,8 +41,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/projects/",
     noindex: false,
     activeTab: "/projects/",
-    facts: ["74.2% on Yelp", "under review", "This site"],
-    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map"],
+    facts: ["Unsupervised Domain Adaptation", "Four-person research project", "under review", "This site"],
+    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map", "74.2%", "67.7%", "95%"],
   },
   {
     path: "/404.html",
@@ -59,6 +59,7 @@ const VIEWPORTS = [
   { width: 1366, height: 900, name: "desktop" },
   { width: 390, height: 844, name: "mobile" },
 ];
+  { width: 320, height: 700, name: "narrow" },
 
 mkdirSync("docs", { recursive: true });
 
@@ -146,6 +147,12 @@ async function checkPage(spec, viewport) {
 
   await page.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
 
+
+  const horizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  if (horizontalOverflow > 1)
+    problems.push(`${tag}: horizontal overflow of ${horizontalOverflow}px`);
   // dark-theme gate: body background luminance must be dark (#0B1220 ≈ 0.007)
   const lum = await page.evaluate(() => {
     const [r, g, b] = getComputedStyle(document.body).backgroundColor.match(/\d+/g).map(Number);
@@ -344,6 +351,50 @@ async function checkPage(spec, viewport) {
   const firstFocus = await page.evaluate(() => document.activeElement?.textContent?.trim());
   if (firstFocus !== "Skip to content")
     problems.push(`${tag}: first focusable is ${JSON.stringify(firstFocus)}, not the skip link`);
+
+  if (spec.path === "/" && viewport.name === "desktop") {
+    const fab = page.locator("#kbd-fab");
+    await fab.click();
+    await page.waitForTimeout(50);
+    const openState = await page.evaluate(() => {
+      const overlay = document.getElementById("kbd-help");
+      return {
+        visible: Boolean(overlay && !overlay.hidden),
+        rootInert: document.getElementById("root")?.hasAttribute("inert") ?? false,
+        fabInert: document.getElementById("kbd-fab")?.hasAttribute("inert") ?? false,
+        scrollLocked: document.body.classList.contains("modal-open"),
+        focusInside: Boolean(overlay?.contains(document.activeElement)),
+      };
+    });
+    for (const [name, value] of Object.entries(openState))
+      if (!value) problems.push(`${tag}: command palette open-state check failed: ${name}`);
+
+    await page.locator(".kbd-help-close").focus();
+    await page.keyboard.press("Tab");
+    const trapped = await page.evaluate(() =>
+      document.getElementById("kbd-help")?.contains(document.activeElement),
+    );
+    if (!trapped) problems.push(`${tag}: command palette focus trap failed`);
+
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(250);
+    const escapeState = await page.evaluate(() => ({
+      hidden: document.getElementById("kbd-help")?.hidden ?? false,
+      rootActive: !document.getElementById("root")?.hasAttribute("inert"),
+      fabActive: !document.getElementById("kbd-fab")?.hasAttribute("inert"),
+      scrollUnlocked: !document.body.classList.contains("modal-open"),
+      focusRestored: document.activeElement?.id === "kbd-fab",
+    }));
+    for (const [name, value] of Object.entries(escapeState))
+      if (!value) problems.push(`${tag}: command palette escape-state check failed: ${name}`);
+
+    await fab.click();
+    await page.waitForTimeout(50);
+    await page.locator(".kbd-help-backdrop").click({ position: { x: 4, y: 4 } });
+    await page.waitForTimeout(250);
+    if (!(await page.locator("#kbd-help").evaluate((el) => el.hidden)))
+      problems.push(`${tag}: backdrop click did not close command palette`);
+  }
   const badAlts = await page.$$eval("img", (imgs) =>
     imgs.filter((i) => !i.getAttribute("alt")).length,
   );

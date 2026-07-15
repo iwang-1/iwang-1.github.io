@@ -6,8 +6,10 @@ import "../../index.css";
 import {
   about,
   education,
+  featuredSystems,
   hero,
   person,
+  proofPoints,
   skills,
   teasers,
 } from "../../content";
@@ -19,6 +21,7 @@ import { KeycapCluster } from "../../components/KeycapCluster";
 import { Nav } from "../../components/Nav";
 import { Reveal } from "../../components/Reveal";
 import { Section } from "../../components/Section";
+import { SystemFeature } from "../../components/SystemFeature";
 
 function Home() {
   return (
@@ -51,8 +54,27 @@ function Home() {
             <p className="hero-email-plain">{person.email}</p>
           </div>
         </section>
+        <section className="proof-band" aria-label="Selected evidence">
+          <dl className="container proof-rail">
+            {proofPoints.map((point) => (
+              <div key={point.label} className="proof-point">
+                <dd>{point.value}</dd>
+                <dt>{point.label}</dt>
+              </div>
+            ))}
+          </dl>
+        </section>
 
-        <Section id="about" kicker="01 · ABOUT" title="About me">
+        <Section id="systems" title="Systems work">
+          <div className="system-list">
+            {featuredSystems.map((project) => (
+              <SystemFeature key={project.id} project={project} />
+            ))}
+          </div>
+        </Section>
+
+
+        <Section id="about" title="About me">
           {/* Desktop 2-col: copy left, decorative keycap cluster right — it
               literally illustrates the hero's keyboard thesis and keeps the
               right half of the container from reading as dead field. */}
@@ -72,7 +94,7 @@ function Home() {
           </div>
         </Section>
 
-        <Section id="education" kicker="02 · EDUCATION" title="Education">
+        <Section id="education" title="Education">
           {/* Single entry — no card-grid (a lone half-width card reads as a
               missing neighbor on desktop). The .edu-card max-width caps the
               measure; bring the grid back with a second entry. */}
@@ -81,7 +103,7 @@ function Home() {
           ))}
         </Section>
 
-        <Section id="skills" kicker="03 · SKILLS" title="Skills">
+        <Section id="skills" title="Skills">
           {skills.map((row) => (
             <div className="skills-row" key={row.label}>
               <span className="skills-label">{row.label}</span>
@@ -94,7 +116,7 @@ function Home() {
           ))}
         </Section>
 
-        <Section kicker="04 · SELECTED PROJECTS" title="Selected projects">
+        <Section title="Selected work">
           <div className="card-grid card-grid-3">
             {teasers.map((t, i) => (
               <Reveal key={t.title} delay={i}>

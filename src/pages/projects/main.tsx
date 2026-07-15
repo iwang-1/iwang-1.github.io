@@ -3,13 +3,14 @@ import { createRoot } from "react-dom/client";
 import "../../js-flag";
 import "../../enhance";
 import "../../index.css";
-import { ossCardA, ossCardB, person, projects } from "../../content";
+import { featuredSystems, ossCardA, ossCardB, person, projects } from "../../content";
 import { CtaBand, ProjectCard } from "../../components/cards";
 import { Footer } from "../../components/Footer";
 import { ExternalLink, Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
 import { Reveal } from "../../components/Reveal";
 import { Section } from "../../components/Section";
+import { SystemFeature } from "../../components/SystemFeature";
 
 function Projects() {
   return (
@@ -20,12 +21,20 @@ function Projects() {
           <div className="page-head container">
             <h1>Projects</h1>
             <p className="page-dek">
-              Everything below with a link is a live, public repo — stats are exact, not rounded.
+              Public artifacts with explicit evidence, ownership, and limitations.
             </p>
           </div>
         </div>
 
-        <Section kicker="01 · PROJECTS" title="Selected projects">
+        <Section title="Systems projects">
+          <div className="system-list">
+            {featuredSystems.map((project) => (
+              <SystemFeature key={project.id} project={project} />
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Selected projects">
           <div className="card-grid">
             {projects.map((p, i) => (
               <Reveal key={p.title} delay={i}>
@@ -35,7 +44,7 @@ function Projects() {
           </div>
         </Section>
 
-        <Section kicker="02 · OPEN SOURCE" title="Open source">
+        <Section title="Open source">
           <div className="card-grid">
             <Reveal delay={0}>
               <article className="card card-live">

@@ -23,7 +23,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 // ---------------------------------------------------------------------------
 // 1. REQUIRED exact strings (locked facts).
 const REQUIRED = [
-  "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains",
+  "unsupervised domain adaptation",
+  "Four-person research project, co-built and open-sourced",
   "co-built and open-sourced",
   "under review",
   "GPA 3.6/4.0",
@@ -37,6 +38,12 @@ const REQUIRED = [
 // 2. FORBIDDEN patterns (per file).
 const FORBIDDEN = [
   { re: /\+26%/, why: "inflated DANN delta (+26%) — use the exact Table-2 numbers" },
+  {
+    re: /74\.2\s?%|67\.7\s?%|64,?000/,
+    why: "report-only DANN metric without reproducible committed evidence",
+  },
+  { re: /\b95\s?%/, why: "unsupported RAG accuracy claim" },
+  { re: /\b3[- ]person|\bthree[- ]person/i, why: "FIRE/QNLP team size is four" },
   { re: /qnlp_lorenz/i, why: "the qnlp_lorenz fork must appear nowhere" },
   {
     re: /(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/,

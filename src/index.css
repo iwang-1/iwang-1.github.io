@@ -11,6 +11,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Anchor targets must clear the 64px sticky nav. Keep in sync with .nav height. */
+[id] {
+  scroll-margin-top: 88px;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -19,6 +24,10 @@ body {
   font-size: 1.0625rem;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+}
+
+body.modal-open {
+  overflow: hidden;
 }
 
 h1,
@@ -32,6 +41,7 @@ h1 {
   font-size: clamp(2.25rem, 5vw, 3.5rem);
   line-height: 1.1;
   font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 h2 {
@@ -41,14 +51,22 @@ h2 {
 
 h3 {
   font-family: var(--font-body);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  line-height: 1.35;
   font-weight: 650;
   margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance; /* progressive enhancement; ignored by non-supporting engines */
 }
 
 p {
   margin: 0 0 16px;
   max-width: 68ch;
+  text-wrap: pretty;
 }
 
 a {
@@ -406,7 +424,7 @@ img {
 }
 
 .section-head h2 {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 main {
@@ -512,6 +530,278 @@ main {
 .hero .kicker { color: var(--navy-ink-2); }
 .hero h1, .hero-subhead { color: var(--navy-ink); }
 .hero-band .hero-email-plain { color: var(--navy-ink-2); }
+
+/* --------------------------------------------------------- evidence rail */
+.proof-band {
+  background: color-mix(in srgb, var(--surface) 68%, var(--bg));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.proof-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.proof-point {
+  min-width: 0;
+  padding: 0 20px;
+}
+
+.proof-point:first-child {
+  padding-left: 0;
+}
+
+.proof-point + .proof-point {
+  border-left: 1px solid var(--border);
+}
+
+.proof-point dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.proof-point dt {
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 767px) {
+  .proof-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+  }
+
+  .proof-point,
+  .proof-point:first-child {
+    padding: 0 12px;
+  }
+
+  .proof-point:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 359px) {
+  .proof-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .proof-point,
+  .proof-point:first-child {
+    padding: 0;
+    border-left: 0;
+  }
+
+  .proof-point + .proof-point {
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* --------------------------------------------------------- system feature */
+.system-list {
+  display: grid;
+  gap: 24px;
+}
+
+.system-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 32px;
+  align-items: stretch;
+}
+
+.system-copy,
+.system-evidence {
+  min-width: 0;
+}
+
+.system-summary {
+  margin-top: 12px;
+  font-size: 1.0625rem;
+}
+
+.system-proof {
+  color: var(--ink);
+  font-weight: 550;
+}
+
+.system-caveat {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.system-evidence {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding-left: 32px;
+  border-left: 1px solid var(--border);
+}
+
+.system-diagram {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 176px;
+  aspect-ratio: 16 / 7;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.diagram-stage,
+.diagram-node,
+.diagram-sstables span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-interactive);
+  background: var(--bg);
+}
+
+.diagram-stage {
+  border-radius: var(--r-key);
+}
+
+.diagram-flow {
+  position: relative;
+  width: 24px;
+  height: 1px;
+  flex: 0 1 24px;
+  background: var(--border-interactive);
+}
+
+.diagram-flow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid var(--border-interactive);
+  border-right: 1px solid var(--border-interactive);
+  transform: rotate(45deg);
+}
+
+.diagram-nodes,
+.diagram-sstables {
+  display: grid;
+  gap: 6px;
+}
+
+.diagram-node {
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.diagram-node.is-leader {
+  border-color: var(--status);
+  color: var(--status);
+}
+
+.diagram-sstables span {
+  min-height: 28px;
+  border-radius: 2px;
+}
+
+.diagram-caption {
+  position: absolute;
+  align-self: flex-end;
+  margin-bottom: 4px;
+  color: var(--ink-2);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.metric-grid div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.metric-grid dd {
+  order: -1;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.metric-grid dt {
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 899px) {
+  .system-feature {
+    grid-template-columns: 1fr;
+  }
+
+  .system-evidence {
+    padding-top: 8px;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .system-feature {
+    padding: 20px;
+  }
+
+  .system-diagram {
+    min-height: 150px;
+    gap: 3px;
+    font-size: 0.6875rem;
+  }
+
+  .diagram-stage,
+  .diagram-sstables span {
+    min-width: 42px;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .diagram-flow {
+    width: 8px;
+    flex-basis: 8px;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* --------------------------------------------------- Backlight Boot (hero) */
 /* The one bold moment: the flat navy band reads as a backlit mechanical
@@ -822,6 +1112,11 @@ main {
 
 .cta-band h2 {
   margin-bottom: 24px;
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: balance;
 }
 
 .cta-band .cta-row {
@@ -977,6 +1272,14 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 /* Reveal wrappers are grid children on card grids: the inner card fills the
    stretched wrapper so rows keep equal-height cards. */
 .card-grid > .reveal > .card { height: 100%; }
+
+/* Equal-height rows: pin the footer row (chips/links) to the card bottom so
+   short cards don't float their links mid-card. Scoped to .card-grid only —
+   timeline/edu cards keep normal block flow. */
+.card-grid .card { display: flex; flex-direction: column; }
+.card-grid .card > p { margin-bottom: 0; }
+.card-grid .card > .chip-rail:last-child,
+.card-grid .card > .project-links:last-child { margin-top: auto; padding-top: 12px; }
 
 /* -------------------------------------------------- progressive enhancement */
 /* All three widgets below are injected by src/enhance.ts at runtime and live

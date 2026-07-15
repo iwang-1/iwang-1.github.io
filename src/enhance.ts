@@ -79,7 +79,7 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
     `<div class="kbd-help-card">` +
     `<p class="kbd-help-title">Keyboard shortcuts</p>` +
     `<ul class="kbd-help-list">${rows}</ul>` +
-    `<p class="kbd-help-foot"><kbd>?</kbd> toggles this panel · <kbd>Esc</kbd> closes</p>` +
+    `<p class="kbd-help-foot"><kbd>?</kbd> toggles this panel · <kbd>Esc</kbd> closes it</p>` +
     `<button type="button" class="keycap kbd-help-close" data-close>Close</button>` +
     `</div>`;
 
@@ -109,20 +109,51 @@ function mountCommandPalette(): void {
 
   const isOpen = () => !overlay.hidden;
 
+  let closeTimer = 0;
+  const root = document.getElementById("root");
+
   const open = () => {
-    if (isOpen()) return;
-    lastFocused = document.activeElement as HTMLElement | null;
+    if (closeTimer) {
+      // reopen mid-exit: cancel the pending hide and resume
+      window.clearTimeout(closeTimer);
+      closeTimer = 0;
+    } else if (isOpen()) {
+      return;
+    }
+    const active = document.activeElement as HTMLElement | null;
+    if (!active || !overlay.contains(active)) lastFocused = active;
     overlay.hidden = false;
+    // make the page behind the modal inert so focus can't escape the dialog
+    root?.setAttribute("inert", "");
+    fab.setAttribute("inert", "");
+    document.body.classList.add("modal-open");
     // next frame so the transition runs from the hidden state
     requestAnimationFrame(() => overlay.classList.add("is-open"));
     focusables()[0]?.focus();
   };
 
   const close = () => {
-    if (!isOpen()) return;
+    if (!isOpen() || closeTimer) return;
     overlay.classList.remove("is-open");
-    overlay.hidden = true;
-    (lastFocused ?? fab).focus();
+    const finish = () => {
+      closeTimer = 0;
+      overlay.hidden = true;
+      // remove inert BEFORE restoring focus — .focus() is a no-op inside an
+      // inert subtree, and lastFocused usually lives inside #root.
+      root?.removeAttribute("inert");
+      fab.removeAttribute("inert");
+      document.body.classList.remove("modal-open");
+      // Restore focus per the WAI-ARIA dialog pattern: back to where the user
+      // was, falling back to the launcher when the palette was opened with no
+      // meaningful focus (activeElement === body) or the element is gone.
+      const target =
+        lastFocused && lastFocused !== document.body && lastFocused.isConnected
+          ? lastFocused
+          : fab;
+      target.focus();
+    };
+    if (prefersReduced()) finish();
+    else closeTimer = window.setTimeout(finish, 200);
   };
 
   const toggle = () => (isOpen() ? close() : open());
@@ -167,6 +198,12 @@ function mountCommandPalette(): void {
         const first = items[0];
         const last = items[items.length - 1];
         const active = document.activeElement as HTMLElement | null;
+        if (!active || !card?.contains(active)) {
+          // focus escaped the dialog (e.g. onto <body>) — pull it back in
+          e.preventDefault();
+          first.focus();
+          return;
+        }
         if (e.shiftKey && active === first) {
           e.preventDefault();
           last.focus();

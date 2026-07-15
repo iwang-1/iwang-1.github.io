@@ -62,10 +62,10 @@ export function EduCard({ edu }: { edu: Education }) {
 }
 
 /** ProjectCard — project cards. `noRepo` renders a mono
- *  "private / no public repo" tag instead of a link. */
+ *  "no public repo" tag instead of a link. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="card card-live" id={project.id}>
+    <article className={`card ${project.repoHref ? "card-live" : "card-static"}`} id={project.id}>
       <h3>
         {project.repoHref ? (
           <ExternalLink href={project.repoHref}>{project.title}</ExternalLink>
@@ -76,7 +76,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <div className="project-meta">
         {project.date && <span className="role-meta">{project.date}</span>}
         {project.license && <span className="role-meta">{project.license}</span>}
-        {project.noRepo && <span className="no-repo-tag">private / no public repo</span>}
+        {project.noRepo && <span className="no-repo-tag">no public repo</span>}
       </div>
       {project.description.map((d) => (
         <p key={d} style={{ marginTop: 12, marginBottom: 0 }}>
