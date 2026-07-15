@@ -1,42 +1,37 @@
-/* Design tokens — "Midnight Harbor" (v4 dark). Deep-midnight reading field +
-   navy brand bands (nav, home hero band, page-head bands, footer). Contrast
-   pre-verified (WCAG 2.x): --ink on --bg 15.89:1 / on --surface 13.34:1 (AAA);
-   --ink-2 on --bg 8.70:1 / on --surface 7.30:1 (AAA); --accent on --bg 7.36:1,
-   on --surface 6.18:1, on --navy 5.48:1 (AA+); --bg-on---accent 7.36:1,
-   --bg-on---accent-deep 10.38:1; --teal on --surface 8.70:1; --status on
-   --surface 8.18:1 / on --bg 9.74:1; --navy-ink on --navy 12.84:1 (AAA);
-   --navy-ink-2 on --navy 6.47:1 (AA). Non-text (1.4.11 ≥3:1):
-   --border-interactive 4.72:1 on --surface / 5.62:1 on --bg; band focus
-   #93C5FD on --navy 7.73:1. Hover goes LIGHTER, never darker, on dark. */
+/* Design tokens — "Chalk & Current". Graphite reading surfaces, deep-water
+   bands, electric cyan interactions, chalk-white route holds, and a restrained
+   gold climbing accent. */
 :root {
   color-scheme: dark;
   /* surfaces */
-  --bg: #0B1220;            /* deep midnight page */
-  --surface: #16233A;       /* cards — lighter navy, one step up from bg */
-  --border: #26374F;        /* DECORATIVE hairlines only (cards, chips, spine) */
+  --bg: #090D12;
+  --surface: #121A22;
+  --border: #293540;
   /* Interactive boundary (keycap border + bottom edge) — clears WCAG
      1.4.11's 3:1: #7A8FA6 is 4.72:1 on --surface and 5.62:1 on --bg. */
-  --border-interactive: #7A8FA6;
-  --shadow-edge: #3A4E6B;   /* decorative edge (nav monogram) */
+  --border-interactive: #8295A5;
+  --shadow-edge: #405264;
   /* ink */
-  --ink: #E6EDF7;           /* primary text — near-white */
-  --ink-2: #9FB3C8;         /* secondary/mono meta — slate */
+  --ink: #EEF5F7;
+  --ink-2: #A9BAC4;
   /* accents */
-  --accent: #60A5FA;        /* blue: links, ONE primary keycap per page, timeline dots */
-  --accent-deep: #93C5FD;   /* hover/pressed — LIGHTER, not darker, on dark */
-  --teal: #22D3EE;          /* Community & Teaching tags, coursework chips */
-  --status: #34D399;        /* emerald proof-chip dot + availability dot */
+  --accent: #22D3EE;
+  --accent-deep: #67E8F9;
+  --teal: #A3E635;
+  --status: #4ADE80;
+  --climb-gold: #F6C453;
+  --chalk: #E8EEE9;
   /* brand band (navy signature) */
-  --navy: #132D4C;          /* nav bar, home hero band, page-head bands, footer */
-  --navy-ink: #F2F6FB;      /* headline text on navy */
-  --navy-ink-2: #9FB3C8;    /* secondary text on navy */
+  --navy: #0C2438;
+  --navy-ink: #F4F8F9;
+  --navy-ink-2: #B2C4CC;
   /* radii & shadow */
   --r-card: 12px;
   --r-key: 8px;
   --r-chip: 999px;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.55);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.35);
-  --border-hover: color-mix(in srgb, var(--accent) 35%, var(--border));
+  --border-hover: color-mix(in srgb, var(--accent) 45%, var(--border));
   /* motion (Keyswitch layer) */
   --t-tap: 120ms;
   --t-hover: 180ms;
@@ -44,13 +39,11 @@
   --t-boot: 1300ms;         /* hero "power-on" light sweep (one-shot) */
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* Backlight Boot — the hero band lights like a backlit keyboard. All hues
-     derived from the existing palette; nothing new enters. Combined pseudo
-     alpha stays ≤0.16 over --navy so --navy-ink keeps >8:1 even unmasked. */
-  --backlight-1: rgba(147, 197, 253, 0.16);   /* puck/blade core — from --accent-deep */
-  --backlight-2: rgba(34, 211, 238, 0.08);    /* puck/blade falloff — from --teal */
-  --keyghost: rgba(122, 143, 166, 0.12);      /* hero ghost-grid fill — from --border-interactive */
-  --keyghost-dim: rgba(122, 143, 166, 0.06);  /* page-head echo, half strength */
+  /* One-shot hero light sweep and the quieter keycap grid on interior pages. */
+  --backlight-1: rgba(103, 232, 249, 0.14);
+  --backlight-2: rgba(246, 196, 83, 0.07);
+  --keyghost: rgba(130, 149, 165, 0.1);
+  --keyghost-dim: rgba(130, 149, 165, 0.05);
   /* one keycap double-rect (same double-rect language as the Keycap component
      / nav monogram), URL-encoded so '#' never appears raw; used as a mask so
      paint lands only on the keycap outlines. */

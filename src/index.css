@@ -38,14 +38,14 @@ h2 {
 }
 
 h1 {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-size: 3.5rem;
   line-height: 1.1;
   font-weight: 700;
   letter-spacing: -0.015em;
 }
 
 h2 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: 2rem;
   font-weight: 600;
 }
 
@@ -61,6 +61,16 @@ h1,
 h2,
 h3 {
   text-wrap: balance; /* progressive enhancement; ignored by non-supporting engines */
+}
+
+@media (max-width: 639px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.625rem;
+  }
 }
 
 p {
@@ -173,7 +183,7 @@ img {
   top: 0;
   z-index: 10;
   height: 64px;
-  background: rgba(19, 45, 76, 0.97); /* --navy #132D4C at 97% — keep in sync */
+  background: rgba(12, 36, 56, 0.97);
   backdrop-filter: saturate(1.2) blur(6px);
   -webkit-backdrop-filter: saturate(1.2) blur(6px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
@@ -215,7 +225,7 @@ img {
 /* Focus visibility on navy bands — #93C5FD on #132D4C is 7.73:1
    (non-text needs 3:1). */
 .nav :focus-visible, .hero-band :focus-visible, .footer :focus-visible,
-.page-head-band :focus-visible { outline-color: #93C5FD; }
+.page-head-band :focus-visible { outline-color: var(--accent-deep); }
 
 .nav-tabs {
   display: flex;
@@ -527,6 +537,10 @@ main {
   overflow: hidden;
   contain: paint;
 }
+.hero {
+  position: relative;
+  z-index: 2;
+}
 .hero .kicker { color: var(--navy-ink-2); }
 .hero h1, .hero-subhead { color: var(--navy-ink); }
 .hero-band .hero-email-plain { color: var(--navy-ink-2); }
@@ -803,32 +817,19 @@ main {
   }
 }
 
-/* --------------------------------------------------- Backlight Boot (hero) */
-/* The one bold moment: the flat navy band reads as a backlit mechanical
-   keyboard. Two pseudo-elements, both gated on the runtime .js class and both
-   at z-index:-1 inside the band's isolated stacking context, so they paint
-   above the --navy fill but always below the hero content — text contrast is
-   untouched. With JS blocked neither renders (today's flat navy, byte-identical
-   prerendered HTML). ::before is a faint keycap grid that lights under the
-   cursor (the puck is driven by --kx/--ky from enhance.ts, offscreen by
-   default). ::after is a diagonal light blade that sweeps once on load. */
-.js .hero-band::before {
+/* --------------------------------------------------- climbing route (hero) */
+.hero-band::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(240px circle at var(--kx, -999px) var(--ky, -999px),
-      var(--backlight-1), var(--backlight-2) 45%, transparent 70%),
-    linear-gradient(var(--keyghost), var(--keyghost));
-  -webkit-mask-image: var(--keycap-tile);
-  mask-image: var(--keycap-tile);
-  -webkit-mask-size: 56px 56px;
-  mask-size: 56px 56px;
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(105deg, transparent 0 54%, rgba(255, 255, 255, 0.04) 54.2% 54.4%, transparent 54.6%),
+    linear-gradient(75deg, transparent 0 70%, rgba(255, 255, 255, 0.035) 70.2% 70.4%, transparent 70.6%);
 }
+
 .js .hero-band::after {
   content: "";
   position: absolute;
@@ -836,12 +837,119 @@ main {
   bottom: -15%;
   left: 0;
   width: 55%;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
-  opacity: 0; /* invisible at rest; only the one-shot boot sweep reveals it */
+  opacity: 0;
   transform: translateX(-120%) skewX(-12deg);
   background: linear-gradient(105deg, transparent, var(--backlight-1) 35%, var(--backlight-2) 65%, transparent);
   will-change: transform;
+}
+
+.climbing-route {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.climbing-wall-lines span {
+  position: absolute;
+  width: 42%;
+  height: 1px;
+  right: -4%;
+  top: 24%;
+  background: rgba(232, 238, 233, 0.12);
+  transform: rotate(-18deg);
+}
+
+.climbing-wall-lines span:nth-child(2) {
+  width: 48%;
+  top: 51%;
+  right: 4%;
+  transform: rotate(11deg);
+}
+
+.climbing-wall-lines span:nth-child(3) {
+  width: 38%;
+  top: 76%;
+  right: -1%;
+  transform: rotate(-9deg);
+}
+
+.climb-segment {
+  position: absolute;
+  left: var(--segment-left);
+  top: var(--segment-top);
+  width: var(--segment-width);
+  height: 2px;
+  background: rgba(103, 232, 249, 0.48);
+  transform: rotate(var(--segment-rotate));
+  transform-origin: left center;
+}
+
+.climb-hold {
+  position: absolute;
+  left: var(--hold-x);
+  top: var(--hold-y);
+  width: 54px;
+  height: 28px;
+  transform: translate(-50%, -50%) translateY(var(--hold-lift, 0px)) rotate(var(--hold-rotate));
+  border-radius: 58% 42% 52% 48% / 68% 54% 46% 32%;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3), inset 0 -5px 0 rgba(0, 0, 0, 0.22);
+  transition: transform var(--t-hover) var(--ease-out), filter var(--t-hover) ease;
+}
+
+.climb-hold > span {
+  position: absolute;
+  inset: 6px 11px 10px;
+  border-radius: 50%;
+  border-top: 2px solid rgba(255, 255, 255, 0.28);
+}
+
+.climb-hold-cyan { background: var(--accent); }
+.climb-hold-chalk { background: var(--chalk); }
+.climb-hold-gold { background: var(--climb-gold); }
+
+.climb-hold:nth-of-type(2n) {
+  width: 44px;
+  height: 34px;
+  border-radius: 38% 62% 46% 54% / 60% 42% 58% 40%;
+}
+
+.climb-finish-ring {
+  position: absolute;
+  left: 73%;
+  top: 1%;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--chalk);
+  border-radius: 50%;
+  opacity: 0.84;
+}
+
+.climb-finish-ring-right { left: calc(73% + 17px); }
+
+@media (max-width: 899px) {
+  .climbing-route {
+    opacity: 0.28;
+    transform: translateX(8%);
+  }
+
+  .hero { text-shadow: 0 2px 18px var(--navy); }
+}
+
+@media (max-width: 639px) {
+  .climbing-route {
+    opacity: 0.18;
+    transform: translateX(-4%) scale(1.18);
+    transform-origin: right center;
+  }
+
+  .climb-hold {
+    width: 44px;
+    height: 24px;
+  }
 }
 
 /* ------------------------------------------------------------ page heads */
@@ -1112,7 +1220,7 @@ main {
 
 .cta-band h2 {
   margin-bottom: 24px;
-  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  font-size: 1.75rem;
   max-width: 40ch;
   margin-left: auto;
   margin-right: auto;
@@ -1282,24 +1390,70 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .card-grid .card > .project-links:last-child { margin-top: auto; padding-top: 12px; }
 
 /* -------------------------------------------------- progressive enhancement */
-/* All three widgets below are injected by src/enhance.ts at runtime and live
-   OUTSIDE #root — they never appear in the prerendered static HTML, so the
-   no-JS fallback is unchanged. Styles are inert until the nodes exist. */
+/* Runtime enhancements share this section. The progress route is rendered
+   in the nav for a stable no-JS layout; JavaScript only updates its position. */
 
-/* reading-progress rail — a thin accent bar pinned under the sticky nav,
-   scaled by scroll fraction (transform-only, GPU-cheap). */
+/* Reading progress as a climbing route physically attached to the sticky
+   header. The fill and carabiner marker share the same scroll fraction. */
 #progress-rail {
-  position: fixed;
-  top: 64px; /* == nav height */
+  --scroll-progress: 0;
+  --scroll-position: 0%;
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -3px;
+  height: 7px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.route-progress::before,
+.route-progress-fill {
+  content: "";
+  position: absolute;
+  top: 3px;
   left: 0;
   right: 0;
   height: 2px;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  background: linear-gradient(90deg, var(--accent), var(--teal));
-  z-index: 9;
+  border-radius: 2px;
+}
+
+.route-progress::before { background: rgba(169, 186, 196, 0.34); }
+
+.route-progress-fill {
+  background: var(--accent);
+  transform: scaleX(var(--scroll-progress));
+  transform-origin: left center;
   will-change: transform;
-  pointer-events: none;
+}
+
+.route-progress-hold {
+  position: absolute;
+  top: 1px;
+  width: 7px;
+  height: 6px;
+  border-radius: 62% 38% 55% 45%;
+  background: var(--climb-gold);
+  transform: rotate(-18deg);
+}
+
+.route-progress-hold-1 { left: 18%; }
+.route-progress-hold-2 { left: 42%; transform: rotate(14deg); }
+.route-progress-hold-3 { left: 66%; transform: rotate(-7deg); }
+.route-progress-hold-4 { left: 88%; transform: rotate(19deg); }
+
+.route-progress-marker {
+  position: absolute;
+  top: -1px;
+  left: clamp(6px, var(--scroll-position), calc(100% - 6px));
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--accent-deep);
+  border-radius: 50%;
+  background: var(--navy);
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 2px rgba(12, 36, 56, 0.82);
+  will-change: left;
 }
 
 /* reactive keycap cluster — the lift set inline by enhance.ts eases in/out. */
@@ -1497,9 +1651,28 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .js .hero .cta-row .keycap:nth-child(2) { animation-delay: 940ms; }
   .js .hero .cta-row .keycap:nth-child(3) { animation-delay: 1030ms; }
   .js .hero .cta-row .keycap:nth-child(4) { animation-delay: 1120ms; }
+
+  .js .climb-segment {
+    animation: route-draw 420ms var(--ease-out) var(--segment-delay) both;
+  }
+
+  .js .climb-hold {
+    animation: hold-set 320ms var(--ease-pop) var(--hold-delay) backwards;
+  }
 }
 @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes dot-pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes route-draw { from { opacity: 0; scale: 0 1; } to { opacity: 1; scale: 1 1; } }
+@keyframes hold-set {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(8px) rotate(var(--hold-rotate)) scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0) rotate(var(--hold-rotate)) scale(1);
+  }
+}
 
 /* Backlight Boot — the hero "powers on": a diagonal light blade crosses the
    band once, ~250–1550ms, overlapping the tail of the rise-in cascade. */

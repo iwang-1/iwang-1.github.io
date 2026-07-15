@@ -3,12 +3,12 @@
 **Live at <https://iwang-1.github.io/>**
 [![deploy](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml)
 
-![Home page — Midnight Harbor dark theme, navy hero band, keycap nav](docs/home-desktop.png)
+![Home page — Chalk & Current theme with a climbing-route hero and keycap nav](docs/home-desktop.png)
 
 Ivan Wang's personal recruiting site — a multi-page React + TypeScript + Vite
-app ("Midnight Harbor" — a dark-first theme: deep-midnight reading field,
-navy brand bands, near-white ink, system fonts, keycap-styled interactive
-elements) deployed to GitHub Pages at
+app ("Chalk & Current" — graphite reading surfaces, deep-water bands, cyan
+interactions, a full-bleed climbing route, and keycap-styled controls) deployed
+to GitHub Pages at
 <https://iwang-1.github.io/> (user site, so Vite `base: '/'`). No router, no
 chart libraries, no CDN fonts, no trackers.
 
@@ -40,9 +40,9 @@ npm run lint
 
 `npm run verify` requires the Playwright Chromium browser
 (`npx playwright install chromium` once, if it is not already cached). It
-checks every page at 1366x900 and 390x844 (head metadata, nav active state,
-internal links, locked facts, a11y gates, zero console errors) and refreshes
-the per-page screenshots `docs/<page>-desktop.png` / `docs/<page>-mobile.png`;
+checks every page at 1366x900, 390x844, and 320x700 (head metadata, sticky
+route progress, nav active state, internal links, locked facts, a11y gates,
+zero console errors) and refreshes the per-page screenshots in `docs/`;
 the PNG bytes are not deterministic, so commit them when they change
 meaningfully and otherwise `git checkout -- docs` to keep the tree clean.
 

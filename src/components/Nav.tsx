@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { person } from "../content";
 import { Keycap } from "./Keycap";
 
@@ -49,6 +50,35 @@ function Monogram() {
 /** Shared sticky nav; the active tab is set at build time via props — no
  *  route sniffing, no JS behavior at all (plain <a href> everywhere). */
 export function Nav({ active }: { active: ActiveTab }) {
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const rail = progressRef.current;
+    if (!rail) return;
+
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, doc.scrollTop / max)) : 0;
+      rail.style.setProperty("--scroll-progress", String(progress));
+      rail.style.setProperty("--scroll-position", `${progress * 100}%`);
+    };
+    const schedulePaint = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+
+    paint();
+    window.addEventListener("scroll", schedulePaint, { passive: true });
+    window.addEventListener("resize", schedulePaint, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", schedulePaint);
+      window.removeEventListener("resize", schedulePaint);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <>
       <a className="skip-link" href="#main">
@@ -93,6 +123,19 @@ export function Nav({ active }: { active: ActiveTab }) {
               </span>
             </Keycap>
           </nav>
+        </div>
+        <div
+          ref={progressRef}
+          id="progress-rail"
+          className="route-progress"
+          aria-hidden="true"
+        >
+          <span className="route-progress-fill" />
+          <span className="route-progress-hold route-progress-hold-1" />
+          <span className="route-progress-hold route-progress-hold-2" />
+          <span className="route-progress-hold route-progress-hold-3" />
+          <span className="route-progress-hold route-progress-hold-4" />
+          <span className="route-progress-marker" />
         </div>
       </header>
     </>

@@ -1,5 +1,4 @@
-/** ProofChip — flat mono pill with a 6px emerald status dot, carrying exact
- *  verifiable metrics ("101 tests · ~95% cov", "GPA 3.6/4.0", …). */
+/** ProofChip — flat mono pill with a status dot for exact, verified metrics. */
 export function ProofChip({ label, dot = true }: { label: string; dot?: boolean }) {
   return (
     <span className="proof-chip">

@@ -1,12 +1,12 @@
 /** Progressive-enhancement layer — everything here is injected by the bundle
  *  at runtime and lives OUTSIDE #root, so it never touches the prerendered
  *  static HTML. Without JS the site is unchanged and fully usable; with JS it
- *  gains three keyboard-themed touches:
+ *  gains four tactile touches:
  *
- *    1. a reading-progress rail under the sticky nav,
- *    2. a keyboard command palette (g-chords + `?` help overlay) with a
- *       discoverable floating button, and
- *    3. a cursor-reactive keycap cluster in the Home "About" motif.
+ *    1. a keyboard command palette (g-chords + `?` help overlay) with a
+ *       discoverable floating button,
+ *    2. a cursor-reactive keycap cluster in the Home "About" motif, and
+ *    3. cursor-reactive climbing holds in the Home hero.
  *
  *  Motion respects prefers-reduced-motion (the cursor effect is skipped and
  *  the global reduced-motion CSS block strips every transition). Imported
@@ -28,32 +28,6 @@ const SHORTCUTS: Shortcut[] = [
   { second: "p", label: "Go to Projects", href: "/projects/" },
   { second: "r", label: "Open Résumé (PDF)", href: person.resumeUrl },
 ];
-
-// --------------------------------------------------------------- progress rail
-function mountProgressRail(): void {
-  if (document.getElementById("progress-rail")) return;
-  const rail = document.createElement("div");
-  rail.id = "progress-rail";
-  rail.setAttribute("aria-hidden", "true");
-  document.body.appendChild(rail);
-
-  let ticking = false;
-  const paint = () => {
-    ticking = false;
-    const doc = document.documentElement;
-    const max = doc.scrollHeight - doc.clientHeight;
-    const pct = max > 0 ? Math.min(1, Math.max(0, doc.scrollTop / max)) : 0;
-    rail.style.transform = `scaleX(${pct})`;
-  };
-  const onScroll = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(paint);
-  };
-  paint();
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-}
 
 // ----------------------------------------------------------- command palette
 function keycapGlyph(): string {
@@ -292,55 +266,53 @@ function mountReactiveCluster(): void {
   svg.addEventListener("pointerleave", reset);
 }
 
-// -------------------------------------------------- hero cursor backlight
-// The hero band reads as a backlit keyboard: a faint keycap grid (CSS
-// ::before) lights under the pointer. This drives the light "puck" position
-// via --kx/--ky. Guarded off under reduced motion and on touch/no-hover
-// devices; no-op on pages without a .hero-band (Experience/Projects/404).
-function mountHeroBacklight(): void {
+// ------------------------------------------------ reactive climbing route
+function mountReactiveClimbingRoute(): void {
   if (prefersReduced()) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
   if (!window.matchMedia("(hover: hover)").matches) return;
   const band = document.querySelector<HTMLElement>(".hero-band");
   if (!band) return;
+  const holds = Array.from(
+    band.querySelectorAll<HTMLElement>(".climbing-route .climb-hold"),
+  );
+  if (holds.length === 0) return;
 
-  let rect: DOMRect | null = null; // cached; recomputed lazily inside paint
   let ticking = false;
   let lastX = 0;
   let lastY = 0;
 
   const paint = () => {
     ticking = false;
-    if (!rect) rect = band.getBoundingClientRect();
-    band.style.setProperty("--kx", `${lastX - rect.left}px`);
-    band.style.setProperty("--ky", `${lastY - rect.top}px`);
+    for (const hold of holds) {
+      const rect = hold.getBoundingClientRect();
+      const distance = Math.hypot(
+        lastX - (rect.left + rect.width / 2),
+        lastY - (rect.top + rect.height / 2),
+      );
+      const lift = distance < 150 ? 8 * (1 - distance / 150) : 0;
+      hold.style.setProperty("--hold-lift", `${-lift.toFixed(2)}px`);
+    }
   };
-  const onMove = (e: PointerEvent) => {
-    lastX = e.clientX;
-    lastY = e.clientY;
+  const onMove = (event: PointerEvent) => {
+    lastX = event.clientX;
+    lastY = event.clientY;
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(paint);
   };
   const reset = () => {
-    band.style.setProperty("--kx", "-999px");
-    band.style.setProperty("--ky", "-999px");
-  };
-  const invalidate = () => {
-    rect = null;
+    holds.forEach((hold) => hold.style.setProperty("--hold-lift", "0px"));
   };
 
   band.addEventListener("pointermove", onMove);
   band.addEventListener("pointerleave", reset);
-  window.addEventListener("resize", invalidate, { passive: true });
-  window.addEventListener("scroll", invalidate, { passive: true });
 
-  // Inline custom properties are NOT reset by the CSS reduced-motion block, so
-  // if the user flips the preference mid-session, detach and park the puck.
+  // Inline custom properties are not reset by the reduced-motion CSS block.
   window
     .matchMedia("(prefers-reduced-motion: reduce)")
-    .addEventListener("change", (e) => {
-      if (!e.matches) return;
+    .addEventListener("change", (event) => {
+      if (!event.matches) return;
       band.removeEventListener("pointermove", onMove);
       band.removeEventListener("pointerleave", reset);
       reset();
@@ -348,17 +320,15 @@ function mountHeroBacklight(): void {
 }
 
 function init(): void {
-  mountProgressRail();
   mountCommandPalette();
   mountReactiveCluster();
-  mountHeroBacklight();
+  mountReactiveClimbingRoute();
 }
 
 // ES imports are hoisted, so this module evaluates BEFORE the page entry's
 // createRoot(...).render(...). Defer init one frame past a settled DOM so the
-// reactive cluster queries React's rendered nodes, not the prerendered ones
-// React is about to replace. The rail + palette live outside #root and would
-// be safe either way.
+// reactive elements query React's rendered nodes, not the prerendered nodes
+// React is about to replace.
 function boot(): void {
   requestAnimationFrame(init);
 }

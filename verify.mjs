@@ -58,8 +58,8 @@ const PAGES = [
 const VIEWPORTS = [
   { width: 1366, height: 900, name: "desktop" },
   { width: 390, height: 844, name: "mobile" },
-];
   { width: 320, height: 700, name: "narrow" },
+];
 
 mkdirSync("docs", { recursive: true });
 
@@ -210,6 +210,45 @@ async function checkPage(spec, viewport) {
     problems.push(`${tag}: 404 page must not mark any tab aria-current (got ${currentCount})`);
   }
 
+  // The climbing-route progress rail must remain physically attached to the
+  // sticky header after scrolling, with its marker moving along the route.
+  const rail = page.locator("#progress-rail");
+  if ((await rail.count()) !== 1) {
+    problems.push(`${tag}: expected exactly one progress rail inside the nav`);
+  } else {
+    const navContainsRail = await page.locator("header.nav #progress-rail").count();
+    if (navContainsRail !== 1)
+      problems.push(`${tag}: progress rail is not a child of the sticky header`);
+    if (spec.path === "/") {
+      // enhance.ts initializes one animation frame after React settles.
+      await page.waitForTimeout(200);
+      const before = await page.locator(".route-progress-marker").boundingBox();
+      const maxScroll = await page.evaluate(
+        () => document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      );
+      await page.evaluate(
+        (y) => window.scrollTo({ top: y, behavior: "instant" }),
+        Math.min(700, maxScroll),
+      );
+      await page.waitForTimeout(350);
+      const progressValue = await rail.evaluate((element) =>
+        Number(element.style.getPropertyValue("--scroll-progress")),
+      );
+      if (maxScroll > 0 && progressValue <= 0)
+        problems.push(`${tag}: progress value did not update after scroll`);
+      const navBox = await page.locator("header.nav").boundingBox();
+      const railBox = await rail.boundingBox();
+      const after = await page.locator(".route-progress-marker").boundingBox();
+      if (!navBox || Math.abs(navBox.y) > 1)
+        problems.push(`${tag}: sticky nav left the viewport after scroll (y=${navBox?.y})`);
+      if (!navBox || !railBox || Math.abs(railBox.y - (navBox.y + navBox.height - 3)) > 2)
+        problems.push(`${tag}: progress rail detached from sticky nav after scroll`);
+      if (maxScroll > 0 && (!before || !after || after.x <= before.x))
+        problems.push(`${tag}: progress marker did not advance after scroll`);
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    }
+  }
+
   // 5. every same-origin link resolves 200 (résumé PDF included)
   const hrefs = await page.$$eval('a[href^="/"]', (as) => as.map((a) => a.getAttribute("href")));
   for (const href of new Set(hrefs)) {
@@ -228,11 +267,12 @@ async function checkPage(spec, viewport) {
     "/404.html": ".not-found h1",
   }[spec.path];
   if (alignSel) {
-    const brand = await page.locator(".nav-brand").boundingBox();
+    const navAnchor = viewport.width <= 359 ? ".nav-tabs" : ".nav-brand";
+    const brand = await page.locator(navAnchor).boundingBox();
     const band = await page.locator(alignSel).first().boundingBox();
     if (!brand || !band || Math.abs(brand.x - band.x) > 1)
       problems.push(
-        `${tag}: ${alignSel} left edge (${band?.x}) != nav brand left edge (${brand?.x}) — .container padding lost`,
+        `${tag}: ${alignSel} left edge (${band?.x}) != nav anchor left edge (${brand?.x}) — .container padding lost`,
       );
   }
 

@@ -15,6 +15,7 @@ import {
 } from "../../content";
 import { EduCard } from "../../components/cards";
 import { Chip, ProofChip } from "../../components/chips";
+import { ClimbingRoute } from "../../components/ClimbingRoute";
 import { Footer } from "../../components/Footer";
 import { Keycap } from "../../components/Keycap";
 import { KeycapCluster } from "../../components/KeycapCluster";
@@ -29,6 +30,7 @@ function Home() {
       <Nav active="home" />
       <main id="main">
         <section className="hero-band">
+          <ClimbingRoute />
           <div className="hero container">
             <p className="kicker">{hero.kicker}</p>
             <h1>{hero.headline}</h1>
