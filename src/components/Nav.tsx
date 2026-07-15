@@ -1,13 +1,12 @@
 import { useEffect, useRef } from "react";
-import { person } from "../content";
-import { Keycap } from "./Keycap";
 
 export type ActiveTab = "home" | "experience" | "projects" | null;
 
-const TABS: { key: ActiveTab; label: string; href: string }[] = [
+const TABS: { key: Exclude<ActiveTab, null> | "contact"; label: string; href: string }[] = [
   { key: "home", label: "Home", href: "/" },
   { key: "experience", label: "Experience", href: "/experience/" },
   { key: "projects", label: "Projects", href: "/projects/" },
+  { key: "contact", label: "Contact", href: "/#contact" },
 ];
 
 /** IW monogram — a single inline-SVG keycap with a serif "IW". */
@@ -107,21 +106,6 @@ export function Nav({ active }: { active: ActiveTab }) {
                 {tab.label}
               </a>
             ))}
-            {/* WCAG 2.5.3 Label in Name: the accessible name must contain the
-                visible label at every breakpoint — "CV" below 640px, "Résumé"
-                above — so both live in the aria-label. Do NOT drop it: with
-                the spans hidden the name would compute as empty on mobile. */}
-            <Keycap
-              href={person.resumeUrl}
-              variant="primary"
-              external
-              ariaLabel="CV — Résumé (PDF)"
-            >
-              <span className="nav-resume-full">Résumé</span>
-              <span className="nav-resume-compact" aria-hidden="true">
-                CV
-              </span>
-            </Keycap>
           </nav>
         </div>
         <div

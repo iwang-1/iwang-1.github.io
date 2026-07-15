@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-import type { Education, Project, Role } from "../content";
+import { contact, person, type Education, type Project, type Role } from "../content";
 import { Chip, ProofChip } from "./chips";
-import { ExternalLink } from "./Keycap";
+import { ExternalLink, Keycap } from "./Keycap";
 import { Reveal } from "./Reveal";
 
 /** RoleCard — surfaced timeline card (Experience alternating timeline);
@@ -94,13 +93,36 @@ export function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-/** CtaBand — end-of-page call-to-action band (scroll-reveals as a unit). */
-export function CtaBand({ heading, children }: { heading: string; children: ReactNode }) {
+/** Shared recruiter-facing contact band used at the end of every primary page. */
+export function ContactBand({
+  id,
+  heading = contact.heading,
+  body = contact.body,
+}: {
+  id?: string;
+  heading?: string;
+  body?: string;
+}) {
   return (
-    <section className="container">
-      <Reveal className="cta-band">
-        <h2>{heading}</h2>
-        <div className="cta-row">{children}</div>
+    <section className="contact-band" id={id}>
+      <Reveal className="container contact-layout">
+        <div className="contact-copy">
+          <p className="kicker">{contact.kicker}</p>
+          <h2>{heading}</h2>
+          <p>{body}</p>
+        </div>
+        <div className="contact-actions">
+          <Keycap href={`mailto:${person.email}`} variant="primary">
+            Email me
+          </Keycap>
+          <Keycap href={person.linkedin} external>
+            LinkedIn
+          </Keycap>
+          <Keycap href={person.github} external>
+            GitHub
+          </Keycap>
+          <span className="mono contact-email">{person.email}</span>
+        </div>
       </Reveal>
     </section>
   );

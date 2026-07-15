@@ -9,11 +9,10 @@ import {
   featuredSystems,
   hero,
   person,
-  proofPoints,
   skills,
   teasers,
 } from "../../content";
-import { EduCard } from "../../components/cards";
+import { ContactBand, EduCard } from "../../components/cards";
 import { Chip, ProofChip } from "../../components/chips";
 import { ClimbingRoute } from "../../components/ClimbingRoute";
 import { Footer } from "../../components/Footer";
@@ -28,46 +27,34 @@ function Home() {
   return (
     <>
       <Nav active="home" />
-      <main id="main">
+      <main id="main" className="main-with-contact">
         <section className="hero-band">
           <ClimbingRoute />
           <div className="hero container">
             <p className="kicker">{hero.kicker}</p>
             <h1>{hero.headline}</h1>
             <p className="hero-subhead">{hero.subhead}</p>
+            <p className="hero-thesis">{hero.thesis}</p>
             <p className="hero-availability">
               <ProofChip label={hero.availability} />
             </p>
-            {/* The shared nav already carries this page's single accent keycap
-                (Résumé) — "exactly ONE accent-filled keycap per page" is a
-                binding restraint rule, so the hero caps stay default. */}
             <div className="cta-row">
-              <Keycap href={person.resumeUrl} external>
-                Résumé (PDF)
+              <Keycap href={`mailto:${person.email}`} variant="primary">
+                Email me
               </Keycap>
+              <Keycap href="/experience/">Experience</Keycap>
               <Keycap href={person.github} external>
                 GitHub
               </Keycap>
               <Keycap href={person.linkedin} external>
                 LinkedIn
               </Keycap>
-              <Keycap href={`mailto:${person.email}`}>Email</Keycap>
             </div>
             <p className="hero-email-plain">{person.email}</p>
           </div>
         </section>
-        <section className="proof-band" aria-label="Selected evidence">
-          <dl className="container proof-rail">
-            {proofPoints.map((point) => (
-              <div key={point.label} className="proof-point">
-                <dd>{point.value}</dd>
-                <dt>{point.label}</dt>
-              </div>
-            ))}
-          </dl>
-        </section>
 
-        <Section id="systems" title="Systems work">
+        <Section id="systems" title="Featured engineering work">
           <div className="system-list">
             {featuredSystems.map((project) => (
               <SystemFeature key={project.id} project={project} />
@@ -145,6 +132,8 @@ function Home() {
             ))}
           </div>
         </Section>
+
+        <ContactBand id="contact" />
       </main>
       <Footer />
     </>

@@ -11,8 +11,6 @@
  *  Motion respects prefers-reduced-motion (the cursor effect is skipped and
  *  the global reduced-motion CSS block strips every transition). Imported
  *  after js-flag by every page entry; guarded so it runs once per document. */
-import { person } from "./content";
-
 const prefersReduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -26,7 +24,7 @@ const SHORTCUTS: Shortcut[] = [
   { second: "h", label: "Go to Home", href: "/" },
   { second: "e", label: "Go to Experience", href: "/experience/" },
   { second: "p", label: "Go to Projects", href: "/projects/" },
-  { second: "r", label: "Open Résumé (PDF)", href: person.resumeUrl },
+  { second: "c", label: "Contact Ivan", href: "/#contact" },
 ];
 
 // ----------------------------------------------------------- command palette
@@ -202,8 +200,7 @@ function mountCommandPalette(): void {
       resetChord();
       if (match) {
         e.preventDefault();
-        if (match.href.endsWith(".pdf")) window.open(match.href, "_blank", "noopener");
-        else window.location.assign(match.href);
+        window.location.assign(match.href);
       }
       return;
     }

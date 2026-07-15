@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import "../../js-flag";
 import "../../enhance";
 import "../../index.css";
-import { person } from "../../content";
 import { Footer } from "../../components/Footer";
 import { Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
@@ -22,9 +21,7 @@ function NotFound() {
             <Keycap href="/">Home</Keycap>
             <Keycap href="/experience/">Experience</Keycap>
             <Keycap href="/projects/">Projects</Keycap>
-            <Keycap href={person.resumeUrl} external>
-              Résumé (PDF)
-            </Keycap>
+            <Keycap href="/#contact">Contact</Keycap>
           </div>
         </div>
       </main>

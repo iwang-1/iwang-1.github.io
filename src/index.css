@@ -233,24 +233,12 @@ img {
   gap: 8px;
 }
 
-.nav-resume-compact {
-  display: none;
-}
-
 /* Mobile nav: the .nav-tabs .keycap selectors out-specify the base .keycap
    rule (which appears LATER in this file — a bare `.keycap` override here
    would silently lose the cascade). */
 @media (max-width: 639px) {
   .nav-wordmark {
     display: none;
-  }
-
-  .nav-resume-full {
-    display: none;
-  }
-
-  .nav-resume-compact {
-    display: inline;
   }
 
   .nav-tabs {
@@ -343,7 +331,7 @@ img {
   box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--border-interactive);
 }
 
-/* Exactly ONE accent-filled keycap per page: the Résumé CTA. */
+/* Primary command keycap, used for the direct email action. */
 .keycap-primary {
   background: var(--accent);
   border-color: var(--accent-deep);
@@ -504,7 +492,16 @@ main {
 .hero-subhead {
   font-size: 1.125rem;
   max-width: 58ch;
+  margin-bottom: 16px;
+}
+
+.hero-thesis {
+  max-width: 54ch;
   margin-bottom: 24px;
+  color: var(--navy-ink);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-style: italic;
 }
 
 .hero-availability {
@@ -544,84 +541,6 @@ main {
 .hero .kicker { color: var(--navy-ink-2); }
 .hero h1, .hero-subhead { color: var(--navy-ink); }
 .hero-band .hero-email-plain { color: var(--navy-ink-2); }
-
-/* --------------------------------------------------------- evidence rail */
-.proof-band {
-  background: color-mix(in srgb, var(--surface) 68%, var(--bg));
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.proof-rail {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.proof-point {
-  min-width: 0;
-  padding: 0 20px;
-}
-
-.proof-point:first-child {
-  padding-left: 0;
-}
-
-.proof-point + .proof-point {
-  border-left: 1px solid var(--border);
-}
-
-.proof-point dd {
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.15;
-}
-
-.proof-point dt {
-  margin-top: 4px;
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-@media (max-width: 767px) {
-  .proof-rail {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 16px;
-  }
-
-  .proof-point,
-  .proof-point:first-child {
-    padding: 0 12px;
-  }
-
-  .proof-point:nth-child(odd) {
-    padding-left: 0;
-    border-left: 0;
-  }
-}
-
-@media (max-width: 359px) {
-  .proof-rail {
-    grid-template-columns: 1fr;
-  }
-
-  .proof-point,
-  .proof-point:first-child {
-    padding: 0;
-    border-left: 0;
-  }
-
-  .proof-point + .proof-point {
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-}
 
 /* --------------------------------------------------------- system feature */
 .system-list {
@@ -853,8 +772,33 @@ main {
   pointer-events: none;
 }
 
+.climbing-route::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(90deg, var(--navy) 0 43%, rgba(12, 36, 56, 0.92) 51%, transparent 72%);
+}
+
+.climbing-wall-panel {
+  position: absolute;
+  z-index: 0;
+  top: -7%;
+  right: -4%;
+  width: 54%;
+  height: 114%;
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%, 8% 57%);
+  background:
+    linear-gradient(108deg, transparent 0 46%, rgba(255, 255, 255, 0.045) 46.2% 46.5%, transparent 46.7%),
+    linear-gradient(72deg, transparent 0 68%, rgba(255, 255, 255, 0.035) 68.2% 68.5%, transparent 68.7%),
+    #173246;
+  border-left: 1px solid rgba(232, 238, 233, 0.22);
+  box-shadow: inset 24px 0 48px rgba(0, 0, 0, 0.18);
+}
+
 .climbing-wall-lines span {
   position: absolute;
+  z-index: 1;
   width: 42%;
   height: 1px;
   right: -4%;
@@ -877,13 +821,59 @@ main {
   transform: rotate(-9deg);
 }
 
+.climbing-wall-bolts {
+  position: absolute;
+  z-index: 1;
+  top: 9%;
+  right: 2%;
+  width: 42%;
+  height: 74%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+.climbing-wall-bolts span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(169, 186, 196, 0.38);
+  box-shadow: inset 0 0 0 1px rgba(9, 13, 18, 0.5);
+}
+
+.climb-route-tag {
+  position: absolute;
+  z-index: 3;
+  right: 3%;
+  bottom: 28px;
+  color: var(--navy-ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.climb-mat {
+  position: absolute;
+  z-index: 2;
+  right: -2%;
+  bottom: -5px;
+  width: 49%;
+  height: 22px;
+  border: 1px solid rgba(232, 238, 233, 0.2);
+  border-radius: 3px 3px 0 0;
+  background: #24394a;
+  box-shadow: inset 0 5px 0 rgba(255, 255, 255, 0.035);
+}
+
 .climb-segment {
   position: absolute;
   left: var(--segment-left);
   top: var(--segment-top);
   width: var(--segment-width);
+  z-index: 2;
   height: 2px;
-  background: rgba(103, 232, 249, 0.48);
+  background: repeating-linear-gradient(90deg, rgba(103, 232, 249, 0.5) 0 6px, transparent 6px 11px);
   transform: rotate(var(--segment-rotate));
   transform-origin: left center;
 }
@@ -898,6 +888,7 @@ main {
   border-radius: 58% 42% 52% 48% / 68% 54% 46% 32%;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3), inset 0 -5px 0 rgba(0, 0, 0, 0.22);
   transition: transform var(--t-hover) var(--ease-out), filter var(--t-hover) ease;
+  z-index: 3;
 }
 
 .climb-hold > span {
@@ -907,32 +898,50 @@ main {
   border-top: 2px solid rgba(255, 255, 255, 0.28);
 }
 
-.climb-hold-cyan { background: var(--accent); }
+.climb-hold-route { background: var(--accent); }
 .climb-hold-chalk { background: var(--chalk); }
 .climb-hold-gold { background: var(--climb-gold); }
 
-.climb-hold:nth-of-type(2n) {
+.climb-hold-edge {
   width: 44px;
-  height: 34px;
-  border-radius: 38% 62% 46% 54% / 60% 42% 58% 40%;
+  height: 22px;
+  border-radius: 35% 65% 42% 58% / 66% 44% 56% 34%;
 }
 
-.climb-finish-ring {
+.climb-hold-start {
+  width: 48px;
+  height: 32px;
+}
+
+.climb-hold-top {
+  box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.2), 0 8px 12px rgba(0, 0, 0, 0.3), inset 0 -5px 0 rgba(0, 0, 0, 0.22);
+}
+
+.climb-hold-off-route {
+  width: 30px;
+  height: 17px;
+  opacity: 0.5;
+  filter: saturate(0.7);
+}
+
+.climb-label {
   position: absolute;
-  left: 73%;
-  top: 1%;
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--chalk);
-  border-radius: 50%;
-  opacity: 0.84;
+  z-index: 3;
+  color: var(--navy-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  padding: 2px 5px;
+  border: 1px solid rgba(232, 238, 233, 0.36);
+  border-radius: 3px;
+  background: rgba(12, 36, 56, 0.88);
 }
 
-.climb-finish-ring-right { left: calc(73% + 17px); }
+.climb-label-start { left: 84%; top: 89%; }
+.climb-label-top { left: 79%; top: 3%; }
 
 @media (max-width: 899px) {
   .climbing-route {
-    opacity: 0.28;
+    opacity: 0.56;
     transform: translateX(8%);
   }
 
@@ -941,14 +950,23 @@ main {
 
 @media (max-width: 639px) {
   .climbing-route {
-    opacity: 0.18;
-    transform: translateX(-4%) scale(1.18);
+    opacity: 0.38;
+    transform: translateX(3%) scale(1.08);
     transform-origin: right center;
   }
 
   .climb-hold {
     width: 44px;
     height: 24px;
+  }
+
+  .climb-hold-off-route {
+    width: 25px;
+    height: 14px;
+  }
+
+  .climb-route-tag {
+    display: none;
   }
 }
 
@@ -1207,28 +1225,56 @@ main {
   font-size: 0.9375rem;
 }
 
-/* -------------------------------------------------------------- CTA band */
-.cta-band {
+/* ---------------------------------------------------------- contact band */
+.contact-band {
   margin-top: 96px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow-card);
-  padding: 48px 32px;
-  text-align: center;
+  background: color-mix(in srgb, var(--surface) 78%, var(--navy));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
-.cta-band h2 {
-  margin-bottom: 24px;
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 64px;
+  align-items: center;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+.contact-copy .kicker {
+  margin-bottom: 12px;
+}
+
+.contact-copy h2 {
+  margin-bottom: 16px;
   font-size: 1.75rem;
-  max-width: 40ch;
-  margin-left: auto;
-  margin-right: auto;
-  text-wrap: balance;
 }
 
-.cta-band .cta-row {
-  justify-content: center;
+.contact-copy p:last-child {
+  margin-bottom: 0;
+  color: var(--ink-2);
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.contact-email {
+  width: 100%;
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+}
+
+.main-with-contact {
+  padding-bottom: 0;
+}
+
+.main-with-contact + .footer {
+  margin-top: 0;
 }
 
 /* Standalone text links used as actions (CTA bands, card .project-links):
@@ -1243,9 +1289,15 @@ main {
 }
 
 @media (max-width: 767px) {
-  .cta-band {
+  .contact-band {
     margin-top: 64px;
-    padding: 32px 20px;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 48px;
+    padding-bottom: 48px;
   }
 }
 
@@ -1625,6 +1677,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .js .hero > *:nth-child(4) { animation-delay: 210ms; }
   .js .hero > *:nth-child(5) { animation-delay: 280ms; }
   .js .hero > *:nth-child(6) { animation-delay: 350ms; }
+  .js .hero > *:nth-child(7) { animation-delay: 420ms; }
   .js .page-head > h1 { animation: rise-in 500ms var(--ease-out) both; }
   .js .page-head > .page-dek { animation: rise-in 500ms var(--ease-out) 80ms both; }
 
@@ -1656,7 +1709,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     animation: route-draw 420ms var(--ease-out) var(--segment-delay) both;
   }
 
-  .js .climb-hold {
+  .js .climb-hold-route {
     animation: hold-set 320ms var(--ease-pop) var(--hold-delay) backwards;
   }
 }

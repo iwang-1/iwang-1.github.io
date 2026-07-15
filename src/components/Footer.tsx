@@ -15,9 +15,6 @@ export function Footer() {
           <Keycap href={person.linkedin} external>
             LinkedIn
           </Keycap>
-          <Keycap href={person.resumeUrl} external>
-            Résumé (PDF)
-          </Keycap>
           <Keycap href="/#education">Education</Keycap>
           <span className="mono footer-email">{person.email}</span>
         </div>

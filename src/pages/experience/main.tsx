@@ -3,10 +3,9 @@ import { createRoot } from "react-dom/client";
 import "../../js-flag";
 import "../../enhance";
 import "../../index.css";
-import { communityRoles, engineeringRoles, person } from "../../content";
-import { CtaBand } from "../../components/cards";
+import { communityRoles, engineeringRoles } from "../../content";
+import { ContactBand } from "../../components/cards";
 import { Footer } from "../../components/Footer";
-import { Keycap } from "../../components/Keycap";
 import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
 import { Timeline, type TimelineEntry } from "../../components/Timeline";
@@ -24,13 +23,13 @@ function Experience() {
   return (
     <>
       <Nav active="experience" />
-      <main id="main">
+      <main id="main" className="main-with-contact">
         <div className="page-head-band">
           <div className="page-head container">
             <h1>Experience</h1>
             <p className="page-dek">
-              Four engineering internships and three community &amp; teaching roles — the complete
-              list.
+              Production engineering across AWS, backend and data systems, research, and technical
+              leadership.
             </p>
           </div>
         </div>
@@ -39,20 +38,7 @@ function Experience() {
           <Timeline entries={entries} />
         </Section>
 
-        {/* Nav already carries the page's single accent keycap (Résumé), so
-            the band keycap stays default — "exactly ONE accent cap per page"
-            is a binding restraint rule. */}
-        <CtaBand heading="Want the one-pager?">
-          <Keycap href={person.resumeUrl} external>
-            Résumé (PDF)
-          </Keycap>
-          <a className="cta-text-link" href="/projects/">
-            See the projects{" "}
-            <span className="arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
-        </CtaBand>
+        <ContactBand heading="Looking for a systems-minded new-grad engineer?" />
       </main>
       <Footer />
     </>

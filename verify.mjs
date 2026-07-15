@@ -7,7 +7,7 @@
 //
 //   npm run build && npm run verify
 import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { chromium } from "playwright";
 
 const PORT = 4173;
@@ -21,8 +21,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
-    facts: ["May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors", "1,400"],
-    absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000"],
+    facts: ["May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors", "2.9 million"],
+    absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000", "1,400", "2,640", "Résumé"],
   },
   {
     path: "/experience/",
@@ -32,7 +32,7 @@ const PAGES = [
     noindex: false,
     activeTab: "/experience/",
     facts: ["7 agent-migrated tests", "3,000+ students", "50,000+ records"],
-    absent: ["Hong Kong", "1M+ customers"],
+    absent: ["Hong Kong", "1M+ customers", "4 upstream PRs", "Résumé"],
   },
   {
     path: "/projects/",
@@ -41,8 +41,8 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/projects/",
     noindex: false,
     activeTab: "/projects/",
-    facts: ["Unsupervised Domain Adaptation", "Four-person research project", "under review", "This site"],
-    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map", "74.2%", "67.7%", "95%"],
+    facts: ["Unsupervised Domain Adaptation", "Four-person research project", "This site", "2.9 million"],
+    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map", "74.2%", "67.7%", "95%", "1,400", "2,640", "4 upstream PRs", "Résumé"],
   },
   {
     path: "/404.html",
@@ -52,6 +52,7 @@ const PAGES = [
     noindex: true,
     activeTab: null,
     facts: [],
+    absent: ["Résumé"],
   },
 ];
 
@@ -112,6 +113,8 @@ for (const f of [
   if (/<html[^>]*class="[^"]*\bjs\b/.test(html))
     problems.push(`${f}: .js class baked into static HTML — content would hide without the bundle`);
 }
+if (existsSync("dist/Ivan-Wang-Resume.pdf"))
+  problems.push("dist: stale public résumé PDF must not be deployed");
 
 async function linkOk(href) {
   if (checkedLinks.has(href)) return checkedLinks.get(href);
@@ -188,14 +191,12 @@ async function checkPage(spec, viewport) {
   }
 
   // 4. nav structure + active tab
-  const tabs = await page
-    .locator('nav[aria-label="Primary"] > a:not([href="/Ivan-Wang-Resume.pdf"])')
+  const tabs = await page.locator('nav[aria-label="Primary"] > a').count();
+  if (tabs !== 4) problems.push(`${tag}: expected exactly 4 nav tabs, got ${tabs}`);
+  const contactTab = await page
+    .locator('nav[aria-label="Primary"] a[href="/#contact"]')
     .count();
-  if (tabs !== 3) problems.push(`${tag}: expected exactly 3 nav tabs, got ${tabs}`);
-  const resume = await page
-    .locator('nav[aria-label="Primary"] a[href="/Ivan-Wang-Resume.pdf"]')
-    .count();
-  if (resume !== 1) problems.push(`${tag}: expected 1 Résumé keycap in nav, got ${resume}`);
+  if (contactTab !== 1) problems.push(`${tag}: expected one Contact tab, got ${contactTab}`);
   const current = page.locator('a[aria-current="page"]');
   const currentCount = await current.count();
   if (spec.activeTab) {
@@ -287,6 +288,14 @@ async function checkPage(spec, viewport) {
     const html = await page.content();
     if (/hong\s?kong/i.test(html))
       problems.push(`${tag}: "Hong Kong" present in page HTML (JSON-LD?)`);
+
+    const routeHolds = await page.locator(".climb-hold-route").count();
+    const secondaryHolds = await page.locator(".climb-hold-off-route").count();
+    if (routeHolds < 8 || secondaryHolds < 6)
+      problems.push(`${tag}: climbing wall lacks a complete route (${routeHolds}/${secondaryHolds})`);
+    for (const label of ["START", "TOP", "BOULDER / SET 01"])
+      if (!(await page.locator(".climbing-route", { hasText: label }).count()))
+        problems.push(`${tag}: climbing route label missing: ${label}`);
   }
   if (spec.path === "/experience/") {
     // timeline structural gate: 7 role cards; alternating L/R on desktop,
@@ -312,30 +321,9 @@ async function checkPage(spec, viewport) {
     if (!/community & teaching/i.test(label))
       problems.push(`${tag}: Community & Teaching spine label missing`);
   }
-  if (spec.path === "/projects/") {
-    // "under review" must live inside the lambeq card, and "merged" must stay
-    // >200 rendered characters away from "lambeq".
-    const lambeqCard = await page
-      .locator(".card", { hasText: "lambeq" })
-      .first()
-      .innerText()
-      .catch(() => "");
-    if (!lambeqCard.toLowerCase().includes("under review"))
-      problems.push(`${tag}: "under review" not inside the lambeq card`);
-    if (/merged/i.test(lambeqCard)) problems.push(`${tag}: "merged" inside the lambeq card`);
-    const flat = bodyText.replace(/\s+/g, " ");
-    const mergedIdx = [...flat.matchAll(/merged/gi)].map((m) => m.index);
-    const lambeqIdx = [...flat.matchAll(/lambeq/gi)].map((m) => m.index);
-    for (const i of mergedIdx)
-      for (const j of lambeqIdx)
-        if (Math.abs(i - j) <= 200)
-          problems.push(`${tag}: "merged" within 200 rendered chars of "lambeq" (${i}/${j})`);
-  }
   if (spec.path === "/404.html") {
-    for (const href of ["/", "/experience/", "/projects/"])
+    for (const href of ["/", "/experience/", "/projects/", "/#contact"])
       if (!hrefs.includes(href)) problems.push(`${tag}: 404 recovery link missing: ${href}`);
-    if (!hrefs.some((h) => h === "/Ivan-Wang-Resume.pdf"))
-      problems.push(`${tag}: 404 résumé link missing`);
   }
 
   // footer contact links + mailto on every page
@@ -345,8 +333,12 @@ async function checkPage(spec, viewport) {
   }
   if ((await page.locator('a[href^="mailto:ivanwang8989@gmail.com"]').count()) === 0)
     problems.push(`${tag}: mailto link missing`);
-  if ((await page.locator('a[href="/Ivan-Wang-Resume.pdf"]').count()) === 0)
-    problems.push(`${tag}: resume PDF link missing`);
+  if ((await page.locator('a[href*="Ivan-Wang-Resume"], a[href$=".pdf"]').count()) !== 0)
+    problems.push(`${tag}: public résumé/PDF link must not be present`);
+  if (spec.path !== "/404.html") {
+    const contactBands = await page.locator(".contact-band").count();
+    if (contactBands !== 1) problems.push(`${tag}: expected one contact band, got ${contactBands}`);
+  }
 
   // reveal gate: full scroll must leave no .reveal without .is-in
   // (instant scrolls — html has scroll-behavior: smooth, and an animated

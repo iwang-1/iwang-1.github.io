@@ -15,21 +15,18 @@ export const person = {
   github: "https://github.com/iwang-1",
   linkedin: "https://www.linkedin.com/in/ivanwang1",
   email: "ivanwang8989@gmail.com",
-  // NOTE: the hosted PDF includes Ivan's phone number — his call whether that
-  // stays on a public, indexed site. The site text itself never shows it.
-  resumeUrl: "/Ivan-Wang-Resume.pdf",
 };
 
 // ---------------------------------------------------------------------------
 // Home — hero, About.
 
 export const hero = {
-  kicker: "BACKEND · DISTRIBUTED SYSTEMS · ML/NLP",
+  kicker: "SOFTWARE ENGINEER · BACKEND / DISTRIBUTED SYSTEMS",
   headline: "Ivan Wang",
   subhead:
-    "Software engineer building correctness-focused backend and distributed systems. AWS SDE intern and UMD CS B.S./M.S. candidate, graduating May 2027.",
+    "AWS SDE intern and UMD CS B.S./M.S. candidate building backend and distributed systems where correctness, reliability, and performance matter.",
   thesis: "I build software the way I build keyboards: carefully, end to end.",
-  availability: "Seeking new-grad SWE roles · available Summer 2027",
+  availability: "Seeking Summer 2027 new-grad software engineering roles",
 };
 
 // About — ≤120 words, first person; max ONE keyboard/climbing metaphor on the
@@ -42,18 +39,6 @@ export const about = {
   p2After: " ship with deterministic tests, reproducible measurements, and explicit limitations.",
   p3: "Away from a terminal I'm usually on a climbing wall. As Secretary of the UMD Climbing Club I organize 8 trips a semester and helped grow attendance 30%. The rest of my tinkering budget goes to building mechanical keyboards and custom PCs. Different materials, same habit: understand the whole system, then make it solid.",
 };
-
-export interface ProofPoint {
-  value: string;
-  label: string;
-}
-
-export const proofPoints: ProofPoint[] = [
-  { value: "AWS", label: "SDE intern · Summer 2026" },
-  { value: "1,400", label: "fault scenarios · zero violations" },
-  { value: "2,640", label: "crash executions · zero acknowledged-write loss" },
-  { value: "4", label: "pull requests merged upstream" },
-];
 
 export interface FeaturedSystem {
   id: string;
@@ -76,16 +61,16 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A three-node Raft key-value store built from scratch with PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, and a gRPC runtime.",
     proof:
-      "A deterministic 200-seed soak drove 1,400 partition, crash, loss, delay, and snapshot scenarios through 2,914,245 client operations with zero safety or linearizability violations.",
+      "A deterministic stress harness exercised partitions, crashes, message loss, delays, and snapshots across 2.9 million client operations with zero safety or linearizability violations.",
     caveat:
-      "The harness found and fixed a checker-precision bug; it found zero consensus bugs. Production snapshot scheduling and chunked streaming remain future work.",
+      "The harness also exposed and fixed a checker-precision bug. Production snapshot scheduling and chunked streaming remain future work.",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     chips: ["Go", "Raft", "gRPC", "Porcupine", "deterministic simulation"],
     diagram: "raft",
     metrics: [
       { value: "272 w/s", label: "durable writes · c=8" },
       { value: "41 ms", label: "p99 latency · c=8" },
-      { value: "2,914,245", label: "client operations checked" },
+      { value: "2.9M", label: "client operations checked" },
     ],
   },
   {
@@ -95,7 +80,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "An embeddable LSM-tree storage engine with a CRC-framed WAL, group commit, memtables, block-based SSTables, bloom filters, and size-tiered compaction — with unsafe Rust forbidden.",
     proof:
-      "Its fault-injecting storage layer simulated 330 crash points across 2,640 executions plus 160 property-based schedules, with zero acknowledged-write loss.",
+      "Fault-injection and property-based tests verified that acknowledged writes survive simulated crashes.",
     caveat:
       "The ~29x group-commit result is WAL-bound. Synchronous compaction is intentionally disclosed and limits full-engine throughput.",
     repoHref: "https://github.com/iwang-1/accretion-db",
@@ -104,7 +89,7 @@ export const featuredSystems: FeaturedSystem[] = [
     metrics: [
       { value: "~29x", label: "WAL-bound group commit" },
       { value: "878 µs", label: "fdatasync p50" },
-      { value: "2,640", label: "crash executions" },
+      { value: "0", label: "unsafe Rust blocks" },
     ],
   },
 ];
@@ -215,17 +200,18 @@ export const teasers: Teaser[] = [
     proofChips: ["PyTorch", "public research artifact"],
   },
   {
+    title: "Quantum NLP research",
+    body: "A four-person open-source research artifact comparing optimizer and ansatz variants in exact noiseless simulation.",
+    href: "/projects/#fire-qnlp",
+    linkText: "See the project",
+    proofChips: ["Qiskit", "DisCoPy", "pytket"],
+  },
+  {
     title: "This portfolio",
     body: "A multi-page React and TypeScript site with static prerendering, no-JS fallbacks, factual guardrails, and Playwright verification.",
     href: "/projects/#this-site",
     linkText: "See the build details",
     proofChips: ["React", "Playwright"],
-  },
-  {
-    title: "Open source",
-    body: "Four pull requests merged into a UMD Observatory data archive, plus an open upstream PR under review at Quantinuum.",
-    href: "/projects/#open-source",
-    linkText: "See the contribution evidence",
   },
 ];
 
@@ -264,9 +250,9 @@ export const engineeringRoles: Role[] = [
     bullets: [
       "Shipped a web app serving 50,000+ records with REST APIs and real-time search/filter for researchers.",
       "Built a Python ETL pipeline for legacy CCD data with ingestion, normalization, schema validation, deduplication, and scheduled updates.",
-      "Cut pipeline runtime by 75%, optimized SQL and API query paths, and landed four pull requests in the upstream open-source archive.",
+      "Cut pipeline runtime by 75% by optimizing SQL and API query paths.",
     ],
-    chips: ["50,000+ records", "−75% pipeline runtime", "4 upstream PRs"],
+    chips: ["50,000+ records", "−75% pipeline runtime"],
   },
   {
     role: "Quantum Machine Learning Researcher",
@@ -383,41 +369,14 @@ export const projects: Project[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Open source — two SEPARATE cards, structurally guaranteeing the wording
-// locks. Card A carries the site's ONLY contributed-to-an-open-source-project
-// claim.
-
-export interface OpenSourceCard {
-  title: string;
-  body: string;
-  href: string;
-  linkText: string;
-}
-
-export const ossCardA: OpenSourceCard = {
-  title: "Merged upstream",
-  body: "Contributed to an open source project: 4 merged pull requests to warnerem/CCD-data-archive — a Python/Flask/SQLite archive of UMD Observatory CCD astronomy data.",
-  href: "https://github.com/warnerem/CCD-data-archive/pulls?q=is%3Apr+author%3Aiwang-1+is%3Amerged",
-  linkText: "View the pull requests on GitHub",
-};
-
-// Framing lock (and spacing, deliberately verbose): the card below is an OPEN
-// pull request that is still under review upstream. Nothing in it — title,
-// body, or link label — may ever describe it with the past-tense m-word that
-// Card A uses, and check-facts.mjs enforces a 200-character quarantine radius
-// between that word and this project's name in every scanned file AND in the
-// rendered page text. This comment doubles as the required separation
-// distance inside this file; the two cards render as separate cards with the
-// same guarantee. Keep it that way.
-export const ossCardB: OpenSourceCard = {
-  title: "Under review upstream",
-  body: "Open pull request under review: Quantinuum/lambeq #259 — LAMBEQ_MODELS_URL override.",
-  href: "https://github.com/Quantinuum/lambeq/pull/259",
-  linkText: "View the pull request on GitHub",
-};
-
-// ---------------------------------------------------------------------------
 // Shared chrome.
+
+export const contact = {
+  kicker: "OPEN TO SUMMER 2027 NEW-GRAD ROLES",
+  heading: "Let's talk about building reliable software.",
+  body:
+    "I'm recruiting for software engineering roles, especially on backend, infrastructure, storage, and distributed systems teams. Email is the fastest way to reach me.",
+};
 
 export const footer = {
   colophon: "Built with React + TypeScript + Vite · Deployed on GitHub Pages · No trackers",

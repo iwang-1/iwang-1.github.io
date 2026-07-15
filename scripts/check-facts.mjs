@@ -26,7 +26,6 @@ const REQUIRED = [
   "unsupervised domain adaptation",
   "Four-person research project, co-built and open-sourced",
   "co-built and open-sourced",
-  "under review",
   "GPA 3.6/4.0",
   "May 2027",
   "ivanwang8989@gmail.com",
