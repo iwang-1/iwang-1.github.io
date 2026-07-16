@@ -1768,6 +1768,43 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
    IntersectionObserver never fires for below-the-fold sections, so force
    every revealable block visible and drop the injected chrome from the page. */
 @media print {
+  /* Light print theme: the on-screen "Chalk & Current" palette is a dark
+     theme, so a default "Save as PDF" would render pages of near-black
+     surfaces and faint cyan text. Re-map the design tokens to a paper palette
+     (dark ink on white) so the printed/PDF'd site is legible in one pass. */
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --border: #c4ccd4;
+    --border-interactive: #6b7885;
+    --shadow-edge: #c4ccd4;
+    --ink: #10161d;
+    --ink-2: #414d59;
+    --accent: #0b6b7a;
+    --accent-deep: #0b6b7a;
+    --teal: #3f6212;
+    --status: #2f7d4f;
+    --climb-gold: #8a6410;
+    --chalk: #10161d;
+    --navy: #ffffff;
+    --navy-ink: #10161d;
+    --navy-ink-2: #414d59;
+    --shadow-card: none;
+    --shadow-card-hover: none;
+    --backlight-1: transparent;
+    --backlight-2: transparent;
+    --keyghost: transparent;
+    --keyghost-dim: transparent;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #10161d !important;
+  }
+
+  /* Reveal-hidden content never fires its IntersectionObserver when printing
+     from a fresh load, so force every revealable block visible. */
   .js .reveal,
   .js .hero > *,
   .js .page-head > * {
@@ -1777,9 +1814,47 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transition: none !important;
   }
 
+  /* Navy signature bands and cards go to paper: light fill, printed border,
+     no drop shadows or backlight decoration. */
+  .hero-band,
+  .page-head-band,
+  .contact-band,
+  .nav {
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .card,
+  .system-feature,
+  .role-card,
+  .edu-card {
+    background: #ffffff !important;
+    border: 1px solid #c4ccd4 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  a {
+    color: #0b3a6b !important;
+    text-decoration: underline;
+  }
+
+  /* Injected chrome and decoration carry no meaning on paper. */
   #progress-rail,
   .kbd-fab,
-  .kbd-help {
+  .kbd-help,
+  .climbing-route,
+  .about-visual,
+  .system-diagram {
+    display: none !important;
+  }
+
+  /* Drop the interactive pseudo-element decoration (keycap grid / backlight
+     puck / power-on sweep) so nothing prints as a gray wash. */
+  .hero-band::before,
+  .hero-band::after,
+  .page-head-band::before,
+  .page-head-band::after {
     display: none !important;
   }
 }
