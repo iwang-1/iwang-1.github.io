@@ -245,71 +245,68 @@ export interface Role {
   dates: string;
   location: string;
   bullets: string[];
-  icon: RoleIcon;
+  logo: RoleLogo;
   chips?: string[]; // ProofChips (exact verifiable metrics)
   tags?: string[]; // flat tags (Community & Teaching, teal)
 }
 
-// Brand icons (aws/qiskit/selenium) are the real vendor marks rendered as
-// inline SVG so the site never hotlinks a logo CDN and verify.mjs's inline-svg
-// role-icon gate keeps passing. Roles without a brand mark keep a themed glyph.
-export type RoleIcon =
-  | "aws"
-  | "telescope"
-  | "qiskit"
-  | "selenium"
-  | "community"
-  | "events"
-  | "teaching";
+// Each role shows its employer's real logo, served from /logos (bundled in
+// public/, never hotlinked from a CDN). Recognizable brands use the actual
+// vendor mark; the small orgs with no public logo get a lettermark tile
+// (kind: "mark") drawn from initials + a brand color, so nothing on a
+// recruiting page is ever the WRONG company's logo.
+export type RoleLogo =
+  | { kind: "img"; src: string; alt: string; wide?: boolean; pad?: boolean }
+  | { kind: "mark"; initials: string; color: string; alt: string };
 
 export const engineeringRoles: Role[] = [
   {
     role: "Software Development Engineer Intern",
-    org: "Amazon Web Services (AWS)",
-    dates: "May 2026 – Present",
+    org: "Amazon Web Services (AWS) — EC2 Networking (Amazon VPC)",
+    dates: "May 2026 – Aug 2026",
     location: "Herndon, VA",
-    icon: "aws",
+    logo: { kind: "img", src: "/logos/aws.png", alt: "Amazon Web Services logo" },
     bullets: [
-      "Built an autonomous Claude Code agent with custom skills that migrated seven production EC2/VPC canaries from Scala to Java and JUnit 5, reducing per-test migration from about one week to about one day and validating each with live integration runs.",
+      "Built an autonomous Claude Code agent with custom skills that migrated seven production EC2/VPC canaries from Scala to Java and JUnit 5, reducing per-test migration from about one week to about one day, gated on live integration testing.",
       "Extended an existing canary framework with AWS SDK v2, CDK, and CloudWatch, adding LIFO resource cleanup, a VPC test suite spanning eight AWS services in us-east-1, and an authentication fix that unblocked CI.",
     ],
     chips: ["7 agent-migrated tests", "~1 week → ~1 day/test", "8 AWS services"],
   },
   {
-    role: "Software Engineer",
-    org: "University of Maryland Observatory",
-    dates: "May – Sep 2025",
-    location: "College Park, MD (Remote)",
-    icon: "telescope",
+    role: "Software Engineer Intern",
+    org: "University of Maryland (Observatory)",
+    dates: "May 2025 – Sep 2025",
+    location: "College Park, MD",
+    logo: { kind: "img", src: "/logos/umd.svg", alt: "University of Maryland logo", wide: true, pad: true },
     bullets: [
-      "Shipped a web app serving 50,000+ records with REST APIs and real-time search/filter for researchers.",
-      "Built a Python ETL pipeline for legacy CCD data with ingestion, normalization, schema validation, deduplication, and scheduled updates.",
-      "Cut pipeline runtime by 75% by optimizing SQL and API query paths.",
+      "Independently built a full-stack search platform (Python/Flask REST APIs, React, SQLite) giving UMD astrophysicists real-time query and filtering over 50,000+ telescope observation records.",
+      "Cut data-processing time 75% with a Python ETL pipeline ingesting FITS files with schema validation, deduplication, and scheduled refreshes.",
+      "Merged four code-reviewed pull requests to the open-source observatory archive.",
     ],
-    chips: ["50,000+ records", "−75% pipeline runtime"],
+    chips: ["50,000+ records", "−75% pipeline runtime", "4 merged PRs"],
   },
   {
     role: "Quantum Machine Learning Researcher",
-    org: "University of Maryland",
+    org: "University of Maryland (IonQ & NQL partnership)",
     dates: "Aug 2023 – Jan 2025",
     location: "College Park, MD",
-    icon: "qiskit",
+    logo: { kind: "img", src: "/logos/ionq.png", alt: "IonQ logo" },
     bullets: [
-      "Prepared datasets and integrated experiment workflows for a four-person quantum NLP research project using DisCoPy, Qiskit, pytket, and JAX.",
-      "Co-built and open-sourced the research artifact, with reproducible simulator workflows and documented comparison methodology.",
-      "Evaluated enhanced optimizers against a default-gain SPSA baseline in exact noiseless simulation.",
+      "Shipped an open-source quantum NLP text classifier on a four-person team, building the Python pipeline that fed parsed sentences into parameterized quantum circuits (Qiskit, DisCoPy, pytket).",
+      "Unlocked IonQ quantum-hardware execution via qiskit-ionq backends; the team's enhanced SPSA/Adam/genetic optimizers cut test error from 41% to 4–9% in simulation.",
+      "Co-built and open-sourced the research artifact with reproducible simulator workflows and documented comparison methodology.",
     ],
-    chips: ["4-person team", "Qiskit/DisCoPy/pytket", "open-source research"],
+    chips: ["4-person team", "Qiskit/DisCoPy/pytket", "IonQ hardware"],
   },
   {
     role: "Software Engineer Intern",
     org: "Washington Software Inc.",
     dates: "Mar 2022 – Aug 2023",
     location: "Gaithersburg, MD",
-    icon: "selenium",
+    logo: { kind: "mark", initials: "WS", color: "#1D4ED8", alt: "Washington Software Inc." },
     bullets: [
-      "Built a Python automation pipeline using Selenium and BeautifulSoup to extract data and generate reports/presentations from templates.",
-      "Created reusable automation across three product teams, saving about 15 engineering hours per week.",
+      "Saved ~15 engineering hours weekly by designing an automated presentation-generation system in Python (Selenium, BeautifulSoup) that replaced the manual client-reporting workflow.",
+      "Replaced recurring manual research and data-gathering across three product teams with modular, reusable Python automation integrated into CI/CD pipelines.",
       "Improved reliability with structured logging, retries, error handling, and tests; supported Jenkins CI/CD for consistent releases.",
     ],
     chips: ["~15 hrs/week saved", "3 product teams"],
@@ -322,7 +319,7 @@ export const communityRoles: Role[] = [
     org: "Kids For Code",
     dates: "Dec 2021 – May 2023",
     location: "Remote",
-    icon: "community",
+    logo: { kind: "mark", initials: "KC", color: "#0E7490", alt: "Kids For Code" },
     bullets: [
       "Led curriculum and instructor operations for a Python/JavaScript program serving 3,000+ students.",
       "Delivered 400+ lessons and standardized materials to keep instruction consistent across classes.",
@@ -335,10 +332,10 @@ export const communityRoles: Role[] = [
     org: "CodeDay",
     dates: "Nov 2019 – Dec 2022",
     location: "Washington DC–Baltimore Area",
-    icon: "events",
+    logo: { kind: "img", src: "/logos/codeday.jpg", alt: "CodeDay logo" },
     bullets: [
       "Ran regional hackathon programs end-to-end, coordinating planning, logistics, and stakeholder communication for 500+ participants.",
-      "Drove outreach to 200+ schools and built partnerships and sponsorships to support event delivery.",
+      "Drove outreach to 200+ schools and secured sponsorships (including Vercel and Brave) to support event delivery.",
       "Managed budgets, runbooks, and risk/last-minute changes to keep events reliable and repeatable.",
     ],
     tags: ["500+ participants", "200+ schools"],
@@ -348,7 +345,7 @@ export const communityRoles: Role[] = [
     org: "Panda Programmer",
     dates: "Mar – Nov 2022",
     location: "Gaithersburg, MD",
-    icon: "teaching",
+    logo: { kind: "mark", initials: "PP", color: "#15803D", alt: "Panda Programmer" },
     bullets: [
       "Taught Python, JavaScript, and Scratch to students ages 6–12 through hands-on projects and structured practice.",
       "Built lesson plans and adapted pacing/explanations to match each student's level while reinforcing core CS fundamentals.",
@@ -394,6 +391,39 @@ export const projects: Project[] = [
       "The repository compares optimizer and ansatz variants in exact noiseless simulation with documented methodology.",
     ],
     chips: ["Python", "Jupyter", "DisCoPy", "Qiskit", "pytket"],
+  },
+  {
+    id: "genai",
+    title: "Generative AI & LLM experiments",
+    repoHref: "https://github.com/iwang-1/generative-ai-experiments",
+    license: "MIT",
+    description: [
+      "A collection of hands-on generative-AI notebooks: a retrieval-augmented generation (RAG) pipeline built stage by stage in LangChain — tokenizers, chunking, embeddings, a vector store, retrieval, and QA/chat — plus Streamlit/Gradio LLM apps and GAN/VAE architecture studies in PyTorch.",
+      "Each notebook isolates one idea so the pieces are easy to revisit and reuse.",
+    ],
+    chips: ["LangChain", "RAG", "PyTorch", "Streamlit/Gradio"],
+  },
+  {
+    id: "prof-rating",
+    title: "Professor rating prediction",
+    repoHref: "https://github.com/iwang-1/professor-rating-prediction",
+    license: "MIT",
+    description: [
+      "Predicts a professor's average star rating on PlanetTerp from the text of student reviews — VADER sentiment plus review count — without ever using the star ratings as features.",
+      "Two text-derived features in a plain linear regression explain about 79% of the variance in ratings.",
+    ],
+    chips: ["Python", "scikit-learn", "VADER", "NLP"],
+  },
+  {
+    id: "stats-studies",
+    title: "Statistical studies",
+    repoHref: "https://github.com/iwang-1/survey-response-analysis",
+    license: "MIT",
+    description: [
+      "A set of reproducible statistics projects: chi-squared hypothesis testing with Bonferroni correction on a multi-wave survey dataset, a gender-perception moral-judgment study, and a weather-vs-attendance analysis with per-group detrending and Welch's t-tests.",
+      "Each ships a reusable cleaning pipeline and documents its evidence boundary honestly.",
+    ],
+    chips: ["Python", "pandas", "SciPy", "hypothesis testing"],
   },
   {
     id: "this-site",

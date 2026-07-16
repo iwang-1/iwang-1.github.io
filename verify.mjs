@@ -306,9 +306,11 @@ async function checkPage(spec, viewport) {
     const items = page.locator(".alt-timeline-item");
     if ((await items.count()) !== 7)
       problems.push(`${tag}: expected 7 timeline items, got ${await items.count()}`);
-    const roleIcons = page.locator('.role-icon[aria-hidden="true"] svg');
-    if ((await roleIcons.count()) !== 7)
-      problems.push(`${tag}: expected 7 decorative role icons, got ${await roleIcons.count()}`);
+    // Each role shows its employer's logo: a real mark (img with alt) or a
+    // lettermark tile (role="img" with aria-label). Expect 7 total.
+    const roleLogos = page.locator('.role-logo img[alt], .role-logo-mark[role="img"]');
+    if ((await roleLogos.count()) !== 7)
+      problems.push(`${tag}: expected 7 role logos, got ${await roleLogos.count()}`);
     const b1 = await items.nth(0).boundingBox();
     const b2 = await items.nth(1).boundingBox();
     if (viewport.name === "desktop") {

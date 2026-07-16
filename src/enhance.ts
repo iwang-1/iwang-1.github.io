@@ -316,10 +316,76 @@ function mountReactiveClimbingRoute(): void {
     });
 }
 
+// ------------------------------------------------------- hash / contact nav
+// The nav "Contact" link is /#contact. On the Home page that target exists, so
+// a same-document click should smooth-scroll to it. From another page the link
+// navigates to "/" and the fragment must scroll AFTER React has rendered the
+// real #root (the prerendered nodes are replaced, and lazy images/reveals
+// shift layout), which the browser's own on-load scroll misses. This wires
+// both: intercept same-doc fragment links, and re-run the fragment scroll once
+// the page has settled.
+function scrollToHash(hash: string, smooth: boolean): boolean {
+  if (!hash || hash === "#") return false;
+  let target: HTMLElement | null = null;
+  try {
+    target = document.querySelector<HTMLElement>(hash);
+  } catch {
+    return false; // malformed selector
+  }
+  if (!target) return false;
+  target.scrollIntoView({
+    behavior: smooth && !prefersReduced() ? "smooth" : "auto",
+    block: "start",
+  });
+  // move focus for keyboard/screen-reader users without a visible outline jump
+  target.setAttribute("tabindex", "-1");
+  target.focus({ preventScroll: true });
+  return true;
+}
+
+function mountHashNav(): void {
+  const samePage = (path: string): boolean => {
+    // "/#contact" targets Home; "#contact" (or "") targets the current page.
+    if (path === "" || path === "/") return true;
+    return path === window.location.pathname;
+  };
+
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+      return;
+    const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>("a[href]");
+    if (!link) return;
+    const href = link.getAttribute("href") || "";
+    const hashIdx = href.indexOf("#");
+    if (hashIdx < 0) return; // no fragment
+    const path = href.slice(0, hashIdx);
+    const hash = href.slice(hashIdx);
+    if (!samePage(path)) return; // let the browser navigate to the other page
+
+    if (scrollToHash(hash, true)) {
+      e.preventDefault();
+      if (window.location.hash !== hash) history.pushState(null, "", hash);
+    }
+  });
+
+  // On first load with a fragment (e.g. arrived at /#contact from another
+  // page), retry the scroll a few times as React renders and images settle.
+  if (window.location.hash) {
+    const hash = window.location.hash;
+    let tries = 0;
+    const retry = () => {
+      if (scrollToHash(hash, false) || tries++ > 20) return;
+      window.setTimeout(retry, 80);
+    };
+    window.setTimeout(retry, 80);
+  }
+}
+
 function init(): void {
   mountCommandPalette();
   mountReactiveCluster();
   mountReactiveClimbingRoute();
+  mountHashNav();
 }
 
 // ES imports are hoisted, so this module evaluates BEFORE the page entry's

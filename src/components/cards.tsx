@@ -1,28 +1,36 @@
-import {
-  CalendarDays,
-  GraduationCap,
-  Telescope,
-  Users,
-} from "lucide-react";
-import type { ComponentType, SVGProps } from "react";
 import { contact, person, type Education, type Project, type Role } from "../content";
-import { AwsIcon, QiskitIcon, SeleniumIcon } from "./BrandIcons";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink, Keycap } from "./Keycap";
 import { Reveal } from "./Reveal";
 
-// Real vendor marks (aws/qiskit/selenium) inline as brand SVGs; the remaining
-// roles keep a themed lucide glyph. All render as inline <svg>, so verify.mjs's
-// role-icon gate counts them the same.
-const ROLE_ICONS: Record<Role["icon"], ComponentType<SVGProps<SVGSVGElement>>> = {
-  aws: AwsIcon,
-  telescope: (props) => <Telescope size={21} strokeWidth={1.8} {...props} />,
-  qiskit: QiskitIcon,
-  selenium: SeleniumIcon,
-  community: (props) => <Users size={21} strokeWidth={1.8} {...props} />,
-  events: (props) => <CalendarDays size={21} strokeWidth={1.8} {...props} />,
-  teaching: (props) => <GraduationCap size={21} strokeWidth={1.8} {...props} />,
-};
+/** RoleLogo — the employer's real logo in a white chip (so transparent and
+ *  dark marks read in both themes), or a colored lettermark tile for the
+ *  small orgs with no public logo. `wide` lets a wordmark span the chip. */
+function RoleLogo({ logo }: { logo: Role["logo"] }) {
+  if (logo.kind === "mark") {
+    return (
+      <span
+        className="role-logo role-logo-mark"
+        style={{ background: logo.color }}
+        role="img"
+        aria-label={logo.alt}
+      >
+        {logo.initials}
+      </span>
+    );
+  }
+  return (
+    <span className={`role-logo${logo.pad ? " role-logo-pad" : ""}`}>
+      <img
+        src={logo.src}
+        alt={logo.alt}
+        className={logo.wide ? "role-logo-img role-logo-wide" : "role-logo-img"}
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+  );
+}
 
 /** RoleCard — surfaced timeline card (Experience alternating timeline);
  *  `tagTone="teal"` renders flat teal tags instead of ProofChips. */
@@ -33,14 +41,10 @@ export function RoleCard({
   role: Role;
   tagTone?: "default" | "teal";
 }) {
-  const Icon = ROLE_ICONS[role.icon];
-
   return (
     <article className={"card role-card"}>
       <header className="role-card-head">
-        <span className={`role-icon role-icon-${tagTone}`} aria-hidden="true">
-          <Icon />
-        </span>
+        <RoleLogo logo={role.logo} />
         <div>
           <h3>{role.role}</h3>
           <p className="role-org">{role.org}</p>
