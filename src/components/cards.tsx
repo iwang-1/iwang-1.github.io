@@ -1,7 +1,27 @@
+import {
+  CalendarDays,
+  CloudCog,
+  Cog,
+  FlaskConical,
+  GraduationCap,
+  Telescope,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 import { contact, person, type Education, type Project, type Role } from "../content";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink, Keycap } from "./Keycap";
 import { Reveal } from "./Reveal";
+
+const ROLE_ICONS: Record<Role["icon"], LucideIcon> = {
+  cloud: CloudCog,
+  telescope: Telescope,
+  research: FlaskConical,
+  automation: Cog,
+  community: Users,
+  events: CalendarDays,
+  teaching: GraduationCap,
+};
 
 /** RoleCard — surfaced timeline card (Experience alternating timeline);
  *  `tagTone="teal"` renders flat teal tags instead of ProofChips. */
@@ -12,10 +32,19 @@ export function RoleCard({
   role: Role;
   tagTone?: "default" | "teal";
 }) {
+  const Icon = ROLE_ICONS[role.icon];
+
   return (
     <article className={"card role-card"}>
-      <h3>{role.role}</h3>
-      <p className="role-org">{role.org}</p>
+      <header className="role-card-head">
+        <span className={`role-icon role-icon-${tagTone}`} aria-hidden="true">
+          <Icon size={21} strokeWidth={1.8} />
+        </span>
+        <div>
+          <h3>{role.role}</h3>
+          <p className="role-org">{role.org}</p>
+        </div>
+      </header>
       <p className="role-meta">
         {role.dates} · {role.location}
       </p>

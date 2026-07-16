@@ -226,9 +226,19 @@ export interface Role {
   dates: string;
   location: string;
   bullets: string[];
+  icon: RoleIcon;
   chips?: string[]; // ProofChips (exact verifiable metrics)
   tags?: string[]; // flat tags (Community & Teaching, teal)
 }
+
+export type RoleIcon =
+  | "cloud"
+  | "telescope"
+  | "research"
+  | "automation"
+  | "community"
+  | "events"
+  | "teaching";
 
 export const engineeringRoles: Role[] = [
   {
@@ -236,6 +246,7 @@ export const engineeringRoles: Role[] = [
     org: "Amazon Web Services (AWS)",
     dates: "May 2026 – Present",
     location: "Herndon, VA",
+    icon: "cloud",
     bullets: [
       "Built an autonomous Claude Code agent with custom skills that migrated seven production EC2/VPC canaries from Scala to Java and JUnit 5, reducing per-test migration from about one week to about one day and validating each with live integration runs.",
       "Extended an existing canary framework with AWS SDK v2, CDK, and CloudWatch, adding LIFO resource cleanup, a VPC test suite spanning eight AWS services in us-east-1, and an authentication fix that unblocked CI.",
@@ -247,6 +258,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland Observatory",
     dates: "May – Sep 2025",
     location: "College Park, MD (Remote)",
+    icon: "telescope",
     bullets: [
       "Shipped a web app serving 50,000+ records with REST APIs and real-time search/filter for researchers.",
       "Built a Python ETL pipeline for legacy CCD data with ingestion, normalization, schema validation, deduplication, and scheduled updates.",
@@ -259,6 +271,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland",
     dates: "Aug 2023 – Jan 2025",
     location: "College Park, MD",
+    icon: "research",
     bullets: [
       "Prepared datasets and integrated experiment workflows for a four-person quantum NLP research project using DisCoPy, Qiskit, pytket, and JAX.",
       "Co-built and open-sourced the research artifact, with reproducible simulator workflows and documented comparison methodology.",
@@ -271,6 +284,7 @@ export const engineeringRoles: Role[] = [
     org: "Washington Software Inc.",
     dates: "Mar 2022 – Aug 2023",
     location: "Gaithersburg, MD",
+    icon: "automation",
     bullets: [
       "Built a Python automation pipeline using Selenium and BeautifulSoup to extract data and generate reports/presentations from templates.",
       "Created reusable automation across three product teams, saving about 15 engineering hours per week.",
@@ -286,6 +300,7 @@ export const communityRoles: Role[] = [
     org: "Kids For Code",
     dates: "Dec 2021 – May 2023",
     location: "Remote",
+    icon: "community",
     bullets: [
       "Led curriculum and instructor operations for a Python/JavaScript program serving 3,000+ students.",
       "Delivered 400+ lessons and standardized materials to keep instruction consistent across classes.",
@@ -298,6 +313,7 @@ export const communityRoles: Role[] = [
     org: "CodeDay",
     dates: "Nov 2019 – Dec 2022",
     location: "Washington DC–Baltimore Area",
+    icon: "events",
     bullets: [
       "Ran regional hackathon programs end-to-end, coordinating planning, logistics, and stakeholder communication for 500+ participants.",
       "Drove outreach to 200+ schools and built partnerships and sponsorships to support event delivery.",
@@ -310,6 +326,7 @@ export const communityRoles: Role[] = [
     org: "Panda Programmer",
     dates: "Mar – Nov 2022",
     location: "Gaithersburg, MD",
+    icon: "teaching",
     bullets: [
       "Taught Python, JavaScript, and Scratch to students ages 6–12 through hands-on projects and structured practice.",
       "Built lesson plans and adapted pacing/explanations to match each student's level while reinforcing core CS fundamentals.",

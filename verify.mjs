@@ -211,8 +211,8 @@ async function checkPage(spec, viewport) {
     problems.push(`${tag}: 404 page must not mark any tab aria-current (got ${currentCount})`);
   }
 
-  // The climbing-route progress rail must remain physically attached to the
-  // sticky header after scrolling, with its marker moving along the route.
+  // The progress rail stays attached to the sticky header, without the old
+  // unexplained yellow hold markers, and its marker moves as the page scrolls.
   const rail = page.locator("#progress-rail");
   if ((await rail.count()) !== 1) {
     problems.push(`${tag}: expected exactly one progress rail inside the nav`);
@@ -220,6 +220,9 @@ async function checkPage(spec, viewport) {
     const navContainsRail = await page.locator("header.nav #progress-rail").count();
     if (navContainsRail !== 1)
       problems.push(`${tag}: progress rail is not a child of the sticky header`);
+    const holdMarkers = await page.locator(".route-progress-hold").count();
+    if (holdMarkers !== 0)
+      problems.push(`${tag}: obsolete yellow progress holds still render (${holdMarkers})`);
     if (spec.path === "/") {
       // enhance.ts initializes one animation frame after React settles.
       await page.waitForTimeout(200);
@@ -303,6 +306,9 @@ async function checkPage(spec, viewport) {
     const items = page.locator(".alt-timeline-item");
     if ((await items.count()) !== 7)
       problems.push(`${tag}: expected 7 timeline items, got ${await items.count()}`);
+    const roleIcons = page.locator('.role-icon[aria-hidden="true"] svg');
+    if ((await roleIcons.count()) !== 7)
+      problems.push(`${tag}: expected 7 decorative role icons, got ${await roleIcons.count()}`);
     const b1 = await items.nth(0).boundingBox();
     const b2 = await items.nth(1).boundingBox();
     if (viewport.name === "desktop") {

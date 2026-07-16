@@ -115,10 +115,6 @@ export function Nav({ active }: { active: ActiveTab }) {
           aria-hidden="true"
         >
           <span className="route-progress-fill" />
-          <span className="route-progress-hold route-progress-hold-1" />
-          <span className="route-progress-hold route-progress-hold-2" />
-          <span className="route-progress-hold route-progress-hold-3" />
-          <span className="route-progress-hold route-progress-hold-4" />
           <span className="route-progress-marker" />
         </div>
       </header>
