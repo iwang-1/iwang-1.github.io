@@ -380,7 +380,7 @@ export const projects: Project[] = [
     license: "MIT",
     description: [
       "DistilBERT and a gradient-reversal DANN across Yelp, Amazon, Twitter, and Reddit. Labeled source-domain examples train the sentiment head while unlabeled target-domain text trains the domain head.",
-      "The committed CSV is a smoke-scale artifact, so the project documents its pipeline and evidence boundary instead of promoting report-only accuracy figures.",
+      "The committed CSV is a smoke-scale artifact, so this page describes the pipeline and its evidence boundary rather than quoting accuracy numbers; the linked repo carries the full team report's figures, attributed to the paper.",
     ],
     chips: ["PyTorch", "DistilBERT", "gradient reversal"],
   },
