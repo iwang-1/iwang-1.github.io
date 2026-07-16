@@ -75,6 +75,21 @@ repos are deleted and the old live demo URL 404s. Do NOT reintroduce it —
 `verify.mjs` asserts `star-catalog` / `star-spectral` / `sky map` are absent
 from the rendered /projects/ page.
 
+## Systems projects (`featuredSystems` — Home "Featured engineering work" + `/projects/` "Systems projects")
+
+Three from-scratch systems, each rendered as a SystemFeature card (summary +
+proof + caveat + metric grid). Every number below is the exact repo/benchmark
+figure — NOT the résumé figure. The résumé's soak counts (1,400 / 2,640) are on
+verify.mjs's `absent` list for `/` and `/projects/`, so they must never render
+here; the site quotes the operation count and the recall/QPS/compression curve
+instead.
+
+| Rendered | Source |
+| --- | --- |
+| parallax-kv (Go, public repo): Raft KV from scratch — PreVote, ReadIndex, WAL, gRPC; deterministic harness across 2.9 million client operations, zero safety/linearizability violations; 272 writes/s at 41 ms p99 (c=8) | repo README |
+| accretion-db (Rust, public repo): embeddable LSM engine — CRC-framed WAL, group commit, bloom SSTables, size-tiered compaction, zero unsafe; ~29x WAL-bound group-commit edge, 878 µs fdatasync | repo README |
+| lodestone (Rust, public repo): from-scratch vector search for embeddings/RAG — HNSW + IVF-PQ over hand-written AVX-512 kernels; HNSW 0.976 recall@10 at ~31,700 QPS single-core (30–48x over exact scan at 90%+ recall), IVF-PQ 0.975 recall@10 at 16x compression. Numbers = benchmarks/raw/bench_50k_128d.txt (50,000 x 128-d, 1,000 queries, k=10, single core) | repo README + bench raw |
+
 ## Other projects (`/projects/`)
 
 | Rendered | Source |

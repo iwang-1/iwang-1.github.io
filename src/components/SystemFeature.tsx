@@ -24,24 +24,46 @@ function SystemDiagram({ kind }: { kind: FeaturedSystem["diagram"] }) {
     );
   }
 
+  if (kind === "lsm") {
+    return (
+      <div
+        className="system-diagram diagram-lsm"
+        role="img"
+        aria-label="Writes flow through a write-ahead log and memtable into SSTables and size-tiered compaction"
+      >
+        <div className="diagram-stage diagram-write">write</div>
+        <span className="diagram-flow" aria-hidden="true" />
+        <div className="diagram-stage diagram-wal">WAL</div>
+        <span className="diagram-flow" aria-hidden="true" />
+        <div className="diagram-stage diagram-mem">memtable</div>
+        <span className="diagram-flow" aria-hidden="true" />
+        <div className="diagram-sstables">
+          <span>SST</span>
+          <span>SST</span>
+          <span>SST</span>
+        </div>
+        <div className="diagram-caption">bloom · sparse index · compaction</div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="system-diagram diagram-lsm"
+      className="system-diagram diagram-ann"
       role="img"
-      aria-label="Writes flow through a write-ahead log and memtable into SSTables and size-tiered compaction"
+      aria-label="A query embedding is scored by AVX-512 distance kernels through an HNSW graph and IVF-PQ index to return the top-k nearest neighbors"
     >
-      <div className="diagram-stage diagram-write">write</div>
+      <div className="diagram-stage diagram-query">query</div>
       <span className="diagram-flow" aria-hidden="true" />
-      <div className="diagram-stage diagram-wal">WAL</div>
+      <div className="diagram-stage diagram-simd">AVX-512</div>
       <span className="diagram-flow" aria-hidden="true" />
-      <div className="diagram-stage diagram-mem">memtable</div>
-      <span className="diagram-flow" aria-hidden="true" />
-      <div className="diagram-sstables">
-        <span>SST</span>
-        <span>SST</span>
-        <span>SST</span>
+      <div className="diagram-nodes">
+        <span className="diagram-node is-leader">HNSW</span>
+        <span className="diagram-node">IVF-PQ</span>
       </div>
-      <div className="diagram-caption">bloom · sparse index · compaction</div>
+      <span className="diagram-flow" aria-hidden="true" />
+      <div className="diagram-stage diagram-topk">top-k</div>
+      <div className="diagram-caption">recall@10 · single-core QPS</div>
     </div>
   );
 }

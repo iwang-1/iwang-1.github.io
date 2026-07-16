@@ -49,7 +49,7 @@ export interface FeaturedSystem {
   caveat?: string;
   repoHref: string;
   chips: string[];
-  diagram: "raft" | "lsm";
+  diagram: "raft" | "lsm" | "ann";
   metrics: { value: string; label: string }[];
 }
 
@@ -90,6 +90,25 @@ export const featuredSystems: FeaturedSystem[] = [
       { value: "~29x", label: "WAL-bound group commit" },
       { value: "878 µs", label: "fdatasync p50" },
       { value: "0", label: "unsafe Rust blocks" },
+    ],
+  },
+  {
+    id: "lodestone",
+    eyebrow: "VECTOR SEARCH · RUST",
+    title: "lodestone",
+    summary:
+      "A vector search engine built from scratch in Rust for embeddings and RAG retrieval: an HNSW proximity graph and an IVF-PQ compressed index over hand-written AVX-512 distance kernels with runtime feature dispatch.",
+    proof:
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,700 queries per second — a 30–48x speedup over the exact brute-force oracle at 90%+ recall — measured on a recall-vs-throughput curve, not a single point.",
+    caveat:
+      "IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression via product quantization. The benchmark is single-machine and single-core; distributed sharding is future work.",
+    repoHref: "https://github.com/iwang-1/lodestone",
+    chips: ["Rust", "HNSW", "IVF-PQ", "AVX-512 SIMD", "RAG retrieval"],
+    diagram: "ann",
+    metrics: [
+      { value: "0.976", label: "HNSW recall@10" },
+      { value: "~31.7K", label: "queries/sec · 1 core" },
+      { value: "16x", label: "IVF-PQ compression" },
     ],
   },
 ];
@@ -231,11 +250,14 @@ export interface Role {
   tags?: string[]; // flat tags (Community & Teaching, teal)
 }
 
+// Brand icons (aws/qiskit/selenium) are the real vendor marks rendered as
+// inline SVG so the site never hotlinks a logo CDN and verify.mjs's inline-svg
+// role-icon gate keeps passing. Roles without a brand mark keep a themed glyph.
 export type RoleIcon =
-  | "cloud"
+  | "aws"
   | "telescope"
-  | "research"
-  | "automation"
+  | "qiskit"
+  | "selenium"
   | "community"
   | "events"
   | "teaching";
@@ -246,7 +268,7 @@ export const engineeringRoles: Role[] = [
     org: "Amazon Web Services (AWS)",
     dates: "May 2026 – Present",
     location: "Herndon, VA",
-    icon: "cloud",
+    icon: "aws",
     bullets: [
       "Built an autonomous Claude Code agent with custom skills that migrated seven production EC2/VPC canaries from Scala to Java and JUnit 5, reducing per-test migration from about one week to about one day and validating each with live integration runs.",
       "Extended an existing canary framework with AWS SDK v2, CDK, and CloudWatch, adding LIFO resource cleanup, a VPC test suite spanning eight AWS services in us-east-1, and an authentication fix that unblocked CI.",
@@ -271,7 +293,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland",
     dates: "Aug 2023 – Jan 2025",
     location: "College Park, MD",
-    icon: "research",
+    icon: "qiskit",
     bullets: [
       "Prepared datasets and integrated experiment workflows for a four-person quantum NLP research project using DisCoPy, Qiskit, pytket, and JAX.",
       "Co-built and open-sourced the research artifact, with reproducible simulator workflows and documented comparison methodology.",
@@ -284,7 +306,7 @@ export const engineeringRoles: Role[] = [
     org: "Washington Software Inc.",
     dates: "Mar 2022 – Aug 2023",
     location: "Gaithersburg, MD",
-    icon: "automation",
+    icon: "selenium",
     bullets: [
       "Built a Python automation pipeline using Selenium and BeautifulSoup to extract data and generate reports/presentations from templates.",
       "Created reusable automation across three product teams, saving about 15 engineering hours per week.",

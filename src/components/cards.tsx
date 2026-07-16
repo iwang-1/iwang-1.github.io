@@ -1,26 +1,27 @@
 import {
   CalendarDays,
-  CloudCog,
-  Cog,
-  FlaskConical,
   GraduationCap,
   Telescope,
   Users,
-  type LucideIcon,
 } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import { contact, person, type Education, type Project, type Role } from "../content";
+import { AwsIcon, QiskitIcon, SeleniumIcon } from "./BrandIcons";
 import { Chip, ProofChip } from "./chips";
 import { ExternalLink, Keycap } from "./Keycap";
 import { Reveal } from "./Reveal";
 
-const ROLE_ICONS: Record<Role["icon"], LucideIcon> = {
-  cloud: CloudCog,
-  telescope: Telescope,
-  research: FlaskConical,
-  automation: Cog,
-  community: Users,
-  events: CalendarDays,
-  teaching: GraduationCap,
+// Real vendor marks (aws/qiskit/selenium) inline as brand SVGs; the remaining
+// roles keep a themed lucide glyph. All render as inline <svg>, so verify.mjs's
+// role-icon gate counts them the same.
+const ROLE_ICONS: Record<Role["icon"], ComponentType<SVGProps<SVGSVGElement>>> = {
+  aws: AwsIcon,
+  telescope: (props) => <Telescope size={21} strokeWidth={1.8} {...props} />,
+  qiskit: QiskitIcon,
+  selenium: SeleniumIcon,
+  community: (props) => <Users size={21} strokeWidth={1.8} {...props} />,
+  events: (props) => <CalendarDays size={21} strokeWidth={1.8} {...props} />,
+  teaching: (props) => <GraduationCap size={21} strokeWidth={1.8} {...props} />,
 };
 
 /** RoleCard — surfaced timeline card (Experience alternating timeline);
@@ -38,7 +39,7 @@ export function RoleCard({
     <article className={"card role-card"}>
       <header className="role-card-head">
         <span className={`role-icon role-icon-${tagTone}`} aria-hidden="true">
-          <Icon size={21} strokeWidth={1.8} />
+          <Icon />
         </span>
         <div>
           <h3>{role.role}</h3>

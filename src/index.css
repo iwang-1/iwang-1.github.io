@@ -664,6 +664,15 @@ main {
   color: var(--ink-2);
 }
 
+/* ANN (lodestone) diagram: the two index nodes carry word labels (HNSW,
+   IVF-PQ), so they render as pills rather than the circular Raft nodes. */
+.diagram-ann .diagram-node {
+  min-width: 58px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border-radius: var(--r-key);
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -97,12 +97,24 @@ const files = [
 const problems = [];
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
+// Decorative SVG path data (the `d="…"` coordinate runs in brand logos) is not
+// site copy — its number soup can coincidentally look like a phone number or a
+// banned figure. Blank those values out (same length, so offsets/line numbers
+// stay exact) before the number/voice tripwires run. Every other check still
+// sees the real text.
+function maskSvgPathData(text) {
+  return text.replace(/(\sd=")([^"]*)(")/g, (_, open, data, close) =>
+    open + " ".repeat(data.length) + close,
+  );
+}
+
 function scan(rel, text) {
+  const scannable = maskSvgPathData(text);
   for (const { re, why } of FORBIDDEN) {
-    const m = text.match(re);
+    const m = scannable.match(re);
     if (m)
       problems.push(
-        `${rel}:${lineOf(text, m.index)}: forbidden — ${why} (matched ${JSON.stringify(m[0])})`,
+        `${rel}:${lineOf(scannable, m.index)}: forbidden — ${why} (matched ${JSON.stringify(m[0])})`,
       );
   }
 
