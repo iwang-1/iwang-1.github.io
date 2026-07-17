@@ -319,7 +319,7 @@ export const communityRoles: Role[] = [
     org: "Kids For Code",
     dates: "Dec 2021 – May 2023",
     location: "Remote",
-    logo: { kind: "mark", initials: "KC", color: "#0E7490", alt: "Kids For Code" },
+    logo: { kind: "img", src: "/logos/kids-for-code.png", alt: "Kids For Code logo" },
     bullets: [
       "Led curriculum and instructor operations for a Python/JavaScript program serving 3,000+ students.",
       "Delivered 400+ lessons and standardized materials to keep instruction consistent across classes.",
