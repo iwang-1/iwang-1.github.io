@@ -24,8 +24,8 @@ export const hero = {
   kicker: "SOFTWARE ENGINEER",
   headline: "Ivan Wang",
   subhead:
-    "AWS SDE intern and UMD CS B.S./M.S. candidate. I build software across the stack — backend services, systems, and ML/NLP — and care about shipping it correct, tested, and measured.",
-  thesis: "I build software you can check — tested, measured, and honest about its limits.",
+    "AWS SDE intern and UMD CS B.S./M.S. candidate. I build software across the stack — backend services, systems, and ML/NLP.",
+  thesis: "Everything here ships with tests, benchmarks, and its limits written down.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
 };
 
