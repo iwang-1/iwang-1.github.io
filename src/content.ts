@@ -21,23 +21,23 @@ export const person = {
 // Home — hero, About.
 
 export const hero = {
-  kicker: "SOFTWARE ENGINEER · BACKEND / DISTRIBUTED SYSTEMS",
+  kicker: "SOFTWARE ENGINEER",
   headline: "Ivan Wang",
   subhead:
-    "AWS SDE intern and UMD CS B.S./M.S. candidate building backend and distributed systems where correctness, reliability, and performance matter.",
-  thesis: "I build software the way I build keyboards: carefully, end to end.",
+    "AWS SDE intern and UMD CS B.S./M.S. candidate. I build software across the stack — backend services, systems, and ML/NLP — and care about shipping it correct, tested, and measured.",
+  thesis: "I build software you can check — tested, measured, and honest about its limits.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
 };
 
-// About — ≤120 words, first person; max ONE keyboard/climbing metaphor on the
-// whole site (the hero thesis is it — P3's closer stays literal).
+// About — ≤120 words, first person. Positioned so any SWE team reads it as a
+// strong general engineer, not someone locked into one niche.
 export const about = {
-  p1: "I'm a software engineer drawn to distributed systems, storage engines, and ML/NLP: the layer where correctness has to survive real failures, not just a demo.",
-  p2Before: "I like software you can check: my ",
+  p1: "I'm a software engineer who likes building things end to end and going deep when a problem is hard. I've shipped backend services, systems software, and ML/NLP work, and I pick up new stacks quickly.",
+  p2Before: "I care about software you can trust: my ",
   p2LinkText: "projects",
   p2LinkHref: "/projects/",
-  p2After: " ship with deterministic tests, reproducible measurements, and explicit limitations.",
-  p3: "Away from a terminal I'm usually on a climbing wall. As Secretary of the UMD Climbing Club I organize 8 trips a semester and helped grow attendance 30%. The rest of my tinkering budget goes to building mechanical keyboards and custom PCs. Different materials, same habit: understand the whole system, then make it solid.",
+  p2After: " ship with tests, reproducible measurements, and honest limitations.",
+  p3: "Outside of coursework I lead as Secretary of the UMD Climbing Club, organizing 8 trips a semester and helping grow attendance 30% — I like building things that bring people together as much as I like building software.",
 };
 
 export interface FeaturedSystem {
@@ -135,16 +135,15 @@ export const education: Education[] = [
     ],
     proofChip: "GPA 3.6/4.0",
     coursework: [
-      "Algorithms",
-      "Data Structures",
-      "Machine Learning",
-      "Deep Learning",
-      "NLP",
-      "Database Design",
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming",
+      "Distributed Systems",
       "Operating Systems",
       "Computer Networks",
-      "Distributed Systems",
-      "Computer Vision",
+      "Database Systems",
+      "Software Engineering",
+      "Machine Learning",
+      "Natural Language Processing",
     ],
   },
 ];
@@ -417,15 +416,34 @@ export const projects: Project[] = [
     chips: ["Python", "scikit-learn", "VADER", "NLP"],
   },
   {
-    id: "stats-studies",
-    title: "Statistical studies",
+    id: "survey-analysis",
+    title: "Survey response analysis",
     repoHref: "https://github.com/iwang-1/survey-response-analysis",
     license: "MIT",
     description: [
-      "A set of reproducible statistics projects: chi-squared hypothesis testing with Bonferroni correction on a multi-wave survey dataset, a gender-perception moral-judgment study, and a weather-vs-attendance analysis with per-group detrending and Welch's t-tests.",
-      "Each ships a reusable cleaning pipeline and documents its evidence boundary honestly.",
+      "Cleaning and statistical analysis of a multi-wave survey dataset: a reusable cleaning function, then chi-squared hypothesis tests with Bonferroni correction probing what actually shifts people's answers to moral-judgment questions.",
     ],
     chips: ["Python", "pandas", "SciPy", "hypothesis testing"],
+  },
+  {
+    id: "gender-perception",
+    title: "Gender perception study",
+    repoHref: "https://github.com/iwang-1/gender-perception-study",
+    license: "MIT",
+    description: [
+      "Does swapping the genders in a moral-judgment scenario change how people judge it? Chi-squared hypothesis testing on gender-swapped survey scenarios, with a documented method and honest read of the findings.",
+    ],
+    chips: ["Python", "pandas", "chi-squared"],
+  },
+  {
+    id: "weather-attendance",
+    title: "Weather vs. attendance study",
+    repoHref: "https://github.com/iwang-1/weather-attendance-study",
+    license: "MIT",
+    description: [
+      "A statistical study of attendance against local weather: per-group detrending, WMO/NWS rain classification, Welch's t-tests, and a rain-plus-wind regression — with the evidence boundary stated plainly.",
+    ],
+    chips: ["Python", "SciPy", "regression"],
   },
   {
     id: "this-site",
