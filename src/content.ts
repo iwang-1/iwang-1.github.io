@@ -345,7 +345,7 @@ export const communityRoles: Role[] = [
     org: "Panda Programmer",
     dates: "Mar – Nov 2022",
     location: "Gaithersburg, MD",
-    logo: { kind: "mark", initials: "PP", color: "#15803D", alt: "Panda Programmer" },
+    logo: { kind: "img", src: "/logos/panda-programmer.png", alt: "Panda Programmer logo" },
     bullets: [
       "Taught Python, JavaScript, and Scratch to students ages 6–12 through hands-on projects and structured practice.",
       "Built lesson plans and adapted pacing/explanations to match each student's level while reinforcing core CS fundamentals.",
