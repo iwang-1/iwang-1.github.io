@@ -99,7 +99,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval: an HNSW proximity graph and an IVF-PQ compressed index over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,700 queries per second — a 30–48x speedup over the exact brute-force oracle at 90%+ recall — measured on a recall-vs-throughput curve, not a single point.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — a 30–48x speedup over the exact brute-force oracle at 90%+ recall — measured on a recall-vs-throughput curve, not a single point.",
     caveat:
       "IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression via product quantization. The benchmark is single-machine and single-core; distributed sharding is future work.",
     repoHref: "https://github.com/iwang-1/lodestone",
@@ -107,7 +107,7 @@ export const featuredSystems: FeaturedSystem[] = [
     diagram: "ann",
     metrics: [
       { value: "0.976", label: "HNSW recall@10" },
-      { value: "~31.7K", label: "queries/sec · 1 core" },
+      { value: "~31.8K", label: "queries/sec · 1 core" },
       { value: "16x", label: "IVF-PQ compression" },
     ],
   },
@@ -297,7 +297,7 @@ export const engineeringRoles: Role[] = [
       "Unlocked IonQ quantum-hardware execution via qiskit-ionq backends; the team's enhanced SPSA/Adam/genetic optimizers cut test error from 41% to 4–9% in simulation.",
       "Co-built and open-sourced the research artifact with reproducible simulator workflows and documented comparison methodology.",
     ],
-    chips: ["4-person team", "Qiskit/DisCoPy/pytket", "IonQ hardware"],
+    chips: ["4-person team", "Qiskit/DisCoPy/pytket", "qiskit-ionq backend"],
     proofLink: { label: "FIRE-QML-WINNERS-QNLP", href: "https://github.com/iwang-1/FIRE-QML-WINNERS-QNLP" },
   },
   {

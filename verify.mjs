@@ -17,7 +17,7 @@ const PAGES = [
   {
     path: "/",
     shot: "home",
-    title: "Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern, Summer 2026",
+    title: "Ivan Wang — Software Engineer · UMD CS · AWS SDE Intern",
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
