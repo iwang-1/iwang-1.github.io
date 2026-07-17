@@ -64,6 +64,13 @@ export function RoleCard({
           {role.tags?.map((t) => <Chip key={t} label={t} tone={tagTone} />)}
         </div>
       )}
+      {role.proofLink && (
+        <p className="project-links">
+          <ExternalLink href={role.proofLink.href} className="cta-text-link">
+            {role.proofLink.label}
+          </ExternalLink>
+        </p>
+      )}
     </article>
   );
 }

@@ -131,8 +131,7 @@ export const education: Education[] = [
     degree: "B.S./M.S. in Computer Science — Departmental Honors (research track)",
     dates: "Aug 2023 – May 2027",
     detailLines: [
-      "CS Departmental Honors — faculty-mentored research track",
-      "Minors in Data Science and Philosophy",
+      "On the faculty-mentored research track; minors in Data Science and Philosophy",
     ],
     proofChip: "GPA 3.6/4.0",
     coursework: [
@@ -248,6 +247,7 @@ export interface Role {
   logo: RoleLogo;
   chips?: string[]; // ProofChips (exact verifiable metrics)
   tags?: string[]; // flat tags (Community & Teaching, teal)
+  proofLink?: { label: string; href: string }; // optional "see the code" link
 }
 
 // Each role shows its employer's real logo, served from /logos (bundled in
@@ -284,6 +284,7 @@ export const engineeringRoles: Role[] = [
       "Merged four code-reviewed pull requests to the open-source observatory archive.",
     ],
     chips: ["50,000+ records", "−75% pipeline runtime", "4 merged PRs"],
+    proofLink: { label: "CCD-data-archive", href: "https://github.com/warnerem/CCD-data-archive" },
   },
   {
     role: "Quantum Machine Learning Researcher",
@@ -297,6 +298,7 @@ export const engineeringRoles: Role[] = [
       "Co-built and open-sourced the research artifact with reproducible simulator workflows and documented comparison methodology.",
     ],
     chips: ["4-person team", "Qiskit/DisCoPy/pytket", "IonQ hardware"],
+    proofLink: { label: "FIRE-QML-WINNERS-QNLP", href: "https://github.com/iwang-1/FIRE-QML-WINNERS-QNLP" },
   },
   {
     role: "Software Engineer Intern",
