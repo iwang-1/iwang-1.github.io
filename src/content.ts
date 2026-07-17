@@ -277,7 +277,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland (Observatory)",
     dates: "May 2025 – Sep 2025",
     location: "College Park, MD",
-    logo: { kind: "img", src: "/logos/umd.svg", alt: "University of Maryland logo", wide: true, pad: true },
+    logo: { kind: "img", src: "/logos/umd.png", alt: "University of Maryland logo" },
     bullets: [
       "Independently built a full-stack search platform (Python/Flask REST APIs, React, SQLite) giving UMD astrophysicists real-time query and filtering over 50,000+ telescope observation records.",
       "Cut data-processing time 75% with a Python ETL pipeline ingesting FITS files with schema validation, deduplication, and scheduled refreshes.",
@@ -303,7 +303,7 @@ export const engineeringRoles: Role[] = [
     org: "Washington Software Inc.",
     dates: "Mar 2022 – Aug 2023",
     location: "Gaithersburg, MD",
-    logo: { kind: "mark", initials: "WS", color: "#1D4ED8", alt: "Washington Software Inc." },
+    logo: { kind: "img", src: "/logos/washington-software.png", alt: "Washington Software Inc. logo" },
     bullets: [
       "Saved ~15 engineering hours weekly by designing an automated presentation-generation system in Python (Selenium, BeautifulSoup) that replaced the manual client-reporting workflow.",
       "Replaced recurring manual research and data-gathering across three product teams with modular, reusable Python automation integrated into CI/CD pipelines.",
