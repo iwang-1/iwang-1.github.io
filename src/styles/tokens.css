@@ -1,58 +1,140 @@
-/* Design tokens — "Chalk & Current". Graphite reading surfaces, deep-water
-   bands, electric cyan interactions, chalk-white route holds, and a restrained
-   gold climbing accent. */
+/* Design tokens — the figure palette.
+   Sampled from the committed benchmark plots; amber darkened for contrast.
+   The page is a measurement report: ground and plate are reading surfaces,
+   grid and axis are hairlines, and colour is spent on two things only —
+   evidence (series) and the things you can click (amber).
+
+   The signature rule: BLUE IS DATA, AMBER IS THE HUMAN ANNOTATION.
+   --series-1 appears only inside plates, where the source plots already put
+   it. Every interactive affordance — link, focus ring, active tab, primary
+   button fill, crosshair readout — is --series-2.
+
+   Contrast, measured (WCAG 2.1, against --ground / --plate / --plate-2):
+     --ink     17.76 / 16.98 / 15.71
+     --ink-2    9.10 /  8.70 /  8.05
+     --ink-3    6.33 /  6.06 /  5.60   (footnotes; 14px floor)
+     --series-1 9.14 /  8.74 /  8.09
+     --series-2 8.98 /  8.58 /  7.94
+     --series-3 10.52 / 10.06 /  9.31
+   Amber is a FILL as often as a text colour: label on amber is --ground
+   (8.98:1). --ink on amber is 1.98:1 and is never used.
+   Surface luminance: ground 0.0036, plate 0.0061, plate-2 0.0106. */
 :root {
   color-scheme: dark;
+
+  /* ---------------------------------------------------------- figure palette */
   /* surfaces */
-  --bg: #090D12;
-  --surface: #121A22;
-  --border: #293540;
-  /* Interactive boundary (keycap border + bottom edge) — clears WCAG
-     1.4.11's 3:1: #7A8FA6 is 4.72:1 on --surface and 5.62:1 on --bg. */
-  --border-interactive: #8295A5;
-  --shadow-edge: #405264;
+  --ground: #080C13;   /* page */
+  --plate: #0B1220;    /* figure / card fill */
+  --plate-2: #101B2A;  /* table stripes */
+  /* hairlines */
+  --grid: #1B293D;
+  --axis: #24354A;
   /* ink */
   --ink: #EEF5F7;
-  --ink-2: #A9BAC4;
-  /* accents */
-  --accent: #22D3EE;
-  --accent-deep: #67E8F9;
-  --teal: #A3E635;
-  --status: #4ADE80;
-  --climb-gold: #F6C453;
-  --chalk: #E8EEE9;
-  /* brand band (navy signature) */
-  --navy: #0C2438;
-  --navy-ink: #F4F8F9;
-  --navy-ink-2: #B2C4CC;
-  /* radii & shadow */
-  --r-card: 12px;
-  --r-key: 8px;
+  --ink-2: #9FB3C8;
+  --ink-3: #8295A5;
+  /* series — data only for series-1; series-2 is every interaction */
+  --series-1: #38BDF8;
+  --series-2: #E9A13B;
+  --series-3: #2DD4BF;
+
+  /* ------------------------------------------------------------- geometry */
+  --hairline: 1px;
+  --r-xs: 2px;
   --r-chip: 999px;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.55);
-  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.35);
-  --border-hover: color-mix(in srgb, var(--accent) 45%, var(--border));
-  /* motion (Keyswitch layer) */
+
+  /* Type scale. Ten steps: the seven text ranks plus the 13px provenance
+     step, the 14px footnote floor, and the two display sizes the hierarchy
+     ranks need. Replaces the fifteen literal font sizes. */
+  --fs-100: 0.6875rem;  /* 11px — tick labels */
+  --fs-200: 0.75rem;    /* 12px — mono plate labels */
+  --fs-300: 0.8125rem;  /* 13px — provenance / kicker */
+  --fs-400: 0.875rem;   /* 14px — footnote floor */
+  --fs-500: 1rem;       /* 16px — label buttons, UI */
+  --fs-600: 1.0625rem;  /* 17px — body */
+  --fs-700: 1.25rem;    /* 20px — h3, lead */
+  --fs-800: 1.5rem;     /* 24px — rank-2 headings */
+  --fs-900: 2.6rem;     /*      — rank-1 headings */
+  --fs-display: clamp(2.4rem, 5.2vw, 3.75rem); /* h1 */
+
+  /* Line heights. h2 inherited 1.65 and rendered 52.8px on a 32px face. */
+  --lh-display: 1.02;
+  --lh-heading: 1.15;
+  --lh-sub: 1.2;
+  --lh-body: 1.65;
+
+  /* Measures. Three, replacing six one-off ch values. */
+  --measure-tight: 22ch;
+  --measure-body: 56ch;
+  --measure-prose: 66ch;
+
+  /* Space ladder. Absorbs the 5/7/26/33/34/36/50/88px one-offs. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  /* One vertical rhythm for section separation, so the four stacked verticals
+     (section padding-top, main padding-bottom, contact-band and footer
+     margin-top) collapse into one value instead of a patch rule. */
+  --section-gap: var(--space-9);
+
+  /* --------------------------------------------------------------- motion */
   --t-tap: 120ms;
   --t-hover: 180ms;
   --t-reveal: 300ms;
-  --t-boot: 1300ms;         /* hero "power-on" light sweep (one-shot) */
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* One-shot hero light sweep and the quieter keycap grid on interior pages. */
-  --backlight-1: rgba(103, 232, 249, 0.14);
-  --backlight-2: rgba(246, 196, 83, 0.07);
-  --keyghost: rgba(130, 149, 165, 0.1);
-  --keyghost-dim: rgba(130, 149, 165, 0.05);
-  /* one keycap double-rect (same double-rect language as the Keycap component
-     / nav monogram), URL-encoded so '#' never appears raw; used as a mask so
-     paint lands only on the keycap outlines. */
-  --keycap-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.5'%3E%3Crect x='4' y='6' width='48' height='44' rx='8'/%3E%3Crect x='8' y='10' width='40' height='32' rx='6'/%3E%3C/g%3E%3C/svg%3E");
-  /* type — system fonts only (no CDN fonts, zero font bytes) */
+
+  /* ----------------------------------------------------------------- type */
+  /* System fonts only (no CDN fonts, zero font bytes). */
   --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
     'Times New Roman', serif;
   --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
     Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas,
     monospace;
+
+  /* ----------------------------------------------- legacy aliases (temporary)
+     src/index.css still references the previous token names. Every one of them
+     now resolves into the figure palette, so the site renders in the new
+     world before the stylesheet is rewritten. These aliases are scaffolding:
+     the rewrite removes the usages, and the final pass deletes the aliases. */
+  --bg: var(--ground);
+  --surface: var(--plate);
+  --border: var(--grid);
+  /* Interactive boundary — #8295A5 clears WCAG 1.4.11's 3:1 on every
+     surface (6.06:1 on --plate, 6.33:1 on --ground). */
+  --border-interactive: var(--ink-3);
+  --shadow-edge: var(--axis);
+  --accent: var(--series-2);
+  --accent-deep: var(--series-2);
+  --teal: var(--ink-2);
+  --status: var(--series-3);
+  --climb-gold: var(--series-2);
+  --chalk: var(--ink);
+  --navy: var(--plate);
+  --navy-ink: var(--ink);
+  --navy-ink-2: var(--ink-2);
+  --r-card: var(--r-xs);
+  --r-key: var(--r-xs);
+  /* The only shadow in the system is a hairline, so the legacy card shadows
+     resolve to a no-op. Kept as a valid shadow value, not `none`, because two
+     surviving rules compose them into a comma list. */
+  --shadow-card: 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-card-hover: 0 0 0 rgba(0, 0, 0, 0);
+  --border-hover: var(--series-2);
+  /* Retired decoration: the light sweep and the ghost-tile mask are held at
+     transparent until their rules are deleted outright. */
+  --t-boot: 1300ms;
+  --backlight-1: transparent;
+  --backlight-2: transparent;
+  --keyghost: transparent;
+  --keyghost-dim: transparent;
+  --keycap-tile: none;
 }
