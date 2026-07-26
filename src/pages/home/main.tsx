@@ -8,10 +8,10 @@ import { ContactBand, EduCard } from "../../components/cards";
 import { Chip, ProofChip } from "../../components/chips";
 import { ClimbingRoute } from "../../components/ClimbingRoute";
 import { Footer } from "../../components/Footer";
-import { Keycap } from "../../components/Keycap";
-import { KeycapCluster } from "../../components/KeycapCluster";
+import { ExternalLink, LabelButton } from "../../components/LabelButton";
 import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
+import { Sweep } from "../../components/Sweep";
 import { SystemFeature } from "../../components/SystemFeature";
 
 function Home() {
@@ -19,46 +19,63 @@ function Home() {
     <>
       <Nav active="home" />
       <main id="main" className="main-with-contact">
+        {/* The first screen is a figure and its readout: identity and
+            availability on the left, the measured recall curve on the right,
+            three repos with one number and one link each above the fold. */}
         <section className="hero-band">
-          <ClimbingRoute />
-          <div className="hero container">
-            <p className="kicker">{hero.kicker}</p>
-            <h1>{hero.headline}</h1>
-            <p className="hero-subhead">{hero.subhead}</p>
-            <p className="hero-availability">
-              <ProofChip label={hero.availability} />
-            </p>
-            <div className="cta-row">
-              <Keycap href={`mailto:${person.email}`} variant="primary">
-                Email me
-              </Keycap>
-              <Keycap href="/experience/">Experience</Keycap>
-              <Keycap href={person.github} external>
-                GitHub
-              </Keycap>
-              <Keycap href={person.linkedin} external>
-                LinkedIn
-              </Keycap>
+          <div className="hero container hero-grid">
+            <div className="hero-copy">
+              <p className="kicker">{hero.kicker}</p>
+              <h1>{hero.headline}</h1>
+              <p className="hero-subhead">{hero.subhead}</p>
+              <p className="hero-availability">
+                <ProofChip label={hero.availability} />
+              </p>
+              {/* The readout rail: fold-level proof that reads and clicks with
+                  the figure ignored entirely. */}
+              <div className="hero-readout" role="list">
+                {hero.readout.map((r) => (
+                  <div className="hero-readout-row" role="listitem" key={r.repo}>
+                    <ExternalLink className="hero-readout-repo mono" href={r.href}>
+                      {r.repo}
+                    </ExternalLink>
+                    <span className="hero-readout-value mono">{r.value}</span>
+                    <span className="hero-readout-unit mono">{r.unit}</span>
+                  </div>
+                ))}
+              </div>
+              {/* Two buttons, one decision. Experience and LinkedIn live in
+                  the nav and footer. */}
+              <div className="cta-row">
+                <LabelButton href={`mailto:${person.email}`} variant="primary">
+                  Email me
+                </LabelButton>
+                <LabelButton href={person.github} external>
+                  GitHub
+                </LabelButton>
+              </div>
+              <p className="hero-email-plain">{person.email}</p>
             </div>
-            <p className="hero-email-plain">{person.email}</p>
+            <div className="hero-figure">
+              <Sweep />
+            </div>
           </div>
         </section>
 
-        <Section id="systems" title="Featured engineering work">
+        <Section id="systems" title="Featured engineering work" rank={1}>
           <div className="system-list">
-            {featuredSystems.map((project) => (
-              <SystemFeature key={project.id} project={project} />
+            {featuredSystems.map((project, i) => (
+              <SystemFeature key={project.id} project={project} index={i} />
             ))}
           </div>
         </Section>
 
-
-        <Section id="about" title="About me">
-          {/* Desktop 2-col: copy left, decorative keycap cluster right — it
-              literally illustrates the hero's keyboard thesis and keeps the
-              right half of the container from reading as dead field. */}
+        <Section id="about" title="About me" rank={2}>
+          {/* Copy left, the boulder topo right: the one drawn figure about the
+              person, beside the paragraph that earns it. Never display:none —
+              the topo carries gate-asserted labels. */}
           <div className="about-layout">
-            <div className="about-copy">
+            <div>
               <p>{about.p1}</p>
               <p>
                 {about.p2Before}
@@ -67,22 +84,21 @@ function Home() {
               </p>
               <p>{about.p3}</p>
             </div>
-            <div className="about-visual" aria-hidden="true">
-              <KeycapCluster />
+            <div className="about-figure">
+              <ClimbingRoute />
             </div>
           </div>
         </Section>
 
-        <Section id="education" title="Education">
+        <Section id="education" title="Education" rank={2}>
           {/* Single entry — no card-grid (a lone half-width card reads as a
-              missing neighbor on desktop). The .edu-card max-width caps the
-              measure; bring the grid back with a second entry. */}
+              missing neighbor on desktop). */}
           {education.map((e) => (
             <EduCard key={e.school} edu={e} />
           ))}
         </Section>
 
-        <Section id="skills" title="Skills">
+        <Section id="skills" title="Skills" rank={2}>
           {skills.map((row) => (
             <div className="skills-row" key={row.label}>
               <span className="skills-label">{row.label}</span>

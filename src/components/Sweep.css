@@ -1,0 +1,332 @@
+/* THE SWEEP — the figure's own stylesheet.
+   Imported by src/components/Sweep.tsx, so it ships only where the figure
+   ships, and src/index.css never has to carry a chart's worth of selectors.
+
+   Everything here is drawn from the figure palette in src/styles/tokens.css:
+   --series-1 (blue) is data, --series-3 (teal) is the second series, and
+   --series-2 (amber) is the human annotation — the crosshair, the knee ring,
+   the leader line and the readout. That is the site's one colour rule and this
+   is the object it was written for.
+
+   The crosshair is two custom properties and nothing else. --sweep-x and
+   --sweep-y are plot coordinates in SVG user units, set on the <figure> by
+   src/enhance.ts; the fallbacks below are the knee, so the server-rendered
+   figure already carries the annotated default and no state appears when the
+   bundle lands. CSS transforms on SVG children take px that map 1:1 to user
+   units, which is why no JS ever touches an attribute. */
+
+/* A <figure> carries a UA margin of `1em 40px`. Unreset, that ate 80px of the
+   plot's width at 320w and pushed the knee annotation out of the pan — a
+   default margin quietly deciding what a reader can see. */
+.sweep {
+  margin: 0;
+  gap: var(--space-4);
+}
+
+/* The plate is focusable, so it needs a real focus ring — the crosshair is
+   keyboard-operable and the arrow keys have to have somewhere to land. */
+.sweep:focus-visible {
+  outline: 2px solid var(--series-2);
+  outline-offset: 2px;
+}
+
+/* Ten labelled samples in a 310px phone column would render this plot's 10px
+   axis text at about 4px — a figure nobody can read, pretending to be one they
+   can. So the plot keeps a floor width (labels stay above ~8px) and the plate
+   pans it horizontally, the way a wide data table pans.
+   The evidence does not ride on that gesture: the readout line and the footnote
+   strip below are static body-size text and carry the same numbers, which is
+   why the figure can afford to be dense. */
+.sweep-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--grid) transparent;
+  /* When the plot is wider than the plate, the pan must START at the annotated
+     end — the amber knee callout is the figure's default state and evidence may
+     never sit behind a gesture. `direction: rtl` on the scroller puts the
+     initial scroll position at the right edge with no script; the child restores
+     LTR so nothing about the plot's own layout changes. */
+  direction: rtl;
+}
+
+.sweep-scroll > * {
+  direction: ltr;
+}
+
+.sweep-plot {
+  display: block;
+  width: 100%;
+  min-width: 580px;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ frame */
+.sweep-grid line {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.sweep-axis line {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+
+/* The 0.90 threshold. Dashed because it is a line someone chose, not a line
+   the benchmark measured — and the fast end of the HNSW curve crosses under
+   it, which is the point of drawing it at all. */
+.sweep-reference {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+}
+
+.sweep-reference-label,
+.sweep-tick text,
+.sweep-legend text,
+.sweep-oracle text,
+.sweep-samples text {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  fill: var(--ink-3);
+}
+
+.sweep-tick-x text {
+  text-anchor: middle;
+  fill: var(--ink-2);
+}
+
+.sweep-tick-y text {
+  text-anchor: end;
+  fill: var(--ink-2);
+}
+
+.sweep-axis-title {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-anchor: middle;
+  fill: var(--ink-3);
+}
+
+/* ----------------------------------------------------------------- legend */
+.sweep-legend text {
+  text-anchor: start;
+  fill: var(--ink-2);
+}
+
+.sweep-legend-hnsw {
+  stroke: var(--series-1);
+  stroke-width: 2;
+}
+
+.sweep-legend-ivf {
+  stroke: var(--series-3);
+  stroke-width: 2;
+}
+
+.sweep-legend-oracle {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  fill: none;
+}
+
+/* ----------------------------------------------------------------- oracle */
+.sweep-oracle path {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  fill: none;
+}
+
+.sweep-oracle text {
+  text-anchor: start;
+  fill: var(--ink-2);
+}
+
+/* ------------------------------------------------------------------ series */
+.sweep-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.sweep-line-hnsw {
+  stroke: var(--series-1);
+}
+
+.sweep-line-ivf {
+  stroke: var(--series-3);
+}
+
+/* SAMPLE POINT, the site's shared atom, in its original habitat: a filled dot
+   with a hairline halo. The halo is the plate colour, so a point reads as a
+   point where two curves nearly touch. */
+.sweep-sample circle {
+  stroke: var(--plate);
+  stroke-width: 1.5;
+}
+
+.sweep-sample-hnsw circle {
+  fill: var(--series-1);
+}
+
+.sweep-sample-ivf circle {
+  fill: var(--series-3);
+}
+
+.sweep-samples text {
+  text-anchor: middle;
+}
+
+/* One sample label is set right-aligned to dodge the crosshair's default
+   column — see the note at the knee in Sweep.tsx. */
+.sweep-samples .sweep-label-end {
+  text-anchor: end;
+}
+
+/* --------------------------------------------------------------- crosshair */
+/* Amber, because it is the reader's annotation on someone else's measurement.
+   Two properties drive all three shapes. */
+.sweep-crosshair line {
+  stroke: var(--series-2);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.sweep-crosshair-v {
+  transform: translateX(calc(var(--sweep-x, 507.3) * 1px));
+  transition: transform var(--t-tap) var(--ease-out);
+}
+
+.sweep-crosshair-h {
+  transform: translateY(calc(var(--sweep-y, 79.3) * 1px));
+  transition: transform var(--t-tap) var(--ease-out);
+}
+
+.sweep-crosshair-dot {
+  fill: none;
+  stroke: var(--series-2);
+  stroke-width: 2;
+  transform: translate(
+    calc(var(--sweep-x, 507.3) * 1px),
+    calc(var(--sweep-y, 79.3) * 1px)
+  );
+  transition: transform var(--t-tap) var(--ease-out);
+}
+
+/* ----------------------------------------------------------------- callout */
+/* Leader line plus label, the plot's own annotation grammar. It is in the
+   markup, at the knee, in the static HTML — proof is never a hover reward. */
+.sweep-callout-ring {
+  fill: none;
+  stroke: var(--series-2);
+  stroke-width: 1.5;
+}
+
+.sweep-callout-leader {
+  fill: none;
+  stroke: var(--series-2);
+  stroke-width: 1;
+}
+
+.sweep-callout-label {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-anchor: end;
+  fill: var(--series-2);
+}
+
+/* ----------------------------------------------------------------- readout */
+/* The line the crosshair rewrites. It sits under the plot, in the plate, above
+   the footnote strip — a caption that happens to be live. */
+.sweep-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-400);
+  line-height: 1.4;
+}
+
+.sweep-readout-key {
+  flex: none;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: var(--fs-200);
+}
+
+.sweep-readout-value {
+  color: var(--series-2);
+}
+
+.sweep-source {
+  color: var(--ink-3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.sweep-source:hover,
+.sweep-source:focus-visible {
+  color: var(--series-2);
+}
+
+/* --------------------------------------------------------- reduced motion */
+/* The crosshair is the site's one animated moment and it is user-driven, so
+   under `reduce` it still moves — it just stops easing. Stated here rather
+   than relying on the global block so the figure's contract is readable in
+   the figure's own file. */
+@media (prefers-reduced-motion: reduce) {
+  .sweep-crosshair-v,
+  .sweep-crosshair-h,
+  .sweep-crosshair-dot {
+    transition-duration: 0ms;
+  }
+}
+
+/* ------------------------------------------------------------------ print */
+/* The plate prints; the amber annotation would print as a pale wash, so the
+   crosshair and the knee ring drop and the curves go to ink. */
+@media print {
+  .sweep-crosshair,
+  .sweep-callout-ring {
+    display: none;
+  }
+
+  .sweep-line-hnsw,
+  .sweep-legend-hnsw {
+    stroke: #0b3a6b;
+  }
+
+  .sweep-sample-hnsw circle {
+    fill: #0b3a6b;
+    stroke: #ffffff;
+  }
+
+  .sweep-line-ivf,
+  .sweep-legend-ivf {
+    stroke: #2f7d4f;
+  }
+
+  .sweep-sample-ivf circle {
+    fill: #2f7d4f;
+    stroke: #ffffff;
+  }
+
+  .sweep-callout-leader {
+    stroke: #8a5a00;
+  }
+
+  .sweep-callout-label,
+  .sweep-readout-value {
+    fill: #8a5a00;
+    color: #8a5a00;
+  }
+}

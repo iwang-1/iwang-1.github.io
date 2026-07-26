@@ -1,21 +1,24 @@
 import { footer, person } from "../content";
-import { Keycap } from "./Keycap";
+import { CopyEmailButton, LabelButton } from "./LabelButton";
 
-/** Shared footer: contact keycaps + Education anchor, then the colophon.
- *  No phone number, ever. */
+/** Shared footer: label buttons for the three channels plus the Education
+ *  anchor, then the colophon. Nothing here reveals on scroll — the footer is
+ *  always the last thing on screen and a fade would only ever be a fade-in of
+ *  content the reader has already reached. No phone number, ever. */
 export function Footer() {
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-links">
-          <Keycap href={`mailto:${person.email}`}>Email</Keycap>
-          <Keycap href={person.github} external>
+          <LabelButton href={`mailto:${person.email}`}>Email</LabelButton>
+          <CopyEmailButton email={person.email} />
+          <LabelButton href={person.github} external>
             GitHub
-          </Keycap>
-          <Keycap href={person.linkedin} external>
+          </LabelButton>
+          <LabelButton href={person.linkedin} external>
             LinkedIn
-          </Keycap>
-          <Keycap href="/#education">Education</Keycap>
+          </LabelButton>
+          <LabelButton href="/#education">Education</LabelButton>
           <span className="mono footer-email">{person.email}</span>
         </div>
         <div className="footer-colophon">

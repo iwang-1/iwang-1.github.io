@@ -28,8 +28,7 @@ function Experience() {
           <div className="page-head container">
             <h1>Experience</h1>
             <p className="page-dek">
-              Production engineering across AWS, backend and data systems, research, and technical
-              leadership.
+              Four engineering roles, then the teaching and community work. Newest first.
             </p>
           </div>
         </div>

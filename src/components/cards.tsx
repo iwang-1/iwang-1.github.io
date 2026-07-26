@@ -1,10 +1,12 @@
 import { contact, person, type Education, type Project, type Role } from "../content";
 import { Chip, ProofChip } from "./chips";
-import { ExternalLink, Keycap } from "./Keycap";
+import { CopyEmailButton, ExternalLink, LabelButton } from "./LabelButton";
 import { Reveal } from "./Reveal";
 
-/** RoleLogo — the employer's real logo in a white chip (so transparent and
- *  dark marks read in both themes). `wide` lets a wordmark span the chip. */
+/** RoleLogo — the employer's real logo in a white chip, so transparent and dark
+ *  marks read on the plate. `wide` lets a wordmark span the chip. Every role has
+ *  a real vendor mark, so nothing on a recruiting page is ever the wrong
+ *  company's logo. */
 function RoleLogo({ logo }: { logo: Role["logo"] }) {
   return (
     <span className={`role-logo${logo.pad ? " role-logo-pad" : ""}`}>
@@ -19,17 +21,11 @@ function RoleLogo({ logo }: { logo: Role["logo"] }) {
   );
 }
 
-/** RoleCard — surfaced timeline card (Experience alternating timeline);
- *  `tagTone="teal"` renders flat teal tags instead of ProofChips. */
-export function RoleCard({
-  role,
-  tagTone = "default",
-}: {
-  role: Role;
-  tagTone?: "default" | "teal";
-}) {
+/** RoleCard — one role, plated: logo, title, the date range as an axis-style
+ *  mono line, then the bullets. */
+export function RoleCard({ role }: { role: Role }) {
   return (
-    <article className={"card role-card"}>
+    <article className="card role-card">
       <header className="role-card-head">
         <RoleLogo logo={role.logo} />
         <div>
@@ -48,7 +44,7 @@ export function RoleCard({
       {(role.chips || role.tags) && (
         <div className="chip-rail">
           {role.chips?.map((c) => <ProofChip key={c} label={c} />)}
-          {role.tags?.map((t) => <Chip key={t} label={t} tone={tagTone} />)}
+          {role.tags?.map((t) => <Chip key={t} label={t} />)}
         </div>
       )}
       {role.proofLink && (
@@ -62,7 +58,7 @@ export function RoleCard({
   );
 }
 
-/** EduCard — Home #education entries. Coursework chips are teal. */
+/** EduCard — the Home #education entry. */
 export function EduCard({ edu }: { edu: Education }) {
   return (
     <article className="card edu-card">
@@ -79,26 +75,21 @@ export function EduCard({ edu }: { edu: Education }) {
           <ProofChip label={edu.proofChip} />
         </div>
       )}
-      <div className="chip-rail">
-        {edu.coursework.map((c) => (
-          <Chip key={c} label={c} tone="teal" />
-        ))}
-      </div>
+      {/* One mono line, not nine pills: coursework is metadata, and a wall of
+          identical chips was ~1.5 phone screens of low-information pills. */}
+      <p className="edu-coursework">Coursework: {edu.coursework.join(", ")}</p>
     </article>
   );
 }
 
-/** ProjectCard — project cards. Every project links to a public repo. */
+/** ProjectCard — one project. Every project links a public repo, so the linked
+ *  title is the card's primary affordance and `.card-live` is what carries the
+ *  hover promise. */
 export function ProjectCard({ project }: { project: Project }) {
+  const { repoHref } = project;
   return (
-    <article className={`card ${project.repoHref ? "card-live" : "card-static"}`} id={project.id}>
-      <h3>
-        {project.repoHref ? (
-          <ExternalLink href={project.repoHref}>{project.title}</ExternalLink>
-        ) : (
-          project.title
-        )}
-      </h3>
+    <article className={repoHref ? "card card-live" : "card"} id={project.id}>
+      <h3>{repoHref ? <ExternalLink href={repoHref}>{project.title}</ExternalLink> : project.title}</h3>
       <div className="project-meta">
         {project.license && <span className="role-meta">{project.license}</span>}
       </div>
@@ -118,7 +109,11 @@ export function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-/** Shared recruiter-facing contact band used at the end of every primary page. */
+/** Shared recruiter-facing contact band, at the end of every primary page.
+ *
+ *  One channel, three ways to use it: open a mail client, copy the address, or
+ *  read it. Profile links live in the nav and the footer, so this band is a
+ *  decision rather than another four-button row. */
 export function ContactBand({
   id,
   heading = contact.heading,
@@ -136,15 +131,10 @@ export function ContactBand({
           <p>{body}</p>
         </div>
         <div className="contact-actions">
-          <Keycap href={`mailto:${person.email}`} variant="primary">
+          <LabelButton href={`mailto:${person.email}`} variant="primary">
             Email me
-          </Keycap>
-          <Keycap href={person.linkedin} external>
-            LinkedIn
-          </Keycap>
-          <Keycap href={person.github} external>
-            GitHub
-          </Keycap>
+          </LabelButton>
+          <CopyEmailButton email={person.email} />
           <span className="mono contact-email">{person.email}</span>
         </div>
       </Reveal>

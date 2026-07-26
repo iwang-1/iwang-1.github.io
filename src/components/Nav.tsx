@@ -9,39 +9,46 @@ const TABS: { key: Exclude<ActiveTab, null> | "contact"; label: string; href: st
   { key: "contact", label: "Contact", href: "/#contact" },
 ];
 
-/** IW monogram — a single inline-SVG keycap with a serif "IW". */
-function Monogram() {
+/** FigureMark — the site's mark, and the same drawing as the favicon: a plate
+ *  with drawn axes, a rising three-point sample line in --series-1, and one
+ *  amber annotation dot on the middle sample. It is the whole thesis at 32px.
+ *
+ *  Paths are literal `d` attributes and the dot is a real sample point, so the
+ *  mark is one object in the grammar rather than a lettermark that happens to sit
+ *  in the corner. */
+function FigureMark() {
   return (
     <svg
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
       role="presentation"
       aria-hidden="true"
       focusable="false"
     >
-      <rect x="1" y="3" width="34" height="32" rx="7" fill="var(--shadow-edge)" />
       <rect
-        x="1"
-        y="1"
-        width="34"
-        height="32"
-        rx="7"
-        fill="var(--surface)"
-        stroke="var(--border)"
+        x="0.5"
+        y="0.5"
+        width="31"
+        height="31"
+        rx="2"
+        fill="var(--plate)"
+        stroke="var(--grid)"
         strokeWidth="1"
       />
-      <text
-        x="18"
-        y="23"
-        textAnchor="middle"
-        fontFamily="'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif"
-        fontSize="14"
-        fontWeight="700"
-        fill="var(--ink)"
-      >
-        IW
-      </text>
+      {/* axes */}
+      <path d="M 6 5 L 6 26 L 27 26" fill="none" stroke="var(--axis)" strokeWidth="1.5" />
+      {/* the sample line */}
+      <path
+        d="M 8 22 L 15 15.5 L 25 9"
+        fill="none"
+        stroke="var(--series-1)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* the annotation */}
+      <circle cx="15" cy="15.5" r="3" fill="var(--series-2)" />
     </svg>
   );
 }
@@ -90,7 +97,7 @@ export function Nav({ active }: { active: ActiveTab }) {
               aria-hidden, so without it the link's name computes as EMPTY on
               mobile (WCAG 4.1.2). */}
           <a className="nav-brand" href="/" aria-label="Ivan Wang — home">
-            <Monogram />
+            <FigureMark />
             <span className="nav-wordmark" aria-hidden="true">
               Ivan Wang
             </span>
@@ -100,7 +107,7 @@ export function Nav({ active }: { active: ActiveTab }) {
               <a
                 key={tab.label}
                 href={tab.href}
-                className={active === tab.key ? "keycap keycap-pressed" : "keycap"}
+                className={active === tab.key ? "btn btn-current" : "btn"}
                 {...(active === tab.key ? { "aria-current": "page" as const } : {})}
               >
                 {tab.label}

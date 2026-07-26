@@ -1,16 +1,19 @@
-/** Progressive-enhancement layer — everything here is injected by the bundle
- *  at runtime and lives OUTSIDE #root, so it never touches the prerendered
- *  static HTML. Without JS the site is unchanged and fully usable; with JS it
- *  gains four tactile touches:
+/** Progressive-enhancement layer. Everything here is injected or bound by the
+ *  bundle at runtime; without JS the prerendered static HTML is complete and
+ *  fully usable, and nothing that constitutes evidence lives behind a pointer.
+ *  With JS the site gains two things:
  *
- *    1. a keyboard command palette (g-chords + `?` help overlay) with a
- *       discoverable floating button,
- *    2. a cursor-reactive keycap cluster in the Home "About" motif, and
- *    3. cursor-reactive climbing holds in the Home hero.
+ *    1. THE SWEEP's crosshair — the figure's readout follows the pointer or the
+ *       arrow keys, snapping to real measured samples. The figure already ships
+ *       annotated at its knee, so this sharpens an existing state rather than
+ *       revealing a hidden one.
+ *    2. a keyboard command palette (g-chords + `?` legend overlay) behind a
+ *       discoverable legend swatch.
  *
- *  Motion respects prefers-reduced-motion (the cursor effect is skipped and
- *  the global reduced-motion CSS block strips every transition). Imported
- *  after js-flag by every page entry; guarded so it runs once per document. */
+ *  The crosshair is the site's one animated moment and it is user-driven. Under
+ *  prefers-reduced-motion it still tracks — the transition just drops to 0ms in
+ *  Sweep.css. Imported after js-flag by every page entry; guarded so it runs
+ *  once per document. */
 const prefersReduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -28,9 +31,11 @@ const SHORTCUTS: Shortcut[] = [
 ];
 
 // ----------------------------------------------------------- command palette
-function keycapGlyph(): string {
-  // small keyboard glyph for the floating button (decorative)
-  return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M6.5 13.5h11"/></svg>`;
+function legendGlyph(): string {
+  // A legend swatch: two series keys and a sample point, which is what the
+  // overlay it opens actually is — the page's legend. Decorative; the button's
+  // aria-label carries the meaning.
+  return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h6M4 16h6"/><circle cx="16.5" cy="8" r="2" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16" r="2"/></svg>`;
 }
 
 function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
@@ -44,12 +49,12 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   overlay.className = "kbd-help";
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", "Keyboard shortcuts");
+  overlay.setAttribute("aria-label", "Legend and shortcuts");
   overlay.hidden = true;
   overlay.innerHTML =
     `<div class="kbd-help-backdrop" data-close></div>` +
     `<div class="kbd-help-card">` +
-    `<p class="kbd-help-title">Keyboard shortcuts</p>` +
+    `<p class="kbd-help-title">Legend &amp; shortcuts</p>` +
     `<ul class="kbd-help-list">${rows}</ul>` +
     `<p class="kbd-help-foot"><kbd>?</kbd> toggles this panel · <kbd>Esc</kbd> closes it</p>` +
     `<button type="button" class="keycap kbd-help-close" data-close>Close</button>` +
@@ -60,8 +65,8 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   fab.id = "kbd-fab";
   fab.className = "kbd-fab";
   fab.setAttribute("aria-haspopup", "dialog");
-  fab.setAttribute("aria-label", "Keyboard shortcuts");
-  fab.innerHTML = keycapGlyph();
+  fab.setAttribute("aria-label", "Legend and shortcuts");
+  fab.innerHTML = legendGlyph();
 
   document.body.appendChild(overlay);
   document.body.appendChild(fab);
@@ -212,108 +217,108 @@ function mountCommandPalette(): void {
   });
 }
 
-// -------------------------------------------------- cursor-reactive cluster
-function mountReactiveCluster(): void {
-  if (prefersReduced()) return;
-  const svg = document.querySelector<SVGSVGElement>(".about-visual svg.kc-cluster");
-  if (!svg) return;
-  // Only wire up when the motif is actually laid out (it is display:none below
-  // 1024px, where getBBox would report a zero rect).
-  if (svg.getBoundingClientRect().width === 0) return;
-  const keys = Array.from(svg.querySelectorAll<SVGGElement>(".kc-key"));
-  if (keys.length === 0) return;
+// ------------------------------------------------------- the Sweep crosshair
+/** Binds the figure's crosshair. The figure (src/components/Sweep.tsx) already
+ *  renders every sample, every label and the amber knee callout, and the
+ *  crosshair already sits on the knee via the CSS fallbacks — so this adds
+ *  inspection, never evidence.
+ *
+ *  Mechanism, deliberately small: each `.sweep-sample` group carries its own
+ *  plot coordinate and its own readout string as data attributes, so the only
+ *  arithmetic here is "which sample is nearest". A pointermove (passive,
+ *  coalesced into one rAF) or an arrow key sets two custom properties on the
+ *  <figure>, swaps one textContent, and mirrors the same string into a polite
+ *  live region. No canvas, no loop, no library, and the single
+ *  getBoundingClientRect is the pointer-to-user-unit conversion — there is no
+ *  other layout read. */
+function mountSweep(): void {
+  const figure = document.querySelector<HTMLElement>("figure.sweep");
+  if (!figure) return;
+  const svg = figure.querySelector<SVGSVGElement>("svg.sweep-plot");
+  const readout = figure.querySelector<HTMLElement>(".sweep-readout-value");
+  const live = figure.querySelector<HTMLElement>(".sweep-live");
+  if (!svg || !readout) return;
 
-  const vb = svg.viewBox.baseVal;
-  const centers = keys.map((g) => {
-    const b = g.getBBox();
-    return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
-  });
+  const samples = Array.from(figure.querySelectorAll<SVGGElement>(".sweep-sample"))
+    .map((node) => ({
+      x: Number(node.dataset.sweepX),
+      y: Number(node.dataset.sweepY),
+      readout: node.dataset.sweepReadout ?? "",
+    }))
+    .filter((s) => Number.isFinite(s.x) && Number.isFinite(s.y) && s.readout)
+    // Left-to-right, so ArrowRight means "faster" and Home/End are the ends of
+    // the throughput axis rather than of the markup.
+    .sort((a, b) => a.x - b.x);
+  if (samples.length === 0) return;
 
-  const MAX_LIFT = 6; // user units — matched by the CSS transition on .kc-key
-  const RADIUS = 78;
-
-  let ticking = false;
-  let lastX = 0;
-  let lastY = 0;
-  const apply = () => {
-    ticking = false;
-    const rect = svg.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    const px = ((lastX - rect.left) / rect.width) * vb.width;
-    const py = ((lastY - rect.top) / rect.height) * vb.height;
-    for (let i = 0; i < keys.length; i++) {
-      const c = centers[i];
-      const dist = Math.hypot(px - c.x, py - c.y);
-      const lift = dist < RADIUS ? MAX_LIFT * (1 - dist / RADIUS) : 0;
-      // CSS transform (not the SVG attribute) so the .kc-key transition eases
-      // the lift and the return-to-rest on pointerleave.
-      keys[i].style.transform = `translateY(${(-lift).toFixed(2)}px)`;
-    }
-  };
-  const onMove = (e: PointerEvent) => {
-    lastX = e.clientX;
-    lastY = e.clientY;
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(apply);
-  };
-  const reset = () => keys.forEach((k) => (k.style.transform = "translateY(0px)"));
-
-  svg.addEventListener("pointermove", onMove);
-  svg.addEventListener("pointerleave", reset);
-}
-
-// ------------------------------------------------ reactive climbing route
-function mountReactiveClimbingRoute(): void {
-  if (prefersReduced()) return;
-  if (!window.matchMedia("(pointer: fine)").matches) return;
-  if (!window.matchMedia("(hover: hover)").matches) return;
-  const band = document.querySelector<HTMLElement>(".hero-band");
-  if (!band) return;
-  const holds = Array.from(
-    band.querySelectorAll<HTMLElement>(".climbing-route .climb-hold"),
+  // The knee is the server-rendered default, so start the keyboard cursor there
+  // instead of at index 0 — the first Arrow press should step off what the
+  // reader is already looking at.
+  const knee = figure.querySelector<SVGGElement>(".sweep-sample-knee");
+  let index = Math.max(
+    0,
+    samples.findIndex((s) => s.readout === knee?.dataset.sweepReadout),
   );
-  if (holds.length === 0) return;
 
-  let ticking = false;
-  let lastX = 0;
-  let lastY = 0;
+  const select = (next: number, announce: boolean): void => {
+    index = Math.min(samples.length - 1, Math.max(0, next));
+    const sample = samples[index];
+    figure.style.setProperty("--sweep-x", String(sample.x));
+    figure.style.setProperty("--sweep-y", String(sample.y));
+    if (readout.textContent !== sample.readout) readout.textContent = sample.readout;
+    // Pointer users get the visual readout; only deliberate (keyboard) moves are
+    // announced, so dragging across ten samples is not ten interruptions.
+    if (announce && live) live.textContent = sample.readout;
+  };
 
-  const paint = () => {
-    ticking = false;
-    for (const hold of holds) {
-      const rect = hold.getBoundingClientRect();
-      const distance = Math.hypot(
-        lastX - (rect.left + rect.width / 2),
-        lastY - (rect.top + rect.height / 2),
-      );
-      const lift = distance < 150 ? 8 * (1 - distance / 150) : 0;
-      hold.style.setProperty("--hold-lift", `${-lift.toFixed(2)}px`);
+  // Pointer → nearest sample on the throughput axis. Comparing x alone is the
+  // right model here: the reader is scrubbing a curve, not hunting a scatter.
+  const nearest = (clientX: number): number => {
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0) return index;
+    const view = svg.viewBox.baseVal;
+    const userX = ((clientX - rect.left) / rect.width) * view.width;
+    let best = 0;
+    let bestDistance = Infinity;
+    for (let i = 0; i < samples.length; i++) {
+      const distance = Math.abs(samples[i].x - userX);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = i;
+      }
     }
-  };
-  const onMove = (event: PointerEvent) => {
-    lastX = event.clientX;
-    lastY = event.clientY;
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(paint);
-  };
-  const reset = () => {
-    holds.forEach((hold) => hold.style.setProperty("--hold-lift", "0px"));
+    return best;
   };
 
-  band.addEventListener("pointermove", onMove);
-  band.addEventListener("pointerleave", reset);
+  let queued = false;
+  let pointerX = 0;
+  const apply = () => {
+    queued = false;
+    select(nearest(pointerX), false);
+  };
 
-  // Inline custom properties are not reset by the reduced-motion CSS block.
-  window
-    .matchMedia("(prefers-reduced-motion: reduce)")
-    .addEventListener("change", (event) => {
-      if (!event.matches) return;
-      band.removeEventListener("pointermove", onMove);
-      band.removeEventListener("pointerleave", reset);
-      reset();
-    });
+  figure.addEventListener(
+    "pointermove",
+    (event: PointerEvent) => {
+      pointerX = event.clientX;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(apply);
+    },
+    { passive: true },
+  );
+
+  figure.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    let next = index;
+    if (event.key === "ArrowRight") next = index + 1;
+    else if (event.key === "ArrowLeft") next = index - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = samples.length - 1;
+    else return;
+    event.preventDefault();
+    select(next, true);
+  });
 }
 
 // ------------------------------------------------------- hash / contact nav
@@ -383,15 +388,14 @@ function mountHashNav(): void {
 
 function init(): void {
   mountCommandPalette();
-  mountReactiveCluster();
-  mountReactiveClimbingRoute();
+  mountSweep();
   mountHashNav();
 }
 
 // ES imports are hoisted, so this module evaluates BEFORE the page entry's
 // createRoot(...).render(...). Defer init one frame past a settled DOM so the
-// reactive elements query React's rendered nodes, not the prerendered nodes
-// React is about to replace.
+// crosshair binds React's rendered figure, not the prerendered nodes React is
+// about to replace.
 function boot(): void {
   requestAnimationFrame(init);
 }

@@ -200,13 +200,15 @@ export const education: Education[] = [
 // ---------------------------------------------------------------------------
 // Skills — focused on tools backed by experience or public work.
 
+// Two rows, not four: the same items per the resume, merged so the section
+// stops reading as 1.5 phone screens of identical pills.
 export const skills: { label: string; items: string[] }[] = [
   {
     label: "Languages",
     items: ["Python", "Java", "Go", "Rust", "TypeScript/JavaScript", "Scala", "SQL", "Bash"],
   },
   {
-    label: "Backend & systems",
+    label: "Tools & frameworks",
     items: [
       "Raft",
       "gRPC/Protobuf",
@@ -215,11 +217,6 @@ export const skills: { label: string; items: string[] }[] = [
       "Node.js",
       "PostgreSQL/SQLite",
       "JUnit 5",
-    ],
-  },
-  {
-    label: "ML & research",
-    items: [
       "PyTorch",
       "HuggingFace",
       "scikit-learn",
@@ -228,11 +225,6 @@ export const skills: { label: string; items: string[] }[] = [
       "DisCoPy",
       "pytket",
       "JAX",
-    ],
-  },
-  {
-    label: "Infrastructure",
-    items: [
       "AWS (EC2/VPC, SDK, CDK, CloudWatch)",
       "Docker",
       "Linux",

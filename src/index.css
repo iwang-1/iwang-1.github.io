@@ -783,6 +783,63 @@ img {
   margin-top: var(--space-4);
 }
 
+/* Hero two-column: identity 46 / figure 54. The figure column needs ~640px
+   for the Sweep to render unpanned, so the split waits for 1200px; below
+   that the figure stacks under the copy at 4:3 and stays fully labelled. */
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 1200px) {
+  .hero-grid {
+    grid-template-columns: 46fr 54fr;
+    gap: var(--space-7);
+  }
+}
+
+/* THE READOUT RAIL — three repos, one measured cell each, on hairline rows.
+   This is the fold-level proof and must read and click with the figure
+   ignored entirely: repo name is the amber link, value is ink, unit is quiet. */
+.hero-readout {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-6);
+  max-width: 520px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-readout-row {
+  display: grid;
+  grid-template-columns: minmax(112px, auto) minmax(64px, auto) minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-top: var(--hairline) solid var(--grid);
+}
+
+.hero-readout-row:last-child {
+  border-bottom: var(--hairline) solid var(--grid);
+}
+
+.hero-readout-repo {
+  font-size: var(--fs-400);
+}
+
+.hero-readout-value {
+  color: var(--ink);
+  font-size: var(--fs-500);
+  font-weight: 600;
+  text-align: right;
+}
+
+.hero-readout-unit {
+  color: var(--ink-3);
+  font-size: var(--fs-300);
+}
+
 /* Home hero band — the band wrapping the hero. */
 .hero-band {
   background: var(--navy);
@@ -1040,253 +1097,171 @@ img {
   }
 }
 
-/* ------------------------------------------------ climbing topo (the wall) */
-/* No band texture. The hero band used to carry two diagonal light streaks over
-   the whole width — decoration behind the most important text on the site. The
-   ground runs edge to edge now and the plates provide the structure. */
+/* ------------------------------------------- FIG. 00 — the boulder topo */
+/* The topo is a plate like every other figure: label, drawing, footnote. It
+   sits in the About column beside the Climbing Club paragraph — the one drawn
+   figure about the person, set exactly like the measured figures about the
+   work. The wall is an SVG silhouette; holds are positioned over it in the
+   same percentage space.
+
+   Gate contract: START / TOP / "BOULDER / SET 01" are visible text
+   descendants of .climbing-route at every viewport; >=8 route holds and
+   >=6 off-route holds. Do not hide any of them. */
 
 .climbing-route {
+  max-width: 440px;
+}
+
+.climb-topo {
+  position: relative;
+  aspect-ratio: 5 / 6;
+}
+
+.climb-wall {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
 }
 
-/* The scrim: the wall is currently a full-bleed backdrop behind the hero, so the
-   copy column needs an opaque field or the holds sit under the headline. Tokens
-   only — the hardcoded navy that used to be baked in here no longer matches any
-   surface in the palette. */
-.climbing-route::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  background: linear-gradient(90deg,
-    var(--navy) 0 43%,
-    color-mix(in srgb, var(--plate) 92%, transparent) 51%,
-    transparent 72%);
+/* The wall face and its two seams: contour lines, not scenery. Strokes are
+   non-scaling so the hairline survives preserveAspectRatio="none". */
+.climb-wall-face {
+  fill: var(--plate-2);
+  stroke: var(--grid);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
 }
 
-/* The wall silhouette: a flat --plate-2 field behind a --grid edge. The inset
-   48px vignette is gone — it was lighting a room, and a topo is drawn, not lit. */
-.climbing-wall-panel {
-  position: absolute;
-  z-index: 0;
-  top: -7%;
-  right: -4%;
-  width: 54%;
-  height: 114%;
-  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%, 8% 57%);
-  background: var(--plate-2);
-  border-left: var(--hairline) solid var(--grid);
+.climb-wall-seam {
+  fill: none;
+  stroke: var(--grid);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
 }
 
-/* Panel seams — three --grid hairlines across the wall, the topo's contour
-   lines. */
-.climbing-wall-lines span {
-  position: absolute;
-  z-index: 1;
-  width: 42%;
-  height: var(--hairline);
-  right: -4%;
-  top: 24%;
-  background: var(--grid);
-  transform: rotate(-18deg);
+.climb-wall-bolt {
+  fill: var(--axis);
 }
 
-.climbing-wall-lines span:nth-child(2) {
-  width: 48%;
-  top: 51%;
-  right: 4%;
-  transform: rotate(11deg);
+/* The marked route: a dashed amber leader between the numbered holds — the
+   same "human annotation on the measurement" amber as every callout. */
+.climb-route-path {
+  fill: none;
+  stroke: var(--series-2);
+  stroke-width: 1.5px;
+  stroke-dasharray: 5 6;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.65;
 }
 
-.climbing-wall-lines span:nth-child(3) {
-  width: 38%;
-  top: 76%;
-  right: -1%;
-  transform: rotate(-9deg);
-}
-
-.climbing-wall-bolts {
-  position: absolute;
-  z-index: 1;
-  top: 9%;
-  right: 2%;
-  width: 42%;
-  height: 74%;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  align-items: center;
-  justify-items: center;
-}
-
-/* Bolt holes: a flat grid of --axis dots, the topo's coordinate marks. No inset
-   ring — at 4px it was rendering as mud. */
-.climbing-wall-bolts span {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--axis);
-}
-
-.climb-route-tag {
-  position: absolute;
-  z-index: 3;
-  right: 3%;
-  bottom: 28px;
-  color: var(--navy-ink-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-100);
-}
-
-/* The route line: a dashed leader between holds, in the annotation colour. The
-   old cyan (#67E8F9) went with the rest of the retired neon — this is the one
-   marked path through the wall, which makes it an annotation, which makes it
-   amber. */
-.climb-segment {
-  position: absolute;
-  left: var(--segment-left);
-  top: var(--segment-top);
-  width: var(--segment-width);
-  z-index: 2;
-  height: 2px;
-  background: repeating-linear-gradient(90deg,
-    color-mix(in srgb, var(--series-2) 55%, transparent) 0 6px, transparent 6px 11px);
-  transform: rotate(var(--segment-rotate));
-  transform-origin: left center;
-}
-
-/* Holds are sample points with a shape. Flat fill plus a hairline halo — the
-   same treatment as .sample-point — so the wall belongs to the same document as
-   the plots. The 12px black blur and the 5px inset extrusion are gone: they were
-   simulating plastic under a spotlight, and the site's only shadow is a
-   hairline. */
+/* Holds are sample points with a shape: flat fill plus a hairline halo, the
+   same treatment as .sample-point, sized for a plate column rather than a
+   full-bleed band. */
 .climb-hold {
   position: absolute;
   left: var(--hold-x);
   top: var(--hold-y);
-  width: 54px;
-  height: 28px;
-  transform: translate(-50%, -50%) translateY(var(--hold-lift, 0px)) rotate(var(--hold-rotate));
+  width: 34px;
+  height: 18px;
+  transform: translate(-50%, -50%) rotate(var(--hold-rotate));
   border-radius: 58% 42% 52% 48% / 68% 54% 46% 32%;
   box-shadow: 0 0 0 var(--hairline) var(--grid);
-  transition: transform var(--t-hover) var(--ease-out), filter var(--t-hover) ease;
-  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* The specular arc, in PERCENTAGES. It used to be `inset: 6px 11px 10px`, which
-   is sized for the 54x28 base hold and collapses to an 8x2 sliver on a 30x17
-   off-route hold and to nothing at all on the 25x14 phone variant — the arc read
-   as a stray 2px line. Percentage insets scale with whatever hold they land in,
-   so one rule covers all five sizes at every breakpoint. */
-.climb-hold > span {
-  position: absolute;
-  inset: 21% 20% 36%;
-  border-radius: 50%;
-  border-top: 2px solid color-mix(in srgb, var(--ink) 28%, transparent);
+/* Two colours, one meaning each: the marked route is amber (the route IS the
+   annotation on the wall); everything off it is the unhighlighted sample
+   grey. That distinction is why the topo reads as a figure, not a photo of
+   a gym. */
+.climb-hold-route {
+  background: var(--series-2);
 }
 
-/* Two colours, one meaning each. The marked route is amber, because the route is
-   the annotation on the wall. Everything off it is --ink-3, the same grey as an
-   unhighlighted sample point — that is the whole reason the topo reads as a
-   figure and not as a photo of a gym.
+/* The hold number, set on the amber like a data label. */
+.climb-num {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: var(--fs-100);
+  line-height: 1;
+  color: var(--ground);
+}
 
-   The `chalk` and `gold` tone classes are still emitted by the component and
-   both resolve here to the off-route grey; the retired --chalk / --climb-gold
-   tokens are no longer referenced by this file at all, so they can be deleted
-   with the rest of the alias scaffolding. */
-.climb-hold-route { background: var(--series-2); }
-.climb-hold-chalk,
-.climb-hold-gold { background: var(--ink-3); }
-
-/* Four hold types, four silhouettes. A route where every hold is the same blob
-   is not a route, and `jug` had no rule at all — two of the eight route holds
-   rendered as the untyped base shape. A jug is the big obvious positive hold, so
-   it is the largest and roundest; an edge is the thin one; start is squat and
-   deep; top is the finish. */
+/* Four hold types, four silhouettes: jug = the big obvious positive hold,
+   edge = the thin one, start = squat and deep, top = the finish (ringed the
+   way a plot rings its annotated point). */
 .climb-hold-jug {
-  width: 58px;
-  height: 34px;
+  width: 40px;
+  height: 22px;
   border-radius: 62% 38% 58% 42% / 72% 62% 38% 28%;
 }
 
 .climb-hold-edge {
-  width: 44px;
-  height: 22px;
+  width: 28px;
+  height: 14px;
   border-radius: 35% 65% 42% 58% / 66% 44% 56% 34%;
 }
 
 .climb-hold-start {
-  width: 48px;
-  height: 32px;
+  width: 32px;
+  height: 18px;
 }
 
-/* The finish hold is called out, not lit: a 2px amber ring is the same "this is
-   the annotated point" signal the plots use for the knee. */
 .climb-hold-top {
-  box-shadow: 0 0 0 2px var(--series-2);
+  box-shadow: 0 0 0 var(--hairline) var(--grid), 0 0 0 3px var(--plate-2), 0 0 0 4px var(--series-2);
 }
 
 .climb-hold-off-route {
-  width: 30px;
-  height: 17px;
-  opacity: 0.5;
-  filter: saturate(0.7);
+  width: 20px;
+  height: 11px;
+  background: var(--ink-3);
+  opacity: 0.55;
 }
 
-/* START / TOP are axis tick labels on the topo, so they are set like every other
-   tick label: mono, 11px, hairline plate, 2px radius. These two literals plus
-   "BOULDER / SET 01" are gate-asserted as visible text descendants of
-   .climbing-route — do not hide them, and do not move them out of that node. */
+/* START / TOP are axis tick labels on the topo, set like every other tick
+   label: mono, 11px, hairline plate, 2px radius. Gate-asserted visible. */
 .climb-label {
   position: absolute;
-  z-index: 3;
-  color: var(--navy-ink);
+  z-index: 2;
+  color: var(--ink-2);
   font-family: var(--font-mono);
-  /* On scale at the 11px tick-label step. It was 10px, below every step. */
   font-size: var(--fs-100);
+  letter-spacing: 0.08em;
   padding: 2px 5px;
   border: var(--hairline) solid var(--axis);
   border-radius: var(--r-xs);
   background: var(--plate);
 }
 
-.climb-label-start { left: 84%; top: 89%; }
-.climb-label-top { left: 79%; top: 3%; }
+.climb-label-start { left: 8%; bottom: 4%; }
+.climb-label-top { right: 8%; top: 1%; }
 
-@media (max-width: 899px) {
-  .climbing-route {
-    opacity: 0.56;
-    transform: translateX(8%);
-  }
-
-  .hero { text-shadow: 0 2px 18px var(--navy); }
+/* About layout: copy left, the topo plate right on desktop; stacked on
+   mobile. Unlike the retired .about-visual, this column is NEVER
+   display:none — it carries gate-asserted labels. */
+.about-figure {
+  margin-top: var(--space-5);
+  display: flex;
+  justify-content: flex-start;
 }
 
-@media (max-width: 639px) {
-  .climbing-route {
-    opacity: 0.38;
-    transform: translateX(3%) scale(1.08);
-    transform-origin: right center;
+@media (min-width: 1024px) {
+  .about-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+    gap: var(--space-8);
+    align-items: start;
   }
 
-  .climb-hold {
-    width: 44px;
-    height: 24px;
-  }
-
-  .climb-hold-off-route {
-    width: 25px;
-    height: 14px;
-  }
-
-  .climb-route-tag {
-    display: none;
+  .about-figure {
+    margin-top: 0;
+    justify-content: center;
   }
 }
+
 
 /* ------------------------------------------------------------ page heads */
 .page-head-band {
@@ -1533,6 +1508,17 @@ img {
   font-size: var(--fs-400);
 }
 
+/* Coursework as one mono metadata line — it is provenance, not evidence, so it
+   is set like a footnote rather than a chip wall. */
+.edu-coursework {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-300);
+  line-height: 1.7;
+  color: var(--ink-3);
+  max-width: none;
+}
+
 /* ---------------------------------------------------------------- skills */
 .skills-row {
   display: flex;
@@ -1698,6 +1684,27 @@ img {
 
 .not-found h1 {
   margin-bottom: var(--space-4);
+}
+
+/* The 404's empty figure: real axes, no data. Small enough that the recovery
+   links stay in the first viewport. */
+.not-found-plate {
+  max-width: 420px;
+  margin-bottom: var(--space-6);
+}
+
+.nf-axis,
+.nf-tick {
+  fill: none;
+  stroke: var(--axis);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.nf-note {
+  fill: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
 .not-found .cta-row {
