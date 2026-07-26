@@ -38,6 +38,9 @@
   --series-1: #38BDF8;
   --series-2: #E9A13B;
   --series-3: #2DD4BF;
+  /* The one true white: the chip behind employer logos. Vendor marks are
+     drawn for paper, so they sit on paper — never on a dark plate. */
+  --logo-chip: #FFFFFF;
 
   /* ------------------------------------------------------------- geometry */
   --hairline: 1px;

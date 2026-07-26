@@ -13,6 +13,7 @@ colors:
   series-1: "#38BDF8"
   series-2: "#E9A13B"
   series-3: "#2DD4BF"
+  logo-chip: "#FFFFFF"
 typography:
   display:
     fontFamily: "'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif"
@@ -166,6 +167,10 @@ series colours held back for evidence and affordance.
   deliberately never an affordance, which is the inversion the whole world turns on.
 
 ### Tertiary
+- **Logo Chip** (`--logo-chip` `#FFFFFF`): the one true white — the chip behind employer
+  logos on the timeline. Vendor marks are drawn for paper, so they sit on paper; nothing
+  else on the dark theme may be pure white. (The `@media print` remap reuses raw paper
+  values by design — see the print rule below.)
 - **Series Teal** (`series-3`): the second measured series (IVF-PQ), plus the status dot
   on a proof chip. Present so a two-series plot can be read; never used for emphasis.
 

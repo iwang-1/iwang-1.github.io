@@ -89,6 +89,9 @@
 .sweep-legend text,
 .sweep-oracle text,
 .sweep-samples text {
+  /* viewBox-space drawing dimension, not a type-ramp step: the plot is 680
+     user units wide, so this renders at ~9px — tuned so ten per-point labels
+     never collide. Deliberately off the CSS ramp, like a tick length. */
   font-size: 10px;
   letter-spacing: 0.02em;
   fill: var(--ink-3);
@@ -105,7 +108,7 @@
 }
 
 .sweep-axis-title {
-  font-size: 11px;
+  font-size: var(--fs-100);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-anchor: middle;
@@ -234,7 +237,7 @@
 }
 
 .sweep-callout-label {
-  font-size: 12px;
+  font-size: var(--fs-200);
   letter-spacing: 0.02em;
   text-anchor: end;
   fill: var(--series-2);
@@ -292,41 +295,19 @@
 }
 
 /* ------------------------------------------------------------------ print */
-/* The plate prints; the amber annotation would print as a pale wash, so the
-   crosshair and the knee ring drop and the curves go to ink. */
+/* The figure's colours all resolve through the series/ink tokens, and the
+   global print block already remaps those tokens to their paper values — so
+   the only print-specific rules here are the ones with no screen equivalent:
+   the pointer-driven crosshair drops, and the sample dots gain a paper halo
+   (--plate is white under the print remap). */
 @media print {
   .sweep-crosshair,
   .sweep-callout-ring {
     display: none;
   }
 
-  .sweep-line-hnsw,
-  .sweep-legend-hnsw {
-    stroke: #0b3a6b;
-  }
-
-  .sweep-sample-hnsw circle {
-    fill: #0b3a6b;
-    stroke: #ffffff;
-  }
-
-  .sweep-line-ivf,
-  .sweep-legend-ivf {
-    stroke: #2f7d4f;
-  }
-
+  .sweep-sample-hnsw circle,
   .sweep-sample-ivf circle {
-    fill: #2f7d4f;
-    stroke: #ffffff;
-  }
-
-  .sweep-callout-leader {
-    stroke: #8a5a00;
-  }
-
-  .sweep-callout-label,
-  .sweep-readout-value {
-    fill: #8a5a00;
-    color: #8a5a00;
+    stroke: var(--plate);
   }
 }
