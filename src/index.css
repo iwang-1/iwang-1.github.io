@@ -21,8 +21,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: var(--fs-600);
+  line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -30,31 +30,35 @@ body.modal-open {
   overflow: hidden;
 }
 
+/* The display serif runs h1 → h3, so the three flagship repo titles carry the
+   same authority as a section heading. Three weights only: 400 body, 600
+   headings, 700 display. (550/600/650 render identical pixels in the system
+   sans, so the extra steps were declared and never seen.) */
 h1,
-h2 {
+h2,
+h3 {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
   margin: 0;
 }
 
 h1 {
-  font-size: 3.5rem;
-  line-height: 1.1;
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
   font-weight: 700;
   letter-spacing: -0.015em;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: var(--fs-800);
+  line-height: var(--lh-heading);
   font-weight: 600;
 }
 
 h3 {
-  font-family: var(--font-body);
-  font-size: 1.25rem;
-  line-height: 1.35;
-  font-weight: 650;
-  margin: 0;
+  font-size: var(--fs-700);
+  line-height: var(--lh-sub);
+  font-weight: 600;
 }
 
 h1,
@@ -63,19 +67,13 @@ h3 {
   text-wrap: balance; /* progressive enhancement; ignored by non-supporting engines */
 }
 
-@media (max-width: 639px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  h2 {
-    font-size: 1.625rem;
-  }
-}
+/* No mobile h1 override: --fs-display is a clamp, so the display size falls
+   out of the viewport width (2.4rem at 390w, 3.75rem at 1920/2560) instead of
+   stepping at one breakpoint. */
 
 p {
-  margin: 0 0 16px;
-  max-width: 68ch;
+  margin: 0 0 var(--space-4);
+  max-width: var(--measure-prose);
   text-wrap: pretty;
 }
 
@@ -95,8 +93,8 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* themed selection — #0B1220 on #60A5FA = 7.36:1, reads on the midnight
-   field AND the navy bands (no per-band inversion rules needed) */
+/* Themed selection: amber field, ground-coloured text (8.98:1), which reads
+   on every surface in the palette. */
 ::selection {
   background: var(--accent);
   color: var(--bg);
@@ -124,12 +122,12 @@ img {
 .container {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-5);
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
   }
 }
 
@@ -138,10 +136,11 @@ img {
   font-variant-numeric: tabular-nums;
 }
 
+/* The provenance line: 13px mono, the same rank as an axis label. */
 .kicker {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
+  font-size: var(--fs-300);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-2);
@@ -167,10 +166,10 @@ img {
   z-index: 100;
   background: var(--surface);
   color: var(--ink);
-  border: 1px solid var(--border);
-  border-radius: var(--r-key);
-  padding: 10px 16px;
-  transition: top 120ms ease;
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--r-xs);
+  padding: 10px var(--space-4);
+  transition: top var(--t-tap) ease;
 }
 
 .skip-link:focus-visible {
@@ -178,15 +177,19 @@ img {
 }
 
 /* ------------------------------------------------------------------- nav */
+/* 64px, frozen. The rail below is measured against navBottom−3px with a ±2
+   tolerance and the delta is already exactly 2.0, so the nav height and the
+   rail's box move together or the gate fails. Restyle, do not resize.
+   The bottom edge is a --grid hairline, like every other boundary here. */
 .nav {
   position: sticky;
   top: 0;
   z-index: 10;
   height: 64px;
-  background: rgba(12, 36, 56, 0.97);
+  background: color-mix(in srgb, var(--plate) 97%, transparent);
   backdrop-filter: saturate(1.2) blur(6px);
   -webkit-backdrop-filter: saturate(1.2) blur(6px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: var(--hairline) solid var(--grid);
 }
 
 @supports not (backdrop-filter: blur(6px)) {
@@ -215,17 +218,11 @@ img {
 .nav-wordmark {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: var(--fs-700);
   color: var(--ink);
 }
 
-.nav-brand, .nav-wordmark { color: var(--navy-ink); }
-.nav .keycap-pressed, .nav .keycap-pressed:hover { border-color: rgba(255, 255, 255, 0.38); }
-
-/* Focus visibility on navy bands — #93C5FD on #132D4C is 7.73:1
-   (non-text needs 3:1). */
-.nav :focus-visible, .hero-band :focus-visible, .footer :focus-visible,
-.page-head-band :focus-visible { outline-color: var(--accent-deep); }
+.nav-brand, .nav-wordmark { color: var(--ink); }
 
 .nav-tabs {
   display: flex;
@@ -233,9 +230,9 @@ img {
   gap: 8px;
 }
 
-/* Mobile nav: the .nav-tabs .keycap selectors out-specify the base .keycap
-   rule (which appears LATER in this file — a bare `.keycap` override here
-   would silently lose the cascade). */
+/* Mobile nav: these descendant selectors out-specify the base label-button
+   rule below, which is why a bare `.keycap`/`.btn` override here would
+   silently lose the cascade. */
 @media (max-width: 639px) {
   .nav-wordmark {
     display: none;
@@ -245,9 +242,10 @@ img {
     gap: 6px;
   }
 
-  .nav-tabs .keycap {
+  .nav-tabs .keycap,
+  .nav-tabs .btn {
     padding: 8px 10px;
-    font-size: 0.875rem;
+    font-size: var(--fs-400);
   }
 
   /* long chips (hero availability) must wrap instead of forcing page
@@ -258,7 +256,7 @@ img {
   }
 }
 
-/* Narrow phones: tighten further so brand + 4 caps never overflow. */
+/* Narrow phones: tighten further so brand + 4 tabs never overflow. */
 @media (max-width: 479px) {
   .nav-inner {
     gap: 8px;
@@ -268,15 +266,31 @@ img {
     gap: 4px;
   }
 
-  .nav-tabs .keycap {
-    padding: 8px 7px;
-    font-size: 0.8125rem;
+  .nav-tabs .keycap,
+  .nav-tabs .btn {
+    padding: 8px 6px;
+    font-size: var(--fs-300);
   }
 }
 
+/* The last tab must clear the viewport's right edge by ≥12px, and the tightest
+   case is 360–379px, where the monogram still shows and eats 44px of the row.
+   Measured: the four labels need 240px of glyph width at 13px, which leaves the
+   Contact tab 0.5px from the edge at 360w. Dropping the label to the 12px
+   mono/tick step buys ~19px and lands the gutter at ~22px, with the 44px tap
+   height untouched (min-height on the primitive, not the font size).
+   The brand is NOT un-hidden to make room: verify switches its band-alignment
+   anchor to .nav-tabs at ≤359px precisely because the brand is display:none
+   there, and showing it moves the tabs 44px off the hero kicker's left edge. */
 @media (max-width: 379px) {
-  .nav-tabs .keycap {
+  .nav-tabs {
+    gap: 3px;
+  }
+
+  .nav-tabs .keycap,
+  .nav-tabs .btn {
     padding: 8px 5px;
+    font-size: var(--fs-200);
   }
 }
 
@@ -288,80 +302,282 @@ img {
   }
 }
 
-/* ---------------------------------------------------------------- keycap */
-/* Interactive elements ONLY — nav tabs, CTA buttons, footer link buttons.
-   Pressability = honest affordance: non-interactive chips are flat pills. */
-.keycap {
+/* ---------------------------------------------------------- label button */
+/* The figure world's one interactive primitive: a flat plate with a hairline
+   border and a mono-adjacent label. Nav tabs, CTA buttons, footer links.
+   Non-interactive chips stay borderless-flat, so the hairline IS the
+   affordance.
+
+   Two selector lists per rule while components still emit the legacy names:
+   `.keycap*` is the old emitted class, `.btn*` is the new one. The legacy
+   halves are removed once every component has switched.
+
+   Cascade contract: hover/focus-visible and :active are each written ONCE,
+   here, at equal specificity, in cascade order. There is exactly one :hover
+   rule for this primitive in the whole file — the previous stylesheet had a
+   second, later one whose `:not()` qualifier out-specified the primary
+   variant and rendered the primary label at 1.21:1. */
+.keycap,
+.btn {
+  /* The hover lift and the label colour, as properties the variants and the
+     reduced-motion block can change WITHOUT adding a second :hover rule.
+     --btn-label must be restated by the hover rule: these are anchors, and
+     the global `a:hover` colour would otherwise repaint the label amber —
+     which on the amber-filled primary is 1.00:1, an invisible CTA. */
+  --btn-lift: -1px;
+  --btn-label: var(--ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-height: 44px;
   min-width: 44px; /* 44px tap target in BOTH axes (short labels like "CV") */
-  padding: 10px 16px;
-  border-radius: var(--r-key);
-  background: var(--surface);
-  /* PBT keycap finish — a faint top-down sheen so caps read as molded plastic,
-     not flat rectangles (static, no motion). */
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 45%);
-  color: var(--ink);
-  /* --border-interactive (≥3:1) — the boundary is what distinguishes a
-     pressable keycap from a flat chip on the same surface. The inset highlight
-     is the molded top edge catching light. */
-  border: 1px solid var(--border-interactive);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--border-interactive);
+  padding: 10px var(--space-4);
+  border-radius: var(--r-xs);
+  background: var(--plate);
+  color: var(--btn-label);
+  border: var(--hairline) solid var(--grid);
   font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 550;
+  font-size: var(--fs-500);
+  font-weight: 600;
   text-decoration: none;
-  transition: transform 120ms ease, box-shadow 120ms ease,
-    background-color 120ms ease;
+  transition: transform var(--t-tap) var(--ease-out),
+    border-color var(--t-tap) ease, background-color var(--t-tap) ease;
 }
 
-.keycap:hover {
-  transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 0 var(--border-interactive);
+/* Primary: amber fill. The label is --ground (8.98:1) — --ink on amber is
+   1.98:1 and is never used. */
+.keycap-primary,
+.btn-primary {
+  --btn-label: var(--ground);
+  background: var(--series-2);
+  border-color: var(--series-2);
+  color: var(--btn-label);
+}
+
+/* Current nav tab / current page. Three signals, none of them colour alone:
+   the brighter --plate-2 fill, the --ink-3 boundary, and an amber tick under
+   the label the way the active tick sits under an axis. The tick is a
+   hairline, because a hairline is the only shadow in this system. */
+.keycap-pressed,
+.btn-current {
+  --btn-lift: 0px; /* held down: never lifts, hover or not */
+  background: var(--plate-2);
+  color: var(--btn-label);
+  border-color: var(--ink-3);
+  box-shadow: inset 0 calc(-1 * var(--hairline)) 0 var(--series-2);
+}
+
+/* Hover / focus-visible: the border becomes the amber annotation and the
+   plate lifts. Written ONCE, for every variant, at one specificity. The
+   label colour is restated from the variant's own property so no ancestor
+   link rule can repaint it. */
+.keycap:hover,
+.keycap:focus-visible,
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--series-2);
+  color: var(--btn-label);
+  transform: translateY(var(--btn-lift));
+}
+
+/* Pressed: the lift is removed. Same specificity as the hover rule above and
+   later in the cascade, so it always wins while the pointer is down. */
+.keycap:active,
+.btn:active {
+  transform: none;
+}
+
+/* ------------------------------------------------------------ primitives */
+/* The figure vocabulary. Seven objects, all borrowed from the plots: plate,
+   axis rule, readout, sample point, callout, data table, label button
+   (above). The only shadow anywhere in the system is a hairline — every
+   surface separation is a 1px --grid line, never a blur. */
+
+/* PLATE — the figure frame. A named surface with a label above the content
+   and a footnote strip below a hairline. No gradient, no blur, 2px radius. */
+.plate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: var(--hairline) solid var(--grid);
+  border-radius: var(--r-xs);
+  background: var(--plate);
+}
+
+/* The plate's own label: what figure this is, and of what. Small-caps mono,
+   set quieter than the content it names. */
+.plate-label {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-200);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* The footnote strip: provenance, measurement conditions, and the † limits
+   note. Under a hairline, at the 14px floor --ink-3 is legible against
+   (6.06:1 on --plate, 5.60:1 on --plate-2). */
+.plate-footnote {
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: var(--hairline) solid var(--grid);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-400); /* 14px floor — never smaller */
+  line-height: 1.5;
+  max-width: none;
+}
+
+/* The footnote strip is the LAST thing in a plate, so it owns the bottom
+   edge: no trailing margin can push the hairline off the content. */
+.plate > .plate-footnote:last-child {
+  margin-top: auto;
+}
+
+/* AXIS RULE — the only decorative line on the site: a 1px rule carrying four
+   5px ticks, opening a section the way an axis opens a plot. */
+.axis-rule {
+  position: relative;
+  height: 5px;
+  margin-bottom: var(--space-4);
+  border-top: var(--hairline) solid var(--grid);
+  background-image: linear-gradient(90deg, var(--axis) 0 var(--hairline), transparent var(--hairline));
+  background-repeat: repeat-x;
+  background-size: 25% 5px;
+  background-position: 0 0;
+}
+
+/* READOUT — value / unit / label on one left-aligned baseline, tabular
+   figures, as many rows as the project actually measured. Deliberately NOT a
+   3-column grid: a fixed column count is what makes varied evidence read as
+   a filled-in schema. */
+.readout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.readout-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.readout-value {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-700);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.readout-unit,
+.readout-label {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-400);
+  line-height: 1.4;
+}
+
+.readout-unit {
+  color: var(--ink-2);
+}
+
+/* SAMPLE POINT — one atom for chart points, timeline nodes, list bullets and
+   route holds. 7px fill plus a hairline halo, which is what makes four
+   different pages read as one document. */
+.sample-point {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--series-1);
+  box-shadow: 0 0 0 var(--hairline) var(--grid);
+}
+
+.sample-point-annotated {
+  background: var(--series-2);
+}
+
+.sample-point-off {
+  background: var(--ink-3);
+}
+
+/* CALLOUT — leader line plus label, exactly as the source plots annotate a
+   knee. The site's only annotation style, and the mechanism of the
+   signature: amber marks the human note on the measurement. */
+.callout {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--series-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-300);
+  line-height: 1.4;
+}
+
+.callout::before {
+  content: "";
+  width: var(--callout-leader, 18px);
+  height: var(--hairline);
+  flex: none;
+  background: var(--series-2);
+}
+
+/* DATA TABLE — a figure-world native, for demoted or tabular items. Striped
+   with --plate-2, hairline rules, tabular figures, no vertical borders. */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-400);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--hairline) solid var(--grid);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.data-table th {
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-200);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.data-table td {
   color: var(--ink);
 }
 
-.keycap:active {
-  transform: translateY(2px);
-  /* deeper bottom-out — the pressed cap visibly compresses (matches the
-     .keycap-pressed inset treatment); the top highlight drops while pressed. */
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--border-interactive);
+.data-table tbody tr:nth-child(even) {
+  background: var(--plate-2);
 }
 
-/* Primary command keycap, used for the direct email action. */
-.keycap-primary {
-  background: var(--accent);
-  border-color: var(--accent-deep);
-  color: var(--bg);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--accent-deep);
-}
-
-.keycap-primary:hover {
-  background: var(--accent-deep);
-  color: var(--bg);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 0 var(--accent-deep);
-}
-
-.keycap-primary:active {
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--accent-deep);
-}
-
-/* Current nav tab = bottomed-out pressed cap, with a lit accent switch under
-   it (the inset -2px accent line reads as backlight leaking from the pressed
-   key — ties the nav into the backlit-board story; non-text, decorative). */
-.keycap-pressed,
-.keycap-pressed:hover {
-  background: var(--ink);
-  background-image: none;
-  color: var(--bg);
-  border-color: var(--ink);
-  transform: translateY(2px);
-  box-shadow: 0 0 0 var(--shadow-edge),
-    inset 0 2px 3px rgba(0, 0, 0, 0.45),
-    inset 0 -2px 0 var(--accent);
+.data-table-num {
+  font-family: var(--font-mono);
+  white-space: nowrap;
 }
 
 /* ----------------------------------------------------------- chips/pills */
@@ -370,21 +586,23 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--r-chip);
-  border: 1px solid var(--border);
+  border: var(--hairline) solid var(--border);
   background: var(--surface);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.8125rem;
+  font-size: var(--fs-300);
   color: var(--ink);
   white-space: nowrap;
 }
 
-.chip-teal {
-  color: var(--teal);
-  border-color: color-mix(in srgb, var(--teal) 30%, var(--border));
-}
+/* There is no `.chip-teal` treatment any more. Coursework chips used to be
+   lime, which spent the loudest colour on the site's least load-bearing
+   content — an intro course list — while the measured numbers were grey. The
+   class may still be emitted; it now inherits the plain chip and that is the
+   intended render. Saturated colour is for evidence and for what you can
+   click, nowhere else. */
 
 .proof-chip .dot {
   width: 6px;
@@ -392,69 +610,105 @@ img {
   border-radius: 50%;
   background: var(--status);
   flex: none;
-  animation: dot-in 300ms ease-out;
-}
-
-@keyframes dot-in {
-  from {
-    transform: scale(0);
-  }
-
-  to {
-    transform: scale(1);
-  }
 }
 
 .chip-rail {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 /* -------------------------------------------------------------- sections */
+/* One vertical rhythm, one owner. Every section-level block carries the gap
+   ABOVE itself and nothing carries a gap below, so the four stacked verticals
+   (.section padding-top + main padding-bottom + .contact-band margin-top +
+   .footer margin-top) collapse to a single --section-gap and the
+   `.main-with-contact { padding-bottom: 0 }` patch is unnecessary. */
 .section {
-  padding: 96px 0 0;
+  padding-top: var(--section-gap);
+}
+
+/* Hierarchy ranks. Five identically-sized h2s over five identical 96px pads is
+   the generated-page fingerprint, so a section declares its rank and the
+   heading size moves with the gap above it. Rank-1 is the page's lead section
+   (the systems work); rank-2 is everything that supports it.
+
+   Rank-1's size is a clamp, not a flat --fs-900: h1 is itself a clamp that
+   bottoms out at 2.4rem, and a fixed 2.6rem h2 would render LARGER than the h1
+   above it on a phone. The 1.75rem floor sits ABOVE rank-2's --fs-800, because
+   a floor equal to it renders the two ranks identical below 640px — the
+   flat-hierarchy defect, just relocated to mobile. So rank-1 measures 28px
+   against rank-2's 24px at 390w, reaches --fs-900 by ~960w, and never passes
+   the h1 above it (38.4px until 738w).
+
+   Rank by position is the fallback while the section components still emit no
+   modifier: the FIRST .section on a page is rank-1, every later one rank-2
+   (`.section ~ .section` cannot match a first child of its class). The explicit
+   `.section--rank-*` rules below are doubled up to `.section.section--rank-*`
+   so they match the sibling selectors' specificity exactly and win on source
+   order — a bare `.section--rank-2` would silently lose to `.section ~
+   .section`. */
+.section h2 {
+  font-size: clamp(1.75rem, 4.4vw, var(--fs-900));
+}
+
+.section ~ .section {
+  padding-top: calc(var(--section-gap) * 0.66);
+}
+
+.section ~ .section h2 {
+  font-size: var(--fs-800);
+}
+
+.section.section--rank-1 {
+  padding-top: var(--section-gap);
+}
+
+.section.section--rank-1 h2 {
+  font-size: clamp(1.75rem, 4.4vw, var(--fs-900));
+}
+
+.section.section--rank-2 {
+  padding-top: calc(var(--section-gap) * 0.66);
+}
+
+.section.section--rank-2 h2 {
+  font-size: var(--fs-800);
 }
 
 .section-head {
-  margin-bottom: 32px;
+  margin-bottom: var(--space-6);
 }
 
 .section-head h2 {
   margin-top: 0;
 }
 
-main {
-  padding-bottom: 96px;
-}
-
 @media (max-width: 767px) {
-  .section {
-    padding-top: 64px;
-  }
-
-  main {
-    padding-bottom: 64px;
+  :root {
+    --section-gap: var(--space-8);
   }
 }
 
 /* ----------------------------------------------------------------- cards */
+/* A card is a plate that has not been named yet: same fill, same hairline, same
+   2px radius, no shadow. The blur-shadow stack is gone from the whole file —
+   the hairline IS the separation, so a card that wants more presence gets a
+   brighter border, never a soft edge. */
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow-card);
-  padding: 24px;
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--r-xs);
+  padding: var(--space-5);
   transition: transform var(--t-hover) var(--ease-out),
-    box-shadow var(--t-hover) var(--ease-out),
     border-color var(--t-hover) var(--ease-out);
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: var(--space-5);
 }
 
 @media (min-width: 768px) {
@@ -471,64 +725,68 @@ main {
   color: var(--ink);
 }
 
+/* Touch: a card's title is its primary link, and at 20px/1.2 the anchor's box
+   measured 24px tall — half the 44px minimum, on the only pointer that cannot
+   aim. The padding is what the finger hits; the equal negative margin keeps the
+   line box at its typographic height, so no card grows and the 390w page budget
+   is untouched. inline-block (not inline) so the padding is part of the box the
+   browser hit-tests, and not inline-flex, so a long title still wraps as text. */
+@media (max-width: 767px) {
+  .card h3 a,
+  .system-copy h3 a {
+    display: inline-block;
+    padding-block: 10px;
+    margin-block: -10px;
+  }
+}
+
 /* ------------------------------------------------------------------ hero */
 /* .hero/.page-head/.not-found sit on the SAME element as .container, so
    they must only ever set padding LONGHANDS — a `padding: X 0 0` shorthand
    here zeroes .container's 24px/16px horizontal padding (rendered flush to
    the viewport edge on mobile). verify.mjs gates this. */
 .hero {
-  padding-top: 80px;
+  padding-top: var(--space-7);
 }
 
 .hero .kicker {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .hero h1 {
-  max-width: 22ch;
-  margin-bottom: 24px;
+  max-width: var(--measure-tight);
+  margin-bottom: var(--space-5);
 }
 
 .hero-subhead {
-  font-size: 1.125rem;
-  max-width: 58ch;
-  margin-bottom: 16px;
-}
-
-.hero-thesis {
-  max-width: 54ch;
-  margin-bottom: 24px;
-  color: var(--navy-ink);
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-style: italic;
+  font-size: var(--fs-700);
+  line-height: 1.45;
+  max-width: var(--measure-body);
+  margin-bottom: var(--space-4);
 }
 
 .hero-availability {
-  margin-bottom: 32px;
+  margin-bottom: var(--space-6);
 }
 
 .cta-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .hero-email-plain {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: var(--fs-400);
   color: var(--ink-2);
-  margin-top: 16px;
+  margin-top: var(--space-4);
 }
 
-/* Home hero band — structural navy band wrapping the hero. The containment
-   props are visually inert without JS; they set up the "Backlight Boot" layer
-   (see below) so its pseudo-elements paint behind the content and repaints
-   stay scoped to this band. */
+/* Home hero band — the band wrapping the hero. */
 .hero-band {
   background: var(--navy);
-  padding-bottom: 64px;
+  padding-bottom: var(--space-8);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -545,13 +803,17 @@ main {
 /* --------------------------------------------------------- system feature */
 .system-list {
   display: grid;
-  gap: 24px;
+  gap: var(--space-5);
 }
 
+/* Single column below 1024px. The 2-col layout was breaking at 900px, where
+   the evidence column is too narrow for its own figure: measured 1px gutters
+   at 900/1024/1200/1280/1440w and "top-k" wrapping mid-word at 900w. 900–1023w
+   now uses the stacked layout, which already renders correctly. */
 .system-feature {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
   align-items: stretch;
 }
 
@@ -561,40 +823,58 @@ main {
 }
 
 .system-summary {
-  margin-top: 12px;
-  font-size: 1.0625rem;
+  margin-top: var(--space-3);
+  font-size: var(--fs-600);
 }
 
 .system-proof {
   color: var(--ink);
-  font-weight: 550;
+  font-weight: 600;
 }
 
 .system-caveat {
   color: var(--ink-2);
-  font-size: 0.9375rem;
+  font-size: var(--fs-400);
 }
 
+/* Evidence packs to the top instead of distributing. `space-between` left
+   188/160/297px of dead field between the figure and the metrics on the three
+   cards at 1440w, because the copy column is taller than its evidence. */
 .system-evidence {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
-  padding-left: 32px;
-  border-left: 1px solid var(--border);
+  justify-content: flex-start;
+  gap: var(--space-6);
+  padding-top: var(--space-2);
+  border-top: var(--hairline) solid var(--border);
 }
 
+/* The figure. Two rows — the stage, then the caption — so the caption is a real
+   box in the flow instead of an absolutely-positioned overlay that measured
+   −20px into parallax's N3 and −35px into accretion's SST on mobile.
+
+   The rows come from `flex-wrap`, not from a grid: the caption below claims a
+   full-width flex basis, so it can never share a line with a stage box. A real
+   two-track grid was measured and rejected — grid columns cannot shrink below
+   min-content, which takes the connector arrows' `flex: 0 1 24px` away, and the
+   stage then overflows the narrow evidence column and squeezes the caption to
+   3–4 wrapped lines at 1024–1440w. Same static caption, one fewer new failure.
+
+   The right pad keeps the last stage box off the column edge, where four widths
+   measured a 1px gutter. */
 .system-diagram {
   display: flex;
+  flex-wrap: wrap;
   position: relative;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  row-gap: 0;
+  column-gap: 10px;
   min-height: 176px;
-  aspect-ratio: 16 / 7;
+  padding-right: var(--space-3);
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-200);
 }
 
 .diagram-stage,
@@ -605,19 +885,26 @@ main {
   justify-content: center;
   min-width: 52px;
   min-height: 40px;
-  padding: 6px 8px;
-  border: 1px solid var(--border-interactive);
+  padding: 6px var(--space-2);
+  border: var(--hairline) solid var(--border-interactive);
   background: var(--bg);
 }
 
+/* Stage labels are single tokens ("top-k", "memtable", "AVX-512"). Wrapping one
+   mid-word — "top-k" broke at 900w — makes the figure read as a rendering bug,
+   so the box grows instead of the label breaking. */
 .diagram-stage {
-  border-radius: var(--r-key);
+  border-radius: var(--r-xs);
+  white-space: nowrap;
 }
 
+/* The connectors are the figure's only shrinkable part: the stage boxes carry
+   nowrap labels, so when the column narrows, the arrows give up width and the
+   labels stay whole. */
 .diagram-flow {
   position: relative;
   width: 24px;
-  height: 1px;
+  height: var(--hairline);
   flex: 0 1 24px;
   background: var(--border-interactive);
 }
@@ -629,8 +916,8 @@ main {
   top: -3px;
   width: 6px;
   height: 6px;
-  border-top: 1px solid var(--border-interactive);
-  border-right: 1px solid var(--border-interactive);
+  border-top: var(--hairline) solid var(--border-interactive);
+  border-right: var(--hairline) solid var(--border-interactive);
   transform: rotate(45deg);
 }
 
@@ -654,13 +941,18 @@ main {
 
 .diagram-sstables span {
   min-height: 28px;
-  border-radius: 2px;
+  border-radius: var(--r-xs);
 }
 
+/* The caption: its own full-width line under the stage, in static flow. It used
+   to be `position: absolute; align-self: flex-end`, which took it out of flow
+   and let it overlap the stage on any figure tall enough to matter.
+   `flex: 0 0 100%` is what forces the wrap, so no stage box can share its line
+   and it never needs to wrap its own text to fit beside one. */
 .diagram-caption {
-  position: absolute;
-  align-self: flex-end;
-  margin-bottom: 4px;
+  flex: 0 0 100%;
+  margin-top: var(--space-3);
+  text-align: center;
   color: var(--ink-2);
 }
 
@@ -670,16 +962,17 @@ main {
   min-width: 58px;
   min-height: 40px;
   padding: 6px 10px;
-  border-radius: var(--r-key);
+  border-radius: var(--r-xs);
+  white-space: nowrap;
 }
 
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--space-3);
   margin: 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  padding-top: var(--space-4);
+  border-top: var(--hairline) solid var(--border);
 }
 
 .metric-grid div {
@@ -693,27 +986,29 @@ main {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 650;
+  font-size: var(--fs-500);
+  font-weight: 600;
 }
 
 .metric-grid dt {
-  margin-top: 4px;
+  margin-top: var(--space-1);
   color: var(--ink-2);
-  font-size: 0.75rem;
+  font-size: var(--fs-200);
   line-height: 1.35;
 }
 
-@media (max-width: 899px) {
+/* Two columns only from 1024px up — below that, the evidence column cannot hold
+   its own figure (see .system-feature). */
+@media (min-width: 1024px) {
   .system-feature {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   }
 
   .system-evidence {
-    padding-top: 8px;
-    padding-left: 0;
-    border-top: 1px solid var(--border);
-    border-left: 0;
+    padding-top: 0;
+    padding-left: var(--space-6);
+    border-top: 0;
+    border-left: var(--hairline) solid var(--border);
   }
 }
 
@@ -724,15 +1019,15 @@ main {
 
   .system-diagram {
     min-height: 150px;
-    gap: 3px;
-    font-size: 0.6875rem;
+    column-gap: 3px;
+    font-size: var(--fs-100);
   }
 
   .diagram-stage,
   .diagram-sstables span {
     min-width: 42px;
-    padding-right: 4px;
-    padding-left: 4px;
+    padding-right: var(--space-1);
+    padding-left: var(--space-1);
   }
 
   .diagram-flow {
@@ -745,33 +1040,10 @@ main {
   }
 }
 
-/* --------------------------------------------------- climbing route (hero) */
-.hero-band::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.16;
-  background-image:
-    linear-gradient(105deg, transparent 0 54%, rgba(255, 255, 255, 0.04) 54.2% 54.4%, transparent 54.6%),
-    linear-gradient(75deg, transparent 0 70%, rgba(255, 255, 255, 0.035) 70.2% 70.4%, transparent 70.6%);
-}
-
-.js .hero-band::after {
-  content: "";
-  position: absolute;
-  top: -15%;
-  bottom: -15%;
-  left: 0;
-  width: 55%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(-120%) skewX(-12deg);
-  background: linear-gradient(105deg, transparent, var(--backlight-1) 35%, var(--backlight-2) 65%, transparent);
-  will-change: transform;
-}
+/* ------------------------------------------------ climbing topo (the wall) */
+/* No band texture. The hero band used to carry two diagonal light streaks over
+   the whole width — decoration behind the most important text on the site. The
+   ground runs edge to edge now and the plates provide the structure. */
 
 .climbing-route {
   position: absolute;
@@ -781,14 +1053,23 @@ main {
   pointer-events: none;
 }
 
+/* The scrim: the wall is currently a full-bleed backdrop behind the hero, so the
+   copy column needs an opaque field or the holds sit under the headline. Tokens
+   only — the hardcoded navy that used to be baked in here no longer matches any
+   surface in the palette. */
 .climbing-route::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 4;
-  background: linear-gradient(90deg, var(--navy) 0 43%, rgba(12, 36, 56, 0.92) 51%, transparent 72%);
+  background: linear-gradient(90deg,
+    var(--navy) 0 43%,
+    color-mix(in srgb, var(--plate) 92%, transparent) 51%,
+    transparent 72%);
 }
 
+/* The wall silhouette: a flat --plate-2 field behind a --grid edge. The inset
+   48px vignette is gone — it was lighting a room, and a topo is drawn, not lit. */
 .climbing-wall-panel {
   position: absolute;
   z-index: 0;
@@ -797,22 +1078,20 @@ main {
   width: 54%;
   height: 114%;
   clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%, 8% 57%);
-  background:
-    linear-gradient(108deg, transparent 0 46%, rgba(255, 255, 255, 0.045) 46.2% 46.5%, transparent 46.7%),
-    linear-gradient(72deg, transparent 0 68%, rgba(255, 255, 255, 0.035) 68.2% 68.5%, transparent 68.7%),
-    #173246;
-  border-left: 1px solid rgba(232, 238, 233, 0.22);
-  box-shadow: inset 24px 0 48px rgba(0, 0, 0, 0.18);
+  background: var(--plate-2);
+  border-left: var(--hairline) solid var(--grid);
 }
 
+/* Panel seams — three --grid hairlines across the wall, the topo's contour
+   lines. */
 .climbing-wall-lines span {
   position: absolute;
   z-index: 1;
   width: 42%;
-  height: 1px;
+  height: var(--hairline);
   right: -4%;
   top: 24%;
-  background: rgba(232, 238, 233, 0.12);
+  background: var(--grid);
   transform: rotate(-18deg);
 }
 
@@ -844,12 +1123,13 @@ main {
   justify-items: center;
 }
 
+/* Bolt holes: a flat grid of --axis dots, the topo's coordinate marks. No inset
+   ring — at 4px it was rendering as mud. */
 .climbing-wall-bolts span {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(169, 186, 196, 0.38);
-  box-shadow: inset 0 0 0 1px rgba(9, 13, 18, 0.5);
+  background: var(--axis);
 }
 
 .climb-route-tag {
@@ -859,22 +1139,13 @@ main {
   bottom: 28px;
   color: var(--navy-ink-2);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--fs-100);
 }
 
-.climb-mat {
-  position: absolute;
-  z-index: 2;
-  right: -2%;
-  bottom: -5px;
-  width: 49%;
-  height: 22px;
-  border: 1px solid rgba(232, 238, 233, 0.2);
-  border-radius: 3px 3px 0 0;
-  background: #24394a;
-  box-shadow: inset 0 5px 0 rgba(255, 255, 255, 0.035);
-}
-
+/* The route line: a dashed leader between holds, in the annotation colour. The
+   old cyan (#67E8F9) went with the rest of the retired neon — this is the one
+   marked path through the wall, which makes it an annotation, which makes it
+   amber. */
 .climb-segment {
   position: absolute;
   left: var(--segment-left);
@@ -882,11 +1153,17 @@ main {
   width: var(--segment-width);
   z-index: 2;
   height: 2px;
-  background: repeating-linear-gradient(90deg, rgba(103, 232, 249, 0.5) 0 6px, transparent 6px 11px);
+  background: repeating-linear-gradient(90deg,
+    color-mix(in srgb, var(--series-2) 55%, transparent) 0 6px, transparent 6px 11px);
   transform: rotate(var(--segment-rotate));
   transform-origin: left center;
 }
 
+/* Holds are sample points with a shape. Flat fill plus a hairline halo — the
+   same treatment as .sample-point — so the wall belongs to the same document as
+   the plots. The 12px black blur and the 5px inset extrusion are gone: they were
+   simulating plastic under a spotlight, and the site's only shadow is a
+   hairline. */
 .climb-hold {
   position: absolute;
   left: var(--hold-x);
@@ -895,21 +1172,46 @@ main {
   height: 28px;
   transform: translate(-50%, -50%) translateY(var(--hold-lift, 0px)) rotate(var(--hold-rotate));
   border-radius: 58% 42% 52% 48% / 68% 54% 46% 32%;
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3), inset 0 -5px 0 rgba(0, 0, 0, 0.22);
+  box-shadow: 0 0 0 var(--hairline) var(--grid);
   transition: transform var(--t-hover) var(--ease-out), filter var(--t-hover) ease;
   z-index: 3;
 }
 
+/* The specular arc, in PERCENTAGES. It used to be `inset: 6px 11px 10px`, which
+   is sized for the 54x28 base hold and collapses to an 8x2 sliver on a 30x17
+   off-route hold and to nothing at all on the 25x14 phone variant — the arc read
+   as a stray 2px line. Percentage insets scale with whatever hold they land in,
+   so one rule covers all five sizes at every breakpoint. */
 .climb-hold > span {
   position: absolute;
-  inset: 6px 11px 10px;
+  inset: 21% 20% 36%;
   border-radius: 50%;
-  border-top: 2px solid rgba(255, 255, 255, 0.28);
+  border-top: 2px solid color-mix(in srgb, var(--ink) 28%, transparent);
 }
 
-.climb-hold-route { background: var(--accent); }
-.climb-hold-chalk { background: var(--chalk); }
-.climb-hold-gold { background: var(--climb-gold); }
+/* Two colours, one meaning each. The marked route is amber, because the route is
+   the annotation on the wall. Everything off it is --ink-3, the same grey as an
+   unhighlighted sample point — that is the whole reason the topo reads as a
+   figure and not as a photo of a gym.
+
+   The `chalk` and `gold` tone classes are still emitted by the component and
+   both resolve here to the off-route grey; the retired --chalk / --climb-gold
+   tokens are no longer referenced by this file at all, so they can be deleted
+   with the rest of the alias scaffolding. */
+.climb-hold-route { background: var(--series-2); }
+.climb-hold-chalk,
+.climb-hold-gold { background: var(--ink-3); }
+
+/* Four hold types, four silhouettes. A route where every hold is the same blob
+   is not a route, and `jug` had no rule at all — two of the eight route holds
+   rendered as the untyped base shape. A jug is the big obvious positive hold, so
+   it is the largest and roundest; an edge is the thin one; start is squat and
+   deep; top is the finish. */
+.climb-hold-jug {
+  width: 58px;
+  height: 34px;
+  border-radius: 62% 38% 58% 42% / 72% 62% 38% 28%;
+}
 
 .climb-hold-edge {
   width: 44px;
@@ -922,8 +1224,10 @@ main {
   height: 32px;
 }
 
+/* The finish hold is called out, not lit: a 2px amber ring is the same "this is
+   the annotated point" signal the plots use for the knee. */
 .climb-hold-top {
-  box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.2), 0 8px 12px rgba(0, 0, 0, 0.3), inset 0 -5px 0 rgba(0, 0, 0, 0.22);
+  box-shadow: 0 0 0 2px var(--series-2);
 }
 
 .climb-hold-off-route {
@@ -933,16 +1237,21 @@ main {
   filter: saturate(0.7);
 }
 
+/* START / TOP are axis tick labels on the topo, so they are set like every other
+   tick label: mono, 11px, hairline plate, 2px radius. These two literals plus
+   "BOULDER / SET 01" are gate-asserted as visible text descendants of
+   .climbing-route — do not hide them, and do not move them out of that node. */
 .climb-label {
   position: absolute;
   z-index: 3;
   color: var(--navy-ink);
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  /* On scale at the 11px tick-label step. It was 10px, below every step. */
+  font-size: var(--fs-100);
   padding: 2px 5px;
-  border: 1px solid rgba(232, 238, 233, 0.36);
-  border-radius: 3px;
-  background: rgba(12, 36, 56, 0.88);
+  border: var(--hairline) solid var(--axis);
+  border-radius: var(--r-xs);
+  background: var(--plate);
 }
 
 .climb-label-start { left: 84%; top: 89%; }
@@ -982,54 +1291,39 @@ main {
 /* ------------------------------------------------------------ page heads */
 .page-head-band {
   background: var(--navy);
-  padding-bottom: 48px;
+  padding-bottom: var(--space-7);
   position: relative;
   isolation: isolate;
   overflow: hidden;
-}
-/* Interior pages echo the powered board at half strength — static grid only,
-   no cursor puck, no sweep — so they feel like the same object as the hero. */
-.js .page-head-band::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(var(--keyghost-dim), var(--keyghost-dim));
-  -webkit-mask-image: var(--keycap-tile);
-  mask-image: var(--keycap-tile);
-  -webkit-mask-size: 56px 56px;
-  mask-size: 56px 56px;
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
 }
 .page-head-band h1 { color: var(--navy-ink); }
 .page-head-band .page-dek { color: var(--navy-ink-2); }
 
 .page-head {
   /* longhand only — shares its element with .container (see .hero note) */
-  padding-top: 64px;
+  padding-top: var(--space-8);
 }
 
 .page-head h1 {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .page-dek {
-  font-size: 1.125rem;
+  font-size: var(--fs-700);
+  line-height: 1.45;
   color: var(--ink-2);
-  max-width: 60ch;
+  max-width: var(--measure-body);
 }
 
 /* --------------------------------------------- alternating timeline */
 .alt-timeline {
   list-style: none;
   position: relative;
-  margin: 32px 0 0;
+  margin: var(--space-6) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--space-6);
 }
 .alt-timeline::before {           /* the spine — left rail on mobile */
   content: "";
@@ -1074,11 +1368,11 @@ main {
 .alt-timeline-label span {
   display: inline-block;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--hairline) solid var(--border);
   border-radius: var(--r-chip);
-  padding: 6px 16px;
+  padding: 6px var(--space-4);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-200);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-2);
@@ -1117,18 +1411,19 @@ main {
 }
 
 /* Real employer logos ride in a white chip so transparent/dark marks read in
-   both themes; wordmarks (UMD) get the -wide variant that spans the chip. */
+   both themes; wordmarks (UMD) get the -wide variant that spans the chip. The
+   chip is a plate too: hairline, 2px radius, and the drop edge is gone — it was
+   the last object on the page casting a shadow onto its own card. */
 .role-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 48px;
   height: 48px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-key);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--r-xs);
   background: #fff;
   overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 0 var(--shadow-edge);
 }
 
 .role-logo-pad {
@@ -1146,44 +1441,47 @@ main {
   height: auto;
 }
 
-/* Lettermark tile for orgs with no public logo — a colored keycap, never the
+/* Lettermark tile for orgs with no public logo — an amber plate, never the
    wrong company's mark. */
 .role-logo-mark {
   color: #fff;
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--fs-500);
   letter-spacing: 0.02em;
   background: var(--accent);
 }
 
 .role-org {
-  font-weight: 550;
+  font-weight: 600;
   margin-top: 2px;
 }
 
 .role-meta {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.875rem;
+  font-size: var(--fs-400);
   color: var(--ink-2);
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 
 .role-bullets {
-  margin: 12px 0 0;
+  margin: var(--space-3) 0 0;
   padding-left: 20px;
 }
 
 .role-bullets li {
-  margin-bottom: 8px;
-  max-width: 62ch;
+  margin-bottom: var(--space-2);
+  max-width: var(--measure-prose);
 }
 
 /* --------------------------------------------------------------- about */
-/* Desktop: the About copy shares the row with a decorative keycap-cluster
-   SVG (echoes the nav monogram / the hero's keyboard thesis), so the right
-   half of the container is not three screen-heights of empty field. */
+/* Desktop: the copy shares the row with the figure beside it, so the right
+   half of the container is not three screen-heights of empty field.
+
+   NOTE for whatever lands in this column next: `.about-visual` is hidden
+   below 1024px, which is correct only for decoration. Anything carrying
+   content or a gated label must use its own column class, not this one. */
 .about-visual {
   display: none;
 }
@@ -1191,8 +1489,8 @@ main {
 @media (min-width: 1024px) {
   .about-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 64px;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    gap: var(--space-8);
     align-items: center;
   }
 
@@ -1223,7 +1521,7 @@ main {
 }
 
 .edu-card .edu-degree {
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 
 .edu-card .role-meta {
@@ -1231,16 +1529,16 @@ main {
 }
 
 .edu-detail {
-  margin: 8px 0 0;
-  font-size: 0.9375rem;
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-400);
 }
 
 /* ---------------------------------------------------------------- skills */
 .skills-row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
 }
 
 /* Desktop: label rail + chips share the row, so the rails span the full
@@ -1249,14 +1547,14 @@ main {
   .skills-row {
     display: grid;
     grid-template-columns: 180px minmax(0, 1fr);
-    gap: 24px;
+    gap: var(--space-5);
     align-items: baseline;
   }
 }
 
 .skills-label {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: var(--fs-300);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-2);
@@ -1265,7 +1563,7 @@ main {
 /* -------------------------------------------------------------- projects */
 .no-repo-tag {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: var(--fs-300);
   color: var(--ink-2);
 }
 
@@ -1273,39 +1571,40 @@ main {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 12px;
-  margin-top: 4px;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
 }
 
 .project-links {
-  margin-top: 12px;
-  font-size: 0.9375rem;
+  margin-top: var(--space-3);
+  font-size: var(--fs-400);
 }
 
 /* ---------------------------------------------------------- contact band */
 .contact-band {
-  margin-top: 96px;
+  margin-top: var(--section-gap);
   background: color-mix(in srgb, var(--surface) 78%, var(--navy));
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-top: var(--hairline) solid var(--border);
+  border-bottom: var(--hairline) solid var(--border);
 }
 
 .contact-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-  gap: 64px;
+  gap: var(--space-8);
   align-items: center;
-  padding-top: 64px;
-  padding-bottom: 64px;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
 }
 
 .contact-copy .kicker {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
+/* The contact band is rank-2: it closes the page, it does not open a section. */
 .contact-copy h2 {
-  margin-bottom: 16px;
-  font-size: 1.75rem;
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-800);
 }
 
 .contact-copy p:last-child {
@@ -1323,15 +1622,7 @@ main {
 .contact-email {
   width: 100%;
   color: var(--ink-2);
-  font-size: 0.8125rem;
-}
-
-.main-with-contact {
-  padding-bottom: 0;
-}
-
-.main-with-contact + .footer {
-  margin-top: 0;
+  font-size: var(--fs-300);
 }
 
 /* Standalone text links used as actions (CTA bands, card .project-links):
@@ -1346,24 +1637,24 @@ main {
 }
 
 @media (max-width: 767px) {
-  .contact-band {
-    margin-top: 64px;
-  }
-
   .contact-layout {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding-top: 48px;
-    padding-bottom: 48px;
+    gap: var(--space-6);
+    padding-top: var(--space-7);
+    padding-bottom: var(--space-7);
   }
 }
 
 /* ---------------------------------------------------------------- footer */
+/* The footer owns no vertical gap of its own. Every page either ends in a
+   .contact-band (whose own --section-gap already separates it from the content
+   above, and whose bottom hairline is the footer's top edge) or ends in a block
+   that carries its own bottom padding (.not-found). One gap, one owner. */
 .footer {
   background: var(--navy);
   border-top: none;
-  padding: 48px 0;
-  margin-top: 96px;
+  padding: var(--space-7) 0;
+  margin-top: 0;
 }
 
 .footer-links {
@@ -1374,15 +1665,15 @@ main {
 }
 
 .footer-email {
-  font-size: 0.875rem;
+  font-size: var(--fs-400);
   color: var(--ink-2);
 }
 
 .footer-colophon {
-  margin-top: 32px;
+  margin-top: var(--space-6);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.8125rem;
+  font-size: var(--fs-300);
   color: var(--ink-2);
   display: flex;
   flex-wrap: wrap;
@@ -1396,87 +1687,69 @@ main {
 
 .footer-email, .footer-colophon { color: var(--navy-ink-2); }
 
-@media (max-width: 767px) {
-  .footer {
-    margin-top: 64px;
-  }
-}
-
 /* --------------------------------------------------------------- 404 page */
+/* The 404 has no .contact-band, so it is the one page whose last main block
+   owns the gap above the footer itself. */
 .not-found {
   /* longhand only — shares its element with .container (see .hero note) */
-  padding-top: 96px;
-  padding-bottom: 96px;
+  padding-top: var(--section-gap);
+  padding-bottom: var(--section-gap);
 }
 
 .not-found h1 {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .not-found .cta-row {
-  margin-top: 32px;
+  margin-top: var(--space-6);
 }
 
 /* ------------------------------------------------------------------ motion */
-/* "Keyswitch" layer. Hover and focus are twins: every :hover ships grouped
-   with :focus-visible (self-focusable) or :focus-within (cards/timeline). */
+/* Hover and focus are twins: every :hover ships grouped with :focus-visible
+   (self-focusable elements) or :focus-within (cards, timeline items). */
 
-/* keycaps — deepen the lift (:not(.keycap-pressed) keeps the current-tab
-   bottomed-out cap inert; this rule sits after .keycap-pressed:hover in the
-   cascade and would otherwise out-compete it at equal specificity) */
-.keycap:not(.keycap-pressed):hover,
-.keycap:not(.keycap-pressed):focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 0 var(--border-interactive);
-  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
-}
-/* :active bottom-out and .keycap-pressed inertness already exist — keep. */
+/* The label button's hover/active states live with the primitive itself
+   (see "label button" above) — one rule, one specificity, one place. */
 
-/* résumé keycap — accent object, no glow */
-.keycap-primary:hover, .keycap-primary:focus-visible {
-  background: var(--accent-deep);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 0 var(--accent-deep);
-}
-
-/* nav monogram */
+/* nav mark */
 .nav-brand svg { transition: transform var(--t-tap) ease; }
 .nav-brand:hover svg, .nav-brand:focus-visible svg { transform: translateY(-1px); }
 
-/* link-bearing cards (.card-live added in JSX) */
+/* Link-bearing cards (.card-live added in JSX). The border goes amber and the
+   plate lifts 2px — the same two signals as the label button, because they are
+   the same promise. The lift is 2px, not 4px: a card is a heavier object than a
+   button and a 4px hop reads as a card that is falling off the page. */
 .card-live:hover, .card-live:focus-within {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
   border-color: var(--border-hover);
 }
 .card-live:hover h3 a, .card-live:focus-within h3 a { text-decoration-thickness: 2px; }
 
-/* non-link cards — attention, not invitation */
+/* Non-link cards get attention, not invitation: the boundary brightens and the
+   card does not move, because there is nothing to click. */
 .role-card:hover, .edu-card:hover {
   border-color: var(--border-interactive);
-  box-shadow: var(--shadow-card-hover);
 }
 
-/* timeline */
-.alt-timeline-item::before { transition: transform 250ms var(--ease-pop); }
+/* Timeline nodes. The dot no longer pops on reveal (that keyframe is gone);
+   hovering a role still marks its node on the date axis, and the overshoot
+   easing goes with the rest of the retired motion — this is a sample point
+   being highlighted, not a toy being squashed. */
+.alt-timeline-item::before { transition: transform var(--t-hover) var(--ease-out); }
 .alt-timeline-item::after  { transition: background-color var(--t-hover) ease; }
 .alt-timeline-item:hover::before, .alt-timeline-item:focus-within::before { transform: scale(1.35); }
 .alt-timeline-item:hover::after,  .alt-timeline-item:focus-within::after  {
   background: color-mix(in srgb, var(--accent) 40%, var(--border));
 }
 
-/* chips — non-interactive: no lift, no cursor, no shadow */
+/* Chips are non-interactive: no lift, no cursor, no shadow — and no motion on
+   the status dot either. A label that reacts to the pointer but does nothing
+   when clicked is a false affordance. */
 .chip, .proof-chip { transition: border-color 150ms ease, background-color 150ms ease; }
 .chip:hover {
   border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
   background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
-.chip-teal:hover {
-  border-color: color-mix(in srgb, var(--teal) 25%, var(--border));
-  background: color-mix(in srgb, var(--teal) 4%, var(--surface));
-}
-.proof-chip .dot { transition: transform 250ms var(--ease-pop); }
-.proof-chip:hover .dot { transform: scale(1.4); }
 
 /* inline text links */
 a { transition: color var(--t-tap) ease, text-decoration-thickness var(--t-tap) ease; }
@@ -1516,6 +1789,18 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   pointer-events: none;
 }
 
+/* The track is the page's x-axis: a --grid hairline carrying four ticks at the
+   quarter marks, the same object as .axis-rule.
+
+   Appearance only — the rail's own box (left/right 12px, bottom -3px, height
+   7px) is FROZEN. verify measures the rail's top edge against navBottom−3px with
+   a ±2 tolerance and the measured delta is already exactly 2.0, so there is no
+   slack: the track, the ticks and the fill are all positioned INSIDE the 7px box
+   and none of them changes it.
+
+   The track needs the full 7px (not the 1px the fill uses) because the ticks
+   hang below the axis line; a 1px-tall box clips them to nothing. So the two
+   share a position but not a height. */
 .route-progress::before,
 .route-progress-fill {
   content: "";
@@ -1523,39 +1808,49 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   top: 3px;
   left: 0;
   right: 0;
-  height: 2px;
-  border-radius: 2px;
 }
 
-.route-progress::before { background: rgba(169, 186, 196, 0.34); }
+/* Axis line on the first row of pixels, ticks hanging 4px below it. The tick
+   gradient repeats every 25% for four marks across the page's width. */
+.route-progress::before {
+  top: 0;
+  height: 7px;
+  background:
+    linear-gradient(90deg, var(--axis) 0 var(--hairline), transparent var(--hairline))
+      repeat-x 0 3px / 25% 4px,
+    linear-gradient(var(--grid), var(--grid)) no-repeat 0 3px / 100% var(--hairline);
+}
 
+/* Read fraction as an amber overlay on the axis — the scrub trace, not a
+   progress bar with a rounded cap. */
 .route-progress-fill {
-  background: var(--accent);
+  height: var(--hairline);
+  background: var(--series-2);
   transform: scaleX(var(--scroll-progress));
   transform-origin: left center;
   will-change: transform;
 }
 
+/* The scrub marker: an amber sample point riding the axis, hairline-haloed
+   against the header exactly like .sample-point. 7px, so it is the same atom as
+   every other point on the site. `top: 0` with translateY(-50%) centres the dot
+   on the axis line at y=3 without the rail's box moving. */
 .route-progress-marker {
   position: absolute;
-  top: -1px;
+  top: 3px;
   left: clamp(6px, var(--scroll-position), calc(100% - 6px));
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--accent-deep);
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--navy);
-  transform: translateX(-50%);
-  box-shadow: 0 0 0 2px rgba(12, 36, 56, 0.82);
+  background: var(--series-2);
+  box-shadow: 0 0 0 var(--hairline) var(--plate);
+  transform: translate(-50%, -50%);
   will-change: left;
 }
 
-/* reactive keycap cluster — the lift set inline by enhance.ts eases in/out. */
-.kc-key {
-  transition: transform var(--t-hover) var(--ease-out);
-}
-
-/* floating "keyboard shortcuts" button */
+/* The legend swatch: the figure's key, parked bottom-right where a plot legend
+   sits. Flat plate, hairline border, no stacked drop edge — it behaves like the
+   label button because it is one. */
 .kbd-fab {
   position: fixed;
   right: 20px;
@@ -1566,34 +1861,32 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--r-key);
+  border-radius: var(--r-xs);
   background: var(--surface);
   color: var(--ink-2);
-  border: 1px solid var(--border-interactive);
-  box-shadow: 0 2px 0 var(--border-interactive), var(--shadow-card);
+  border: var(--hairline) solid var(--border-interactive);
   cursor: pointer;
   transition: transform var(--t-hover) var(--ease-out),
-    box-shadow var(--t-hover) var(--ease-out), color var(--t-hover) ease;
+    border-color var(--t-hover) ease, color var(--t-hover) ease;
 }
 
 .kbd-fab:hover,
 .kbd-fab:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 0 var(--border-interactive), var(--shadow-card-hover);
+  transform: translateY(-1px);
+  border-color: var(--series-2);
   color: var(--accent);
 }
 
 .kbd-fab:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 0 var(--border-interactive);
+  transform: none;
 }
 
 @media (max-width: 639px) {
   .kbd-fab { right: 14px; bottom: 14px; }
 }
 
-/* The g-chord palette is a keyboard-only affordance and the fixed button
-   overlaps the text column on phones — hide it where there's no keyboard. */
+/* The g-chord palette needs a physical key to trigger it, and the fixed
+   button overlaps the text column on phones — so it is hidden on touch. */
 @media (pointer: coarse), (max-width: 639px) {
   .kbd-fab { display: none; }
 }
@@ -1606,7 +1899,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--space-5);
   opacity: 0;
   transition: opacity var(--t-hover) ease;
 }
@@ -1617,19 +1910,21 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-help-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(4, 9, 18, 0.66);
+  background: color-mix(in srgb, var(--ground) 66%, transparent);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
 
+/* The legend panel is a plate that happens to be modal: hairline boundary, flat
+   fill, and the backdrop is what separates it from the page — not a blur under
+   its own edge. */
 .kbd-help-card {
   position: relative;
   width: min(420px, 100%);
   background: var(--surface);
-  border: 1px solid var(--border-interactive);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow-card-hover);
-  padding: 24px;
+  border: var(--hairline) solid var(--border-interactive);
+  border-radius: var(--r-xs);
+  padding: var(--space-5);
   transform: translateY(8px) scale(0.98);
   transition: transform var(--t-hover) var(--ease-out);
 }
@@ -1638,27 +1933,27 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 .kbd-help-title {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: var(--fs-700);
   font-weight: 600;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
 }
 
 .kbd-help-list {
   list-style: none;
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-2);
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .kbd-help-list a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 10px 12px;
-  border-radius: var(--r-key);
+  gap: var(--space-4);
+  padding: 10px var(--space-3);
+  border-radius: var(--r-xs);
   color: var(--ink);
   text-decoration: none;
   transition: background-color var(--t-tap) ease;
@@ -1670,27 +1965,29 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   color: var(--ink);
 }
 
-.kbd-combo { display: inline-flex; gap: 4px; flex: none; }
+.kbd-combo { display: inline-flex; gap: var(--space-1); flex: none; }
 
+/* A <kbd> is a legend swatch for a key, so it is set like every other small
+   label in the system: mono, hairline, 2px, flat. No extruded edge — the shadow
+   was the last remnant of the retired physical-key metaphor. */
 .kbd-help kbd,
 .kbd-help-foot kbd {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-200);
   line-height: 1;
   min-width: 22px;
   padding: 5px 6px;
   text-align: center;
   color: var(--ink);
   background: var(--bg);
-  border: 1px solid var(--border-interactive);
-  border-radius: 6px;
-  box-shadow: 0 2px 0 var(--border-interactive);
+  border: var(--hairline) solid var(--border-interactive);
+  border-radius: var(--r-xs);
 }
 
 .kbd-help-foot {
-  margin: 8px 0 20px;
+  margin: var(--space-2) 0 20px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-200);
   color: var(--ink-2);
   display: flex;
   align-items: center;
@@ -1700,8 +1997,20 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 .kbd-help-close { width: 100%; }
 
-/* scroll-reveal contract — gated on root .js class AND no-preference:
-   without JS (no .js) or with reduced motion, .reveal has NO hidden state. */
+/* scroll-reveal contract — gated on the root .js class AND no-preference:
+   without JS (no .js) or with reduced motion, .reveal has NO hidden state.
+
+   This is the whole motion system now. There are no entrance animations: the
+   hero's 7-step cascade, the page-head rise-in, the timeline dot pop, the
+   route-draw and hold-set sequences and the status-dot pop are all deleted, so
+   nothing on the site animates on load except the one scroll-reveal fade, and
+   nothing animates on interaction except hover/focus feedback and the figure's
+   user-driven crosshair. Five stacked systems on first paint was the tell.
+
+   Consequence worth knowing: this stylesheet now declares no keyframes at all —
+   every remaining motion is a transition on an interaction. Anything that wants
+   a keyframe back should first answer which animated moment it is, because the
+   site is only entitled to one and the crosshair already has it. */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal {
     opacity: 0;
@@ -1710,87 +2019,6 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transition-delay: var(--reveal-delay, 0ms);
   }
   .js .reveal.is-in { opacity: 1; transform: none; }
-
-  /* hero entrance cascade */
-  .js .hero > * { animation: rise-in 500ms var(--ease-out) both; }
-  .js .hero > *:nth-child(1) { animation-delay: 0ms; }
-  .js .hero > *:nth-child(2) { animation-delay: 70ms; }
-  .js .hero > *:nth-child(3) { animation-delay: 140ms; }
-  .js .hero > *:nth-child(4) { animation-delay: 210ms; }
-  .js .hero > *:nth-child(5) { animation-delay: 280ms; }
-  .js .hero > *:nth-child(6) { animation-delay: 350ms; }
-  .js .hero > *:nth-child(7) { animation-delay: 420ms; }
-  .js .page-head > h1 { animation: rise-in 500ms var(--ease-out) both; }
-  .js .page-head > .page-dek { animation: rise-in 500ms var(--ease-out) 80ms both; }
-
-  /* timeline dot pop-on-reveal — fill-mode `backwards` (NOT `both`): it
-     still fills scale(0) through the 200ms delay, but stops applying once
-     the pop ends, so the :hover/:focus-within scale(1.35) rule above can
-     take effect on revealed items. */
-  .js .alt-timeline-item.reveal.is-in::before {
-    animation: dot-pop 350ms var(--ease-pop) 200ms backwards;
-  }
-
-  /* Backlight Boot — one-shot power-on blade (250–1550ms) then the typed
-     wave walks the CTA row (850–1280ms), landing as the rise-in cascade
-     settles. Both are one-shot; the global reduced-motion block below kills
-     them, and living inside this no-preference block is the belt-and-braces
-     second lock. fill-mode: none leaves the caps in their resting state. */
-  .js .hero-band::after {
-    animation: hero-boot var(--t-boot) cubic-bezier(0.22, 0.61, 0.36, 1) 250ms 1 both;
-  }
-  .js .hero .cta-row .keycap {
-    animation: key-tap 160ms ease-out none;
-  }
-  .js .hero .cta-row .keycap:nth-child(1) { animation-delay: 850ms; }
-  .js .hero .cta-row .keycap:nth-child(2) { animation-delay: 940ms; }
-  .js .hero .cta-row .keycap:nth-child(3) { animation-delay: 1030ms; }
-  .js .hero .cta-row .keycap:nth-child(4) { animation-delay: 1120ms; }
-
-  .js .climb-segment {
-    animation: route-draw 420ms var(--ease-out) var(--segment-delay) both;
-  }
-
-  .js .climb-hold-route {
-    animation: hold-set 320ms var(--ease-pop) var(--hold-delay) backwards;
-  }
-}
-@keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-@keyframes dot-pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
-@keyframes route-draw { from { opacity: 0; scale: 0 1; } to { opacity: 1; scale: 1 1; } }
-@keyframes hold-set {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(8px) rotate(var(--hold-rotate)) scale(0.72);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) translateY(0) rotate(var(--hold-rotate)) scale(1);
-  }
-}
-
-/* Backlight Boot — the hero "powers on": a diagonal light blade crosses the
-   band once, ~250–1550ms, overlapping the tail of the rise-in cascade. */
-@keyframes hero-boot {
-  from { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  to   { transform: translateX(320%) skewX(-12deg); opacity: 0; }
-}
-/* Typed wave — after the board powers on, it "types" once across the four
-   hero CTA keycaps: each bottoms out and releases in turn. Frame 0 == the
-   keycap's resting box-shadow, so this is safe to run with fill-mode: none
-   (it leaves the cap in its normal state and never touches :hover). NO opacity
-   here — a CTA can never be held hidden. */
-@keyframes key-tap {
-  0%, 100% {
-    transform: none;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2px 0 var(--border-interactive);
-  }
-  45% {
-    transform: translateY(2px);
-    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35), 0 0 0 var(--border-interactive);
-  }
 }
 
 /* ---------------------------------------------------------------- print */
@@ -1799,11 +2027,26 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
    IntersectionObserver never fires for below-the-fold sections, so force
    every revealable block visible and drop the injected chrome from the page. */
 @media print {
-  /* Light print theme: the on-screen "Chalk & Current" palette is a dark
-     theme, so a default "Save as PDF" would render pages of near-black
-     surfaces and faint cyan text. Re-map the design tokens to a paper palette
-     (dark ink on white) so the printed/PDF'd site is legible in one pass. */
+  /* Light print theme: the on-screen palette is a dark theme, so a default
+     "Save as PDF" would render pages of near-black surfaces. Re-map the
+     design tokens to a paper palette (dark ink on white) so the printed/PDF'd
+     site is legible in one pass.
+
+     The figure palette is remapped FIRST, because the primitives and the
+     label button reference it directly. Amber becomes a dark ochre so a
+     filled primary button still clears AA on paper (white on #8A5A00 =
+     5.93:1) — the on-screen amber would print at 1.9:1. */
   :root {
+    --ground: #ffffff;
+    --plate: #ffffff;
+    --plate-2: #f2f4f7;
+    --grid: #c4ccd4;
+    --axis: #6b7885;
+    --ink-3: #55606b;
+    --series-1: #0b3a6b;
+    --series-2: #8a5a00;
+    --series-3: #2f7d4f;
+
     --bg: #ffffff;
     --surface: #ffffff;
     --border: #c4ccd4;
@@ -1822,10 +2065,6 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     --navy-ink-2: #414d59;
     --shadow-card: none;
     --shadow-card-hover: none;
-    --backlight-1: transparent;
-    --backlight-2: transparent;
-    --keyghost: transparent;
-    --keyghost-dim: transparent;
   }
 
   html,
@@ -1845,8 +2084,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transition: none !important;
   }
 
-  /* Navy signature bands and cards go to paper: light fill, printed border,
-     no drop shadows or backlight decoration. */
+  /* Signature bands and plates go to paper: light fill, printed hairline,
+     no decoration. */
   .hero-band,
   .page-head-band,
   .contact-band,
@@ -1870,6 +2109,45 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     text-decoration: underline;
   }
 
+  /* Label buttons print as outlined white plates with dark ink — never as a
+     filled amber (or ochre) chip.
+
+     This override is not belt-and-braces, it is the fix for a measured cold-load
+     defect. The buttons are anchors, so the `a { color: #0b3a6b !important }`
+     rule above beats the primitive's own unprefixed `color: var(--btn-label)`,
+     and the primary's fill still resolved through --series-2. The result was a
+     dark-blue label on an ochre field at 1.59–1.86:1 on the first Save-as-PDF
+     from a fresh load. Fixed values, not tokens, so no later :root remap can
+     re-introduce the collision: #0b3a6b on #ffffff is 11.4:1 and the #6b7885
+     hairline is 4.5:1 against the paper.
+
+     Both selector halves are listed while components still emit the legacy
+     names — a print bug that only appears after the class rename is a print bug
+     nobody finds. */
+  .keycap,
+  .keycap-primary,
+  .keycap-pressed,
+  .btn,
+  .btn-primary,
+  .btn-current {
+    background: #ffffff !important;
+    color: #0b3a6b !important;
+    border-color: #6b7885 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  /* The hero prints as ONE column. On screen it is a two-column split with the
+     figure on the right; on paper the figure is dropped (it carries no meaning
+     as a raster-free line drawing at print scale), and a vacated grid column
+     prints as a blank half page beside the name. Both the wrapper class and
+     .hero itself are listed so the collapse holds wherever the split is
+     authored. */
+  .hero,
+  .hero-layout {
+    display: block !important;
+  }
+
   /* Injected chrome and decoration carry no meaning on paper. */
   #progress-rail,
   .kbd-fab,
@@ -1880,8 +2158,10 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     display: none !important;
   }
 
-  /* Drop the interactive pseudo-element decoration (keycap grid / backlight
-     puck / power-on sweep) so nothing prints as a gray wash. */
+  /* Belt-and-braces: the band pseudo-element textures are deleted from the
+     stylesheet, but a future decorative ::before on either band would print as
+     a grey wash across the page's first block, which is exactly the defect
+     nobody notices until a recruiter prints it. */
   .hero-band::before,
   .hero-band::after,
   .page-head-band::before,
@@ -1904,19 +2184,29 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transition: none !important;
   }
 
-  /* second lock: reveal content is always visible (the .js .reveal hidden
-     state is also gated on no-preference, so this is belt-and-braces) */
-  .js .reveal {
+  /* Second lock: nothing revealable may start hidden. The hidden state is
+     already gated on no-preference and the entrance animations are gone, so
+     under `reduce` these compute opacity:1 with no help — this block states it
+     anyway, because it is the assertion verify actually makes (`.reveal,
+     .hero > *, .page-head > *` must all compute opacity:1 here) and a future
+     pass that reintroduces a fade should fail its own review, not the gate.
+
+     No !important: the .js .reveal hidden rule lives behind the no-preference
+     query, so it and this rule are never both live. */
+  .js .reveal,
+  .hero > *,
+  .page-head > * {
     opacity: 1;
     transform: none;
   }
 
-  /* :not() matches the motion rules' specificity so transform: none wins */
-  .keycap:not(.keycap-pressed):hover,
-  .keycap:not(.keycap-pressed):focus-visible,
-  .keycap:active,
-  .keycap-primary:hover,
-  .keycap-primary:focus-visible,
+  /* The label button's lift is a custom property, so zeroing it here needs no
+     second :hover rule and cannot out-specify the primitive's own states. */
+  .keycap,
+  .btn {
+    --btn-lift: 0px;
+  }
+
   .card-live:hover,
   .card-live:focus-within,
   .kbd-fab:hover,
@@ -1927,12 +2217,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transform: none;
   }
 
-  /* the help overlay still fades in via opacity (opacity-only is allowed
-     under reduced motion), but the reactive cluster lift is JS-guarded off
-     in enhance.ts, so .kc-key never gets an inline transform here. */
-
-  /* state still never color-only: border/background change remains */
-  .keycap:hover {
-    border-color: var(--ink-2);
-  }
+  /* The help overlay still fades in via opacity, which is allowed here.
+     The label button's hover is still never colour-only: its border goes to
+     --series-2 in the primitive's own rule, which this block does not
+     suppress — only the 1px lift is dropped. */
 }
