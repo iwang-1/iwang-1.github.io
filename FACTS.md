@@ -27,7 +27,7 @@ Engineering (reverse-chron), with ProofChips:
 
 | # | Rendered | Source |
 | --- | --- | --- |
-| 1 | AWS SDE Intern, May–Aug 2026, Herndon VA: agentic AI system, 8+ tests Scala→JUnit5, 5x migration throughput, EC2 VPC control-plane APIs; canary infra on SDK v2/CDK/CloudWatch, us-east-1, −40% test runtime, −60% flaky failures, Sev2 alarms, 1M+ customers | resume |
+| 1 | AWS SDE Intern, May–Aug 2026, Herndon VA — the two shipped bullets: (a) autonomous Claude Code agent with custom skills, seven production EC2/VPC canaries Scala→Java+JUnit5, ~1 week → ~1 day per test, gated on live integration testing; (b) canary framework extended with SDK v2/CDK/CloudWatch, LIFO resource cleanup, VPC suite spanning eight AWS services in us-east-1, auth fix that unblocked CI | resume (rebuilt 2026-07) |
 | 2 | UMD Full-Stack SWE Intern, May–Sep 2025, College Park (Remote): 50,000+ records, REST APIs, ETL over 10+ yrs legacy data via cron, −75% pipeline runtime | resume + LinkedIn |
 | 3 | UMD ML Engineer Intern, Aug 2023–Jan 2025, College Park: +30% NLP accuracy, −25% training time (SPSA/ADAM/SGD) | resume + LinkedIn |
 | 4 | Washington Software Inc. SWE Intern, Mar 2022–Aug 2023, Gaithersburg: Selenium/BeautifulSoup automation, −40% manual work, 15+ hrs/week saved, Jenkins CI/CD | resume + LinkedIn |
@@ -51,20 +51,19 @@ invent beyond the resume.
 
 | Rendered | Source |
 | --- | --- |
-| UMD College Park, B.S./M.S. CS — Departmental Honors (research track), Aug 2023–May 2027, GPA 3.6/4.0, minors DS + Philosophy, 10 coursework chips | UMD CS departmental honors page + resume |
+| UMD College Park, B.S./M.S. CS — Departmental Honors (research track), Aug 2023–May 2027, GPA 3.6/4.0, minors DS + Philosophy, 9 coursework chips | UMD CS departmental honors page + resume |
 
 ## Home page extras
 
-v4 design notes: the palette is now "Midnight Harbor" (dark-first: deep-midnight
-reading field + navy brand bands — src/styles/tokens.css); the hero tri-card
-"Now" strip (nowStrip) was removed — the availability proof-chip carries the
-who/what/when.
+Design notes: the palette is "Figure One" (dark-first, sampled from the
+committed benchmark plots; amber darkened for contrast —
+src/styles/tokens.css). The hero readout rail carries the fold-level proof
+(three repos, one measured cell each, values identical to
+featuredSystems.metrics).
 
 | Rendered | Source |
 | --- | --- |
 | Secretary of the UMD Climbing Club — 8 trips a semester, grew attendance 30% | resume |
-| Mechanical keyboards + custom PCs hobby line (About P3) | facts sheet · ABOUT |
-| Max ONE keyboard/climbing metaphor site-wide: the hero headline is it | design spec |
 | Skills rows exactly per resume (Languages / Frameworks / Tools) | resume |
 
 ## Star Catalog System — REMOVED
@@ -88,17 +87,16 @@ instead.
 | --- | --- |
 | parallax-kv (Go, public repo): Raft KV from scratch — PreVote, ReadIndex, WAL, gRPC; deterministic harness across 2.9 million client operations, zero safety/linearizability violations; 272 writes/s at 41 ms p99 (c=8) | repo README |
 | accretion-db (Rust, public repo): embeddable LSM engine — CRC-framed WAL, group commit, bloom SSTables, size-tiered compaction, zero unsafe; ~29x WAL-bound group-commit edge, 878 µs fdatasync | repo README |
-| lodestone (Rust, public repo): from-scratch vector search for embeddings/RAG — HNSW + IVF-PQ over hand-written AVX-512 kernels; HNSW 0.976 recall@10 at ~31,700 QPS single-core (30–48x over exact scan at 90%+ recall), IVF-PQ 0.975 recall@10 at 16x compression. Numbers = benchmarks/raw/bench_50k_128d.txt (50,000 x 128-d, 1,000 queries, k=10, single core) | repo README + bench raw |
+| lodestone (Rust, public repo): from-scratch vector search for embeddings/RAG — HNSW + IVF-PQ over hand-written AVX-512 kernels; HNSW 0.976 recall@10 at ~31,800 QPS single-core (~33x the exact oracle's throughput at that recall; 9x–33x across the ≥0.90 recall band — the old wider-band multiple is RETIRED and check-facts FORBIDS it: its top end sits at 0.8996 recall, below the band it asserted), IVF-PQ 0.975 recall@10 at 16x compression. Numbers = benchmarks/raw/bench_50k_128d.txt (50,000 x 128-d, 1,000 queries, k=10, single core) | repo README + bench raw |
 
 ## Other projects (`/projects/`)
 
 | Rendered | Source |
 | --- | --- |
-| DANN (cross-domain-sentiment-dann, MIT): DistilBERT, LODO across Yelp/Amazon/Twitter/Reddit, 64,000 labeled samples, 16 experimental conditions, DANN moonshot, Financial PhraseBank OOD probe | repo README |
-| DANN result line EXACTLY: "DANN reached 74.2% on Yelp and 67.7% average accuracy across held-out domains." — never "+26%", never an unqualified "74.2% on held-out domains" (74.2% is Yelp-only per repo README / report Table 2) | repo README · Table 2 |
-| RAG Research Assistant (Jan 2025, private / no public repo — no link): LangChain+FAISS over 25+ papers, Streamlit + W&B, 95% policy-analysis QA | resume |
+| DANN (cross-domain-sentiment-dann, MIT): DistilBERT, LODO across Yelp/Amazon/Twitter/Reddit — REFERENCE-ONLY, UN-RENDERABLE BY DESIGN: the report figures (74.2 / 67.7 / 64,000) never render anywhere; check-facts FORBIDS them and verify.mjs asserts their absence. The card describes the pipeline and quotes no accuracy numbers. | repo README (reference only) |
+| RAG Research Assistant: REMOVED from the site (no public repo, and the old 95% QA figure is check-facts-FORBIDDEN). Reference-only row; do not "restore". | historical |
 | ML Professor Rating Predictor (Apr 2025, private / no public repo — no link): 13,000+ profiles, VADER, scikit-learn, R² 0.79 | resume |
-| QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): 3-person project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
+| QNLP (FIRE-QML-WINNERS-QNLP, GPL-3.0): four-person project, "co-built and open-sourced" — NEVER "contributed to"; role = dataset preparation and integration + project documentation; enhanced optimizers beat out-of-the-box standard-SPSA by roughly 30 percentage points (exact noiseless simulation) | facts sheet · OPEN SOURCE |
 | This site — public repo iwang-1/iwang-1.github.io, MIT, CI = check-facts + verify (no `date` field — none invented) | repo + this file |
 
 ## Open source (framing locks — two SEPARATE cards)

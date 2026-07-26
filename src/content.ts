@@ -20,24 +20,46 @@ export const person = {
 // ---------------------------------------------------------------------------
 // Home — hero, About.
 
+// The readout rail is the fold-level proof: three repos, one measured cell
+// each, every value already carried by featuredSystems.metrics. It has to read
+// and click with the figure ignored entirely.
 export const hero = {
-  kicker: "SOFTWARE ENGINEER",
+  kicker: "UMD CS B.S./M.S. · MAY 2027 · AWS SDE INTERN",
   headline: "Ivan Wang",
   subhead:
-    "AWS SDE intern and UMD CS B.S./M.S. candidate. I build software across the stack — backend services, systems, and ML/NLP.",
-  thesis: "Everything here ships with tests, benchmarks, and its limits written down.",
+    "I build across the stack, from backend services and storage engines to ML and NLP pipelines.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
+  readout: [
+    {
+      repo: "parallax-kv",
+      href: "https://github.com/iwang-1/parallax-kv",
+      value: "2.9M",
+      unit: "client operations checked",
+    },
+    {
+      repo: "accretion-db",
+      href: "https://github.com/iwang-1/accretion-db",
+      value: "878 µs",
+      unit: "fdatasync p50",
+    },
+    {
+      repo: "lodestone",
+      href: "https://github.com/iwang-1/lodestone",
+      value: "0.976",
+      unit: "recall@10",
+    },
+  ],
 };
 
 // About — ≤120 words, first person. Positioned so any SWE team reads it as a
 // strong general engineer, not someone locked into one niche.
 export const about = {
-  p1: "I'm a software engineer who likes building things end to end and going deep when a problem is hard. I've shipped backend services, systems software, and ML/NLP work, and I pick up new stacks quickly.",
-  p2Before: "I care about software you can trust: my ",
+  p1: "I'm a CS student at UMD, partway through the combined B.S./M.S. Summer 2026 I'm an SDE intern at AWS, working on EC2 networking. I write mostly Go and Rust. Python covers the ML and NLP.",
+  p2Before: "Start with the ",
   p2LinkText: "projects",
   p2LinkHref: "/projects/",
-  p2After: " ship with tests, reproducible measurements, and honest limitations.",
-  p3: "Outside of coursework I lead as Secretary of the UMD Climbing Club, organizing 8 trips a semester and helping grow attendance 30% — I like building things that bring people together as much as I like building software.",
+  p2After: ".",
+  p3: "I also climb. As Secretary of the UMD Climbing Club I organize 8 trips a semester, and attendance is up 30%.",
 };
 
 export interface FeaturedSystem {
@@ -46,8 +68,16 @@ export interface FeaturedSystem {
   title: string;
   summary: string;
   proof: string;
-  caveat?: string;
+  /** Footnote-register scope note. Renders in the plate's footnote strip under
+   *  a hairline with a † marker, never as the card's closing sentence. */
+  limits?: string;
+  /** The plate footnote's measurement conditions — what the numbers were
+   *  measured on, in the same shape as the axis labels in the repo's own plot. */
+  provenance: string;
   repoHref: string;
+  /** Deep links to the committed artifact a reader can open to check the
+   *  numbers. Each verified to return 200 before commit. */
+  artifactLinks: { label: string; href: string }[];
   chips: string[];
   diagram: "raft" | "lsm" | "ann";
   metrics: { value: string; label: string }[];
@@ -59,12 +89,19 @@ export const featuredSystems: FeaturedSystem[] = [
     eyebrow: "DISTRIBUTED SYSTEMS · GO",
     title: "parallax-kv",
     summary:
-      "A three-node Raft key-value store built from scratch with PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, and a gRPC runtime.",
+      "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
     proof:
-      "A deterministic stress harness exercised partitions, crashes, message loss, delays, and snapshots across 2.9 million client operations with zero safety or linearizability violations.",
-    caveat:
-      "The harness also exposed and fixed a checker-precision bug. Production snapshot scheduling and chunked streaming remain future work.",
+      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety or linearizability violations.",
+    limits:
+      "† The first bug the harness caught was in the linearizability checker, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
+    provenance: "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms",
     repoHref: "https://github.com/iwang-1/parallax-kv",
+    artifactLinks: [
+      {
+        label: "docs/BUG_LEDGER.md",
+        href: "https://github.com/iwang-1/parallax-kv/blob/main/docs/BUG_LEDGER.md",
+      },
+    ],
     chips: ["Go", "Raft", "gRPC", "Porcupine", "deterministic simulation"],
     diagram: "raft",
     metrics: [
@@ -78,18 +115,24 @@ export const featuredSystems: FeaturedSystem[] = [
     eyebrow: "STORAGE ENGINE · RUST",
     title: "accretion-db",
     summary:
-      "An embeddable LSM-tree storage engine with a CRC-framed WAL, group commit, memtables, block-based SSTables, bloom filters, and size-tiered compaction — with unsafe Rust forbidden.",
+      "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
     proof:
-      "Fault-injection and property-based tests verified that acknowledged writes survive simulated crashes.",
-    caveat:
-      "The ~29x group-commit result is WAL-bound. Synchronous compaction is intentionally disclosed and limits full-engine throughput.",
+      "Fault-injection and property tests check that acknowledged writes survive simulated crashes. They do. Every result is benchmarked against sled, including the cases sled wins.",
+    limits:
+      "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
+    provenance: "16-byte keys / 100-byte values · ext4 on NVMe · Xeon 8488C",
     repoHref: "https://github.com/iwang-1/accretion-db",
+    artifactLinks: [
+      {
+        label: "benchmarks/RESULTS.md",
+        href: "https://github.com/iwang-1/accretion-db/blob/main/benchmarks/RESULTS.md",
+      },
+    ],
     chips: ["Rust", "LSM tree", "group commit", "crash consistency", "proptest"],
     diagram: "lsm",
     metrics: [
       { value: "~29x", label: "WAL-bound group commit" },
       { value: "878 µs", label: "fdatasync p50" },
-      { value: "0", label: "unsafe Rust blocks" },
     ],
   },
   {
@@ -97,18 +140,24 @@ export const featuredSystems: FeaturedSystem[] = [
     eyebrow: "VECTOR SEARCH · RUST",
     title: "lodestone",
     summary:
-      "A vector search engine built from scratch in Rust for embeddings and RAG retrieval: an HNSW proximity graph and an IVF-PQ compressed index over hand-written AVX-512 distance kernels with runtime feature dispatch.",
+      "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — a 30–48x speedup over the exact brute-force oracle at 90%+ recall — measured on a recall-vs-throughput curve, not a single point.",
-    caveat:
-      "IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression via product quantization. The benchmark is single-machine and single-core; distributed sharding is future work.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second. That is about 33x the exact brute-force oracle's throughput at that recall, and 9–33x across the 90%+ recall band. The whole curve is measured, not one point.",
+    limits:
+      "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
+    provenance: "50,000 x 128-d · k=10 · single core · Xeon 8488C",
     repoHref: "https://github.com/iwang-1/lodestone",
+    artifactLinks: [
+      {
+        label: "benchmarks/raw/bench_50k_128d.txt",
+        href: "https://github.com/iwang-1/lodestone/blob/main/benchmarks/raw/bench_50k_128d.txt",
+      },
+    ],
     chips: ["Rust", "HNSW", "IVF-PQ", "AVX-512 SIMD", "RAG retrieval"],
     diagram: "ann",
     metrics: [
       { value: "0.976", label: "HNSW recall@10" },
       { value: "~31.8K", label: "queries/sec · 1 core" },
-      { value: "16x", label: "IVF-PQ compression" },
     ],
   },
 ];
@@ -196,43 +245,6 @@ export const skills: { label: string; items: string[] }[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Home — Selected Work teasers (text-only).
-
-export interface Teaser {
-  title: string;
-  body: string;
-  href: string;
-  linkText: string;
-  proofChips?: string[];
-}
-
-// Home teasers are PROJECTS ONLY — the AWS internship lives in the hero
-// subhead and on /experience/, never framed as a project here.
-export const teasers: Teaser[] = [
-  {
-    title: "Domain adaptation research",
-    body: "A team research artifact exploring DistilBERT and unsupervised domain adaptation across Yelp, Amazon, Twitter, and Reddit.",
-    href: "/projects/#dann",
-    linkText: "See the project",
-    proofChips: ["PyTorch", "public research artifact"],
-  },
-  {
-    title: "Quantum NLP research",
-    body: "A four-person open-source research artifact comparing optimizer and ansatz variants in exact noiseless simulation.",
-    href: "/projects/#fire-qnlp",
-    linkText: "See the project",
-    proofChips: ["Qiskit", "DisCoPy", "pytket"],
-  },
-  {
-    title: "This portfolio",
-    body: "A multi-page React and TypeScript site with static prerendering, no-JS fallbacks, factual guardrails, and Playwright verification.",
-    href: "/projects/#this-site",
-    linkText: "See the build details",
-    proofChips: ["React", "Playwright"],
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Experience — all 7 roles. Bullets lightly copyedited from the sheet only;
 // every number/tool/claim verbatim. AWS phrasing stays date-anchored
 // ("Summer 2026"), never "currently".
@@ -250,13 +262,10 @@ export interface Role {
 }
 
 // Each role shows its employer's real logo, served from /logos (bundled in
-// public/, never hotlinked from a CDN). Recognizable brands use the actual
-// vendor mark; the small orgs with no public logo get a lettermark tile
-// (kind: "mark") drawn from initials + a brand color, so nothing on a
-// recruiting page is ever the WRONG company's logo.
-export type RoleLogo =
-  | { kind: "img"; src: string; alt: string; wide?: boolean; pad?: boolean }
-  | { kind: "mark"; initials: string; color: string; alt: string };
+// public/, never hotlinked from a CDN). Every one of the seven is a real
+// vendor mark, so nothing on a recruiting page is ever the WRONG company's
+// logo.
+export type RoleLogo = { kind: "img"; src: string; alt: string; wide?: boolean; pad?: boolean };
 
 export const engineeringRoles: Role[] = [
   {
@@ -278,9 +287,9 @@ export const engineeringRoles: Role[] = [
     location: "College Park, MD",
     logo: { kind: "img", src: "/logos/umd.png", alt: "University of Maryland logo" },
     bullets: [
-      "Independently built a full-stack search platform (Python/Flask REST APIs, React, SQLite) giving UMD astrophysicists real-time query and filtering over 50,000+ telescope observation records.",
-      "Cut data-processing time 75% with a Python ETL pipeline ingesting FITS files with schema validation, deduplication, and scheduled refreshes.",
-      "Merged four code-reviewed pull requests to the open-source observatory archive.",
+      "Independently built a full-stack search platform (Python/Flask REST APIs, SQLite, JavaScript front end) giving UMD astrophysicists query and filtering over 50,000+ telescope observation records.",
+      "Cut data-processing time 75% with a Python ETL pipeline ingesting FITS files.",
+      "Merged four pull requests to the open-source observatory archive.",
     ],
     chips: ["50,000+ records", "−75% pipeline runtime", "4 merged PRs"],
     proofLink: { label: "CCD-data-archive", href: "https://github.com/warnerem/CCD-data-archive" },
@@ -294,7 +303,7 @@ export const engineeringRoles: Role[] = [
     bullets: [
       "Shipped an open-source quantum NLP text classifier on a four-person team, building the Python pipeline that fed parsed sentences into parameterized quantum circuits (Qiskit, DisCoPy, pytket).",
       "Unlocked IonQ quantum-hardware execution via qiskit-ionq backends; the team's enhanced SPSA/Adam/genetic optimizers cut test error from 41% to 4–9% in simulation.",
-      "Co-built and open-sourced the research artifact with reproducible simulator workflows and documented comparison methodology.",
+      "Co-built and open-sourced the research artifact and wrote up the comparison methodology.",
     ],
     chips: ["4-person team", "Qiskit/DisCoPy/pytket", "qiskit-ionq backend"],
     proofLink: { label: "FIRE-QML-WINNERS-QNLP", href: "https://github.com/iwang-1/FIRE-QML-WINNERS-QNLP" },
@@ -362,12 +371,10 @@ export const communityRoles: Role[] = [
 export interface Project {
   id?: string;
   title: string;
-  date?: string;
   description: string[];
   chips?: string[];
   repoHref?: string;
   license?: string;
-  noRepo?: boolean;
 }
 
 export const projects: Project[] = [
@@ -377,8 +384,8 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/cross-domain-sentiment-dann",
     license: "MIT",
     description: [
-      "DistilBERT and a gradient-reversal DANN across Yelp, Amazon, Twitter, and Reddit. Labeled source-domain examples train the sentiment head while unlabeled target-domain text trains the domain head.",
-      "The committed CSV is a smoke-scale artifact, so this page describes the pipeline and its evidence boundary rather than quoting accuracy numbers; the linked repo carries the full team report's figures, attributed to the paper.",
+      "DistilBERT with a gradient-reversal DANN for unsupervised domain adaptation across Yelp, Amazon, Twitter, and Reddit. Labeled source-domain examples train the sentiment head; unlabeled target-domain text trains the domain head.",
+      "The committed CSV is a smoke-scale artifact, so this page quotes no accuracy numbers. The full figures live in the linked repo's team report.",
     ],
     chips: ["PyTorch", "DistilBERT", "gradient reversal"],
   },
@@ -399,8 +406,8 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/generative-ai-experiments",
     license: "MIT",
     description: [
-      "A collection of hands-on generative-AI notebooks: a retrieval-augmented generation (RAG) pipeline built stage by stage in LangChain — tokenizers, chunking, embeddings, a vector store, retrieval, and QA/chat — plus Streamlit/Gradio LLM apps and GAN/VAE architecture studies in PyTorch.",
-      "Each notebook isolates one idea so the pieces are easy to revisit and reuse.",
+      "Hands-on generative-AI notebooks. The core is a retrieval-augmented generation (RAG) pipeline built stage by stage in LangChain, from tokenizers through chunking and embeddings to retrieval and QA chat. Alongside it: Streamlit/Gradio LLM apps and GAN/VAE architecture studies in PyTorch.",
+      "Each notebook isolates one idea.",
     ],
     chips: ["LangChain", "RAG", "PyTorch", "Streamlit/Gradio"],
   },
@@ -410,7 +417,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/professor-rating-prediction",
     license: "MIT",
     description: [
-      "Predicts a professor's average star rating on PlanetTerp from the text of student reviews — VADER sentiment plus review count — without ever using the star ratings as features.",
+      "Predicts a professor's average star rating on PlanetTerp from the text of student reviews (VADER sentiment plus review count), without ever using the star ratings as features.",
       "Two text-derived features in a plain linear regression explain about 79% of the variance in ratings.",
     ],
     chips: ["Python", "scikit-learn", "VADER", "NLP"],
@@ -431,7 +438,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/gender-perception-study",
     license: "MIT",
     description: [
-      "Does swapping the genders in a moral-judgment scenario change how people judge it? Chi-squared hypothesis testing on gender-swapped survey scenarios, with a documented method and honest read of the findings.",
+      "Does swapping the genders in a moral-judgment scenario change how people judge it? Chi-squared hypothesis testing on gender-swapped survey scenarios, with the method written down.",
     ],
     chips: ["Python", "pandas", "chi-squared"],
   },
@@ -441,7 +448,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/weather-attendance-study",
     license: "MIT",
     description: [
-      "A statistical study of attendance against local weather: per-group detrending, WMO/NWS rain classification, Welch's t-tests, and a rain-plus-wind regression — with the evidence boundary stated plainly.",
+      "A statistical study of attendance against local weather: per-group detrending, WMO/NWS rain classification, Welch's t-tests, then a rain-plus-wind regression.",
     ],
     chips: ["Python", "SciPy", "regression"],
   },
@@ -451,7 +458,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/iwang-1.github.io",
     license: "MIT",
     description: [
-      "The page you're reading: a multi-page React + TypeScript + Vite site deployed to GitHub Pages, with static prerendering, a no-JS fallback, factual guardrails, responsive screenshots, and Playwright interaction checks.",
+      "The page you're reading: a multi-page React + TypeScript + Vite site on GitHub Pages. It prerenders to static HTML, works without JavaScript, and won't build if a fact check or Playwright assertion fails.",
     ],
     chips: ["React + TypeScript + Vite", "fact-gate in CI", "Playwright-verified", "no trackers"],
   },
@@ -461,10 +468,9 @@ export const projects: Project[] = [
 // Shared chrome.
 
 export const contact = {
-  kicker: "OPEN TO SUMMER 2027 NEW-GRAD ROLES",
   heading: "Let's talk about building reliable software.",
   body:
-    "I'm recruiting for software engineering roles, especially on backend, infrastructure, storage, and distributed systems teams. Email is the fastest way to reach me.",
+    "I'm looking for Summer 2027 software engineering roles across the stack. Email is fastest.",
 };
 
 export const footer = {

@@ -78,7 +78,7 @@ export function SystemFeature({ project }: { project: FeaturedSystem }) {
         </h3>
         <p className="system-summary">{project.summary}</p>
         <p className="system-proof">{project.proof}</p>
-        {project.caveat && <p className="system-caveat">{project.caveat}</p>}
+        {project.limits && <p className="system-caveat">{project.limits}</p>}
         <div className="chip-rail">
           {project.chips.map((chip) => (
             <Chip key={chip} label={chip} />

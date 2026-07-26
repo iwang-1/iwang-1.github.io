@@ -48,6 +48,10 @@ const FORBIDDEN = [
     re: /(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/,
     why: "phone-number-shaped string (no phone number anywhere in site text)",
   },
+  {
+    re: /30[–-]48x/,
+    why: "retired lodestone claim — 48.7x occurs at 0.8996 recall, below the asserted 90%; true ≥0.90 band is 9.2x–32.8x",
+  },
   { re: /\b80(\.0)?\s?%/, why: "rounded classifier accuracy (79.5% never becomes 80%)" },
   { re: /\b99(\.\d+)?\s?%/, why: "rounded coverage (98.56% never becomes 99%)" },
   { re: /(?<![\d.])219(?![\d.])/, why: "summed test count (101+66+52) — counts stay per-repo" },

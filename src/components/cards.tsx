@@ -4,21 +4,8 @@ import { ExternalLink, Keycap } from "./Keycap";
 import { Reveal } from "./Reveal";
 
 /** RoleLogo — the employer's real logo in a white chip (so transparent and
- *  dark marks read in both themes), or a colored lettermark tile for the
- *  small orgs with no public logo. `wide` lets a wordmark span the chip. */
+ *  dark marks read in both themes). `wide` lets a wordmark span the chip. */
 function RoleLogo({ logo }: { logo: Role["logo"] }) {
-  if (logo.kind === "mark") {
-    return (
-      <span
-        className="role-logo role-logo-mark"
-        style={{ background: logo.color }}
-        role="img"
-        aria-label={logo.alt}
-      >
-        {logo.initials}
-      </span>
-    );
-  }
   return (
     <span className={`role-logo${logo.pad ? " role-logo-pad" : ""}`}>
       <img
@@ -101,8 +88,7 @@ export function EduCard({ edu }: { edu: Education }) {
   );
 }
 
-/** ProjectCard — project cards. `noRepo` renders a mono
- *  "no public repo" tag instead of a link. */
+/** ProjectCard — project cards. Every project links to a public repo. */
 export function ProjectCard({ project }: { project: Project }) {
   return (
     <article className={`card ${project.repoHref ? "card-live" : "card-static"}`} id={project.id}>
@@ -114,9 +100,7 @@ export function ProjectCard({ project }: { project: Project }) {
         )}
       </h3>
       <div className="project-meta">
-        {project.date && <span className="role-meta">{project.date}</span>}
         {project.license && <span className="role-meta">{project.license}</span>}
-        {project.noRepo && <span className="no-repo-tag">no public repo</span>}
       </div>
       {project.description.map((d) => (
         <p key={d} style={{ marginTop: 12, marginBottom: 0 }}>
@@ -148,7 +132,6 @@ export function ContactBand({
     <section className="contact-band" id={id}>
       <Reveal className="container contact-layout">
         <div className="contact-copy">
-          <p className="kicker">{contact.kicker}</p>
           <h2>{heading}</h2>
           <p>{body}</p>
         </div>

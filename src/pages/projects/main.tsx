@@ -20,8 +20,8 @@ function Projects() {
           <div className="page-head container">
             <h1>Projects</h1>
             <p className="page-dek">
-              Systems, backend, and ML/NLP work with public code, reproducible evidence, and clear
-              engineering tradeoffs.
+              Every project links its code. The numbers come from committed benchmarks you can
+              re-run.
             </p>
           </div>
         </div>

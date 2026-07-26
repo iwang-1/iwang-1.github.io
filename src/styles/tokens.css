@@ -89,7 +89,9 @@
   --t-hover: 180ms;
   --t-reveal: 300ms;
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Legacy alias; overshoot easing retired with the keycap world. Usages are
+     deleted in the motion purge, then this alias goes with the other shims. */
+  --ease-pop: var(--ease-out);
 
   /* ----------------------------------------------------------------- type */
   /* System fonts only (no CDN fonts, zero font bytes). */
