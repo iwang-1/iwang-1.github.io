@@ -57,7 +57,7 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
     `<p class="kbd-help-title">Legend &amp; shortcuts</p>` +
     `<ul class="kbd-help-list">${rows}</ul>` +
     `<p class="kbd-help-foot"><kbd>?</kbd> toggles this panel · <kbd>Esc</kbd> closes it</p>` +
-    `<button type="button" class="keycap kbd-help-close" data-close>Close</button>` +
+    `<button type="button" class="btn kbd-help-close" data-close>Close</button>` +
     `</div>`;
 
   const fab = document.createElement("button");

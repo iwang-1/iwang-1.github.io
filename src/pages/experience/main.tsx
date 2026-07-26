@@ -16,7 +16,7 @@ import { Timeline, type TimelineEntry } from "../../components/Timeline";
 const entries: TimelineEntry[] = [
   ...engineeringRoles.map((role): TimelineEntry => ({ kind: "role", role })),
   { kind: "label", text: "Community & Teaching" },
-  ...communityRoles.map((role): TimelineEntry => ({ kind: "role", role, tagTone: "teal" })),
+  ...communityRoles.map((role): TimelineEntry => ({ kind: "role", role })),
 ];
 
 function Experience() {

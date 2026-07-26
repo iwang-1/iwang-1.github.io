@@ -334,6 +334,64 @@ async function checkPage(spec, viewport) {
       if (!hrefs.includes(href)) problems.push(`${tag}: 404 recovery link missing: ${href}`);
   }
 
+  // caption/figure non-overlap gate: the mobile caption collision (-20px into
+  // parallax's N3, -35px into accretion's SST across 6 renders) shipped while
+  // all 12 checks passed. Bounding-box intersection between every figure
+  // caption/footnote and its sibling figure elements must be zero.
+  const overlaps = await page.evaluate(() => {
+    const out = [];
+    const intersects = (a, b) =>
+      a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
+    for (const cap of document.querySelectorAll(".diagram-caption, .plate-footnote")) {
+      const parent = cap.closest(".system-diagram, .plate, figure");
+      if (!parent) continue;
+      const c = cap.getBoundingClientRect();
+      if (!c.width || !c.height) continue;
+      for (const el of parent.querySelectorAll(
+        ".diagram-stage, .diagram-node, .diagram-sstables span, .sweep-plot, .climb-topo",
+      )) {
+        if (cap.contains(el) || el.contains(cap)) continue;
+        const e = el.getBoundingClientRect();
+        if (!e.width || !e.height) continue;
+        if (intersects(c, e))
+          out.push(`${cap.className} overlaps ${el.className || el.tagName}`);
+      }
+    }
+    return out;
+  });
+  for (const o of new Set(overlaps)) problems.push(`${tag}: caption/figure overlap — ${o}`);
+
+  // primary-CTA contrast gate, at rest AND hovered: the 1.21:1 invisible-CTA
+  // hover bug (a later :hover out-specifying the primary variant) was
+  // completely invisible to the other 12 checks.
+  const primaryCta = page.locator(".btn-primary").first();
+  if (await primaryCta.count()) {
+    const readRatio = () =>
+      primaryCta.evaluate((el) => {
+        const lum = (channel) => {
+          const c = channel / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        };
+        const relLum = (rgb) => {
+          const [r, g, b] = rgb.match(/\d+(\.\d+)?/g).map(Number);
+          return 0.2126 * lum(r) + 0.7152 * lum(g) + 0.0722 * lum(b);
+        };
+        const s = getComputedStyle(el);
+        const L1 = relLum(s.color);
+        const L2 = relLum(s.backgroundColor);
+        return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+      });
+    const atRest = await readRatio();
+    await primaryCta.hover();
+    await page.waitForTimeout(200);
+    const hovered = await readRatio();
+    if (atRest < 4.5 || hovered < 4.5)
+      problems.push(
+        `${tag}: primary CTA label contrast below 4.5:1 (rest ${atRest.toFixed(2)}, hover ${hovered.toFixed(2)})`,
+      );
+    await page.mouse.move(0, 0);
+  }
+
   // footer contact links + mailto on every page
   for (const needle of ["github.com/iwang-1", "linkedin.com/in/ivanwang1"]) {
     const n = await page.locator(`footer a[href*="${needle}"]`).count();

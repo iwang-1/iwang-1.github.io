@@ -3,22 +3,27 @@
 **Live at <https://iwang-1.github.io/>**
 [![deploy](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/iwang-1/iwang-1.github.io/actions/workflows/deploy.yml)
 
-![Home page — Chalk & Current theme with a climbing-route hero and keycap nav](docs/home-desktop.png)
+![Home page — Figure One: a measurement-report layout with an interactive recall-vs-throughput figure in the hero](docs/home-desktop.png)
 
 Ivan Wang's personal recruiting site — a multi-page React + TypeScript + Vite
-app ("Chalk & Current" — graphite reading surfaces, deep-water bands, cyan
-interactions, a full-bleed climbing route, and keycap-styled controls) deployed
-to GitHub Pages at
-<https://iwang-1.github.io/> (user site, so Vite `base: '/'`). No router, no
-chart libraries, no CDN fonts, no trackers.
+app deployed to GitHub Pages at <https://iwang-1.github.io/> (user site, so
+Vite `base: '/'`). No router, no chart libraries, no CDN fonts, no trackers.
+
+The visual system is **"Figure One"**: the site is set like a measurement
+report, in the vocabulary of the benchmark plots committed in the featured
+repos. The palette is sampled from those plots (amber darkened for contrast);
+blue is data and appears only inside figures, amber is every interaction.
+Numbers sit inside labelled plates that carry their own measurement conditions
+and limits as footnotes, and the homepage hero is a scrubbable inline-SVG
+render of lodestone's real recall-vs-throughput curve.
 
 ## Page map (Vite MPA — `build.rollupOptions.input`)
 
 | Route | Entry | Page module |
 | --- | --- | --- |
-| `/` | `index.html` | `src/pages/home/main.tsx` — hero, About, Education (`#education`), Skills (`#skills`), Selected work |
+| `/` | `index.html` | `src/pages/home/main.tsx` — hero (readout rail + the recall-curve figure), featured systems, About (`#about`, with the boulder topo), Education (`#education`), Skills (`#skills`) |
 | `/experience/` | `experience/index.html` | `src/pages/experience/main.tsx` — center-spine alternating timeline: 4 engineering + 3 community & teaching roles |
-| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — DANN, RAG, Professor Predictor, QNLP, open source |
+| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — three system plates (parallax-kv, accretion-db, lodestone), then the selected projects |
 | `/404.html` | `404.html` | `src/pages/not-found/main.tsx` — branded not-found (GitHub Pages serves it natively; `noindex`) |
 
 Each entry hand-writes its own head (title, description, canonical, OG,
@@ -42,7 +47,8 @@ npm run lint
 (`npx playwright install chromium` once, if it is not already cached). It
 checks every page at 1366x900, 390x844, and 320x700 (head metadata, sticky
 route progress, nav active state, internal links, locked facts, a11y gates,
-zero console errors) and refreshes the per-page screenshots in `docs/`;
+zero console errors, caption/figure non-overlap, primary-CTA contrast at rest
+and hover) and refreshes the per-page screenshots in `docs/`;
 the PNG bytes are not deterministic, so commit them when they change
 meaningfully and otherwise `git checkout -- docs` to keep the tree clean.
 

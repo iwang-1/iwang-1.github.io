@@ -18,7 +18,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--fs-600);
@@ -78,26 +78,26 @@ p {
 }
 
 a {
-  color: var(--accent);
+  color: var(--series-2);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
 a:hover,
 a:focus-visible {
-  color: var(--accent-deep);
+  color: var(--series-2);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--series-2);
   outline-offset: 2px;
 }
 
 /* Themed selection: amber field, ground-coloured text (8.98:1), which reads
    on every surface in the palette. */
 ::selection {
-  background: var(--accent);
-  color: var(--bg);
+  background: var(--series-2);
+  color: var(--ground);
 }
 
 img {
@@ -164,9 +164,9 @@ img {
   left: 16px;
   top: -64px;
   z-index: 100;
-  background: var(--surface);
+  background: var(--plate);
   color: var(--ink);
-  border: var(--hairline) solid var(--border);
+  border: var(--hairline) solid var(--grid);
   border-radius: var(--r-xs);
   padding: 10px var(--space-4);
   transition: top var(--t-tap) ease;
@@ -194,7 +194,7 @@ img {
 
 @supports not (backdrop-filter: blur(6px)) {
   .nav {
-    background: var(--navy);
+    background: var(--plate);
   }
 }
 
@@ -231,8 +231,8 @@ img {
 }
 
 /* Mobile nav: these descendant selectors out-specify the base label-button
-   rule below, which is why a bare `.keycap`/`.btn` override here would
-   silently lose the cascade. */
+   rule below, which is why a bare `.btn` override here would silently lose
+   the cascade. */
 @media (max-width: 639px) {
   .nav-wordmark {
     display: none;
@@ -242,7 +242,6 @@ img {
     gap: 6px;
   }
 
-  .nav-tabs .keycap,
   .nav-tabs .btn {
     padding: 8px 10px;
     font-size: var(--fs-400);
@@ -266,7 +265,6 @@ img {
     gap: 4px;
   }
 
-  .nav-tabs .keycap,
   .nav-tabs .btn {
     padding: 8px 6px;
     font-size: var(--fs-300);
@@ -287,7 +285,6 @@ img {
     gap: 3px;
   }
 
-  .nav-tabs .keycap,
   .nav-tabs .btn {
     padding: 8px 5px;
     font-size: var(--fs-200);
@@ -308,16 +305,11 @@ img {
    Non-interactive chips stay borderless-flat, so the hairline IS the
    affordance.
 
-   Two selector lists per rule while components still emit the legacy names:
-   `.keycap*` is the old emitted class, `.btn*` is the new one. The legacy
-   halves are removed once every component has switched.
-
    Cascade contract: hover/focus-visible and :active are each written ONCE,
    here, at equal specificity, in cascade order. There is exactly one :hover
    rule for this primitive in the whole file — the previous stylesheet had a
    second, later one whose `:not()` qualifier out-specified the primary
    variant and rendered the primary label at 1.21:1. */
-.keycap,
 .btn {
   /* The hover lift and the label colour, as properties the variants and the
      reduced-motion block can change WITHOUT adding a second :hover rule.
@@ -347,7 +339,6 @@ img {
 
 /* Primary: amber fill. The label is --ground (8.98:1) — --ink on amber is
    1.98:1 and is never used. */
-.keycap-primary,
 .btn-primary {
   --btn-label: var(--ground);
   background: var(--series-2);
@@ -359,7 +350,6 @@ img {
    the brighter --plate-2 fill, the --ink-3 boundary, and an amber tick under
    the label the way the active tick sits under an axis. The tick is a
    hairline, because a hairline is the only shadow in this system. */
-.keycap-pressed,
 .btn-current {
   --btn-lift: 0px; /* held down: never lifts, hover or not */
   background: var(--plate-2);
@@ -372,8 +362,6 @@ img {
    plate lifts. Written ONCE, for every variant, at one specificity. The
    label colour is restated from the variant's own property so no ancestor
    link rule can repaint it. */
-.keycap:hover,
-.keycap:focus-visible,
 .btn:hover,
 .btn:focus-visible {
   border-color: var(--series-2);
@@ -383,7 +371,6 @@ img {
 
 /* Pressed: the lift is removed. Same specificity as the hover rule above and
    later in the cascade, so it always wins while the pointer is down. */
-.keycap:active,
 .btn:active {
   transform: none;
 }
@@ -588,8 +575,8 @@ img {
   gap: 6px;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--r-chip);
-  border: var(--hairline) solid var(--border);
-  background: var(--surface);
+  border: var(--hairline) solid var(--grid);
+  background: var(--plate);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--fs-300);
@@ -608,7 +595,7 @@ img {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--status);
+  background: var(--series-3);
   flex: none;
 }
 
@@ -627,6 +614,29 @@ img {
    `.main-with-contact { padding-bottom: 0 }` patch is unnecessary. */
 .section {
   padding-top: var(--section-gap);
+}
+
+/* Mobile rhythm: 96px verticals are a desktop measure. On a phone they read
+   as five dead half-screens, and the page budget (≤~6,000px at 390w) is spent
+   on evidence, not air. Plate padding narrows with the viewport for the same
+   reason: 24px frames on a 390px screen spend an eighth of the width on air. */
+@media (max-width: 639px) {
+  :root {
+    --section-gap: 48px;
+  }
+
+  .plate {
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .section-head {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-band {
+    padding-bottom: var(--space-6);
+  }
 }
 
 /* Hierarchy ranks. Five identically-sized h2s over five identical 96px pads is
@@ -697,8 +707,8 @@ img {
    the hairline IS the separation, so a card that wants more presence gets a
    brighter border, never a soft edge. */
 .card {
-  background: var(--surface);
-  border: var(--hairline) solid var(--border);
+  background: var(--plate);
+  border: var(--hairline) solid var(--grid);
   border-radius: var(--r-xs);
   padding: var(--space-5);
   transition: transform var(--t-hover) var(--ease-out),
@@ -842,7 +852,7 @@ img {
 
 /* Home hero band — the band wrapping the hero. */
 .hero-band {
-  background: var(--navy);
+  background: var(--plate);
   padding-bottom: var(--space-8);
   position: relative;
   isolation: isolate;
@@ -853,9 +863,9 @@ img {
   position: relative;
   z-index: 2;
 }
-.hero .kicker { color: var(--navy-ink-2); }
-.hero h1, .hero-subhead { color: var(--navy-ink); }
-.hero-band .hero-email-plain { color: var(--navy-ink-2); }
+.hero .kicker { color: var(--ink-2); }
+.hero h1, .hero-subhead { color: var(--ink); }
+.hero-band .hero-email-plain { color: var(--ink-2); }
 
 /* --------------------------------------------------------- system feature */
 .system-list {
@@ -903,7 +913,17 @@ img {
   justify-content: flex-start;
   gap: var(--space-6);
   padding-top: var(--space-2);
-  border-top: var(--hairline) solid var(--border);
+  border-top: var(--hairline) solid var(--grid);
+}
+
+@media (max-width: 639px) {
+  .system-feature {
+    gap: var(--space-4);
+  }
+
+  .system-evidence {
+    gap: var(--space-4);
+  }
 }
 
 /* The figure. Two rows — the stage, then the caption — so the caption is a real
@@ -943,8 +963,19 @@ img {
   min-width: 52px;
   min-height: 40px;
   padding: 6px var(--space-2);
-  border: var(--hairline) solid var(--border-interactive);
-  background: var(--bg);
+  border: var(--hairline) solid var(--ink-3);
+  background: var(--ground);
+}
+
+/* Phones get the numbers, not the box diagram. The diagram is a supplementary
+   illustration — the proof is the readout and the artifact links, which stay.
+   Dropping it saves ~200px per plate on a page with three of them. (This rule
+   must sit AFTER the .system-diagram base rule: equal specificity, source
+   order decides.) */
+@media (max-width: 639px) {
+  .system-diagram {
+    display: none;
+  }
 }
 
 /* Stage labels are single tokens ("top-k", "memtable", "AVX-512"). Wrapping one
@@ -963,7 +994,7 @@ img {
   width: 24px;
   height: var(--hairline);
   flex: 0 1 24px;
-  background: var(--border-interactive);
+  background: var(--ink-3);
 }
 
 .diagram-flow::after {
@@ -973,8 +1004,8 @@ img {
   top: -3px;
   width: 6px;
   height: 6px;
-  border-top: var(--hairline) solid var(--border-interactive);
-  border-right: var(--hairline) solid var(--border-interactive);
+  border-top: var(--hairline) solid var(--ink-3);
+  border-right: var(--hairline) solid var(--ink-3);
   transform: rotate(45deg);
 }
 
@@ -992,8 +1023,8 @@ img {
 }
 
 .diagram-node.is-leader {
-  border-color: var(--status);
-  color: var(--status);
+  border-color: var(--series-3);
+  color: var(--series-3);
 }
 
 .diagram-sstables span {
@@ -1029,7 +1060,7 @@ img {
   gap: var(--space-3);
   margin: 0;
   padding-top: var(--space-4);
-  border-top: var(--hairline) solid var(--border);
+  border-top: var(--hairline) solid var(--grid);
 }
 
 .metric-grid div {
@@ -1065,7 +1096,7 @@ img {
     padding-top: 0;
     padding-left: var(--space-6);
     border-top: 0;
-    border-left: var(--hairline) solid var(--border);
+    border-left: var(--hairline) solid var(--grid);
   }
 }
 
@@ -1110,6 +1141,13 @@ img {
 
 .climbing-route {
   max-width: 440px;
+}
+
+/* On a phone the topo is a marginal figure, not a second hero. */
+@media (max-width: 639px) {
+  .climbing-route {
+    max-width: 320px;
+  }
 }
 
 .climb-topo {
@@ -1265,14 +1303,14 @@ img {
 
 /* ------------------------------------------------------------ page heads */
 .page-head-band {
-  background: var(--navy);
+  background: var(--plate);
   padding-bottom: var(--space-7);
   position: relative;
   isolation: isolate;
   overflow: hidden;
 }
-.page-head-band h1 { color: var(--navy-ink); }
-.page-head-band .page-dek { color: var(--navy-ink-2); }
+.page-head-band h1 { color: var(--ink); }
+.page-head-band .page-dek { color: var(--ink-2); }
 
 .page-head {
   /* longhand only — shares its element with .container (see .hero note) */
@@ -1307,7 +1345,7 @@ img {
   bottom: 4px;
   left: 7px;
   width: 2px;
-  background: var(--border);
+  background: var(--grid);
 }
 .alt-timeline-item { position: relative; margin-left: 36px; }
 .alt-timeline-item::before {      /* dot centered on the rail */
@@ -1320,8 +1358,8 @@ img {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--bg);
+  background: var(--series-2);
+  border: 2px solid var(--ground);
   z-index: 1;
 }
 .alt-timeline-item::after {       /* connector tick, rail → card */
@@ -1331,7 +1369,7 @@ img {
   left: -28px;
   width: 28px;
   height: 2px;
-  background: var(--border);
+  background: var(--grid);
 }
 .alt-timeline-label { position: relative; margin-left: 36px; z-index: 1; }
 /* The label is a real heading (group boundary for heading navigation) but
@@ -1342,8 +1380,8 @@ img {
 }
 .alt-timeline-label span {
   display: inline-block;
-  background: var(--surface);
-  border: var(--hairline) solid var(--border);
+  background: var(--plate);
+  border: var(--hairline) solid var(--grid);
   border-radius: var(--r-chip);
   padding: 6px var(--space-4);
   font-family: var(--font-mono);
@@ -1395,7 +1433,7 @@ img {
   justify-content: center;
   width: 48px;
   height: 48px;
-  border: var(--hairline) solid var(--border);
+  border: var(--hairline) solid var(--grid);
   border-radius: var(--r-xs);
   background: #fff;
   overflow: hidden;
@@ -1424,7 +1462,7 @@ img {
   font-weight: 700;
   font-size: var(--fs-500);
   letter-spacing: 0.02em;
-  background: var(--accent);
+  background: var(--series-2);
 }
 
 .role-org {
@@ -1538,6 +1576,18 @@ img {
   }
 }
 
+/* The skill list itself: one mono paragraph per row, interpunct-separated —
+   the same register as the plate footnotes, because a skills list is
+   metadata about the person, not evidence. */
+.skills-line {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-300);
+  line-height: 1.8;
+  color: var(--ink-2);
+  max-width: none;
+}
+
 .skills-label {
   font-family: var(--font-mono);
   font-size: var(--fs-300);
@@ -1569,9 +1619,9 @@ img {
 /* ---------------------------------------------------------- contact band */
 .contact-band {
   margin-top: var(--section-gap);
-  background: color-mix(in srgb, var(--surface) 78%, var(--navy));
-  border-top: var(--hairline) solid var(--border);
-  border-bottom: var(--hairline) solid var(--border);
+  background: color-mix(in srgb, var(--plate) 78%, var(--plate));
+  border-top: var(--hairline) solid var(--grid);
+  border-bottom: var(--hairline) solid var(--grid);
 }
 
 .contact-layout {
@@ -1637,7 +1687,7 @@ img {
    above, and whose bottom hairline is the footer's top edge) or ends in a block
    that carries its own bottom padding (.not-found). One gap, one owner. */
 .footer {
-  background: var(--navy);
+  background: var(--plate);
   border-top: none;
   padding: var(--space-7) 0;
   margin-top: 0;
@@ -1671,7 +1721,7 @@ img {
   max-width: none;
 }
 
-.footer-email, .footer-colophon { color: var(--navy-ink-2); }
+.footer-email, .footer-colophon { color: var(--ink-2); }
 
 /* --------------------------------------------------------------- 404 page */
 /* The 404 has no .contact-band, so it is the one page whose last main block
@@ -1728,14 +1778,14 @@ img {
    button and a 4px hop reads as a card that is falling off the page. */
 .card-live:hover, .card-live:focus-within {
   transform: translateY(-2px);
-  border-color: var(--border-hover);
+  border-color: var(--series-2);
 }
 .card-live:hover h3 a, .card-live:focus-within h3 a { text-decoration-thickness: 2px; }
 
 /* Non-link cards get attention, not invitation: the boundary brightens and the
    card does not move, because there is nothing to click. */
 .role-card:hover, .edu-card:hover {
-  border-color: var(--border-interactive);
+  border-color: var(--ink-3);
 }
 
 /* Timeline nodes. The dot no longer pops on reveal (that keyframe is gone);
@@ -1746,7 +1796,7 @@ img {
 .alt-timeline-item::after  { transition: background-color var(--t-hover) ease; }
 .alt-timeline-item:hover::before, .alt-timeline-item:focus-within::before { transform: scale(1.35); }
 .alt-timeline-item:hover::after,  .alt-timeline-item:focus-within::after  {
-  background: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--series-2) 40%, var(--grid));
 }
 
 /* Chips are non-interactive: no lift, no cursor, no shadow — and no motion on
@@ -1754,8 +1804,8 @@ img {
    when clicked is a false affordance. */
 .chip, .proof-chip { transition: border-color 150ms ease, background-color 150ms ease; }
 .chip:hover {
-  border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
-  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+  border-color: color-mix(in srgb, var(--series-2) 25%, var(--grid));
+  background: color-mix(in srgb, var(--series-2) 4%, var(--plate));
 }
 
 /* inline text links */
@@ -1869,9 +1919,9 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   align-items: center;
   justify-content: center;
   border-radius: var(--r-xs);
-  background: var(--surface);
+  background: var(--plate);
   color: var(--ink-2);
-  border: var(--hairline) solid var(--border-interactive);
+  border: var(--hairline) solid var(--ink-3);
   cursor: pointer;
   transition: transform var(--t-hover) var(--ease-out),
     border-color var(--t-hover) ease, color var(--t-hover) ease;
@@ -1881,7 +1931,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-fab:focus-visible {
   transform: translateY(-1px);
   border-color: var(--series-2);
-  color: var(--accent);
+  color: var(--series-2);
 }
 
 .kbd-fab:active {
@@ -1928,8 +1978,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-help-card {
   position: relative;
   width: min(420px, 100%);
-  background: var(--surface);
-  border: var(--hairline) solid var(--border-interactive);
+  background: var(--plate);
+  border: var(--hairline) solid var(--ink-3);
   border-radius: var(--r-xs);
   padding: var(--space-5);
   transform: translateY(8px) scale(0.98);
@@ -1968,7 +2018,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 .kbd-help-list a:hover,
 .kbd-help-list a:focus-visible {
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  background: color-mix(in srgb, var(--series-2) 10%, var(--plate));
   color: var(--ink);
 }
 
@@ -1986,8 +2036,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   padding: 5px 6px;
   text-align: center;
   color: var(--ink);
-  background: var(--bg);
-  border: var(--hairline) solid var(--border-interactive);
+  background: var(--ground);
+  border: var(--hairline) solid var(--ink-3);
   border-radius: var(--r-xs);
 }
 
@@ -2049,29 +2099,12 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     --plate-2: #f2f4f7;
     --grid: #c4ccd4;
     --axis: #6b7885;
+    --ink: #10161d;
+    --ink-2: #414d59;
     --ink-3: #55606b;
     --series-1: #0b3a6b;
     --series-2: #8a5a00;
     --series-3: #2f7d4f;
-
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --border: #c4ccd4;
-    --border-interactive: #6b7885;
-    --shadow-edge: #c4ccd4;
-    --ink: #10161d;
-    --ink-2: #414d59;
-    --accent: #0b6b7a;
-    --accent-deep: #0b6b7a;
-    --teal: #3f6212;
-    --status: #2f7d4f;
-    --climb-gold: #8a6410;
-    --chalk: #10161d;
-    --navy: #ffffff;
-    --navy-ink: #10161d;
-    --navy-ink-2: #414d59;
-    --shadow-card: none;
-    --shadow-card-hover: none;
   }
 
   html,
@@ -2128,12 +2161,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
      re-introduce the collision: #0b3a6b on #ffffff is 11.4:1 and the #6b7885
      hairline is 4.5:1 against the paper.
 
-     Both selector halves are listed while components still emit the legacy
-     names — a print bug that only appears after the class rename is a print bug
-     nobody finds. */
-  .keycap,
-  .keycap-primary,
-  .keycap-pressed,
+     re-introduce the collision. */
   .btn,
   .btn-primary,
   .btn-current {
@@ -2209,7 +2237,6 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
   /* The label button's lift is a custom property, so zeroing it here needs no
      second :hover rule and cannot out-specify the primitive's own states. */
-  .keycap,
   .btn {
     --btn-lift: 0px;
   }

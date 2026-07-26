@@ -4,12 +4,7 @@ import { RoleCard } from "./cards";
 import { Reveal } from "./Reveal";
 
 export type TimelineEntry =
-  /** `tagTone` is accepted and ignored. Tags used to render lime for the
-   *  community roles; there is one tag treatment now, so the tone is gone from
-   *  the chip and from RoleCard. The field stays in the type only so the pages
-   *  keep compiling while they still pass it — the argument and this line go
-   *  together. */
-  | { kind: "role"; role: Role; tagTone?: "default" | "teal" }
+  | { kind: "role"; role: Role }
   | { kind: "label"; text: string };
 
 /* NO YEAR TICKS ON THE SPINE — deliberate, and the reason is in the data.

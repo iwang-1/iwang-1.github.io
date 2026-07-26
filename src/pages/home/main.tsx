@@ -5,7 +5,7 @@ import "../../enhance";
 import "../../index.css";
 import { about, education, featuredSystems, hero, person, skills } from "../../content";
 import { ContactBand, EduCard } from "../../components/cards";
-import { Chip, ProofChip } from "../../components/chips";
+import { ProofChip } from "../../components/chips";
 import { ClimbingRoute } from "../../components/ClimbingRoute";
 import { Footer } from "../../components/Footer";
 import { ExternalLink, LabelButton } from "../../components/LabelButton";
@@ -98,15 +98,13 @@ function Home() {
           ))}
         </Section>
 
+        {/* Skills are metadata, so they are set like the plate footnotes:
+            mono lines, not a wall of pills. */}
         <Section id="skills" title="Skills" rank={2}>
           {skills.map((row) => (
             <div className="skills-row" key={row.label}>
               <span className="skills-label">{row.label}</span>
-              <div className="chip-rail" style={{ marginTop: 0 }}>
-                {row.items.map((s) => (
-                  <Chip key={s} label={s} />
-                ))}
-              </div>
+              <p className="skills-line">{row.items.join(" · ")}</p>
             </div>
           ))}
         </Section>

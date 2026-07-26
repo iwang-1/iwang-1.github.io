@@ -89,9 +89,6 @@
   --t-hover: 180ms;
   --t-reveal: 300ms;
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-  /* Legacy alias; overshoot easing retired with the keycap world. Usages are
-     deleted in the motion purge, then this alias goes with the other shims. */
-  --ease-pop: var(--ease-out);
 
   /* ----------------------------------------------------------------- type */
   /* System fonts only (no CDN fonts, zero font bytes). */
@@ -102,41 +99,4 @@
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas,
     monospace;
 
-  /* ----------------------------------------------- legacy aliases (temporary)
-     src/index.css still references the previous token names. Every one of them
-     now resolves into the figure palette, so the site renders in the new
-     world before the stylesheet is rewritten. These aliases are scaffolding:
-     the rewrite removes the usages, and the final pass deletes the aliases. */
-  --bg: var(--ground);
-  --surface: var(--plate);
-  --border: var(--grid);
-  /* Interactive boundary — #8295A5 clears WCAG 1.4.11's 3:1 on every
-     surface (6.06:1 on --plate, 6.33:1 on --ground). */
-  --border-interactive: var(--ink-3);
-  --shadow-edge: var(--axis);
-  --accent: var(--series-2);
-  --accent-deep: var(--series-2);
-  --teal: var(--ink-2);
-  --status: var(--series-3);
-  --climb-gold: var(--series-2);
-  --chalk: var(--ink);
-  --navy: var(--plate);
-  --navy-ink: var(--ink);
-  --navy-ink-2: var(--ink-2);
-  --r-card: var(--r-xs);
-  --r-key: var(--r-xs);
-  /* The only shadow in the system is a hairline, so the legacy card shadows
-     resolve to a no-op. Kept as a valid shadow value, not `none`, because two
-     surviving rules compose them into a comma list. */
-  --shadow-card: 0 0 0 rgba(0, 0, 0, 0);
-  --shadow-card-hover: 0 0 0 rgba(0, 0, 0, 0);
-  --border-hover: var(--series-2);
-  /* Retired decoration: the light sweep and the ghost-tile mask are held at
-     transparent until their rules are deleted outright. */
-  --t-boot: 1300ms;
-  --backlight-1: transparent;
-  --backlight-2: transparent;
-  --keyghost: transparent;
-  --keyghost-dim: transparent;
-  --keycap-tile: none;
 }
