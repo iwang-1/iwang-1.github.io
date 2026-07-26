@@ -421,6 +421,13 @@ img {
   max-width: none;
 }
 
+/* Footnote artifact links are long unbroken filenames
+   (bench_50k_128d.txt at 40 chars) — allow them to break anywhere, or the
+   longest one escapes its plate by 11px at 320w. */
+.plate-footnote a {
+  overflow-wrap: anywhere;
+}
+
 /* The footnote strip is the LAST thing in a plate, so it owns the bottom
    edge: no trailing margin can push the hairline off the content. */
 .plate > .plate-footnote:last-child {
@@ -1140,6 +1147,9 @@ img {
    >=6 off-route holds. Do not hide any of them. */
 
 .climbing-route {
+  /* Reset the UA <figure> margin (1em 40px) — it indents the plate 40px off
+     every alignment anchor on the page. Same reset the Sweep carries. */
+  margin: 0;
   max-width: 440px;
 }
 
@@ -1488,36 +1498,6 @@ img {
   max-width: var(--measure-prose);
 }
 
-/* --------------------------------------------------------------- about */
-/* Desktop: the copy shares the row with the figure beside it, so the right
-   half of the container is not three screen-heights of empty field.
-
-   NOTE for whatever lands in this column next: `.about-visual` is hidden
-   below 1024px, which is correct only for decoration. Anything carrying
-   content or a gated label must use its own column class, not this one. */
-.about-visual {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .about-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-    gap: var(--space-8);
-    align-items: center;
-  }
-
-  .about-visual {
-    display: flex;
-    justify-content: center;
-  }
-
-  .about-visual svg {
-    width: 100%;
-    height: auto;
-  }
-}
-
 /* ------------------------------------------------------------- education */
 /* Single entry, no grid: a fuller measure lets the coursework chips flow in
    2 rows instead of 4–5. Reintroduce card-grid when a second entry exists. */
@@ -1737,10 +1717,11 @@ img {
 }
 
 /* The 404's empty figure: real axes, no data. Small enough that the recovery
-   links stay in the first viewport. */
+   links stay in the first viewport. Margin longhands reset the UA <figure>
+   1em 40px, which would indent the plate off the page's alignment anchor. */
 .not-found-plate {
   max-width: 420px;
-  margin-bottom: var(--space-6);
+  margin: 0 0 var(--space-6);
 }
 
 .nf-axis,
@@ -1868,13 +1849,15 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 }
 
 /* Axis line on the first row of pixels, ticks hanging 4px below it. The tick
-   gradient repeats every 25% for four marks across the page's width. */
+   tile is offset so the four marks land at 25/50/75/100% of the width — a
+   tick at 0% sits under the scrub marker's resting clamp and reads as a
+   smudge instead of a mark. */
 .route-progress::before {
   top: 0;
   height: 7px;
   background:
-    linear-gradient(90deg, var(--axis) 0 var(--hairline), transparent var(--hairline))
-      repeat-x 0 3px / 25% 4px,
+    linear-gradient(270deg, var(--axis) 0 var(--hairline), transparent var(--hairline))
+      repeat-x right 0 top 3px / 25% 4px,
     linear-gradient(var(--grid), var(--grid)) no-repeat 0 3px / 100% var(--hairline);
 }
 
