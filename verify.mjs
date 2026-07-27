@@ -21,7 +21,10 @@ const PAGES = [
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
-    facts: ["May 2027", "Secretary of the UMD Climbing Club", "Departmental Honors", "2.9 million"],
+    // "Secretary of the UMD Climbing Club" was retired 2026-07-27 by owner
+    // request — the hobby section deliberately carries no leadership claims.
+    // The hobby anchors below keep the section gate-visible instead.
+    facts: ["May 2027", "mechanical keyboards", "rock climbing", "Departmental Honors", "2.9 million"],
     absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000", "1,400", "2,640", "Résumé"],
   },
   {
@@ -264,8 +267,11 @@ async function checkPage(spec, viewport) {
   // the nav brand's left edge. (.hero/.page-head/.not-found sit on the same
   // element as .container — a restated padding SHORTHAND there zeroes the
   // container's horizontal padding and the band renders flush left.)
+  // The home hero is centered (owner call, 2026-07-27), so its kicker can no
+  // longer anchor the container-padding check; the first section heading is
+  // left-aligned on the same .container and does the same job.
   const alignSel = {
-    "/": ".hero .kicker",
+    "/": ".section .section-head h2",
     "/experience/": ".page-head h1",
     "/projects/": ".page-head h1",
     "/404.html": ".not-found h1",

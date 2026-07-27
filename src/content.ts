@@ -34,7 +34,7 @@ export const hero = {
   kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN",
   headline: "Ivan Wang",
   subhead:
-    "I build across the stack, from backend services and storage engines to ML and NLP pipelines.",
+    "CS student at UMD, SDE intern at AWS. I build software — and outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
   readoutLead: "Three things I built. One measured number each — the names link to the code.",
   readout: [
@@ -71,20 +71,34 @@ export const hero = {
   },
 };
 
-// About — ≤120 words, first person. Positioned so any SWE team reads it as a
-// strong general engineer, not someone locked into one niche.
-export const about = {
-  p1: "I'm a CS student at UMD, partway through the combined B.S./M.S. In Summer 2026 I'm an SDE intern at AWS, working on EC2 networking. I write mostly Go and Rust. Python covers the ML and NLP.",
-  p2Before: "I build storage and consensus systems from scratch because reading how they work never told me what actually breaks. Start with the ",
-  p2LinkText: "projects",
-  p2LinkHref: "/projects/",
-  p2After: ".",
-  p3: "I also climb. As Secretary of the UMD Climbing Club I organize 8 trips a semester, and attendance is up 30%.",
-  // Renders directly above FIG. 00, so the boulder topo reads as a climbing wall
-  // on sight rather than as a fourth architecture diagram. Says only what the
-  // drawing IS — an earlier draft had me "setting boulder problems", which is a
-  // claim nothing in content.ts or the repos supports.
-  climbLead: "So here is a climbing wall, drawn the way a guidebook draws one: follow the dashed line, start at 1, finish at 8.",
+// Off the clock — the hobby section. Quick and warm by design (owner call,
+// 2026-07-27): no leadership claims, no metrics, just the three things he is
+// actually into, each with its own drawn figure. The old About paragraphs and
+// the club-officer line were retired at the same time.
+export const hobbies = {
+  title: "Off the clock",
+  intro:
+    "Three things I sink real time into. Drawn here, because apparently I can't help myself.",
+  climb: {
+    blurb: "Rock climbing — bouldering, mostly. Chalk, problems, repeat.",
+    // Renders directly above the topo so the drawing reads as a climbing wall
+    // on sight rather than as a fourth architecture diagram.
+    lead: "A wall, drawn like a guidebook draws one: follow the dashed line, start at 1, top out at 8.",
+  },
+  keyboards: {
+    blurb: "Mechanical keyboards — switches, keycaps, the whole rabbit hole.",
+  },
+  tech: {
+    blurb: "Keeping up with tech — releases, reviews, benchmarks. All of it.",
+    // The feed plate: a reading log, not a claims sheet. Hobby voice only —
+    // no product names, no numbers to defend.
+    feed: [
+      { topic: "gaming mice", note: "ask me the current best. I actually know." },
+      { topic: "keyboards & switches", note: "see the key tester on the left." },
+      { topic: "hardware launches", note: "reviews read day one, usually twice." },
+      { topic: "the rest of tech", note: "if it shipped this week, I saw the thread." },
+    ],
+  },
 };
 
 export interface FeaturedSystem {

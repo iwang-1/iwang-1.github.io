@@ -805,21 +805,34 @@ img {
   margin-top: var(--space-4);
 }
 
-/* Hero two-column: identity 46 / figure 54. The figure column needs ~640px
-   for the Sweep to render unpanned, so the split waits for 1200px; below
-   that the figure stacks under the copy at 4:3 and stays fully labelled. */
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-6);
-  align-items: start;
+/* Centered hero (owner call, 2026-07-27): the first screen is the person —
+   name, one friendly line, availability, contact. The evidence lives one
+   scroll down, opening Featured engineering work. */
+.hero-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: var(--space-6);
 }
 
-@media (min-width: 1200px) {
-  .hero-grid {
-    grid-template-columns: 46fr 54fr;
-    gap: var(--space-7);
-  }
+.hero-centered h1 {
+  max-width: none;
+}
+
+.hero-centered .hero-subhead {
+  max-width: 58ch;
+}
+
+.hero-centered .cta-row {
+  justify-content: center;
+}
+
+/* The Sweep, when it opens the evidence section: cap it so the plot renders
+   unpanned (~640px) without stretching the full 1120px container. */
+.systems-sweep {
+  max-width: 760px;
+  margin: var(--space-6) 0;
 }
 
 /* THE READOUT RAIL — three repos, one measured cell each, on hairline rows.
@@ -1363,44 +1376,6 @@ img {
 .climb-label-start { left: 8%; bottom: 4%; }
 .climb-label-top { right: 8%; top: 1%; }
 
-/* About layout: copy left, the topo plate right on desktop; stacked on
-   mobile. Unlike the retired .about-visual, this column is NEVER
-   display:none — it carries gate-asserted labels. */
-.about-figure {
-  margin-top: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-4);
-}
-
-/* The climbing paragraph, now the figure's own introduction, plus the line that
-   names the drawing. Body register, not mono: it is the person talking, and the
-   plate below is the diagram. */
-.about-figure-intro,
-.about-figure-lead {
-  margin: 0;
-  max-width: 46ch;
-}
-
-.about-figure-lead {
-  color: var(--ink-2);
-}
-
-@media (min-width: 1024px) {
-  .about-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
-    gap: var(--space-8);
-    align-items: start;
-  }
-
-  .about-figure {
-    margin-top: 0;
-  }
-}
-
-
 /* ------------------------------------------------------------ page heads */
 .page-head-band {
   background: var(--plate);
@@ -1575,6 +1550,50 @@ img {
 .role-bullets li {
   margin-bottom: var(--space-2);
   max-width: var(--measure-prose);
+}
+
+/* ------------------------------------------------------- off the clock */
+/* The hobby section: three drawn figures, one per hobby, each introduced by
+   one plain sentence. Deliberately claim-free — it is warmth, not evidence. */
+.hobby-intro {
+  max-width: var(--measure-body);
+  margin-bottom: var(--space-6);
+}
+
+.hobby-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .hobby-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.hobby-blurb {
+  margin: 0 0 var(--space-3);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.hobby-lead {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-400);
+  color: var(--ink-2);
+}
+
+.hobby-cell .plate {
+  max-width: none;
+}
+
+/* The feed plate: th is the topic, td the aside. Topics wrap — the base
+   .data-table th nowrap overflowed the plate by 20px at 320w. */
+.feed-table th {
+  text-align: left;
+  white-space: normal;
 }
 
 /* ------------------------------------------------------------- education */

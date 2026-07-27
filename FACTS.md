@@ -63,7 +63,7 @@ featuredSystems.metrics).
 
 | Rendered | Source |
 | --- | --- |
-| Secretary of the UMD Climbing Club — 8 trips a semester, grew attendance 30% | resume |
+| Hobby section ("Off the clock"): mechanical keyboards, rock climbing, keeping up with tech — NO leadership claims by owner decision 2026-07-27 (the "Secretary of the UMD Climbing Club · 8 trips · 30%" line is resume-only now; do not re-add without his ask) | owner call |
 | Skills rows exactly per resume (Languages / Frameworks / Tools) | resume |
 
 ## Star Catalog System — REMOVED

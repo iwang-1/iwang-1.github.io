@@ -3,9 +3,8 @@ import type { CSSProperties } from "react";
 /** FIG. 00 — the boulder topo. A guidebook-style route topo drawn in the
  *  figure grammar: the wall is a contour silhouette, the marked route is
  *  numbered holds joined by a dashed amber leader, and everything off the
- *  route is the unhighlighted sample grey. It sits beside the Climbing Club
- *  paragraph as the one drawn figure about the person, set exactly like the
- *  measured figures about the work.
+ *  route is the unhighlighted sample grey. It is the climbing cell of the
+ *  hobby section, set exactly like the measured figures about the work.
  *
  *  Gate contract (verify.mjs): the `.climbing-route` element keeps >=8
  *  `.climb-hold-route`, >=6 `.climb-hold-off-route`, and the literals
@@ -35,10 +34,9 @@ const offRouteHolds = [
 export function ClimbingRoute() {
   return (
     <figure className="plate climbing-route">
-      {/* "off-hours" qualifies the 00: going down the page a reader meets 01,
-          02, 03, 04 and then this, and a zero arriving last reads as an
-          off-by-one rather than as "before the work" unless it says so. */}
-      <p className="plate-label">FIG. 00 · off-hours · boulder topo</p>
+      {/* The 00 series is the hobby shelf (A keyboard, B topo, C feed); the
+          measured work starts at FIG. 01 below it. */}
+      <p className="plate-label">FIG. 00B · off-hours · boulder topo</p>
       <div className="climb-topo">
         <svg
           className="climb-wall"
