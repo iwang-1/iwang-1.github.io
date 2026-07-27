@@ -23,43 +23,68 @@ export const person = {
 // The readout rail is the fold-level proof: three repos, one measured cell
 // each, every value already carried by featuredSystems.metrics. It has to read
 // and click with the figure ignored entirely.
+//
+// `what` and `plain` exist because the repo names are invented words and two of
+// the three units are jargon: a reader who has never seen "lodestone" or
+// "recall@10" learns nothing from a rail that only prints them. Both fields are
+// SURFACING, never new claims — every `what` is the opening noun phrase of that
+// project's own summary below, and every `plain` names what the metric IS
+// rather than asserting a second measurement.
 export const hero = {
-  kicker: "UMD CS B.S./M.S. · MAY 2027 · AWS SDE INTERN",
+  kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN",
   headline: "Ivan Wang",
   subhead:
     "I build across the stack, from backend services and storage engines to ML and NLP pipelines.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
+  readoutLead: "Three things I built. One measured number each — the names link to the code.",
   readout: [
     {
       repo: "parallax-kv",
+      what: "Raft key-value store",
       href: "https://github.com/iwang-1/parallax-kv",
       value: "2.9M",
       unit: "client operations checked",
     },
     {
       repo: "accretion-db",
+      what: "LSM storage engine",
       href: "https://github.com/iwang-1/accretion-db",
       value: "878 µs",
       unit: "fdatasync p50",
+      plain: "median durable-write flush",
     },
     {
       repo: "lodestone",
+      what: "vector search engine",
       href: "https://github.com/iwang-1/lodestone",
       value: "0.976",
       unit: "recall@10",
+      plain: "top-10 search accuracy",
     },
   ],
+  // The paid production work, at the fold. Both figures are the exact chip
+  // strings from the AWS role below, which otherwise render only on
+  // /experience/ — a page a ten-second scan never reaches.
+  readoutAside: {
+    text: "AWS internship · 7 agent-migrated tests · ~1 week → ~1 day/test",
+    href: "/experience/",
+  },
 };
 
 // About — ≤120 words, first person. Positioned so any SWE team reads it as a
 // strong general engineer, not someone locked into one niche.
 export const about = {
-  p1: "I'm a CS student at UMD, partway through the combined B.S./M.S. Summer 2026 I'm an SDE intern at AWS, working on EC2 networking. I write mostly Go and Rust. Python covers the ML and NLP.",
-  p2Before: "Start with the ",
+  p1: "I'm a CS student at UMD, partway through the combined B.S./M.S. In Summer 2026 I'm an SDE intern at AWS, working on EC2 networking. I write mostly Go and Rust. Python covers the ML and NLP.",
+  p2Before: "I build storage and consensus systems from scratch because reading how they work never told me what actually breaks. Start with the ",
   p2LinkText: "projects",
   p2LinkHref: "/projects/",
   p2After: ".",
   p3: "I also climb. As Secretary of the UMD Climbing Club I organize 8 trips a semester, and attendance is up 30%.",
+  // Renders directly above FIG. 00, so the boulder topo reads as a climbing wall
+  // on sight rather than as a fourth architecture diagram. Says only what the
+  // drawing IS — an earlier draft had me "setting boulder problems", which is a
+  // claim nothing in content.ts or the repos supports.
+  climbLead: "So here is a climbing wall, drawn the way a guidebook draws one: follow the dashed line, start at 1, finish at 8.",
 };
 
 export interface FeaturedSystem {
@@ -71,6 +96,10 @@ export interface FeaturedSystem {
   /** Footnote-register scope note. Renders in the plate's footnote strip under
    *  a hairline with a † marker, never as the card's closing sentence. */
   limits?: string;
+  /** One first-person aside, in body register, on ONE plate only — the
+   *  deliberate break in an otherwise identical three-plate anatomy. Restates a
+   *  fact the plate already carries; never introduces a number. */
+  aside?: string;
   /** The plate footnote's measurement conditions — what the numbers were
    *  measured on, in the same shape as the axis labels in the repo's own plot. */
   provenance: string;
@@ -94,6 +123,12 @@ export const featuredSystems: FeaturedSystem[] = [
       "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety or linearizability violations.",
     limits:
       "† The first bug the harness caught was in the linearizability checker, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
+    // The mold breaks ONCE, deliberately: three plates with identical anatomy
+    // (eyebrow / title / summary / 5 chips / bold proof / 2 links / † footnote)
+    // read as a filled-in template. This aside restates the footnote's own
+    // checker-bug fact in body register, where it lands as character instead of
+    // as compliance. No second copy of any number.
+    aside: "The first thing my own stress harness caught was a bug in my checker, not in the consensus code. That was humbling, and it is why I trust the harness now.",
     provenance: "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     artifactLinks: [
@@ -200,38 +235,37 @@ export const education: Education[] = [
 // ---------------------------------------------------------------------------
 // Skills — focused on tools backed by experience or public work.
 
-// Two rows, not four: the same items per the resume, merged so the section
-// stops reading as 1.5 phone screens of identical pills.
+// Four rows, not two: the same items in the same mono/interpunct grammar, but
+// the 22-item "Tools & frameworks" run was a 276-character grey wall in which a
+// fast reader keyword-matching against a req found nothing. Grouping is the
+// whole change — nothing added, nothing removed, and the strongest items lead
+// each row.
 export const skills: { label: string; items: string[] }[] = [
   {
     label: "Languages",
     items: ["Python", "Java", "Go", "Rust", "TypeScript/JavaScript", "Scala", "SQL", "Bash"],
   },
   {
-    label: "Tools & frameworks",
+    label: "Distributed & storage",
+    items: ["Raft", "gRPC/Protobuf", "LSM trees", "PostgreSQL/SQLite"],
+  },
+  {
+    label: "Backend & web",
+    items: ["Flask/FastAPI", "Node.js", "JUnit 5", "Playwright"],
+  },
+  {
+    label: "ML & NLP",
+    items: ["PyTorch", "HuggingFace", "scikit-learn", "LangChain", "JAX", "Qiskit", "DisCoPy", "pytket"],
+  },
+  {
+    label: "Cloud & CI",
     items: [
-      "Raft",
-      "gRPC/Protobuf",
-      "LSM trees",
-      "Flask/FastAPI",
-      "Node.js",
-      "PostgreSQL/SQLite",
-      "JUnit 5",
-      "PyTorch",
-      "HuggingFace",
-      "scikit-learn",
-      "LangChain",
-      "Qiskit",
-      "DisCoPy",
-      "pytket",
-      "JAX",
       "AWS (EC2/VPC, SDK, CDK, CloudWatch)",
       "Docker",
       "Linux",
       "GitHub Actions",
       "CI/CD",
       "Jenkins",
-      "Playwright",
     ],
   },
 ];
@@ -461,8 +495,11 @@ export const projects: Project[] = [
 
 export const contact = {
   heading: "Let's talk about building reliable software.",
+  // "Full resume on request" removes the screener's dead end without shipping a
+  // PDF — verify.mjs blocks any public résumé/PDF link, so the sentence IS the
+  // affordance. No accented spelling: that literal is on the gate's absent list.
   body:
-    "I'm looking for Summer 2027 software engineering roles across the stack. Email is fastest.",
+    "I'm looking for Summer 2027 software engineering roles across the stack. Email is fastest — happy to send a full resume on request.",
 };
 
 export const footer = {

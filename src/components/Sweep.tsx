@@ -46,6 +46,18 @@ export function Sweep() {
         FIG. 01 · lodestone · recall vs throughput
       </figcaption>
 
+      {/* THE GLOSS. The plate label above is machine grammar — "lodestone" is a
+          repo name a reader has never seen, and a rotated log axis is not an
+          introduction. The owner of this site looked at his own fold and asked
+          what the graphic was, which is the whole argument for these two
+          sentences: they name the object, claim it, and say which way is good,
+          in body-size sans, before any axis has to be read. No number here — the
+          numbers are in the callout, the readout and the footnote already. */}
+      <p className="sweep-gloss">
+        lodestone is a vector search engine I built in Rust. This is its own benchmark run — up is
+        more accurate, right is faster, and every dot is one setting I measured.
+      </p>
+
       {/* The plot keeps a minimum width and pans inside the plate rather than
           scaling its labels into illegibility on a phone. The numbers a reader
           actually needs are in the readout and footnote below, at body size,
@@ -71,8 +83,13 @@ export function Sweep() {
                 measurement. The fast end of the HNSW curve crosses BELOW it,
                 which is the honest part of this figure. ------------------- */}
         <line className="sweep-reference" x1="92" y1="111.2" x2="596" y2="111.2" />
+        {/* Named as a floor the fast end breaks, not just "reference": the
+            ef=16 sample plotted below already carries recall 0.8996, so this
+            states what the figure shows rather than adding to it. Volunteering
+            your own failure boundary only counts if the reader can see that you
+            did it on purpose. */}
         <text className="sweep-reference-label" x="100" y="124">
-          recall 0.90 reference
+          recall 0.90 floor · ef=16 falls below it
         </text>
 
         {/* --- axes ------------------------------------------------------- */}
@@ -276,10 +293,31 @@ export function Sweep() {
       </svg>
       </div>
 
-      {/* --- the readout the crosshair rewrites. Ships on the knee. ------- */}
+      {/* --- the series key, in HTML, OUTSIDE the pannable window. The SVG
+              legend is the real one on desktop, but below ~600px the plot pans
+              inside the plate and the in-plot legend, both axis titles and six
+              of seven y-ticks sit off-window — so a phone reader met two
+              coloured lines with no key. All three strings are the SVG legend's
+              own, restated where the pan cannot take them. ---------------- */}
+      <p className="sweep-key" aria-hidden="true">
+        <span className="sweep-key-item sweep-key-hnsw">HNSW m=16</span>
+        <span className="sweep-key-item sweep-key-ivf">IVF-PQ nlist=256 m=32</span>
+        <span className="sweep-key-item sweep-key-oracle">oracle · exact</span>
+      </p>
+
+      {/* --- the readout the crosshair rewrites. Ships on the knee. -------
+              "READING" rather than "CROSSHAIR": the old key named the mechanism
+              to someone who already knew what it was. The hint beside it is the
+              only invitation a sighted mouse user gets — the same instruction
+              previously existed ONLY in the figure's aria-label. It is gated on
+              `.js` because without the bundle there is nothing to drag, and a
+              site that tells a no-JS reader to drag is lying to them; evidence
+              parity holds either way, since the amber callout, this readout and
+              the footnote all carry the numbers statically. */}
       <p className="sweep-readout">
-        <span className="sweep-readout-key">crosshair</span>
+        <span className="sweep-readout-key">reading</span>
         <span className="sweep-readout-value">{READOUT_DEFAULT}</span>
+        <span className="sweep-readout-hint">drag across the plot · or press ← →</span>
       </p>
       <p className="sweep-live visually-hidden" aria-live="polite" />
 

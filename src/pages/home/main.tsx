@@ -32,18 +32,35 @@ function Home() {
                 <ProofChip label={hero.availability} />
               </p>
               {/* The readout rail: fold-level proof that reads and clicks with
-                  the figure ignored entirely. */}
+                  the figure ignored entirely. The lead-in gives the mono block a
+                  human owner — without it the three amber names were
+                  indistinguishable from product names or dependencies — and each
+                  row now says what the repo IS before it says what it measured. */}
+              <p className="hero-readout-lead">{hero.readoutLead}</p>
               <div className="hero-readout" role="list">
                 {hero.readout.map((r) => (
                   <div className="hero-readout-row" role="listitem" key={r.repo}>
-                    <ExternalLink className="hero-readout-repo mono" href={r.href}>
-                      {r.repo}
-                    </ExternalLink>
+                    <span className="hero-readout-name">
+                      <ExternalLink className="hero-readout-repo mono" href={r.href}>
+                        {r.repo}
+                      </ExternalLink>
+                      <span className="hero-readout-what">{r.what}</span>
+                    </span>
                     <span className="hero-readout-value mono">{r.value}</span>
-                    <span className="hero-readout-unit mono">{r.unit}</span>
+                    <span className="hero-readout-unit mono">
+                      {r.unit}
+                      {r.plain ? <span className="hero-readout-plain">{r.plain}</span> : null}
+                    </span>
                   </div>
                 ))}
               </div>
+              {/* The paid production work, at the fold. It rendered only on
+                  /experience/, which a ten-second scan never reaches. */}
+              <p className="hero-readout-aside">
+                <a className="mono" href={hero.readoutAside.href}>
+                  {hero.readoutAside.text}
+                </a>
+              </p>
               {/* Two buttons, one decision. Experience and LinkedIn live in
                   the nav and footer. */}
               <div className="cta-row">
@@ -82,9 +99,16 @@ function Home() {
                 <a href={about.p2LinkHref}>{about.p2LinkText}</a>
                 {about.p2After}
               </p>
-              <p>{about.p3}</p>
             </div>
             <div className="about-figure">
+              {/* The climbing paragraph moved HERE, out of the left column. The
+                  topo is drawn in the same plate grammar as the three benchmark
+                  figures, so on a scan it filed as a fourth architecture
+                  diagram — and the one sentence that explained it was three
+                  paragraphs up in the other column. Now it introduces its own
+                  figure, and the lead-in under it names the drawing. */}
+              <p className="about-figure-intro">{about.p3}</p>
+              <p className="about-figure-lead">{about.climbLead}</p>
               <ClimbingRoute />
             </div>
           </div>

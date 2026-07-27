@@ -48,10 +48,26 @@
      initial scroll position at the right edge with no script; the child restores
      LTR so nothing about the plot's own layout changes. */
   direction: rtl;
+  /* The plot is scrubbable, so it says so. This was the only affordance the
+     figure lacked once the crosshair worked: no cursor change, no hint, so the
+     plate read as a static PNG. */
+  cursor: col-resize;
 }
 
 .sweep-scroll > * {
   direction: ltr;
+}
+
+/* Below the plate's floor width the pan is deep enough that starting at the
+   annotated RIGHT end costs a phone reader the y-axis, both axis titles and the
+   whole legend — the first thing they saw of the site's centrepiece was an
+   unlabelled squiggle with a chopped axis title. Start at the left edge there
+   instead: the amber knee's numbers are still on screen without any gesture,
+   restated at body size by .sweep-readout below and by the HTML key. */
+@media (max-width: 640px) {
+  .sweep-scroll {
+    direction: ltr;
+  }
 }
 
 .sweep-plot {
@@ -243,6 +259,71 @@
   fill: var(--series-2);
 }
 
+/* ------------------------------------------------------------------- gloss */
+/* The figure's plain-English lead-in. Sans, body size, --ink-2: deliberately
+   the ONE non-mono text leaf inside the plate, because it is the one line
+   addressed to a reader who does not already know what this is. It sits between
+   the mono FIG. label and the plot, so the plate grammar is unchanged — a
+   figure that introduces itself before it starts measuring. */
+.sweep-gloss {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--ink-2);
+  font-size: var(--fs-500);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------- series key */
+/* The legend, in HTML, outside the pannable window — see the note in
+   Sweep.tsx. Each item carries its series colour as a leading rule, the same
+   swatch grammar as the in-plot legend. Hidden on wide screens, where the SVG
+   legend is on-window and a second copy would be noise. */
+.sweep-key {
+  display: none;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .sweep-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--fs-200);
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .sweep-key-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .sweep-key-item::before {
+    content: "";
+    width: 14px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .sweep-key-hnsw {
+    color: var(--series-1);
+  }
+
+  .sweep-key-ivf {
+    color: var(--series-3);
+  }
+
+  .sweep-key-oracle {
+    color: var(--ink-2);
+  }
+
+  .sweep-key-oracle::before {
+    height: var(--hairline);
+  }
+}
+
 /* ----------------------------------------------------------------- readout */
 /* The line the crosshair rewrites. It sits under the plot, in the plate, above
    the footnote strip — a caption that happens to be live. */
@@ -268,6 +349,21 @@
 
 .sweep-readout-value {
   color: var(--series-2);
+}
+
+/* The drag invitation. Hidden until the bundle proves it can honour it — see
+   the note in Sweep.tsx. Quiet register: it is an instruction, not evidence, so
+   it must never compete with the amber value beside it. */
+.sweep-readout-hint {
+  display: none;
+  flex: none;
+  color: var(--ink-3);
+  font-size: var(--fs-200);
+  letter-spacing: 0.04em;
+}
+
+.js .sweep-readout-hint {
+  display: inline;
 }
 
 .sweep-source {
@@ -303,6 +399,13 @@
 @media print {
   .sweep-crosshair,
   .sweep-callout-ring {
+    display: none;
+  }
+
+  /* Paper has no pointer and no arrow keys, and the series key's screen job is
+     to survive a pan that print does not have. */
+  .js .sweep-readout-hint,
+  .sweep-key {
     display: none;
   }
 

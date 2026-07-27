@@ -766,8 +766,13 @@ img {
   padding-top: var(--space-7);
 }
 
+/* School and graduation date are the two facts a recruiter checks first, and
+   they were in the smallest, quietest type on the page — below the chart's own
+   axis labels in rank. One step up the ramp and full --ink contrast; the string
+   itself now says GRADUATING so the date cannot read as a start date. */
 .hero .kicker {
   margin-bottom: var(--space-4);
+  font-size: var(--fs-400);
 }
 
 .hero h1 {
@@ -823,7 +828,9 @@ img {
 .hero-readout {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--space-6);
+  /* The AWS aside below owns the gap down to the CTA row; when it is absent the
+     rail's own last-child rule still closes the block. */
+  margin-bottom: var(--space-3);
   max-width: 520px;
   font-variant-numeric: tabular-nums;
 }
@@ -855,6 +862,55 @@ img {
 .hero-readout-unit {
   color: var(--ink-3);
   font-size: var(--fs-300);
+}
+
+/* The lead-in above the rail. Sans, so the mono block below reads as the data
+   it introduces rather than as the page's dominant voice. */
+.hero-readout-lead {
+  margin-bottom: var(--space-3);
+  max-width: var(--measure-body);
+  color: var(--ink-2);
+  font-size: var(--fs-500);
+}
+
+/* Repo name + what it IS, stacked in the rail's first column. The name stays
+   the amber link; the descriptor is the quiet second line, so the rail still
+   scans down its links but never leaves a reader guessing what parallax-kv is. */
+.hero-readout-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-readout-what {
+  color: var(--ink-2);
+  font-size: var(--fs-300);
+}
+
+/* The metric, said in words. Same quiet register as the unit it follows: it
+   defines the unit rather than adding a second measurement to the row. */
+.hero-readout-plain {
+  display: block;
+  color: var(--ink-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-300);
+}
+
+/* The AWS line under the rail: the paid production work, in the rail's own mono
+   register but off the hairline grid, because it is not one of the three repos. */
+.hero-readout-aside {
+  margin-bottom: var(--space-6);
+  font-size: var(--fs-300);
+}
+
+.hero-readout-aside a {
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.hero-readout-aside a:hover,
+.hero-readout-aside a:focus-visible {
+  color: var(--series-2);
 }
 
 /* Home hero band — the band wrapping the hero. */
@@ -904,6 +960,13 @@ img {
 .system-proof {
   color: var(--ink);
   font-weight: 600;
+}
+
+/* The one first-person aside, on one plate only. Regular weight against the
+   bold proof above it, --ink-2 against the proof's --ink: it is the person
+   talking beside the evidence, not a second claim competing with it. */
+.system-aside {
+  color: var(--ink-2);
 }
 
 .system-caveat {
@@ -1160,6 +1223,19 @@ img {
   }
 }
 
+/* The one self-aware line on the site, inside the topo's own footnote node (a
+   sibling element would give the caption-overlap gate a new box to intersect).
+   Set as its own line in the sans register so it reads as the person, not as
+   more provenance. */
+.climb-wink {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-2);
+}
+
 .climb-topo {
   position: relative;
   aspect-ratio: 5 / 6;
@@ -1293,7 +1369,22 @@ img {
 .about-figure {
   margin-top: var(--space-5);
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+/* The climbing paragraph, now the figure's own introduction, plus the line that
+   names the drawing. Body register, not mono: it is the person talking, and the
+   plate below is the diagram. */
+.about-figure-intro,
+.about-figure-lead {
+  margin: 0;
+  max-width: 46ch;
+}
+
+.about-figure-lead {
+  color: var(--ink-2);
 }
 
 @media (min-width: 1024px) {
@@ -1306,7 +1397,6 @@ img {
 
   .about-figure {
     margin-top: 0;
-    justify-content: center;
   }
 }
 

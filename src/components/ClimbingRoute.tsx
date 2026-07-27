@@ -35,7 +35,10 @@ const offRouteHolds = [
 export function ClimbingRoute() {
   return (
     <figure className="plate climbing-route">
-      <p className="plate-label">FIG. 00 · boulder topo · marked route</p>
+      {/* "off-hours" qualifies the 00: going down the page a reader meets 01,
+          02, 03, 04 and then this, and a zero arriving last reads as an
+          off-by-one rather than as "before the work" unless it says so. */}
+      <p className="plate-label">FIG. 00 · off-hours · boulder topo</p>
       <div className="climb-topo">
         <svg
           className="climb-wall"
@@ -100,8 +103,14 @@ export function ClimbingRoute() {
         <span className="climb-label climb-label-start">START</span>
         <span className="climb-label climb-label-top">TOP</span>
       </div>
+      {/* The gate literals stay verbatim and stay in THIS element. The aside is
+          appended inside the same footnote node rather than added as a sibling,
+          so the caption/figure overlap gate has no new box to collide — and so
+          the site acknowledges its own joke once, which is the cheapest warmth
+          available on a page this disciplined. */}
       <figcaption className="plate-footnote">
         BOULDER / SET 01 · 8 numbered holds · the dashed line marks the route
+        <span className="climb-wink">Yes, I drew my climbing wall as a figure. It felt right.</span>
       </figcaption>
     </figure>
   );

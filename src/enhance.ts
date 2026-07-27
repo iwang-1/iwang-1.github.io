@@ -66,6 +66,11 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   fab.className = "kbd-fab";
   fab.setAttribute("aria-haspopup", "dialog");
   fab.setAttribute("aria-label", "Legend and shortcuts");
+  // A native tooltip, because an unlabelled glyph floating over every page is
+  // the same defect as an uncaptioned chart: readers guessed "settings",
+  // "filter", "download" and clicked hoping for a resume. The meaning existed
+  // only in the aria-label, which a sighted mouse user never hears.
+  fab.title = "Legend & shortcuts";
   fab.innerHTML = legendGlyph();
 
   document.body.appendChild(overlay);
@@ -230,14 +235,33 @@ function mountCommandPalette(): void {
  *  <figure>, swaps one textContent, and mirrors the same string into a polite
  *  live region. No canvas, no loop, no library, and the single
  *  getBoundingClientRect is the pointer-to-user-unit conversion — there is no
- *  other layout read. */
-function mountSweep(): void {
-  const figure = document.querySelector<HTMLElement>("figure.sweep");
-  if (!figure) return;
+ *  other layout read.
+ *
+ *  DELEGATED ON PURPOSE. The listeners live on `document` and re-resolve the
+ *  figure per event instead of closing over the node found at boot. Binding the
+ *  node directly shipped a dead figure: this module evaluates before the page
+ *  entry's createRoot().render(), and one requestAnimationFrame was not enough
+ *  to outrun it — React replaced #root AFTER the bind, orphaning the element
+ *  (isConnected false), so the readout stayed frozen on its default at every
+ *  pointer position and both arrow keys, while the figure's aria-label went on
+ *  promising an interaction that did not exist. The command palette survived the
+ *  same boot because it appends to document.body, which React never replaces —
+ *  which is exactly the property this now borrows. A cached view is reused while
+ *  its figure stays connected, so the steady-state cost is one closest() call
+ *  per event. */
+interface SweepView {
+  figure: HTMLElement;
+  svg: SVGSVGElement;
+  readout: HTMLElement;
+  live: HTMLElement | null;
+  samples: { x: number; y: number; readout: string }[];
+  index: number;
+}
+
+function readSweep(figure: HTMLElement): SweepView | null {
   const svg = figure.querySelector<SVGSVGElement>("svg.sweep-plot");
   const readout = figure.querySelector<HTMLElement>(".sweep-readout-value");
-  const live = figure.querySelector<HTMLElement>(".sweep-live");
-  if (!svg || !readout) return;
+  if (!svg || !readout) return null;
 
   const samples = Array.from(figure.querySelectorAll<SVGGElement>(".sweep-sample"))
     .map((node) => ({
@@ -249,39 +273,62 @@ function mountSweep(): void {
     // Left-to-right, so ArrowRight means "faster" and Home/End are the ends of
     // the throughput axis rather than of the markup.
     .sort((a, b) => a.x - b.x);
-  if (samples.length === 0) return;
+  if (samples.length === 0) return null;
 
   // The knee is the server-rendered default, so start the keyboard cursor there
   // instead of at index 0 — the first Arrow press should step off what the
   // reader is already looking at.
   const knee = figure.querySelector<SVGGElement>(".sweep-sample-knee");
-  let index = Math.max(
+  const index = Math.max(
     0,
     samples.findIndex((s) => s.readout === knee?.dataset.sweepReadout),
   );
 
-  const select = (next: number, announce: boolean): void => {
-    index = Math.min(samples.length - 1, Math.max(0, next));
-    const sample = samples[index];
-    figure.style.setProperty("--sweep-x", String(sample.x));
-    figure.style.setProperty("--sweep-y", String(sample.y));
-    if (readout.textContent !== sample.readout) readout.textContent = sample.readout;
+  return {
+    figure,
+    svg,
+    readout,
+    live: figure.querySelector<HTMLElement>(".sweep-live"),
+    samples,
+    index,
+  };
+}
+
+function mountSweep(): void {
+  let view: SweepView | null = null;
+
+  // Resolve from the event's own target, so a re-rendered figure is picked up
+  // the first time a reader touches it — no MutationObserver, no retry timer.
+  const resolve = (target: EventTarget | null): SweepView | null => {
+    const figure = (target as Element | null)?.closest?.<HTMLElement>("figure.sweep") ?? null;
+    if (!figure) return null;
+    if (!view || view.figure !== figure || !view.figure.isConnected)
+      view = readSweep(figure);
+    return view;
+  };
+
+  const select = (v: SweepView, next: number, announce: boolean): void => {
+    v.index = Math.min(v.samples.length - 1, Math.max(0, next));
+    const sample = v.samples[v.index];
+    v.figure.style.setProperty("--sweep-x", String(sample.x));
+    v.figure.style.setProperty("--sweep-y", String(sample.y));
+    if (v.readout.textContent !== sample.readout) v.readout.textContent = sample.readout;
     // Pointer users get the visual readout; only deliberate (keyboard) moves are
     // announced, so dragging across ten samples is not ten interruptions.
-    if (announce && live) live.textContent = sample.readout;
+    if (announce && v.live) v.live.textContent = sample.readout;
   };
 
   // Pointer → nearest sample on the throughput axis. Comparing x alone is the
   // right model here: the reader is scrubbing a curve, not hunting a scatter.
-  const nearest = (clientX: number): number => {
-    const rect = svg.getBoundingClientRect();
-    if (rect.width === 0) return index;
-    const view = svg.viewBox.baseVal;
-    const userX = ((clientX - rect.left) / rect.width) * view.width;
+  const nearest = (v: SweepView, clientX: number): number => {
+    const rect = v.svg.getBoundingClientRect();
+    if (rect.width === 0) return v.index;
+    const box = v.svg.viewBox.baseVal;
+    const userX = ((clientX - rect.left) / rect.width) * box.width;
     let best = 0;
     let bestDistance = Infinity;
-    for (let i = 0; i < samples.length; i++) {
-      const distance = Math.abs(samples[i].x - userX);
+    for (let i = 0; i < v.samples.length; i++) {
+      const distance = Math.abs(v.samples[i].x - userX);
       if (distance < bestDistance) {
         bestDistance = distance;
         best = i;
@@ -292,14 +339,19 @@ function mountSweep(): void {
 
   let queued = false;
   let pointerX = 0;
+  let pointerView: SweepView | null = null;
   const apply = () => {
     queued = false;
-    select(nearest(pointerX), false);
+    if (pointerView && pointerView.figure.isConnected)
+      select(pointerView, nearest(pointerView, pointerX), false);
   };
 
-  figure.addEventListener(
+  document.addEventListener(
     "pointermove",
     (event: PointerEvent) => {
+      const v = resolve(event.target);
+      if (!v) return;
+      pointerView = v;
       pointerX = event.clientX;
       if (queued) return;
       queued = true;
@@ -308,16 +360,18 @@ function mountSweep(): void {
     { passive: true },
   );
 
-  figure.addEventListener("keydown", (event: KeyboardEvent) => {
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    let next = index;
-    if (event.key === "ArrowRight") next = index + 1;
-    else if (event.key === "ArrowLeft") next = index - 1;
+    const v = resolve(event.target);
+    if (!v) return;
+    let next = v.index;
+    if (event.key === "ArrowRight") next = v.index + 1;
+    else if (event.key === "ArrowLeft") next = v.index - 1;
     else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = samples.length - 1;
+    else if (event.key === "End") next = v.samples.length - 1;
     else return;
     event.preventDefault();
-    select(next, true);
+    select(v, next, true);
   });
 }
 

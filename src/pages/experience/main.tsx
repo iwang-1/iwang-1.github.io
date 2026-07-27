@@ -28,7 +28,8 @@ function Experience() {
           <div className="page-head container">
             <h1>Experience</h1>
             <p className="page-dek">
-              Four engineering roles, then the teaching and community work. Newest first.
+              Four engineering roles, then the teaching and community work I did alongside school.
+              Newest first.
             </p>
           </div>
         </div>

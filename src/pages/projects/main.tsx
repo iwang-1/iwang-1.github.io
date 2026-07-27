@@ -20,8 +20,9 @@ function Projects() {
           <div className="page-head container">
             <h1>Projects</h1>
             <p className="page-dek">
-              Every project links its code. The numbers come from committed benchmarks you can
-              re-run.
+              Every project links its code. Where I quote a number, it comes from a committed
+              benchmark you can re-run — including this page, which won't build if a number here
+              stops matching its source.
             </p>
           </div>
         </div>

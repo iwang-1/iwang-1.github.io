@@ -158,6 +158,7 @@ export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem;
             ))}
           </div>
           <p className="system-proof">{project.proof}</p>
+          {project.aside && <p className="system-aside">{project.aside}</p>}
           <p className="project-links" style={LINK_ROW}>
             <ExternalLink className="cta-text-link" href={project.repoHref}>
               Inspect the repository <span className="arrow" aria-hidden="true">→</span>
