@@ -54,8 +54,8 @@ export function Sweep() {
           in body-size sans, before any axis has to be read. No number here — the
           numbers are in the callout, the readout and the footnote already. */}
       <p className="sweep-gloss">
-        lodestone is a vector search engine I built in Rust. This is its own benchmark run — up is
-        more accurate, right is faster, and every dot is one setting I measured.
+        lodestone is a vector search engine I built in Rust. This is its benchmark: higher is more
+        accurate, further right is faster, and each dot is one setting I measured.
       </p>
 
       {/* The plot keeps a minimum width and pans inside the plate rather than

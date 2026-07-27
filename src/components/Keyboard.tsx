@@ -185,7 +185,7 @@ export function Keyboard() {
         }
       }}
     >
-      <p className="plate-label">FIG. 00A · off-hours · the keyboard</p>
+      <p className="plate-label">Key tester</p>
 
       <div className="keyboard-rows">
         {ROWS.map((row, index) => (
@@ -224,16 +224,13 @@ export function Keyboard() {
         </span>
         {/* Gated on `.js` in the stylesheet: without the bundle there is
             nothing to press, and inviting a reader to press it would be a lie. */}
-        <span className="keyboard-hint">click a cap · or type while hovering</span>
+        <span className="keyboard-hint">Click a key, or type while hovering</span>
       </p>
       <p className="keyboard-live visually-hidden" aria-live="polite">
         {last ? `${NAMES.get(last) ?? last} pressed` : ""}
       </p>
 
-      <figcaption className="plate-footnote">
-        linear switches · lubed · ask me about the best gaming mouse, I keep embarrassingly
-        current
-      </figcaption>
+      <figcaption className="plate-footnote">Linear switches, lubed.</figcaption>
     </figure>
   );
 }

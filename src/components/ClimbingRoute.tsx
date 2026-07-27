@@ -34,9 +34,9 @@ const offRouteHolds = [
 export function ClimbingRoute() {
   return (
     <figure className="plate climbing-route">
-      {/* The 00 series is the hobby shelf (A keyboard, B topo, C feed); the
-          measured work starts at FIG. 01 below it. */}
-      <p className="plate-label">FIG. 00B · off-hours · boulder topo</p>
+      {/* The hobby figures use plain labels; only the measured work below
+          carries FIG. numbers, so a reader never has to decode a hobby. */}
+      <p className="plate-label">Boulder route</p>
       <div className="climb-topo">
         <svg
           className="climb-wall"
@@ -101,14 +101,10 @@ export function ClimbingRoute() {
         <span className="climb-label climb-label-start">START</span>
         <span className="climb-label climb-label-top">TOP</span>
       </div>
-      {/* The gate literals stay verbatim and stay in THIS element. The aside is
-          appended inside the same footnote node rather than added as a sibling,
-          so the caption/figure overlap gate has no new box to collide — and so
-          the site acknowledges its own joke once, which is the cheapest warmth
-          available on a page this disciplined. */}
+      {/* The gate literals (START, TOP, "BOULDER / SET 01") stay verbatim and
+          stay inside this element — verify.mjs asserts them here. */}
       <figcaption className="plate-footnote">
-        BOULDER / SET 01 · 8 numbered holds · the dashed line marks the route
-        <span className="climb-wink">Yes, I drew my climbing wall as a figure. It felt right.</span>
+        BOULDER / SET 01 · start at 1, top out at 8
       </figcaption>
     </figure>
   );

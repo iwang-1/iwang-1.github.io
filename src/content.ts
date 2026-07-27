@@ -34,9 +34,9 @@ export const hero = {
   kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN",
   headline: "Ivan Wang",
   subhead:
-    "CS student at UMD, SDE intern at AWS. I build software — and outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+    "CS student at UMD and a software engineering intern at AWS. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
   availability: "Seeking Summer 2027 new-grad software engineering roles",
-  readoutLead: "Three things I built. One measured number each — the names link to the code.",
+  readoutLead: "Three things I built, with one measured result each. The names link to the code.",
   readout: [
     {
       repo: "parallax-kv",
@@ -76,27 +76,24 @@ export const hero = {
 // actually into, each with its own drawn figure. The old About paragraphs and
 // the club-officer line were retired at the same time.
 export const hobbies = {
-  title: "Off the clock",
-  intro:
-    "Three things I sink real time into. Drawn here, because apparently I can't help myself.",
-  climb: {
-    blurb: "Rock climbing — bouldering, mostly. Chalk, problems, repeat.",
-    // Renders directly above the topo so the drawing reads as a climbing wall
-    // on sight rather than as a fourth architecture diagram.
-    lead: "A wall, drawn like a guidebook draws one: follow the dashed line, start at 1, top out at 8.",
-  },
+  title: "Outside of work",
+  intro: "A few things I spend my free time on.",
   keyboards: {
-    blurb: "Mechanical keyboards — switches, keycaps, the whole rabbit hole.",
+    blurb: "Mechanical keyboards",
+    lead: "I build and tune my own. Click a key below, or type on it.",
+  },
+  climb: {
+    blurb: "Rock climbing",
+    lead: "Mostly bouldering. Here's a route drawn the way a climbing guidebook draws one.",
   },
   tech: {
-    blurb: "Keeping up with tech — releases, reviews, benchmarks. All of it.",
-    // The feed plate: a reading log, not a claims sheet. Hobby voice only —
-    // no product names, no numbers to defend.
+    blurb: "Keeping up with tech",
+    lead: "I follow hardware and software releases pretty closely.",
     feed: [
-      { topic: "gaming mice", note: "ask me the current best. I actually know." },
-      { topic: "keyboards & switches", note: "see the key tester on the left." },
-      { topic: "hardware launches", note: "reviews read day one, usually twice." },
-      { topic: "the rest of tech", note: "if it shipped this week, I saw the thread." },
+      { topic: "gaming mice", note: "I know which one is currently the best" },
+      { topic: "keyboards", note: "switches, keycaps, builds" },
+      { topic: "hardware launches", note: "I read the reviews" },
+      { topic: "software releases", note: "new tools, new versions" },
     ],
   },
 };
@@ -137,12 +134,10 @@ export const featuredSystems: FeaturedSystem[] = [
       "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety or linearizability violations.",
     limits:
       "† The first bug the harness caught was in the linearizability checker, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
-    // The mold breaks ONCE, deliberately: three plates with identical anatomy
-    // (eyebrow / title / summary / 5 chips / bold proof / 2 links / † footnote)
-    // read as a filled-in template. This aside restates the footnote's own
-    // checker-bug fact in body register, where it lands as character instead of
-    // as compliance. No second copy of any number.
-    aside: "The first thing my own stress harness caught was a bug in my checker, not in the consensus code. That was humbling, and it is why I trust the harness now.",
+    // One plate carries an aside so the three do not read as one filled-in
+    // template. It restates the footnote's checker-bug fact in plain prose;
+    // no second copy of any number.
+    aside: "The first bug the stress harness found was in my checker, not in the consensus code.",
     provenance: "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     artifactLinks: [
@@ -166,7 +161,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
     proof:
-      "Fault-injection and property tests check that acknowledged writes survive simulated crashes. They do. Every result is benchmarked against sled, including the cases sled wins.",
+      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Results are benchmarked against sled, including the cases where sled wins.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
     provenance: "16-byte keys / 100-byte values · ext4 on NVMe · Xeon 8488C",
@@ -191,7 +186,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second. That is about 33x the exact brute-force oracle's throughput at that recall, and 9–33x across the 90%+ recall band. The whole curve is measured, not one point.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The chart above plots the full curve.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance: "50,000 x 128-d · k=10 · single core · Xeon 8488C",
@@ -508,12 +503,12 @@ export const projects: Project[] = [
 // Shared chrome.
 
 export const contact = {
-  heading: "Let's talk about building reliable software.",
+  heading: "Get in touch",
   // "Full resume on request" removes the screener's dead end without shipping a
   // PDF — verify.mjs blocks any public résumé/PDF link, so the sentence IS the
   // affordance. No accented spelling: that literal is on the gate's absent list.
   body:
-    "I'm looking for Summer 2027 software engineering roles across the stack. Email is fastest — happy to send a full resume on request.",
+    "I'm looking for Summer 2027 new-grad software engineering roles. Email is the fastest way to reach me, and I can send a full resume on request.",
 };
 
 export const footer = {

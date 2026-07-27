@@ -1236,19 +1236,6 @@ img {
   }
 }
 
-/* The one self-aware line on the site, inside the topo's own footnote node (a
-   sibling element would give the caption-overlap gate a new box to intersect).
-   Set as its own line in the sans register so it reads as the person, not as
-   more provenance. */
-.climb-wink {
-  display: block;
-  margin-top: var(--space-2);
-  font-family: var(--font-sans);
-  letter-spacing: normal;
-  text-transform: none;
-  color: var(--ink-2);
-}
-
 .climb-topo {
   position: relative;
   aspect-ratio: 5 / 6;
@@ -1573,9 +1560,11 @@ img {
   }
 }
 
+/* The hobby name is an h3 — a real heading, so the section has structure a
+   screen reader and a scanner can both follow. */
 .hobby-blurb {
-  margin: 0 0 var(--space-3);
-  font-weight: 600;
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-700);
   color: var(--ink);
 }
 

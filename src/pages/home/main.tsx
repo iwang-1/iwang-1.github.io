@@ -51,18 +51,20 @@ function Home() {
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
             <div className="hobby-cell">
-              <p className="hobby-blurb">{hobbies.keyboards.blurb}</p>
+              <h3 className="hobby-blurb">{hobbies.keyboards.blurb}</h3>
+              <p className="hobby-lead">{hobbies.keyboards.lead}</p>
               <Keyboard />
             </div>
             <div className="hobby-cell">
-              <p className="hobby-blurb">{hobbies.climb.blurb}</p>
+              <h3 className="hobby-blurb">{hobbies.climb.blurb}</h3>
               <p className="hobby-lead">{hobbies.climb.lead}</p>
               <ClimbingRoute />
             </div>
             <div className="hobby-cell">
-              <p className="hobby-blurb">{hobbies.tech.blurb}</p>
+              <h3 className="hobby-blurb">{hobbies.tech.blurb}</h3>
+              <p className="hobby-lead">{hobbies.tech.lead}</p>
               <figure className="plate feed-fig">
-                <p className="plate-label">FIG. 00C · off-hours · the feed</p>
+                <p className="plate-label">What I follow</p>
                 <table className="data-table feed-table">
                   <tbody>
                     {hobbies.tech.feed.map((row) => (
@@ -73,9 +75,6 @@ function Home() {
                     ))}
                   </tbody>
                 </table>
-                <figcaption className="plate-footnote">
-                  updated constantly · sample size: every spare minute
-                </figcaption>
               </figure>
             </div>
           </div>
