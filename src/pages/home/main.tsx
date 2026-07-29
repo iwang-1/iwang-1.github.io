@@ -63,18 +63,18 @@ function Home() {
             <div className="hobby-cell">
               <h3 className="hobby-blurb">{hobbies.tech.blurb}</h3>
               <p className="hobby-lead">{hobbies.tech.lead}</p>
+              {/* A stacked list, not a two-column table: in a third-width
+                  column a table wrapped both cells every two words. */}
               <figure className="plate feed-fig">
                 <p className="plate-label">What I follow</p>
-                <table className="data-table feed-table">
-                  <tbody>
-                    {hobbies.tech.feed.map((row) => (
-                      <tr key={row.topic}>
-                        <th scope="row">{row.topic}</th>
-                        <td>{row.note}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <dl className="feed-list">
+                  {hobbies.tech.feed.map((row) => (
+                    <div className="feed-row" key={row.topic}>
+                      <dt>{row.topic}</dt>
+                      <dd>{row.note}</dd>
+                    </div>
+                  ))}
+                </dl>
               </figure>
             </div>
           </div>

@@ -1568,21 +1568,61 @@ img {
   color: var(--ink);
 }
 
+/* The blurbs are real paragraphs now (his own words about why he likes each
+   thing), so they read at body size with prose line-height, and the figure
+   below is the illustration rather than the content. */
 .hobby-lead {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-400);
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-500);
+  line-height: 1.6;
   color: var(--ink-2);
+  text-wrap: pretty;
 }
 
 .hobby-cell .plate {
   max-width: none;
 }
 
-/* The feed plate: th is the topic, td the aside. Topics wrap — the base
-   .data-table th nowrap overflowed the plate by 20px at 320w. */
-.feed-table th {
-  text-align: left;
-  white-space: normal;
+/* The feed list: topic then note, stacked. A two-column table in a
+   third-width column wrapped both cells every two words; a definition list
+   gives each note the whole measure. */
+.feed-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-row {
+  padding: var(--space-3) 0;
+  border-top: var(--hairline) solid var(--grid);
+}
+
+.feed-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.feed-list dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-200);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.feed-list dd {
+  margin: var(--space-1) 0 0;
+  font-size: var(--fs-400);
+  color: var(--ink);
+}
+
+/* Bottom-align nothing: each hobby cell is its own column, and a figure that
+   stretches to match its neighbours would distort the drawings. Instead the
+   cells share a top edge and the figures keep their natural height. */
+.hobby-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 /* ------------------------------------------------------------- education */

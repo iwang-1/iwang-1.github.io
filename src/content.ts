@@ -75,25 +75,31 @@ export const hero = {
 // 2026-07-27): no leadership claims, no metrics, just the three things he is
 // actually into, each with its own drawn figure. The old About paragraphs and
 // the club-officer line were retired at the same time.
+// Outside of work — the hobby section. The blurbs are Ivan's own words, lightly
+// edited for grammar only: his reasons for liking each thing, not a description
+// of the thing. Do not "improve" these into cleverness; the whole point is that
+// they sound like him.
 export const hobbies = {
   title: "Outside of work",
   intro: "A few things I spend my free time on.",
   keyboards: {
-    blurb: "Mechanical keyboards",
-    lead: "I build and tune my own. Click a key below, or type on it.",
+    blurb: "Building keyboards",
+    lead: "I like using and building keyboards. You can customize every part, so you can tailor a board to exactly what you or someone else needs, and picking the right part for the job is the fun of it.",
   },
   climb: {
     blurb: "Rock climbing",
-    lead: "Mostly bouldering. Here's a route drawn the way a climbing guidebook draws one.",
+    lead: "I climb for the community and the problem solving. It keeps me active, and a boulder can usually be done a lot of different ways — the version that costs you the least energy depends on your body, so the best solution is different for everyone. Working that out is my favorite part.",
   },
   tech: {
-    blurb: "Keeping up with tech",
-    lead: "I follow hardware and software releases pretty closely.",
+    blurb: "Following the industry",
+    lead: "I keep up with tech pretty closely, from new Apple hardware to how governments are regulating AI. I'm interested in where the industry is heading.",
+    // Short by design: this renders in a third-width column, so each note has
+    // to fit on one or two lines.
     feed: [
-      { topic: "gaming mice", note: "I know which one is currently the best" },
-      { topic: "keyboards", note: "switches, keycaps, builds" },
-      { topic: "hardware launches", note: "I read the reviews" },
-      { topic: "software releases", note: "new tools, new versions" },
+      { topic: "hardware", note: "launches and reviews" },
+      { topic: "AI policy", note: "regulation, worldwide" },
+      { topic: "keyboards", note: "switches and group buys" },
+      { topic: "the industry", note: "where it's heading" },
     ],
   },
 };
