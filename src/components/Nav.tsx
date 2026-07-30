@@ -106,7 +106,10 @@ export function Nav({ active }: { active: ActiveTab }) {
             {TABS.map((tab) => (
               <a
                 key={tab.label}
-                href={tab.href}
+                /* Contact points at THIS page's contact band — every page has
+                   one — so the tab scrolls instead of reloading the site. The
+                   404 has no band, so it keeps the absolute link home. */
+                href={tab.key === "contact" && active ? "#contact" : tab.href}
                 className={active === tab.key ? "btn btn-current" : "btn"}
                 {...(active === tab.key ? { "aria-current": "page" as const } : {})}
               >

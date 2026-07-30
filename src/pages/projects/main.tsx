@@ -34,7 +34,7 @@ function Projects() {
           </div>
         </Section>
 
-        <Section title="Selected projects">
+        <Section id="selected" title="Selected projects">
           <div className="card-grid card-grid-3">
             {projects.map((p, i) => (
               <Reveal key={p.title} delay={i}>
@@ -44,7 +44,7 @@ function Projects() {
           </div>
         </Section>
 
-        <ContactBand heading="Building a backend or infrastructure team?" />
+        <ContactBand id="contact" heading="Get in touch" />
       </main>
       <Footer />
     </>

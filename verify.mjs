@@ -196,8 +196,12 @@ async function checkPage(spec, viewport) {
   // 4. nav structure + active tab
   const tabs = await page.locator('nav[aria-label="Primary"] > a').count();
   if (tabs !== 4) problems.push(`${tag}: expected exactly 4 nav tabs, got ${tabs}`);
+  // The Contact tab targets THIS page's own contact band ("#contact") on every
+  // page that has one, so the tab scrolls instead of reloading the site; the
+  // 404 has no band and keeps the absolute "/#contact". Both forms count, and
+  // the band itself is asserted separately below.
   const contactTab = await page
-    .locator('nav[aria-label="Primary"] a[href="/#contact"]')
+    .locator('nav[aria-label="Primary"] a[href="#contact"], nav[aria-label="Primary"] a[href="/#contact"]')
     .count();
   if (contactTab !== 1) problems.push(`${tag}: expected one Contact tab, got ${contactTab}`);
   const current = page.locator('a[aria-current="page"]');

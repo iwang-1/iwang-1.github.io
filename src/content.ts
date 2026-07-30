@@ -31,11 +31,17 @@ export const person = {
 // project's own summary below, and every `plain` names what the metric IS
 // rather than asserting a second measurement.
 export const hero = {
-  kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN",
+  // Date-anchored: a bare "AWS SDE INTERN" silently goes stale when the
+  // internship ends.
+  kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN, SUMMER 2026",
   headline: "Ivan Wang",
+  // The second sentence is gate-locked verbatim — verify.mjs asserts the
+  // lowercase literals "mechanical keyboards" and "rock climbing" on "/", and
+  // they exist nowhere else in the rendered DOM (the hobby headings are
+  // capitalized). Edit the first sentence only.
   subhead:
-    "CS student at UMD and a software engineering intern at AWS. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
-  availability: "Seeking Summer 2027 new-grad software engineering roles",
+    "I write mostly Go and Rust, and I like building the kind of software that's hard to get right. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+  availability: "Open to Summer 2027 new-grad software engineering roles",
   readoutLead: "Three things I built, with one measured result each. The names link to the code.",
   readout: [
     {
@@ -62,11 +68,13 @@ export const hero = {
       plain: "top-10 search accuracy",
     },
   ],
-  // The paid production work, at the fold. Both figures are the exact chip
-  // strings from the AWS role below, which otherwise render only on
-  // /experience/ — a page a ten-second scan never reaches.
-  readoutAside: {
-    text: "AWS internship · 7 agent-migrated tests · ~1 week → ~1 day/test",
+  // The paid production work, in the hero in body type. It is the highest-signal
+  // thing a new grad has and the one thing GitHub can't show, and it used to
+  // render only as a mono aside two screens down. Every fact here is already in
+  // engineeringRoles[0] — org, dates, and the first bullet's own numbers.
+  awsLine: {
+    text: "This summer I'm an SDE intern on EC2 Networking at AWS, where I built an agent that migrated seven production canaries from Scala to Java, cutting each one from about a week of work to about a day.",
+    linkText: "Full timeline",
     href: "/experience/",
   },
 };
@@ -192,7 +200,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The chart above plots the full curve.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance: "50,000 x 128-d · k=10 · single core · Xeon 8488C",

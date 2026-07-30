@@ -20,11 +20,10 @@ function Home() {
     <>
       <Nav active="home" />
       <main id="main" className="main-with-contact">
-        {/* The first screen is the person, not the proof (owner call,
-            2026-07-27): centered name, a friendly line, availability, and the
-            two contact affordances. The evidence moved one scroll down into
-            Featured engineering work, where it opens with the readout rail and
-            the measured curve. */}
+        {/* The hero band owns the first screen by itself (539px desktop, ~684px
+            at 390w): who he is, what he's doing now, and how to reach him. The
+            engineering evidence follows it directly — hobbies come after the
+            work, because a screener's first scroll should buy proof. */}
         <section className="hero-band">
           <div className="hero container hero-centered">
             <p className="kicker">{hero.kicker}</p>
@@ -32,6 +31,13 @@ function Home() {
             <p className="hero-subhead">{hero.subhead}</p>
             <p className="hero-availability">
               <ProofChip label={hero.availability} />
+            </p>
+            {/* The paid production work, in body type, in the hero. */}
+            <p className="hero-aws">
+              {hero.awsLine.text}{" "}
+              <a href={hero.awsLine.href}>
+                {hero.awsLine.linkText} <span className="arrow" aria-hidden="true">→</span>
+              </a>
             </p>
             <div className="cta-row">
               <LabelButton href={`mailto:${person.email}`} variant="primary">
@@ -45,8 +51,45 @@ function Home() {
           </div>
         </section>
 
-        {/* Off the clock — the hobbies, each drawn as its own small figure:
-            the key tester you can type on, the boulder topo, the feed table. */}
+        <Section id="systems" title="Featured engineering work" rank={1}>
+          {/* The evidence opens with the rail: three repos, what each IS, one
+              measured number each — then the curve, then the plates. */}
+          <p className="hero-readout-lead">{hero.readoutLead}</p>
+          <div className="hero-readout" role="list">
+            {hero.readout.map((r) => (
+              <div className="hero-readout-row" role="listitem" key={r.repo}>
+                <span className="hero-readout-name">
+                  <ExternalLink className="hero-readout-repo mono" href={r.href}>
+                    {r.repo}
+                  </ExternalLink>
+                  <span className="hero-readout-what">{r.what}</span>
+                </span>
+                <span className="hero-readout-value mono">{r.value}</span>
+                <span className="hero-readout-unit mono">
+                  {r.unit}
+                  {r.plain ? <span className="hero-readout-plain">{r.plain}</span> : null}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="systems-sweep">
+            <Sweep />
+          </div>
+          <div className="system-list">
+            {featuredSystems.map((project, i) => (
+              <SystemFeature key={project.id} project={project} index={i} />
+            ))}
+          </div>
+          {/* An exit that points at what the reader has NOT seen. */}
+          <p className="section-exit">
+            <a className="mono" href="/projects/#selected">
+              Eight more projects <span className="arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
+        </Section>
+
+        {/* The hobbies, each drawn as its own small figure: the key tester you
+            can type on, the boulder route, the feed. */}
         <Section id="off-hours" title={hobbies.title} rank={2}>
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
@@ -80,59 +123,23 @@ function Home() {
           </div>
         </Section>
 
-        <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The evidence opens with the rail: three repos, what each IS, one
-              measured number each — then the curve, then the plates. */}
-          <p className="hero-readout-lead">{hero.readoutLead}</p>
-          <div className="hero-readout" role="list">
-            {hero.readout.map((r) => (
-              <div className="hero-readout-row" role="listitem" key={r.repo}>
-                <span className="hero-readout-name">
-                  <ExternalLink className="hero-readout-repo mono" href={r.href}>
-                    {r.repo}
-                  </ExternalLink>
-                  <span className="hero-readout-what">{r.what}</span>
-                </span>
-                <span className="hero-readout-value mono">{r.value}</span>
-                <span className="hero-readout-unit mono">
-                  {r.unit}
-                  {r.plain ? <span className="hero-readout-plain">{r.plain}</span> : null}
-                </span>
+        {/* Education and skills are one thing — where he studied and what he
+            works in — so they are one section instead of two identical
+            headings. The #education anchor is kept for the footer link. */}
+        <Section id="background" title="Background" rank={2}>
+          <div id="education">
+            {education.map((e) => (
+              <EduCard key={e.school} edu={e} />
+            ))}
+          </div>
+          <div className="skills-block" id="skills">
+            {skills.map((row) => (
+              <div className="skills-row" key={row.label}>
+                <span className="skills-label">{row.label}</span>
+                <p className="skills-line">{row.items.join(" · ")}</p>
               </div>
             ))}
           </div>
-          <p className="hero-readout-aside">
-            <a className="mono" href={hero.readoutAside.href}>
-              {hero.readoutAside.text}
-            </a>
-          </p>
-          <div className="systems-sweep">
-            <Sweep />
-          </div>
-          <div className="system-list">
-            {featuredSystems.map((project, i) => (
-              <SystemFeature key={project.id} project={project} index={i} />
-            ))}
-          </div>
-        </Section>
-
-        <Section id="education" title="Education" rank={2}>
-          {/* Single entry — no card-grid (a lone half-width card reads as a
-              missing neighbor on desktop). */}
-          {education.map((e) => (
-            <EduCard key={e.school} edu={e} />
-          ))}
-        </Section>
-
-        {/* Skills are metadata, so they are set like the plate footnotes:
-            mono lines, not a wall of pills. */}
-        <Section id="skills" title="Skills" rank={2}>
-          {skills.map((row) => (
-            <div className="skills-row" key={row.label}>
-              <span className="skills-label">{row.label}</span>
-              <p className="skills-line">{row.items.join(" · ")}</p>
-            </div>
-          ))}
         </Section>
 
         <ContactBand id="contact" />

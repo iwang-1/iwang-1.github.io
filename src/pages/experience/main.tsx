@@ -38,7 +38,7 @@ function Experience() {
           <Timeline entries={entries} />
         </Section>
 
-        <ContactBand heading="Looking for a systems-minded new-grad engineer?" />
+        <ContactBand id="contact" heading="Get in touch" />
       </main>
       <Footer />
     </>

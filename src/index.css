@@ -828,6 +828,35 @@ img {
   justify-content: center;
 }
 
+/* The AWS line: body register, hairline-bounded, so the paid work reads as a
+   sentence rather than as another mono chip. */
+.hero-aws {
+  max-width: 62ch;
+  margin: var(--space-5) 0 var(--space-6);
+  padding: var(--space-4) 0;
+  border-top: var(--hairline) solid var(--grid);
+  border-bottom: var(--hairline) solid var(--grid);
+  font-size: var(--fs-500);
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* A section's exit link: where to go next, set quietly at the end of the
+   section rather than as a button. */
+.section-exit {
+  margin: var(--space-6) 0 0;
+  font-size: var(--fs-400);
+}
+
+/* Background section: education, a hairline, then the skills rows. One
+   heading instead of two identical ones. */
+.skills-block {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: var(--hairline) solid var(--grid);
+}
+
 /* The Sweep, when it opens the evidence section: cap it so the plot renders
    unpanned (~640px) without stretching the full 1120px container. */
 .systems-sweep {
