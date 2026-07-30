@@ -267,27 +267,36 @@ async function checkPage(spec, viewport) {
     if (!(await linkOk(clean))) problems.push(`${tag}: internal link does not resolve 200: ${href}`);
   }
 
-  // container-padding regression gate: navy-band headline content must share
-  // the nav brand's left edge. (.hero/.page-head/.not-found sit on the same
-  // element as .container — a restated padding SHORTHAND there zeroes the
-  // container's horizontal padding and the band renders flush left.)
-  // The home hero is centered (owner call, 2026-07-27), so its kicker can no
-  // longer anchor the container-padding check; the first section heading is
-  // left-aligned on the same .container and does the same job.
+  // ONE-LEFT-SPINE gate (was: container-padding gate). Band headline content
+  // must share the nav brand's left edge. (.hero/.page-head/.not-found sit on
+  // the same element as .container — a restated padding SHORTHAND there zeroes
+  // the container's horizontal padding and the band renders flush left.)
+  //
+  // Home checks TWO selectors, not one. The page has exactly one alignment
+  // spine — the container's inner left edge — and the hero is on it (see the
+  // one-left-spine Named Rule in DESIGN.md; supersedes the 2026-07-27 centered
+  // hero, whose change came with a comment REMOVING the hero kicker as this
+  // anchor). Checking only the section head cannot see a future pass re-centring
+  // the hero, which is exactly how that clash got in. Measured delta = 0.00 for
+  // both selectors at 1440/1366/1280/1200/1100/1024/1023/900/768/390/360/320.
   const alignSel = {
-    "/": ".section .section-head h2",
-    "/experience/": ".page-head h1",
-    "/projects/": ".page-head h1",
-    "/404.html": ".not-found h1",
+    "/": [".hero .kicker", ".section .section-head h2"],
+    "/experience/": [".page-head h1"],
+    "/projects/": [".page-head h1"],
+    "/404.html": [".not-found h1"],
   }[spec.path];
   if (alignSel) {
+    // .nav-brand is display:none below 360px (index.css:296-300), so the tabs
+    // are the anchor there. Load-bearing fallback — do not "simplify" it away.
     const navAnchor = viewport.width <= 359 ? ".nav-tabs" : ".nav-brand";
     const brand = await page.locator(navAnchor).boundingBox();
-    const band = await page.locator(alignSel).first().boundingBox();
-    if (!brand || !band || Math.abs(brand.x - band.x) > 1)
-      problems.push(
-        `${tag}: ${alignSel} left edge (${band?.x}) != nav anchor left edge (${brand?.x}) — .container padding lost`,
-      );
+    for (const sel of alignSel) {
+      const band = await page.locator(sel).first().boundingBox();
+      if (!brand || !band || Math.abs(brand.x - band.x) > 1)
+        problems.push(
+          `${tag}: ${sel} left edge (${band?.x}) != nav anchor left edge (${brand?.x}) — off the page's one left spine`,
+        );
+    }
   }
 
   // 6. locked facts rendered in the DOM

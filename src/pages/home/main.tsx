@@ -20,58 +20,69 @@ function Home() {
     <>
       <Nav active="home" />
       <main id="main" className="main-with-contact">
-        {/* The hero band owns the first screen by itself (539px desktop, ~684px
-            at 390w): who he is, what he's doing now, and how to reach him. The
-            engineering evidence follows it directly — hobbies come after the
-            work, because a screener's first scroll should buy proof. */}
+        {/* The hero band IS the report's first figure: identity and one
+            sentence on the left, the three-repo readout rail on the right, both
+            hanging off the container's left spine and closed by a hairline at
+            the band's bottom edge. Measured 713px tall at 1440 and ~1,012px at
+            1023, where the rail stacks under the copy. */}
         <section className="hero-band">
-          <div className="hero container hero-centered">
-            <p className="kicker">{hero.kicker}</p>
-            <h1>{hero.headline}</h1>
-            <p className="hero-subhead">{hero.subhead}</p>
-            <p className="hero-availability">
-              <ProofChip label={hero.availability} />
-            </p>
-            {/* The paid production work, in body type, in the hero. */}
-            <p className="hero-aws">
-              {hero.awsLine.text}{" "}
-              <a href={hero.awsLine.href}>
-                {hero.awsLine.linkText} <span className="arrow" aria-hidden="true">→</span>
-              </a>
-            </p>
-            <div className="cta-row">
-              <LabelButton href={`mailto:${person.email}`} variant="primary">
-                Email me
-              </LabelButton>
-              <LabelButton href={person.github} external>
-                GitHub
-              </LabelButton>
+          <div className="hero container">
+            <div className="hero-layout">
+              <div className="hero-copy">
+                <p className="kicker">{hero.kicker}</p>
+                <h1>{hero.headline}</h1>
+                <p className="hero-subhead">{hero.subhead}</p>
+                <p className="hero-availability">
+                  <ProofChip label={hero.availability} />
+                </p>
+                {/* The paid production work, in body type, in the hero. */}
+                <p className="hero-aws">
+                  {hero.awsLine.text}{" "}
+                  <a href={hero.awsLine.href}>
+                    {hero.awsLine.linkText} <span className="arrow" aria-hidden="true">→</span>
+                  </a>
+                </p>
+                <div className="cta-row">
+                  <LabelButton href={`mailto:${person.email}`} variant="primary">
+                    Email me
+                  </LabelButton>
+                  <LabelButton href={person.github} external>
+                    GitHub
+                  </LabelButton>
+                </div>
+                <p className="hero-email-plain">{person.email}</p>
+              </div>
+              {/* The rail: three repos, what each IS, one measured number each.
+                  It belongs on the first screen — it is the evidence the
+                  headline is claiming. */}
+              <div className="hero-side">
+                <p className="hero-readout-lead">{hero.readoutLead}</p>
+                <div className="hero-readout" role="list">
+                  {hero.readout.map((r) => (
+                    <div className="hero-readout-row" role="listitem" key={r.repo}>
+                      <span className="hero-readout-name">
+                        <ExternalLink className="hero-readout-repo mono" href={r.href}>
+                          {r.repo}
+                        </ExternalLink>
+                        <span className="hero-readout-what">{r.what}</span>
+                      </span>
+                      <span className="hero-readout-value mono">{r.value}</span>
+                      <span className="hero-readout-unit mono">
+                        {r.unit}
+                        {r.plain ? <span className="hero-readout-plain">{r.plain}</span> : null}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <p className="hero-email-plain">{person.email}</p>
           </div>
         </section>
 
         <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The evidence opens with the rail: three repos, what each IS, one
-              measured number each — then the curve, then the plates. */}
-          <p className="hero-readout-lead">{hero.readoutLead}</p>
-          <div className="hero-readout" role="list">
-            {hero.readout.map((r) => (
-              <div className="hero-readout-row" role="listitem" key={r.repo}>
-                <span className="hero-readout-name">
-                  <ExternalLink className="hero-readout-repo mono" href={r.href}>
-                    {r.repo}
-                  </ExternalLink>
-                  <span className="hero-readout-what">{r.what}</span>
-                </span>
-                <span className="hero-readout-value mono">{r.value}</span>
-                <span className="hero-readout-unit mono">
-                  {r.unit}
-                  {r.plain ? <span className="hero-readout-plain">{r.plain}</span> : null}
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* The section opens with ONE figure at the full container measure —
+              the rail that used to sit beside it now lives in the hero, above
+              the fold, where the numbers are the first screen's evidence. */}
           <div className="systems-sweep">
             <Sweep />
           </div>

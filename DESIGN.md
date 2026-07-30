@@ -178,6 +178,9 @@ series colours held back for evidence and affordance.
 - **Ground** (`ground`): the page, and every section body. Measured luminance 0.0036
   against the dark-theme gate's 0.05 ceiling. The hero and page-head bands are the one
   exception: they sit on `plate`, so the first screen reads as one wide plate on ground.
+  The hero band is **closed** by a 1px `grid` rule at its bottom edge — six points of
+  luminance is not enough for a band to read as a band, and an unclosed one reads as the
+  background having a soft accident in it rather than as the first screen ending.
 - **Plate** (`plate`): every figure, card, nav bar, footer, and modal surface. Chosen to
   match the source plots' own canvas so a real plot could drop in unrestyled.
 - **Plate Two** (`plate-2`): the second-level surface — data-table stripes, the current
@@ -268,9 +271,12 @@ Space is a nine-step ladder (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px). Plate 
 the width on air.
 
 Responsive behaviour, as built:
-- **Hero**: single column until 1200px, then 46 / 54 identity-to-figure. The figure column
-  waits for 1200px because the plot needs ~640px to render unpanned; below that it stacks
-  under the copy and stays fully labelled.
+- **Hero**: single column until 1024px, then 56 / 44 identity-to-rail. The right column is
+  a text rail (the three-repo readout), which needs ~360px — not the plot, which needed
+  ~640px and is what the old 1200px breakpoint was sized for. 1024px is the breakpoint the
+  system plates, the hobby grid and the education card already declare, so the page steps
+  once instead of at four different widths. Below it the rail stacks under the copy, capped
+  at 34rem so its hairline rows end where its content does.
 - **System plates**: single column until 1024px, then copy 1.2fr / evidence 0.8fr with the
   evidence column separated by a left hairline instead of a top one. The 900px breakpoint
   was measured and abandoned — the evidence column could not hold its own figure there.
@@ -285,7 +291,21 @@ Responsive behaviour, as built:
   44px without changing the page's height budget.
 - **Mobile budget**: the phone page is held to ~6,000px. Supplementary illustration is
   dropped rather than shrunk — the box diagrams hide below 640px because the readout and
-  the artifact links are the proof, and the diagram was ~200px per plate.
+  the artifact links are the proof, and the diagram was ~200px per plate. Known overrun:
+  the home page measures ~9,300px at 390w, which predates and survives the spine pass.
+
+### Named Rules
+**The One-Left-Spine Rule.** The page has exactly one alignment spine: the container's
+inner left edge (x = 184 / 147 / 104 / 64 / 24 / 16 by width, which is the nav brand's own
+edge). Every block starts on it — the nav brand, the hero, every section head, every plate,
+the hobby grid, the skills rows, the contact band. The only thing permitted to leave that
+edge is the interior of a figure's own drawing, and even there the drawing is pinned to the
+plate's padding edge rather than allowed to float (see the `direction: rtl` note in
+Sweep.css). A centred band on a left-aligned page reads as a second document pasted on top,
+which is what the 2026-07-27 centered hero produced and what this rule supersedes —
+deliberately, as a decision, not as drift. `verify.mjs` gates both the hero kicker and the
+first section head against the nav anchor at every viewport, so re-centring anything fails
+the build rather than shipping.
 
 ## Elevation & Depth
 
@@ -409,8 +429,11 @@ Value / unit / label on one left-aligned baseline, in tabular figures, with as m
 as the project actually measured. Explicitly **not** a fixed-column grid: three cards with
 exactly three metrics each is a schema, and a schema reads as filled in rather than
 measured. The hero variant is a three-row rail of hairline-separated rows — repo name as
-the amber link, value in `ink`, unit in `ink-3` — and it must read and click with the
-figure ignored entirely.
+the amber link, value in `ink`, unit in `ink-3` — and it lives in the hero's right column,
+which is what makes the first screen a figure rather than a decorated résumé header. It
+must read and click with everything else ignored entirely. Its value and unit tracks are
+fixed widths, not content-sized: three auto-sized rows put the three figures on three
+different edges, which is the Tabular Rule failing in the one place a reader checks it.
 
 ### The Axis Rule
 A 1px `grid` line carrying four 5px `axis` ticks, opening every section the way an axis

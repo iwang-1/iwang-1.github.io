@@ -70,10 +70,27 @@
   }
 }
 
+/* The plot is capped at 900px and PINNED LEFT — the plate is never capped, only
+   the drawing inside it.
+
+   The cap: at the full 1072px plate the 680-unit viewBox scales 1.503x, which
+   renders this plot's own 10px axis type at 15px — above the page's 13px mono
+   label rank, so the chart's tick labels would outrank the section's plate
+   labels. At 900px the scale is 1.324x and ticks render 13.2px, back at rank.
+
+   The pin is not optional: .sweep-scroll is `direction: rtl` above 640px (that
+   is how the pan starts at the annotated end), so a bare max-width aligns the
+   plot to the RIGHT of its plate — measured plot x 209 -> 331, a 147px interior
+   gutter off the plate's own left edge and the y-axis ticks moved from x=284.6
+   to x=406.6. That is this pass's own defect reproduced one level down, inside
+   the figure. `margin-inline-end: auto` puts it back on the plate's padding
+   edge. */
 .sweep-plot {
   display: block;
   width: 100%;
   min-width: 580px;
+  max-width: 900px;
+  margin-inline-end: auto;
   height: auto;
   overflow: visible;
   font-family: var(--font-mono);
