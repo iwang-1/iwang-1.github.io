@@ -39,8 +39,11 @@ export const hero = {
   // lowercase literals "mechanical keyboards" and "rock climbing" on "/", and
   // they exist nowhere else in the rendered DOM (the hobby headings are
   // capitalized). Edit the first sentence only.
+  // NO language or specialty in the first sentence — naming a stack narrows the
+  // roles a screener will consider him for (owner call, 2026-07-31). The site
+  // shows the range; it doesn't announce a lane.
   subhead:
-    "I write mostly Go and Rust, and I like building the kind of software that's hard to get right. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+    "I'm a software engineer. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
   availability: "Open to Summer 2027 new-grad software engineering roles",
   readoutLead: "Three things I built, with one measured result each. The names link to the code.",
   readout: [

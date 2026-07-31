@@ -79,29 +79,13 @@ function Home() {
           </div>
         </section>
 
-        <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The section opens with ONE figure at the full container measure —
-              the rail that used to sit beside it now lives in the hero, above
-              the fold, where the numbers are the first screen's evidence. */}
-          <div className="systems-sweep">
-            <Sweep />
-          </div>
-          <div className="system-list">
-            {featuredSystems.map((project, i) => (
-              <SystemFeature key={project.id} project={project} index={i} />
-            ))}
-          </div>
-          {/* An exit that points at what the reader has NOT seen. */}
-          <p className="section-exit">
-            <a className="mono" href="/projects/#selected">
-              Eight more projects <span className="arrow" aria-hidden="true">→</span>
-            </a>
-          </p>
-        </Section>
-
-        {/* The hobbies, each drawn as its own small figure: the key tester you
-            can type on, the boulder route, the feed. */}
-        <Section id="off-hours" title={hobbies.title} rank={2}>
+        {/* Personality first, by owner call (2026-07-31): the hobbies lead the
+            page, each drawn as its own small figure — the key tester you can
+            type on, the boulder route, the feed. The engineering evidence
+            follows directly, and the hero's readout rail already puts three
+            measured results above the fold, so a screener never has to scroll
+            past the personality to find proof. */}
+        <Section id="off-hours" title={hobbies.title} rank={1}>
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
             <div className="hobby-cell">
@@ -132,6 +116,26 @@ function Home() {
               </figure>
             </div>
           </div>
+        </Section>
+
+        <Section id="systems" title="Featured engineering work" rank={1}>
+          {/* The section opens with ONE figure at the full container measure —
+              the rail that used to sit beside it now lives in the hero, above
+              the fold, where the numbers are the first screen's evidence. */}
+          <div className="systems-sweep">
+            <Sweep />
+          </div>
+          <div className="system-list">
+            {featuredSystems.map((project, i) => (
+              <SystemFeature key={project.id} project={project} index={i} />
+            ))}
+          </div>
+          {/* An exit that points at what the reader has NOT seen. */}
+          <p className="section-exit">
+            <a className="mono" href="/projects/#selected">
+              Eight more projects <span className="arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
         </Section>
 
         {/* Education and skills are one thing — where he studied and what he
