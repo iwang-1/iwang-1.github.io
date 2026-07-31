@@ -42,10 +42,20 @@ export const hero = {
   // NO language or specialty in the first sentence — naming a stack narrows the
   // roles a screener will consider him for (owner call, 2026-07-31). The site
   // shows the range; it doesn't announce a lane.
+  //
+  // The first sentence states an ACTION, not a category: "I'm a software
+  // engineer" on a page already titled "Software Engineer" described the set
+  // every candidate belongs to rather than anything he does, so the whole
+  // self-description fell to the hobby list. This names zero technologies (the
+  // no-lane call stands) and is exactly what the three repos in the rail below
+  // demonstrate — it introduces no fact the page did not already carry.
   subhead:
-    "I'm a software engineer. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+    "I build things from scratch and measure whether they work. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
   availability: "Open to Summer 2027 new-grad software engineering roles",
-  readoutLead: "Three things I built, with one measured result each. The names link to the code.",
+  // "Three OF the things": eleven public repos exist, and a rail that reads as
+  // the complete portfolio is what makes a broad body of work look like one
+  // track. Two words, no count asserted.
+  readoutLead: "Three of the things I've built, with one measured result each. The names link to the code.",
   readout: [
     {
       repo: "parallax-kv",
@@ -71,6 +81,14 @@ export const hero = {
       plain: "top-10 search accuracy",
     },
   ],
+  // The line under the CTA row. It used to be the bare address, a second copy of
+  // the "Email me" button directly above it; now the same line carries the ONE
+  // affordance a screener could otherwise only find 5,000px down in the contact
+  // band. Not a new claim — contact.body has published "I can send a full resume
+  // on request" all along, and verify.mjs still blocks any public PDF, so the
+  // sentence IS the artifact. Unaccented "Resume": the accented literal is on
+  // the gate's absent list for "/".
+  emailLine: "Resume on request",
   // The paid production work, in the hero in body type. It is the highest-signal
   // thing a new grad has and the one thing GitHub can't show, and it used to
   // render only as a mono aside two screens down. Every fact here is already in
@@ -93,17 +111,23 @@ export const hero = {
 export const hobbies = {
   title: "Outside of work",
   intro: "A few things I spend my free time on.",
+  // Trimmed 2026-07-31, subtractively: personality only works if it reads in a
+  // few seconds, and this section now stands between a screener and the proof.
+  // 208 words -> ~76. Nothing is rephrased into cleverness — clauses that
+  // restated the heading above them, or the plate rows below them, came out.
   keyboards: {
     blurb: "Building keyboards",
-    lead: "I like using and building keyboards. You can customize every part, so you can tailor a board to exactly what you or someone else needs, and picking the right part for the job is the fun of it.",
+    lead: "You can customize every part, so you can tailor a board to exactly what you or someone else needs — and picking the right part for the job is the fun of it.",
   },
   climb: {
     blurb: "Rock climbing",
-    lead: "I climb for the community and the problem solving. It keeps me active, and a boulder can usually be done a lot of different ways — the version that costs you the least energy depends on your body, so the best solution is different for everyone. Working that out is my favorite part.",
+    lead: "I climb for the community and the problem solving. A boulder can usually be done a lot of different ways, and which one costs you the least depends on your body — working that out is my favorite part.",
   },
   tech: {
     blurb: "Following the industry",
-    lead: "I keep up with tech pretty closely, from new Apple hardware to how governments are regulating AI. I'm interested in where the industry is heading.",
+    // One clause, no enumeration: the four rows below name the specifics, and
+    // the paragraph used to say all four of them 30px above the plate.
+    lead: "I keep up with tech pretty closely.",
     // Short by design: this renders in a third-width column, so each note has
     // to fit on one or two lines.
     feed: [
@@ -276,7 +300,10 @@ export const skills: { label: string; items: string[] }[] = [
     items: ["Raft", "gRPC/Protobuf", "LSM trees", "PostgreSQL/SQLite"],
   },
   {
-    label: "Backend & web",
+    // The row label names what all four items are, testing tools included:
+    // "Backend & web" was the only label on the page that a JUnit 5 and a
+    // Playwright entry did not belong under.
+    label: "Backend, web & testing",
     items: ["Flask/FastAPI", "Node.js", "JUnit 5", "Playwright"],
   },
   {

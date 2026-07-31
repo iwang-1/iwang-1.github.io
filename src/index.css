@@ -787,10 +787,37 @@ img {
      rather than running at it. */
   max-width: 46ch;
   margin-bottom: var(--space-4);
+  /* The same treatment .hero-aws already carries, applied for consistency across
+     the hero's two prose blocks. Measured honestly: at 390px it does NOT change
+     this sentence's break (six lines either way, last line "with tech."), because
+     `pretty` targets single-word orphans and that line is two words. It is here so
+     both hero paragraphs are set the same way, not as a fix. */
+  text-wrap: pretty;
 }
 
+/* No bottom margin: the chip is the LAST thing in .hero-lead, so the grid's own
+   row gap is the separation. Both together measured 64px of air between the ask
+   and the hairline that opens the AWS sentence. */
 .hero-availability {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
+}
+
+/* THE ASK, promoted off the generic chip rank. "Open to Summer 2027 new-grad
+   software engineering roles" is the highest information-per-pixel string on the
+   site — it is the second thing a screener looks for after the graduation date —
+   and it was set at --fs-300, the SMALLEST step on the ramp: below the kicker
+   above it (14px) and below the prose either side of it (16-17px). A footnote
+   rank on the page's one statement of intent.
+   The chip's own grammar is untouched (border, status dot, mono, tabular): only
+   the step moves, to --fs-500, one above the kicker. `white-space: normal` is
+   load-bearing at every width, not just the ≤639px override further up: at 16px
+   the 55-character string is wider than the container between 640 and ~1023px,
+   where the hero is still one column, and a nowrap chip there would push the page
+   into horizontal overflow. */
+.hero-availability .proof-chip {
+  font-size: var(--fs-500);
+  line-height: 1.4;
+  white-space: normal;
 }
 
 .cta-row {
@@ -828,20 +855,55 @@ img {
   align-items: start;
 }
 
+/* THREE named areas, and the ONE reason they exist: on a phone the rail has to
+   come before the AWS paragraph and the CTAs, or its first row lands below the
+   844px fold and a phone screener meets the bio and no evidence. Single column
+   there, so DOM order IS the picture: lead → rail → tail.
+   At ≥1024 the areas restore the two-column split exactly — lead over tail on the
+   left, rail spanning both rows on the right — which is why no `order` property
+   appears anywhere here. Visual order and DOM order agree at both widths. */
+.hero-layout {
+  grid-template-areas: "lead" "rail" "tail";
+}
+
+.hero-lead { grid-area: lead; }
+.hero-side { grid-area: rail; }
+.hero-tail { grid-area: tail; }
+
 @media (min-width: 1024px) {
   .hero-layout {
     grid-template-columns: minmax(0, 56fr) minmax(360px, 44fr);
-    gap: var(--space-8);
+    grid-template-areas:
+      "lead rail"
+      "tail rail";
+    gap: var(--space-6) var(--space-8);
+  }
+
+  /* The rail is in the other column here, so nothing draws an edge above this
+     paragraph and it gets its own — the hairline-bounded sentence the comment at
+     .hero-aws describes. See the note there for why the rule is off below 1024. */
+  .hero-aws {
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--grid);
   }
 }
 
 /* The AWS line: body register, hairline-bounded, so the paid work reads as a
-   sentence rather than as another mono chip. */
+   sentence rather than as another mono chip.
+   No top margin: it opens .hero-tail, and the grid's own row gap is the
+   separation. Its own 24px on top of that gap read as 56px of unexplained air
+   between the rail and the paragraph. */
 .hero-aws {
   max-width: 62ch;
-  margin: var(--space-5) 0 var(--space-6);
-  padding: var(--space-4) 0;
-  border-top: var(--hairline) solid var(--grid);
+  margin: 0 0 var(--space-6);
+  padding: 0 0 var(--space-4);
+  /* NO top rule below 1024. There the rail stacks directly above this
+     paragraph and its last row already draws a closing hairline, so a second
+     rule 32px under the first read as two parallel rules with an empty band
+     between them. The rail's own edge is the separation; the bottom rule below
+     still closes the sentence before the CTAs. The ≥1024 block restores the top
+     rule, where the rail is in the other column and this paragraph opens the
+     left column's second row with nothing above it. */
   border-bottom: var(--hairline) solid var(--grid);
   font-size: var(--fs-500);
   line-height: 1.6;
@@ -1304,9 +1366,18 @@ img {
   }
 }
 
+/* SQUARE, not 5:6. At 5:6 the topo stood 492px against a 264px key tester and a
+   356px feed — 1.86x its shortest sibling, and by pixel count the largest and
+   most saturated object in the whole document (2.12% amber against the Sweep's
+   0.21%), one screen above the benchmark it out-shouted tenfold. A hobby drawing
+   does not get to be the loudest thing on a recruiting page. Square takes it to
+   ~435px in the same column and halves the row's ragged bottom.
+   Nothing has to be redrawn: the wall's viewBox is preserveAspectRatio="none"
+   and every hold sits at a percentage coordinate, so the wall and the route
+   rescale together. */
 .climb-topo {
   position: relative;
-  aspect-ratio: 5 / 6;
+  aspect-ratio: 1 / 1;
 }
 
 .climb-wall {
@@ -1610,21 +1681,43 @@ img {
 /* ------------------------------------------------------- off the clock */
 /* The hobby section: three drawn figures, one per hobby, each introduced by
    one plain sentence. Deliberately claim-free — it is warmth, not evidence. */
+/* --ink-2, like every other intro on the site (.page-dek, .hero-readout-lead):
+   the section's least informative sentence was set in full --ink, brighter than
+   the three paragraphs it introduces. Size stays at 17px — bumping it would put
+   it in competition with the h3s now that the heading is rank-2. */
 .hobby-intro {
   max-width: var(--measure-body);
   margin-bottom: var(--space-6);
+  color: var(--ink-2);
 }
 
+/* The hobby row closes on a stated edge, like every other register on the page:
+   the hero band ends on a 1px --grid hairline and every plate closes its footnote
+   under one. This block used to end on nothing — the tallest column simply
+   stopped and 96px of ground followed — so the transition from playful figures
+   into measured ones happened in a vacuum instead of at a boundary. Declared
+   here, outside the ≥1024 block, so the single-column phone layout gets the
+   closing edge too. */
 .hobby-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
+  padding-bottom: var(--space-6);
+  border-bottom: var(--hairline) solid var(--grid);
 }
 
 @media (min-width: 1024px) {
   .hobby-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* THREE NAMED ROWS — heading, paragraph, figure — so the row reads as one
+       three-panel figure instead of three unrelated columns. Each cell subgrids
+       onto them below, which is the only way three independent flex columns can
+       share a horizontal edge: previously each figure began wherever its own
+       paragraph happened to stop (measured tops 1181 / 1258 / 1155 at 1440, 103px
+       of scatter), and an unaligned edge in this system is a bug in the spacing
+       system, not a style. */
+    grid-template-rows: auto auto auto;
   }
 }
 
@@ -1709,6 +1802,30 @@ img {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+
+/* Above 1024 the cell stops being an independent column and subgrids onto the
+   grid's three named rows, so h3 / paragraph / figure each share ONE line across
+   all three cells. Below 1024 the grid is a single column and none of this
+   applies, so the phone layout is untouched; a browser without subgrid falls back
+   to the flex column above, which is exactly what shipped before — it degrades to
+   no-change rather than to broken.
+
+   `align-self: start` on the figure is load-bearing and must not be dropped: a
+   subgrid row stretches its item, which would pull the 264px key tester to the
+   topo's height and distort a drawing — the one thing .hobby-cell's own comment
+   above forbids. With it, the figures share a top edge and keep their natural
+   heights. */
+@media (min-width: 1024px) {
+  .hobby-cell {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+  }
+
+  .hobby-cell > figure {
+    align-self: start;
+  }
 }
 
 /* ------------------------------------------------------------- education */
@@ -2381,6 +2498,12 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .hero,
   .hero-layout {
     display: block !important;
+  }
+
+  /* With the grid collapsed the three hero blocks flow in DOM order, so the
+     negative margin that de-doubles a grid gap has no gap left to correct. */
+  .hero-tail {
+    margin-top: 0 !important;
   }
 
   /* Injected chrome and decoration carry no meaning on paper. */

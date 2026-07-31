@@ -168,8 +168,20 @@
   letter-spacing: 0.04em;
 }
 
-.js .keyboard-hint {
-  display: inline;
+/* Two hints, one per input register, and never both. The old single string told
+   a phone reader to "type while hovering" — an instruction for hardware they do
+   not have, on the first interactive thing the page now shows them. Tapping a
+   cap always worked; only the sentence was wrong. */
+@media (hover: hover) and (pointer: fine) {
+  .js .keyboard-hint-fine {
+    display: inline;
+  }
+}
+
+@media (hover: none) {
+  .js .keyboard-hint-coarse {
+    display: inline;
+  }
 }
 
 /* --------------------------------------------------------- reduced motion */
@@ -186,7 +198,9 @@
 /* Paper has no pointer and no keyboard. The caps print as the drawing they
    are; the hint and the log line, which only describe an interaction, do not. */
 @media print {
-  .js .keyboard-hint {
+  .js .keyboard-hint,
+  .js .keyboard-hint-fine,
+  .js .keyboard-hint-coarse {
     display: none;
   }
 

@@ -210,7 +210,15 @@ const html = `<!doctype html>
 </head>
 <body>
   <div class="plate">
-    <div class="plate-label"><span>iwang-1.github.io</span><span>recall@10 vs queries/sec</span></div>
+    <!-- The right-hand label reads "measured results", not the figure's own
+         axis pair. This card is the ONLY thing a recruiter sees for a link
+         shared in Slack or a DM, and headlining it "recall@10 vs queries/sec"
+         typed the whole person as a vector-search specialist off one project's
+         units — the lane-naming the owner removed from the bio and the meta on
+         2026-07-31. The curve stays as the visual and the plot's own tick
+         labels stay as-is (they are the artifact's units, which is evidence);
+         only the card's headline stops claiming a specialty. -->
+    <div class="plate-label"><span>iwang-1.github.io</span><span>measured results</span></div>
     <div class="body-row">
       <div>
         <h1>Ivan&nbsp;Wang</h1>

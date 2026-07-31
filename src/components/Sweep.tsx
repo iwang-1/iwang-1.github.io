@@ -317,7 +317,16 @@ export function Sweep() {
       <p className="sweep-readout">
         <span className="sweep-readout-key">reading</span>
         <span className="sweep-readout-value">{READOUT_DEFAULT}</span>
-        <span className="sweep-readout-hint">drag across the plot · or press ← →</span>
+        {/* Two registers. The one string used to name the two mechanisms a
+            touch device does not have — a hover-drag and arrow keys — while the
+            gesture it actually supports (tap a point, drag to pan) went
+            unnamed. */}
+        <span className="sweep-readout-hint sweep-readout-hint-fine">
+          drag across the plot · or press ← →
+        </span>
+        <span className="sweep-readout-hint sweep-readout-hint-coarse">
+          tap a point · drag to pan
+        </span>
       </p>
       <p className="sweep-live visually-hidden" aria-live="polite" />
 

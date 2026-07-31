@@ -26,7 +26,16 @@ function Projects() {
           </div>
         </div>
 
-        <Section title="Systems projects">
+        {/* "Built from scratch" / "More projects", not "Systems projects" /
+            "Selected projects". The old pair labelled the top tier by specialty
+            and the other eight as leftovers, which is the two-track read the
+            page is trying not to give — and "Selected" mislabels a group that is
+            ML, NLP, statistics and a web app rather than a selection of
+            anything. The new lead names the property that actually earns those
+            three the top slot; all three of their summaries already say "built
+            from scratch". The #selected anchor stays: the home page's exit link
+            targets it and verify.mjs fails any internal link that isn't 200. */}
+        <Section title="Built from scratch">
           <div className="system-list">
             {featuredSystems.map((project) => (
               <SystemFeature key={project.id} project={project} />
@@ -34,7 +43,7 @@ function Projects() {
           </div>
         </Section>
 
-        <Section id="selected" title="Selected projects">
+        <Section id="selected" title="More projects">
           <div className="card-grid card-grid-3">
             {projects.map((p, i) => (
               <Reveal key={p.title} delay={i}>

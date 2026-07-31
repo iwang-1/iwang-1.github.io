@@ -379,8 +379,20 @@
   letter-spacing: 0.04em;
 }
 
-.js .sweep-readout-hint {
-  display: inline;
+/* One hint per input register, never both: the desktop string names a
+   hover-drag and the arrow keys, and a phone has neither. The touch variant
+   names what a finger can actually do here — tap a sample, drag to pan the
+   window. */
+@media (hover: hover) and (pointer: fine) {
+  .js .sweep-readout-hint-fine {
+    display: inline;
+  }
+}
+
+@media (hover: none) {
+  .js .sweep-readout-hint-coarse {
+    display: inline;
+  }
 }
 
 .sweep-source {
@@ -422,6 +434,8 @@
   /* Paper has no pointer and no arrow keys, and the series key's screen job is
      to survive a pan that print does not have. */
   .js .sweep-readout-hint,
+  .js .sweep-readout-hint-fine,
+  .js .sweep-readout-hint-coarse,
   .sweep-key {
     display: none;
   }

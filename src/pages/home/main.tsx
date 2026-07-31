@@ -27,30 +27,29 @@ function Home() {
             1023, where the rail stacks under the copy. */}
         <section className="hero-band">
           <div className="hero container">
+            {/* THREE blocks in DOM order — identity, the rail, then the AWS
+                sentence and the CTAs — and at ≥1024 the grid puts identity over
+                AWS/CTAs in the left column with the rail spanning both on the
+                right, so the desktop picture is unchanged from the two-column
+                split it replaces.
+                The split is what gets the evidence above a PHONE fold. In one
+                copy block the rail came last, and its first row did not close
+                until y=1070 on a 390px screen — 226px below the 844 fold — so a
+                phone screener saw the bio, the AWS paragraph, two buttons, and no
+                evidence at all. Reordered, the first row closes at ~715.
+                It also fixes the desktop tab order for free: focus used to run
+                down the copy to y=595 and then jump 407px back UP to the rail at
+                the hero's top right. DOM order is now the reading order at both
+                widths, so no `order` property is needed anywhere — the WCAG 2.4.3
+                mismatch is removed rather than relocated. */}
             <div className="hero-layout">
-              <div className="hero-copy">
+              <div className="hero-lead">
                 <p className="kicker">{hero.kicker}</p>
                 <h1>{hero.headline}</h1>
                 <p className="hero-subhead">{hero.subhead}</p>
                 <p className="hero-availability">
                   <ProofChip label={hero.availability} />
                 </p>
-                {/* The paid production work, in body type, in the hero. */}
-                <p className="hero-aws">
-                  {hero.awsLine.text}{" "}
-                  <a href={hero.awsLine.href}>
-                    {hero.awsLine.linkText} <span className="arrow" aria-hidden="true">→</span>
-                  </a>
-                </p>
-                <div className="cta-row">
-                  <LabelButton href={`mailto:${person.email}`} variant="primary">
-                    Email me
-                  </LabelButton>
-                  <LabelButton href={person.github} external>
-                    GitHub
-                  </LabelButton>
-                </div>
-                <p className="hero-email-plain">{person.email}</p>
               </div>
               {/* The rail: three repos, what each IS, one measured number each.
                   It belongs on the first screen — it is the evidence the
@@ -75,6 +74,33 @@ function Home() {
                   ))}
                 </div>
               </div>
+              <div className="hero-tail">
+                {/* The paid production work, in body type, in the hero. */}
+                <p className="hero-aws">
+                  {hero.awsLine.text}{" "}
+                  <a href={hero.awsLine.href}>
+                    {hero.awsLine.linkText} <span className="arrow" aria-hidden="true">→</span>
+                  </a>
+                </p>
+                <div className="cta-row">
+                  <LabelButton href={`mailto:${person.email}`} variant="primary">
+                    Email me
+                  </LabelButton>
+                  <LabelButton href={person.github} external>
+                    GitHub
+                  </LabelButton>
+                </div>
+                {/* Was the bare address — a second copy of the "Email me"
+                    button one line above it. The same line now carries the one
+                    artifact an ATS asks for, which otherwise appeared only in
+                    the contact band 5,000px down. Plain text, not a file:
+                    verify.mjs blocks any public PDF link, so the sentence IS
+                    the affordance. The address still renders in the contact
+                    band and the footer, so the required-string gate holds. */}
+                <p className="hero-email-plain">
+                  {hero.emailLine} · {person.email}
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -84,8 +110,15 @@ function Home() {
             type on, the boulder route, the feed. The engineering evidence
             follows directly, and the hero's readout rail already puts three
             measured results above the fold, so a screener never has to scroll
-            past the personality to find proof. */}
-        <Section id="off-hours" title={hobbies.title} rank={1}>
+            past the personality to find proof.
+
+            rank={2}, deliberately, and it does NOT walk back the ordering call:
+            ORDER carries the personality, SIZE carries the rank. At rank-1 this
+            heading and "Featured engineering work" both computed to 41.6px, so
+            the page had two leads and the louder one was the preamble — the
+            identically-sized-headings failure DESIGN.md's Rank Rule names. The
+            hobbies still come first; the work keeps the page's biggest type. */}
+        <Section id="off-hours" title={hobbies.title} rank={2}>
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
             <div className="hobby-cell">
@@ -130,10 +163,16 @@ function Home() {
               <SystemFeature key={project.id} project={project} index={i} />
             ))}
           </div>
-          {/* An exit that points at what the reader has NOT seen. */}
+          {/* An exit that points at what the reader has NOT seen — and NAMES it.
+              A bare "Eight more projects" sits exactly where a reader who has
+              just read three Raft/LSM/HNSW plates decides whether this is a
+              one-track portfolio, and it named nothing behind the link. All four
+              categories are already the titles or chips of those eight cards, so
+              this is surfacing, not a new claim. */}
           <p className="section-exit">
             <a className="mono" href="/projects/#selected">
-              Eight more projects <span className="arrow" aria-hidden="true">→</span>
+              Eight more — ML, NLP, statistics, and this site{" "}
+              <span className="arrow" aria-hidden="true">→</span>
             </a>
           </p>
         </Section>

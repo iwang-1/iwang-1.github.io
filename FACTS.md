@@ -74,7 +74,7 @@ repos are deleted and the old live demo URL 404s. Do NOT reintroduce it —
 `verify.mjs` asserts `star-catalog` / `star-spectral` / `sky map` are absent
 from the rendered /projects/ page.
 
-## Systems projects (`featuredSystems` — Home "Featured engineering work" + `/projects/` "Systems projects")
+## Systems projects (`featuredSystems` — Home "Featured engineering work" + `/projects/` "Built from scratch")
 
 Three from-scratch systems, each rendered as a SystemFeature card (summary +
 proof + caveat + metric grid). Every number below is the exact repo/benchmark

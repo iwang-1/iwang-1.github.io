@@ -93,11 +93,19 @@ export function Keyboard() {
   const [log, setLog] = useState<readonly string[]>([]);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  /** A monotonic press count, whose ONLY job is to make the live region's text
+   *  differ on every press. Pressing A four times produced the identical string
+   *  "A pressed" each time, so React skipped the DOM write and an unchanged live
+   *  region is not re-announced: a screen-reader user heard the first press and
+   *  then silence. Rendered as a zero-width discriminator, so the announcement
+   *  still reads as "A pressed" and never as a number. */
+  const [presses, setPresses] = useState(0);
   const tapTimers = useRef(new Map<string, number>());
 
   const press = useCallback((legend: string) => {
     setDown((held) => (held.includes(legend) ? held : [...held, legend]));
     setLog((entries) => [...entries, legend].slice(-LOG_LIMIT));
+    setPresses((n) => n + 1);
   }, []);
 
   const release = useCallback((legend: string) => {
@@ -172,7 +180,7 @@ export function Keyboard() {
     <figure
       className="plate keyboard-fig"
       role="group"
-      aria-label="A drawn key tester, off the clock: ten home-row keycaps. Click a keycap to press it, or type the matching letter while the pointer is over the figure."
+      aria-label="A drawn key tester, off the clock: ten home-row keycaps. Activate a keycap to press it, or type the matching letter while the pointer is over the figure."
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -223,11 +231,24 @@ export function Keyboard() {
           {log.length ? log.join(" ") : "idle · no keys yet"}
         </span>
         {/* Gated on `.js` in the stylesheet: without the bundle there is
-            nothing to press, and inviting a reader to press it would be a lie. */}
-        <span className="keyboard-hint">Click a key, or type while hovering</span>
+            nothing to press, and inviting a reader to press it would be a lie.
+            Two registers, because half the old single string was unreachable on
+            the pointer that meets this figure first: a phone has no hover, and
+            this is now the first interactive thing on the page. The stylesheet
+            shows exactly one of these per input type. */}
+        <span className="keyboard-hint keyboard-hint-fine">
+          Click a key, or type while hovering
+        </span>
+        <span className="keyboard-hint keyboard-hint-coarse">Tap a key</span>
       </p>
+      {/* The live region is the stable <p>; the message is a child keyed on the
+          press count, so every press REMOVES and RE-INSERTS a node inside the
+          region rather than rewriting an identical string. Pressing A four times
+          used to produce the same "A pressed" text, React skipped the DOM write,
+          and an unchanged live region is not re-announced — one announcement for
+          four presses. The announced string is untouched. */}
       <p className="keyboard-live visually-hidden" aria-live="polite">
-        {last ? `${NAMES.get(last) ?? last} pressed` : ""}
+        {last ? <span key={presses}>{`${NAMES.get(last) ?? last} pressed`}</span> : null}
       </p>
 
       <figcaption className="plate-footnote">Linear switches, lubed.</figcaption>

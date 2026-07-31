@@ -252,7 +252,12 @@ display.
 
 **The Rank Rule.** A section declares its rank and the heading size moves with the gap
 above it. Five identically-sized headings over five identical pads is the generated-page
-fingerprint; rank-1 opens a page, everything supporting it is rank-2.
+fingerprint; rank-1 opens a page, everything supporting it is rank-2. A page gets exactly
+ONE rank-1, and it is the section that carries the page's argument — never a preamble that
+merely happens to come first. Corollary, and the reason the rule is stated this sharply:
+ORDER carries emphasis of a different kind than SIZE does, so a section may lead the page
+and still be rank-2. Home does exactly that — the hobbies come first by owner call and sit
+at rank-2, while "Featured engineering work" keeps the page's biggest type.
 
 **The Tabular Rule.** Any element that shows a measured number carries the mono family
 and `font-variant-numeric: tabular-nums`. Numbers in this world line up.
@@ -271,17 +276,33 @@ Space is a nine-step ladder (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px). Plate 
 the width on air.
 
 Responsive behaviour, as built:
-- **Hero**: single column until 1024px, then 56 / 44 identity-to-rail. The right column is
-  a text rail (the three-repo readout), which needs ~360px — not the plot, which needed
+- **Hero**: three named grid areas — `lead` (kicker, name, bio, the availability chip),
+  `rail` (the three-repo readout), `tail` (the AWS sentence, the CTAs, the contact line).
+  Single column until 1024px in that DOM order, then `"lead rail" / "tail rail"` at
+  56 / 44. The right column is a text rail, which needs ~360px — not the plot, which needed
   ~640px and is what the old 1200px breakpoint was sized for. 1024px is the breakpoint the
   system plates, the hobby grid and the education card already declare, so the page steps
-  once instead of at four different widths. Below it the rail stacks under the copy, capped
-  at 34rem so its hairline rows end where its content does.
+  once instead of at four different widths. Below 1024 the rail stacks between the identity
+  and the tail, capped at 34rem so its hairline rows end where its content does.
+  The three-area split exists for two measured reasons, and NO `order` property is used to
+  achieve either: (a) with the rail authored last, its first row closed at y=1070 on a
+  390×844 phone — 226px below the fold, so a phone screener met the bio and no evidence;
+  (b) at 1440 the tab order ran down the copy to y=595 and then jumped 407px back up to the
+  rail. Areas fix both at once, because DOM order is the reading order at every width.
 - **System plates**: single column until 1024px, then copy 1.2fr / evidence 0.8fr with the
   evidence column separated by a left hairline instead of a top one. The 900px breakpoint
   was measured and abandoned — the evidence column could not hold its own figure there.
 - **Timeline**: left-rail single column on mobile, centre-spine true interleaving from
   900px (88px column gap, 44px each side of the spine).
+- **Hobby grid**: one column below 1024px; three columns above it, where the grid declares
+  three named rows (heading / paragraph / figure) and each cell `subgrid`s onto them. That
+  is the only way three independent columns share a horizontal edge — authored as three flex
+  columns, each figure started wherever its own paragraph happened to stop (tops 1181 /
+  1258 / 1155 at 1440, 103px of scatter). `align-self: start` on each figure is
+  load-bearing: a subgrid row stretches its item, which would pull the 264px key tester to
+  the topo's height and distort a drawing. A browser without subgrid falls back to the flex
+  column, which is what shipped before, so it degrades to no-change. The grid closes on a
+  1px `--grid` hairline at every width, like the hero band and every plate footnote.
 - **Card grids**: one column, two from 768px, three for the `-3` variant.
 - **Nav**: fixed 64px height at every width. The wordmark hides below 640px and the whole
   brand hides below 360px; tab padding and gap tighten in three steps so the last tab

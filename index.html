@@ -38,6 +38,14 @@
       content="Ivan Wang — Software Engineer · UMD CS B.S./M.S. · AWS SDE Intern, Summer 2026"
     />
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- The Person block deliberately declares no specialty-topic field. One
+         used to name four of them, which is the lane-naming the owner removed
+         from the bio and the meta on 2026-07-31 — still shipping in the layer an
+         ATS or enrichment crawler reads first. schema.org Person is valid
+         without it and that field has no rich-result surface, so dropping it
+         costs nothing: description, jobTitle, worksFor, alumniOf and sameAs
+         carry every fact a crawler needs. Do not add one back. (This comment
+         names no topic on purpose — an HTML comment ships too.) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -59,12 +67,6 @@
             "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Maryland, College Park" },
             "affiliation": [
               { "@type": "CollegeOrUniversity", "name": "University of Maryland, College Park" }
-            ],
-            "knowsAbout": [
-              "Distributed systems",
-              "Storage engines",
-              "Backend engineering",
-              "Machine learning"
             ],
             "sameAs": [
               "https://github.com/iwang-1",

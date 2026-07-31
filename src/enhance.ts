@@ -154,6 +154,17 @@ function mountCommandPalette(): void {
     gTimer = 0;
   };
 
+  /** True while the hobby key tester is armed — i.e. exactly when it is
+   *  listening for letters itself. Same two conditions the figure arms on
+   *  (src/components/Keyboard.tsx): the pointer is over it, or focus is inside
+   *  it. Queried per event rather than cached, because the figure is a React
+   *  node that boot may not have seen yet. */
+  const armedKeyTester = (): boolean => {
+    const fig = document.querySelector<HTMLElement>(".keyboard-fig");
+    if (!fig) return false;
+    return fig.matches(":hover") || fig.contains(document.activeElement);
+  };
+
   const typingTarget = (el: EventTarget | null): boolean => {
     const t = el as HTMLElement | null;
     if (!t) return false;
@@ -202,6 +213,21 @@ function mountCommandPalette(): void {
     if (e.key === "?") {
       e.preventDefault();
       toggle();
+      return;
+    }
+
+    // THE KEY-TESTER TRUCE. The hobby figure invites "type while hovering" and
+    // draws the home row — which contains both halves of the g→h "Go to Home"
+    // chord. Typing a s d f g h over that figure lit five caps and then
+    // NAVIGATED on the sixth keystroke: scroll position gone, log reset, the
+    // reader thrown back to the fold by the one control the page opens with.
+    // g→e and g→p left for /experience/ and /projects/ the same way.
+    // While the tester is armed (pointer over it, or focus inside it) the chord
+    // does not arm and does not resolve. The shortcuts stay live everywhere else
+    // on the page, and this stays out of Keyboard.tsx, which correctly commits
+    // to never intercepting a key.
+    if (armedKeyTester()) {
+      resetChord();
       return;
     }
 
@@ -307,6 +333,27 @@ function mountSweep(): void {
     return view;
   };
 
+  /** Pan the pannable window so the selected sample is actually on screen.
+   *  Below ~500px the plot is wider than the plate and the arrow keys were
+   *  reporting samples whose dot sat outside the window with no way to reach
+   *  them — the keydown handler preventDefault()s the same key the scroller
+   *  would have used to scroll, so the reader could neither see the sample nor
+   *  pan to it. This is the exact inverse of `nearest()`'s conversion.
+   *  KEYBOARD SELECTS ONLY (see the `announce` guard at the call site): a
+   *  programmatic scroll during a pointer scrub would yank the plot out from
+   *  under the finger that is driving it. */
+  const revealSample = (v: SweepView, x: number): void => {
+    const scroller = v.svg.parentElement;
+    if (!scroller) return;
+    if (scroller.scrollWidth - scroller.clientWidth <= 1) return; // nothing pans
+    const rect = v.svg.getBoundingClientRect();
+    const box = v.svg.viewBox.baseVal;
+    if (!rect.width || !box.width) return;
+    const dotX = rect.left + (x / box.width) * rect.width;
+    const windowRect = scroller.getBoundingClientRect();
+    scroller.scrollLeft += dotX - (windowRect.left + windowRect.width / 2);
+  };
+
   const select = (v: SweepView, next: number, announce: boolean): void => {
     v.index = Math.min(v.samples.length - 1, Math.max(0, next));
     const sample = v.samples[v.index];
@@ -315,7 +362,10 @@ function mountSweep(): void {
     if (v.readout.textContent !== sample.readout) v.readout.textContent = sample.readout;
     // Pointer users get the visual readout; only deliberate (keyboard) moves are
     // announced, so dragging across ten samples is not ten interruptions.
-    if (announce && v.live) v.live.textContent = sample.readout;
+    if (announce && v.live) {
+      v.live.textContent = sample.readout;
+      revealSample(v, sample.x);
+    }
   };
 
   // Pointer → nearest sample on the throughput axis. Comparing x alone is the
@@ -346,17 +396,47 @@ function mountSweep(): void {
       select(pointerView, nearest(pointerView, pointerX), false);
   };
 
+  /** One entry point for every pointing gesture. `apply()` is idempotent and
+   *  rAF-coalesced, so a hybrid device firing both a pointer and a touch event
+   *  for the same frame costs one redundant select at worst. */
+  const track = (target: EventTarget | null, clientX: number): void => {
+    const v = resolve(target);
+    if (!v) return;
+    pointerView = v;
+    pointerX = clientX;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(apply);
+  };
+
   document.addEventListener(
     "pointermove",
-    (event: PointerEvent) => {
-      const v = resolve(event.target);
-      if (!v) return;
-      pointerView = v;
-      pointerX = event.clientX;
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(apply);
+    (event: PointerEvent) => track(event.target, event.clientX),
+    { passive: true },
+  );
+
+  // TOUCH. pointermove alone made the figure lie on a phone: the pannable
+  // .sweep-scroll claims the gesture, so the browser fires exactly ONE
+  // pointermove and then pointercancel, while the following ~14 touchmoves were
+  // heard by nobody. A drag from the left edge to the right edge left the readout
+  // frozen on the leftmost sample — the figure stating a measurement that was not
+  // the one under the finger. Passive, so the pan still works; the rect read in
+  // nearest() already resolves a panned plot correctly.
+  document.addEventListener(
+    "touchmove",
+    (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (touch) track(event.target, touch.clientX);
     },
+    { passive: true },
+  );
+
+  // A TAP is the first thing anyone tries on a curve, and it did nothing: the
+  // touch sequence is pointerdown/touchstart/pointerup/touchend with no
+  // pointermove at all, so the readout never moved anywhere on the plot.
+  document.addEventListener(
+    "pointerdown",
+    (event: PointerEvent) => track(event.target, event.clientX),
     { passive: true },
   );
 
