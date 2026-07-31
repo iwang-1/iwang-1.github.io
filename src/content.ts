@@ -127,7 +127,7 @@ export const hobbies = {
     blurb: "Following the industry",
     // One clause, no enumeration: the four rows below name the specifics, and
     // the paragraph used to say all four of them 30px above the plate.
-    lead: "I keep up with tech pretty closely.",
+    lead: "I keep up with tech pretty closely — from new hardware to how governments are handling AI. I'm interested in where the industry is heading.",
     // Short by design: this renders in a third-width column, so each note has
     // to fit on one or two lines.
     feed: [

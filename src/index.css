@@ -1710,6 +1710,11 @@ img {
 @media (min-width: 1024px) {
   .hobby-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* Column gap stays --space-6; the ROW gap is the space between a heading
+       and its own paragraph, which wants the heading's margin, not a
+       between-columns measure. One value for both put 40px under every h3. */
+    column-gap: var(--space-6);
+    row-gap: var(--space-2);
     /* THREE NAMED ROWS — heading, paragraph, figure — so the row reads as one
        three-panel figure instead of three unrelated columns. Each cell subgrids
        onto them below, which is the only way three independent flex columns can
@@ -1824,6 +1829,14 @@ img {
   }
 
   .hobby-cell > figure {
+    align-self: start;
+  }
+
+  /* The paragraph row is as tall as the LONGEST of the three blurbs, so a short
+     one would float in the middle of its own row and open a void above the
+     figure. Pin every paragraph to the top of the row: the ragged bottom of a
+     text column is normal typography, a floating paragraph is not. */
+  .hobby-cell > .hobby-lead {
     align-self: start;
   }
 }
