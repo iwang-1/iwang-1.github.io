@@ -50,8 +50,11 @@ export const hero = {
   // no-lane call stands) and is exactly what the three repos in the rail below
   // demonstrate — it introduces no fact the page did not already carry.
   subhead:
-    "I build things from scratch and measure whether they work. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
-  availability: "Open to Summer 2027 new-grad software engineering roles",
+    "I like taking things apart to understand how they work, then building my own. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+  // Both tracks, because he is eligible for both (confirmed 2026-07-31: the
+  // combined B.S./M.S. can extend past May 2027). Addressing only one would make
+  // the other kind of recruiter rule him out. Relocation stated, no metro named.
+  availability: "Open to Summer 2027 internships and new-grad roles · relocating anywhere in the US",
   // "Three OF the things": eleven public repos exist, and a rail that reads as
   // the complete portfolio is what makes a broad body of work look like one
   // track. Two words, no count asserted.
