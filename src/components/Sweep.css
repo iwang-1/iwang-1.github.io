@@ -58,33 +58,54 @@
   direction: ltr;
 }
 
-/* Below the plate's floor width the pan is deep enough that starting at the
-   annotated RIGHT end costs a phone reader the y-axis, both axis titles and the
-   whole legend — the first thing they saw of the site's centrepiece was an
-   unlabelled squiggle with a chopped axis title. Start at the left edge there
-   instead: the amber knee's numbers are still on screen without any gesture,
-   restated at body size by .sweep-readout below and by the HTML key. */
+/* Below the plate's floor width, exactly ONE legend renders — the HTML
+   `.sweep-key` below, which lives outside the pannable window — so the in-plot
+   SVG legend goes away. Both used to render simultaneously at 320-640, and the
+   SVG one named a blue "HNSW m=16" series that was off-window at every phone
+   width, keying a curve the reader could not see.
+   The left-start override that used to live here is GONE, deliberately: it broke
+   DESIGN.md's own Sweep rule that the pan must start at the annotated end. With
+   `direction: ltr` the window opened on the IVF-PQ (teal) end — 3 of 12 plotted
+   marks at 320w, 5 at 390w — while the amber knee callout carrying "ef=32 ·
+   recall 0.976 · ~31.8K q/s" sat at x 398-538 against a window of 33-287, fully
+   outside up to 480w, and `.sweep-readout` quoted that off-screen HNSW sample as
+   the current reading. Restoring the inherited rtl start puts the annotated end
+   on screen with no gesture; the y-axis, axis titles and legend the override was
+   protecting are covered here by `.sweep-key`, which is what it exists for. */
 @media (max-width: 640px) {
-  .sweep-scroll {
-    direction: ltr;
+  .sweep-legend {
+    display: none;
   }
 }
 
-/* The plot is capped at 900px and PINNED LEFT — the plate is never capped, only
-   the drawing inside it.
+/* The plot is PINNED LEFT, and capped only in the range where its plate is not.
 
-   The cap: at the full 1072px plate the 680-unit viewBox scales 1.503x, which
-   renders this plot's own 10px axis type at 15px — above the page's 13px mono
-   label rank, so the chart's tick labels would outrank the section's plate
-   labels. At 900px the scale is 1.324x and ticks render 13.2px, back at rank.
+   The cap exists for type rank: at a full 1072px plate the 680-unit viewBox
+   scales 1.503x, which renders this plot's own 10px axis type at 15px — above the
+   page's 13px mono label rank, so the chart's tick labels would outrank the
+   section's plate labels. At ~900px the scale is 1.324x and ticks render 13.2px,
+   back at rank.
 
-   The pin is not optional: .sweep-scroll is `direction: rtl` above 640px (that
-   is how the pan starts at the annotated end), so a bare max-width aligns the
-   plot to the RIGHT of its plate — measured plot x 209 -> 331, a 147px interior
-   gutter off the plate's own left edge and the y-axis ticks moved from x=284.6
-   to x=406.6. That is this pass's own defect reproduced one level down, inside
-   the figure. `margin-inline-end: auto` puts it back on the plate's padding
-   edge. */
+   From 998px up that cap moves UP one level, onto `.systems-sweep` (index.css),
+   because a cap on the drawing inside an uncapped plate left the plot ending 147px
+   short of the plate's inner right edge at 1440 while the footnote hairline still
+   ruled the full width — the same empty-ruled-line defect the .systems-sweep
+   comment names. Below 998 the container is narrower than the plate cap, so this
+   rule is what holds the axis type at rank; from 998 up the plate holds it and
+   this cap lifts. Exactly one is active at any width.
+
+   998, not 1120 (2026-08-01): 998px is the viewport where the plate's own 950px
+   cap first binds, which is also where the plate's interior first reaches this
+   900px. Handing over at 1120 opened a 120px band (1000-1119) where the plate grew
+   on the full container measure while this cap held the drawing at 900px — the
+   footnote hairline ruled a measured 26px past the last gridline at 1024 and 121px
+   at 1119, which is the defect both comments were written to have removed.
+
+   The pin is not optional: .sweep-scroll is `direction: rtl` (that is how the pan
+   starts at the annotated end), so a bare max-width aligns the plot to the RIGHT
+   of its plate — measured plot x 209 -> 331, a 147px interior gutter off the
+   plate's own left edge and the y-axis ticks moved from x=284.6 to x=406.6.
+   `margin-inline-end: auto` puts it back on the plate's padding edge. */
 .sweep-plot {
   display: block;
   width: 100%;
@@ -95,6 +116,12 @@
   overflow: visible;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 998px) {
+  .sweep-plot {
+    max-width: none;
+  }
 }
 
 /* ------------------------------------------------------------------ frame */
@@ -416,6 +443,49 @@
   .sweep-crosshair-h,
   .sweep-crosshair-dot {
     transition-duration: 0ms;
+  }
+}
+
+/* ----------------------------------------------------- forced colours (HCM) */
+/* Windows High Contrast Mode forces the page background to white but does NOT
+   override SVG `fill`, so this figure kept its dark-theme fills on paper-white:
+   measured tick labels, the in-plot legend and the oracle label at ~2.15:1, the
+   amber knee callout carrying the figure's headline numbers at ~2.18:1, and the
+   sample labels, the 0.90 reference label and both axis titles at ~3.09:1 — all
+   below AA, the first group below even the 3:1 large-text floor.
+   Additive and query-scoped, so the dark-first default cannot be touched. The
+   system keywords are the whole point: CanvasText and LinkText are whatever the
+   user's own scheme says they are, which is the contract HCM exists for. The two
+   series also take distinct dashes, because forced colours collapse blue and
+   teal to the same stroke and a two-series plot has to stay readable without
+   colour. */
+@media (forced-colors: active) {
+  .sweep-tick text,
+  .sweep-legend text,
+  .sweep-oracle text,
+  .sweep-samples text,
+  .sweep-reference-label,
+  .sweep-axis-title {
+    fill: CanvasText;
+  }
+
+  .sweep-callout-label {
+    fill: LinkText;
+  }
+
+  .sweep-grid line,
+  .sweep-axis line,
+  .sweep-reference,
+  .sweep-crosshair line {
+    stroke: CanvasText;
+  }
+
+  .sweep-line-hnsw {
+    stroke-dasharray: none;
+  }
+
+  .sweep-line-ivf {
+    stroke-dasharray: 6 4;
   }
 }
 

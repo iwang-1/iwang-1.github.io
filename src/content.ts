@@ -554,8 +554,14 @@ export const contact = {
   // "Full resume on request" removes the screener's dead end without shipping a
   // PDF — verify.mjs blocks any public résumé/PDF link, so the sentence IS the
   // affordance. No accented spelling: that literal is on the gate's absent list.
+  //
+  // BOTH tracks named, matching the hero chip's already-approved phrasing
+  // (hero.availability). This band is the peak-end position on all three content
+  // pages; opening it with new-grad only told an intern recruiter who scrolled to
+  // the bottom that this candidate wants something else. Introduces no new fact —
+  // the dual-track eligibility already ships above the fold.
   body:
-    "I'm looking for Summer 2027 new-grad software engineering roles. Email is the fastest way to reach me, and I can send a full resume on request.",
+    "I'm looking for Summer 2027 software engineering internships and new-grad roles. Email is the fastest way to reach me, and I can send a full resume on request.",
 };
 
 export const footer = {

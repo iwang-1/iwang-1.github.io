@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "../../js-flag";
+import { enableJs } from "../../js-flag";
 import "../../enhance";
 import "../../index.css";
 import { communityRoles, engineeringRoles } from "../../content";
@@ -50,3 +50,5 @@ createRoot(document.getElementById("root")!).render(
     <Experience />
   </StrictMode>,
 );
+// AFTER render — see src/js-flag.ts.
+enableJs();

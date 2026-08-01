@@ -304,6 +304,27 @@ Responsive behaviour, as built:
   column, which is what shipped before, so it degrades to no-change. The grid closes on a
   1px `--grid` hairline at every width, like the hero band and every plate footnote.
 - **Card grids**: one column, two from 768px, three for the `-3` variant.
+- **The Sweep's cap lives on the PLATE, not the drawing** (revised 2026-07-31, superseding
+  "the plate is never capped"; handoff width corrected 2026-08-01). `.systems-sweep` caps at
+  950px from **998px** up, and `.sweep-plot`'s own 900px cap lifts there. The cap has to
+  exist somewhere — the 680-unit viewBox scaled 1.503x at a full 1072px plate renders the
+  plot's 10px axis type at 15px, above the page's 13px mono label rank; at 950px it is
+  1.324x and ~13.2px, at rank. But capping only the drawing inside an uncapped plate left
+  the SVG ending 147px short of the plate's inner right edge at 1440 (unbounded past it)
+  while the footnote strip's hairline still ruled the plate's full width — the
+  empty-ruled-line signature of unfinished, one level in. On the plate, the plot, the gloss
+  and the footnote all end on one right edge.
+  998px is where the handoff has to happen, and the original 1120px was wrong: the plate's
+  interior reaches 900px — the width at which `.sweep-plot`'s own cap starts binding — when
+  the container's inner measure hits 950px, i.e. at a 998px viewport. Handing over at 1120
+  left the 1000-1119px band with NEITHER cap in force: the plate grew on the full container
+  measure while the drawing stayed frozen at 900px, so the footnote hairline ruled a measured
+  2px past the last gridline at vw=1000, 26px at 1024, 82px at 1080 and 121px at 1119 — the
+  very defect this bullet was written to record as fixed, and in a band (landscape iPad, a
+  half-width 2560 monitor, small laptop windows) that none of the three verify viewports
+  samples. Below 998px the container is already narrower than the cap, so `.sweep-plot`'s
+  900px is what holds type rank there. Exactly one cap is active at any width, and the plot's
+  right edge meets the footnote's from 320px to 2560px.
 - **Nav**: fixed 64px height at every width. The wordmark hides below 640px and the whole
   brand hides below 360px; tab padding and gap tighten in three steps so the last tab
   keeps a ≥12px gutter at 320px rather than the brand reappearing.
@@ -455,6 +476,14 @@ which is what makes the first screen a figure rather than a decorated résumé h
 must read and click with everything else ignored entirely. Its value and unit tracks are
 fixed widths, not content-sized: three auto-sized rows put the three figures on three
 different edges, which is the Tabular Rule failing in the one place a reader checks it.
+Those fixed tracks need 220px plus the name, so below 412px the row **stacks** to one column
+in DOM order and the three values share the container's left spine — which satisfies the
+Tabular Rule rather than breaking it. The ceiling is 412 and not 380 because between them
+the tracks stopped overlapping without starting to fit: the name track computed to 80-111px
+against mono anchors needing 92.7-101.2px, so `parallax-kv` and `accretion-db` wrapped
+mid-token with the hyphen dangling. A repo name broken over two lines is not a name a reader
+can recognise or retype, and it is the fold's clickable route into the evidence — so on this
+rail a whole unbroken name outranks a compact row.
 
 ### The Axis Rule
 A 1px `grid` line carrying four 5px `axis` ticks, opening every section the way an axis

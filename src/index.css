@@ -375,6 +375,18 @@ img {
   transform: none;
 }
 
+/* The one control where the global amber focus ring is invisible: it draws
+   #E9A13B around a button FILLED #E9A13B, measured 1.00:1 — on the primary CTA,
+   the control a keyboard screener reaches first. --ink instead, pushed to a 3px
+   offset so the ring lands on plate/ground where --ink measures 17.76:1.
+   This does NOT touch the Ground-On-Amber Rule, which governs the LABEL colour
+   on an amber fill; the label is still --ground. Outline properties only — no
+   second :hover rule, no border or lift change. */
+.btn-primary:focus-visible {
+  outline-color: var(--ink);
+  outline-offset: 3px;
+}
+
 /* ------------------------------------------------------------ primitives */
 /* The figure vocabulary. Seven objects, all borrowed from the plots: plate,
    axis rule, readout, sample point, callout, data table, label button
@@ -435,16 +447,23 @@ img {
 }
 
 /* AXIS RULE — the only decorative line on the site: a 1px rule carrying four
-   5px ticks, opening a section the way an axis opens a plot. */
+   5px ticks, opening a section the way an axis opens a plot.
+
+   The gradient runs 270deg and the tile is pinned RIGHT, exactly as the progress
+   rail's identical primitive does it (see .route-progress::before). Left-pinned
+   at 90deg the repeating tile put ticks at 0/25/50/75%: the first landed ON the
+   container's inner left edge and merged with the page's one alignment spine, and
+   none landed at 100%, so DESIGN.md's four ticks drew as three plus a smudge.
+   Mirrored, they land at 25/50/75/100 and all four read. */
 .axis-rule {
   position: relative;
   height: 5px;
   margin-bottom: var(--space-4);
   border-top: var(--hairline) solid var(--grid);
-  background-image: linear-gradient(90deg, var(--axis) 0 var(--hairline), transparent var(--hairline));
+  background-image: linear-gradient(270deg, var(--axis) 0 var(--hairline), transparent var(--hairline));
   background-repeat: repeat-x;
   background-size: 25% 5px;
-  background-position: 0 0;
+  background-position: right 0 top 0;
 }
 
 /* READOUT — value / unit / label on one left-aligned baseline, tabular
@@ -623,28 +642,9 @@ img {
   padding-top: var(--section-gap);
 }
 
-/* Mobile rhythm: 96px verticals are a desktop measure. On a phone they read
-   as five dead half-screens, and the page budget (≤~6,000px at 390w) is spent
-   on evidence, not air. Plate padding narrows with the viewport for the same
-   reason: 24px frames on a 390px screen spend an eighth of the width on air. */
-@media (max-width: 639px) {
-  :root {
-    --section-gap: 48px;
-  }
-
-  .plate {
-    padding: var(--space-4);
-    gap: var(--space-2);
-  }
-
-  .section-head {
-    margin-bottom: var(--space-4);
-  }
-
-  .hero-band {
-    padding-bottom: var(--space-6);
-  }
-}
+/* The phone rhythm block that used to sit here now lives AFTER `.hero-band`,
+   below — see the comment there. It was authored before three of the rules it
+   overrides and lost all three on source order at equal specificity. */
 
 /* Hierarchy ranks. Five identically-sized h2s over five identical 96px pads is
    the generated-page fingerprint, so a section declares its rank and the
@@ -747,10 +747,21 @@ img {
    aim. The padding is what the finger hits; the equal negative margin keeps the
    line box at its typographic height, so no card grows and the 390w page budget
    is untouched. inline-block (not inline) so the padding is part of the box the
-   browser hit-tests, and not inline-flex, so a long title still wraps as text. */
+   browser hit-tests, and not inline-flex, so a long title still wraps as text.
+
+   Two more links join the same treatment rather than getting a second one:
+   `.hero-readout-repo` (measured 23.1px tall at every width from 390 up — the
+   three fold-level routes into the evidence repos) and `.sweep-source`
+   (bench_50k_128d.txt, 16px — the link a senior engineer taps to falsify a
+   number). Same idiom, same reasoning, one rule. `.sweep-source` is styled in
+   Sweep.css; its touch box lives here so this stays the file's single 44px
+   lift. The 34px keycaps are deliberately NOT in this list — Keyboard.css
+   documents that trade and it is sound. */
 @media (max-width: 767px) {
   .card h3 a,
-  .system-copy h3 a {
+  .system-copy h3 a,
+  .hero-readout-repo,
+  .sweep-source {
     display: inline-block;
     padding-block: 10px;
     margin-block: -10px;
@@ -926,18 +937,50 @@ img {
   border-top: var(--hairline) solid var(--grid);
 }
 
-/* The Sweep opens the evidence section at the full container measure, on the
-   spine. It is not capped and it has no sibling: the side-by-side arrangement
-   that briefly lived here traded 576px of dead horizontal field for a 335px
-   vertical void under the rail, and below its own 1100px breakpoint it drew the
-   rail's hairline rows across the whole 976px measure with the last glyph at
-   ~452px — 547px of empty ruled line, this world's signature of "unfinished".
-   It also stepped the plate from 1051px at vw=1099 to 600px at vw=1100. The
-   plot's own max-width (Sweep.css) keeps its axis type at label rank; the plate
-   is never capped, because capping the plate is what opens a dead gutter. */
+/* The Sweep opens the evidence section on the spine, with no sibling: the
+   side-by-side arrangement that briefly lived here traded 576px of dead
+   horizontal field for a 335px vertical void under the rail, and below its own
+   1100px breakpoint it drew the rail's hairline rows across the whole 976px
+   measure with the last glyph at ~452px — 547px of empty ruled line, this
+   world's signature of "unfinished". It also stepped the plate from 1051px at
+   vw=1099 to 600px at vw=1100.
+
+   REVISED 2026-07-31 (DESIGN.md Layout updated in the same change): from the
+   width below up the CAP LIVES HERE, on the plate, not on the drawing. It used to
+   live only on .sweep-plot (max-width: 900px) inside a plate that was never
+   capped, so the plot ended 147px short of the plate's inner right edge at 1440 —
+   growing without bound past that — while the footnote strip's hairline still
+   ruled the plate's full width. That is the same empty-ruled-line defect
+   described above, reproduced one level in. With the cap on the plate, the plot,
+   the gloss and the footnote all end on one right edge.
+   950px, not 900: it preserves the reason the 900px cap existed. The plate's
+   interior is exactly 900px here (950 − 2px hairline − 48px padding), so the
+   680-unit viewBox scales 1.324x and the plot's own 10px axis type renders at
+   ~13.2px — the page's mono label rank, not the 15px it would reach at the full
+   1072px measure.
+
+   998px, not 1120px (2026-08-01): the handoff between the two caps has to happen
+   at the width where .sweep-plot's 900px starts binding, which is where the
+   plate's interior reaches 900px — container inner measure 950px, i.e. viewport
+   998px at the 24px gutter. Handing over at 1120 instead left a 120px-wide band
+   where NEITHER cap held the plate: the plate kept growing on the full container
+   measure while the drawing sat frozen at 900px, so the footnote hairline ruled
+   past the last gridline by a measured 2px at vw=1000, 26px at 1024, 82px at
+   1080 and 121px at 1119 — the empty-ruled-line signature again, in the exact
+   place two comments claimed it could not happen. Below 998px the container is
+   narrower than 950px, so the plate stays on the full measure and .sweep-plot's
+   own 900px cap is the one in force (Sweep.css). Exactly one cap is active at any
+   width, and the plot's right edge now meets the footnote's at every width from
+   320 to 2560. */
 .systems-sweep {
   margin: 0 0 var(--space-7);
   min-width: 0;
+}
+
+@media (min-width: 998px) {
+  .systems-sweep {
+    max-width: 950px;
+  }
 }
 
 /* THE READOUT RAIL — three repos, one measured cell each, on hairline rows.
@@ -1020,12 +1063,50 @@ img {
   }
 }
 
+/* Below 412 the three-track row cannot hold: the two fixed tracks plus two 16px
+   gaps claim 220px of a 288px content box, so the name track collapses to ~20px
+   while the mono anchor's min-content is 76-84px and the link paints straight
+   over its own value. Measured glyph overlap at 320w: parallax-kv 10.4px,
+   accretion-db 38.1px, lodestone 20.0px; 18.1px at 340w; 3.1px at 355w.
+   Stacked, name / value / unit fall in DOM order and the three values share the
+   container's left spine — which SATISFIES the Tabular Rule rather than breaking
+   it. The fixed tracks stay untouched above this width: they are what puts the
+   three figures on one right edge at >=1024.
+
+   CEILING RAISED 379 -> 411 (2026-08-01). Above the old ceiling the row stopped
+   overlapping but did not start FITTING: the name track computes to 80-111px at
+   380-411 while the mono repo anchors need 92.7 / 101.2 / 75.9px, so two of the
+   three names wrapped mid-token — "parallax-" / "kv" and "accretion-" / "db",
+   hyphen dangling — at 380, 385, 390 and 400 (accretion-db alone at 400-401),
+   clean from 402. A repo name broken across two lines is no longer a name a
+   reader can recognise or retype, and it is the fold's clickable route into the
+   evidence repo; 390px is both the most common phone width and one of the three
+   verify.mjs viewports, so this was the state most phone screeners actually saw.
+   411, not 402: 412 is the first width where all three names fit on one line
+   with the track still content-driven, so the handoff lands where the fixed
+   tracks genuinely hold rather than one glyph before it. The stacked band costs
+   140px of rail height at 390 (railBottom 890 -> 1030) and buys three unbroken
+   names — the same trade this rule already makes below 380. */
+@media (max-width: 411px) {
+  .hero-readout-row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-1);
+  }
+  .hero-readout-value {
+    text-align: left;
+  }
+}
+
 /* The metric, said in words. Same quiet register as the unit it follows: it
-   defines the unit rather than adding a second measurement to the row. */
+   defines the unit rather than adding a second measurement to the row.
+   --font-body, NOT --font-sans: the latter is declared nowhere (tokens.css
+   defines --font-body), so the declaration was invalid at computed-value time
+   and this gloss inherited the rail's mono — the plain-English translation of
+   recall@10 was set in the exact register of the jargon it translates. */
 .hero-readout-plain {
   display: block;
   color: var(--ink-3);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--fs-300);
 }
 
@@ -1073,6 +1154,40 @@ img {
 .hero h1, .hero-subhead { color: var(--ink); }
 .hero-band .hero-email-plain { color: var(--ink-2); }
 
+/* Mobile rhythm: 96px verticals are a desktop measure. On a phone they read
+   as five dead half-screens, and the page budget (≤~6,000px at 390w) is spent
+   on evidence, not air. Plate padding narrows with the viewport for the same
+   reason: 24px frames on a 390px screen spend an eighth of the width on air.
+
+   MOVED here from just under `.section` (was ~line 630). Authored there, three
+   of its four rules sat BEFORE their unmediated twins — `.section-head`
+   (margin-bottom 32px), `.hero-band` (padding-bottom 48px) and the 767px
+   `--section-gap: 64px` — all at equal (0,1,0) specificity, so source order
+   decided and the plain rules won. Measured computed at 320w and 390w:
+   .section-head 32px where the file intends 16, .hero-band 48px where it intends
+   32 — roughly 64px of phone budget spent on air the file believed it had
+   already reclaimed. Fixed by ORDER, which is this file's stated convention, and
+   not by a qualified duplicate rule, which DESIGN.md forbids. Keep this block
+   last of the three; do not move it back above `.hero-band`. */
+@media (max-width: 639px) {
+  :root {
+    --section-gap: 48px;
+  }
+
+  .plate {
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .section-head {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-band {
+    padding-bottom: var(--space-6);
+  }
+}
+
 /* --------------------------------------------------------- system feature */
 .system-list {
   display: grid;
@@ -1100,7 +1215,14 @@ img {
   font-size: var(--fs-600);
 }
 
+/* The margin is not optional: `.chip-rail` carries only margin-TOP and this
+   carried nothing, so the pill row butted the plate's loudest sentence at a
+   measured 0px gap on all three system plates at both 1440 and 390. 16px is the
+   figure exactly: every other sibling gap inside the plate is 16px
+   (kicker→h3, summary→chips via --space-3 plus the line box, proof→aside), so
+   the plate reads as one ladder instead of one collision. */
 .system-proof {
+  margin-top: var(--space-4);
   color: var(--ink);
   font-weight: 600;
 }
@@ -1745,15 +1867,20 @@ img {
   text-wrap: pretty;
 }
 
-/* :not(.climbing-route) because this rule was silently killing the topo's own
-   cap. .climbing-route declares max-width:440px (320px below 640px) at lines
-   ~1274-1287, but this later rule's (0,1,1) specificity beat both — measured
-   computed maxWidth "none" at 1440/1024/900/768/390/320, so both declarations
-   were dead code. Consequence at 768: the topo rendered 720x932px, taller than
-   its column is wide, beside 235px and 356px siblings — the "second hero" the
-   comment at .climbing-route says it must not be. */
-.hobby-cell .plate:not(.climbing-route) {
-  max-width: none;
+/* OPT-IN, not a blanket un-cap. The rule here used to be
+   `.hobby-cell .plate:not(.climbing-route) { max-width: none }` — written to
+   un-kill the topo's cap, but its (0,1,1) `:not()` also stripped
+   `.keyboard-fig`'s own 440px cap (Keyboard.css: "Compact by intent: a hobby
+   figure is a marginal note"). In the single-column band that left empty plate
+   ruled past the last glyph on two of three figures — keyboard 225px @768,
+   357px @900, 480px @1023; feed 521 / 653 / 776 — beside a topo correctly
+   holding 440px with 25px, which is this world's signature of unfinished.
+   `.feed-fig` is the one hobby figure authored with no cap of its own, so it
+   gets one here, matched to its siblings. `.keyboard-fig` and `.climbing-route`
+   now keep the caps their own files declare. Inert at >=1024, where all three
+   subgrid cells measure 304-336px. */
+.hobby-cell > .feed-fig {
+  max-width: 440px;
 }
 
 /* The UA <figure> margin (1em 40px) is live on this one, and it is the most

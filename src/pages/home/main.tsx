@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "../../js-flag";
+import { enableJs } from "../../js-flag";
 import "../../enhance";
 import "../../index.css";
 import { education, featuredSystems, hero, hobbies, person, skills } from "../../content";
@@ -208,3 +208,7 @@ createRoot(document.getElementById("root")!).render(
     <Home />
   </StrictMode>,
 );
+// AFTER render, never before: `.js` is the receipt for a completed mount. See
+// src/js-flag.ts — as an import side effect it hid intact prerendered content
+// whenever anything above threw.
+enableJs();

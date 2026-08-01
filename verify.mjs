@@ -409,6 +409,86 @@ async function checkPage(spec, viewport) {
         `${tag}: primary CTA label contrast below 4.5:1 (rest ${atRest.toFixed(2)}, hover ${hovered.toFixed(2)})`,
       );
     await page.mouse.move(0, 0);
+
+    // ...and FOCUSED. The global :focus-visible ring is --series-2, which on the
+    // amber-filled primary drew #E9A13B on #E9A13B — a measured 1.00:1 ring on
+    // the one control a keyboard screener is most likely to reach. The ring must
+    // not be the button's own fill.
+    //
+    // Read in a THROWAWAY page. Focusing the CTA in this one moves the document's
+    // sequential-focus starting point, and the skip-link assertion further down
+    // presses Tab from wherever focus last was — so measuring here would break a
+    // gate that is testing something else entirely.
+    const ringPage = await browser.newPage({
+      viewport: { width: viewport.width, height: viewport.height },
+    });
+    await ringPage.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+    const ring = await ringPage.locator(".btn-primary").first().evaluate((el) => {
+      el.focus();
+      const s = getComputedStyle(el);
+      return { outline: s.outlineColor, fill: s.backgroundColor, width: s.outlineWidth };
+    });
+    await ringPage.close();
+    if (ring.outline === ring.fill)
+      problems.push(
+        `${tag}: primary CTA focus ring is its own background (${ring.outline}) — invisible focus`,
+      );
+    if (parseFloat(ring.width) < 1)
+      problems.push(`${tag}: primary CTA focus ring has no width (${ring.width})`);
+  }
+
+  // HERO READOUT RAIL overlap gate. The rail's two fixed tracks plus two 16px
+  // gaps claim 220px of a 288px content box at 320w, which collapsed the name
+  // track to ~20px against a mono anchor whose min-content is 76-84px: the repo
+  // link painted straight over its own measured value (parallax-kv 10.4px,
+  // accretion-db 38.1px, lodestone 20.0px of glyph overlap at 320w; 18.1px at
+  // 340; 3.1px at 355). The 'narrow' viewport was already 320x700 — the gate ran
+  // at the failing width and simply had no rail check. Measured on TEXT rects
+  // (Range), not element boxes, so a stacked layout with the value on its own row
+  // passes and a same-row collision cannot hide behind whitespace.
+  if (spec.path === "/") {
+    const railOverlaps = await page.evaluate(() => {
+      const out = [];
+      // Per-TEXT-NODE rects, and only nodes that are actually painted. A Range
+      // over the whole element also measures the ".visually-hidden" new-tab
+      // string, which `clip: rect(0 0 0 0)` shrinks to a 1x1 box while Range
+      // still reports its full 151.7px natural width — measured overlaps of
+      // 22-100px against elements whose real boxes never touch. Filtering by
+      // rect size cannot separate the two; ancestry can.
+      const paintedRects = (root) => {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        const boxes = [];
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          if (!n.nodeValue?.trim()) continue;
+          if (n.parentElement?.closest(".visually-hidden")) continue;
+          const r = document.createRange();
+          r.selectNodeContents(n);
+          for (const b of r.getClientRects()) if (b.width > 0 && b.height > 0) boxes.push(b);
+        }
+        return boxes;
+      };
+      for (const row of document.querySelectorAll(".hero-readout-row")) {
+        const repo = row.querySelector(".hero-readout-repo");
+        const value = row.querySelector(".hero-readout-value");
+        if (!repo || !value) continue;
+        const repoRects = paintedRects(repo);
+        const valueRects = paintedRects(value);
+        if (!repoRects.length || !valueRects.length) continue;
+        const repoRight = Math.max(...repoRects.map((b) => b.right));
+        const valueLeft = Math.min(...valueRects.map((b) => b.left));
+        // Only a SAME-LINE collision is a defect: below 412px the row stacks by
+        // design, and there the value sits on its own line at the same left edge.
+        const sameLine = repoRects.some((a) =>
+          valueRects.some((b) => a.top < b.bottom - 1 && b.top < a.bottom - 1),
+        );
+        if (sameLine && repoRight > valueLeft + 0.5)
+          out.push(
+            `${repo.textContent?.trim()} overlaps its value by ${(repoRight - valueLeft).toFixed(1)}px`,
+          );
+      }
+      return out;
+    });
+    for (const o of railOverlaps) problems.push(`${tag}: hero readout — ${o}`);
   }
 
   // footer contact links + mailto on every page
@@ -439,6 +519,82 @@ async function checkPage(spec, viewport) {
   if (unrevealed) problems.push(`${tag}: ${unrevealed} .reveal never gained .is-in after full scroll`);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.waitForTimeout(100);
+
+  // PARKED-OFFSET reveal gate. The gate above cannot see the defect this one
+  // catches: it always steps from y=0 in 600px increments with 60ms dwell, so
+  // every block enters the root from BELOW and satisfies the 0.15 threshold on
+  // the way in. Landing directly on a deep offset — an anchor link, a restored
+  // scroll position, a middle-click into the page — a block taller than ~6.7x
+  // the 15% slice can sit fully on screen at a ratio under 0.15 and never fire.
+  // Measured dead before the [0, 0.15] threshold fix: /projects/ at 390x844
+  // parked at y=2000 (FIG. 04 lodestone, 1041px) and /experience/ at y=800
+  // (869px timeline item), both opacity 0 after 3s stationary.
+  // Assert on VISIBLE geometry, not on .is-in: what matters is that nothing the
+  // reader can see is transparent.
+  for (const parkY of [800, 2000, 4200]) {
+    const parked = await browser.newPage({
+      viewport: { width: viewport.width, height: viewport.height },
+    });
+    await parked.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+    const reachable = await parked.evaluate(
+      (y) => y <= document.documentElement.scrollHeight - document.documentElement.clientHeight,
+      parkY,
+    );
+    if (!reachable) {
+      await parked.close();
+      continue;
+    }
+    await parked.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), parkY);
+    await parked.waitForTimeout(700); // past the 450ms transition
+    const stuck = await parked.evaluate(() => {
+      const out = [];
+      // Bounded by the observer's OWN root, not the raw viewport: useReveal
+      // declares `rootMargin: 0px 0px -10% 0px`, so the bottom 10% of the screen
+      // is an authored pre-roll strip where a block that has only just peeked in
+      // is SUPPOSED to still be faded — that is the fade reading as designed.
+      // Measured: /projects/ at 390x844 parked at y=800 leaves FIG. 03's top at
+      // 795.9 against a root bottom of 759.6, i.e. genuinely outside. Asserting
+      // on the raw viewport would fail a correct render. A block big enough to
+      // deadlock the threshold spans the whole root, so nothing is lost.
+      const rootBottom = window.innerHeight * 0.9;
+      for (const el of document.querySelectorAll(".reveal")) {
+        const r = el.getBoundingClientRect();
+        const inRoot = r.bottom > 0 && r.top < rootBottom && r.width && r.height;
+        if (inRoot && getComputedStyle(el).opacity !== "1")
+          out.push(el.className || el.tagName);
+      }
+      return out;
+    });
+    if (stuck.length)
+      problems.push(
+        `${tag}: ${stuck.length} on-screen .reveal still transparent when parked at y=${parkY} (${stuck.join(", ")})`,
+      );
+    await parked.close();
+  }
+
+  // MOUNT-FAILURE gate: a throw anywhere in the mount path must leave the
+  // prerendered HTML VISIBLE, never blank the page. `.js` is what switches on
+  // `.js .reveal { opacity: 0 }`, so it may only be set after render completes
+  // (src/js-flag.ts). Deleting matchMedia is the cheapest real reproduction —
+  // measured before the fix: #root rendered 0 children and 0 visible characters
+  // on / and /projects/ while documentElement still carried `js`.
+  const broken = await browser.newPage({
+    viewport: { width: viewport.width, height: viewport.height },
+  });
+  await broken.addInitScript(() => {
+    // @ts-expect-error deliberately removing a platform API
+    delete window.matchMedia;
+  });
+  await broken.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+  const degraded = await broken.evaluate(() => ({
+    children: document.getElementById("root")?.children.length ?? 0,
+    text: (document.getElementById("root")?.innerText ?? "").trim().length,
+  }));
+  if (degraded.children === 0 || degraded.text === 0)
+    problems.push(
+      `${tag}: broken-mount render is blank (#root children ${degraded.children}, ${degraded.text} chars) — content must survive a throw in the mount path`,
+    );
+  await broken.close();
 
   // footer exemption: the footer must never reveal (always visible)
   if (await page.locator("footer .reveal").count())

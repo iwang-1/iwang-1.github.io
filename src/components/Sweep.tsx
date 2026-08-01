@@ -87,9 +87,21 @@ export function Sweep() {
             ef=16 sample plotted below already carries recall 0.8996, so this
             states what the figure shows rather than adding to it. Volunteering
             your own failure boundary only counts if the reader can see that you
-            did it on purpose. */}
+            did it on purpose.
+
+            TWO LINES, and the break is geometry, not taste. On one line the bbox
+            ran x 100..348.5 / y 114.9..126.3, and the IVF-PQ segment
+            `M 328 94 L 379 285.5` entered it at (333.6, 115.1) and left at
+            (336.6, 126.2) — the data series drew straight through the "i" of
+            "falls below it", 30 sampled crossings. Broken here, line one ends at
+            x≈257 and line two at x≈290, both clear of the curve, and the y=135
+            band is empty for the full label width. Strings and numbers
+            unchanged. */}
         <text className="sweep-reference-label" x="100" y="124">
-          recall 0.90 floor · ef=16 falls below it
+          recall 0.90 floor ·
+          <tspan x="100" dy="11">
+            ef=16 falls below it
+          </tspan>
         </text>
 
         {/* --- axes ------------------------------------------------------- */}

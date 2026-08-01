@@ -12,8 +12,10 @@
  *
  *  The crosshair is the site's one animated moment and it is user-driven. Under
  *  prefers-reduced-motion it still tracks — the transition just drops to 0ms in
- *  Sweep.css. Imported after js-flag by every page entry; guarded so it runs
- *  once per document. */
+ *  Sweep.css. Imported by every page entry; guarded so it runs once per
+ *  document. Note it runs BEFORE the root `.js` class is set (js-flag's
+ *  `enableJs()` is called after render), so a throw here leaves the prerendered
+ *  HTML fully visible instead of hiding it. */
 const prefersReduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
