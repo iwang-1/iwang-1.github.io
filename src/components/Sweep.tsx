@@ -144,7 +144,7 @@ export function Sweep() {
       aria-label="Figure 1: lodestone recall against throughput, ten measured samples. Move the pointer across the plot, or use the arrow keys, to read each sample."
     >
       <figcaption className="plate-label">
-        FIG. 01 · lodestone · recall vs throughput
+        FIG. 03 DETAIL · lodestone · recall vs throughput
       </figcaption>
 
       {/* THE GLOSS. The plate label above is machine grammar — "lodestone" is a
@@ -285,14 +285,14 @@ export function Sweep() {
           <line className="sweep-legend-ivf" x1="98" y1="222" x2="112" y2="222" />
           <text x="118" y="226">IVF-PQ nlist=256 m=32</text>
           <path className="sweep-legend-oracle" d="M 98 244 L 112 244 M 105 240 L 105 248" />
-          <text x="118" y="248">oracle · exact brute force</text>
+          <text x="118" y="248">oracle · exact brute force · all 48 cores</text>
         </g>
 
         {/* --- the oracle: 971 q/s at exact recall, the thing the index is
                 being compared against ----------------------------------- */}
         <g className="sweep-oracle">
           <path d="M 121.6 69.2 L 133.6 69.2 M 127.6 63.2 L 127.6 75.2" />
-          <text x="138.6" y="64">oracle · 971 q/s exact</text>
+          <text x="138.6" y="64">oracle · 971 q/s exact · 48 cores</text>
         </g>
 
         {/* --- IVF-PQ, nlist=256 m=32, sweeping nprobe -------------------- */}

@@ -6,11 +6,18 @@ import { Plate } from "./Plate";
 import { Readout } from "./Readout";
 import { Reveal } from "./Reveal";
 
-/** Figure numbering across the site: FIG. 00 is the climbing topo, FIG. 01 is
+/** Figure numbering across the site: the three system plates are FIG. 01-03 in
+ *  page order, and the Sweep labels itself a DETAIL of lodestone's plate rather
+ *  than taking a number of its own — it used to be FIG. 01 while lodestone's
+ *  plate was FIG. 04, so one subject carried two numbers on one page and three
+ *  cold reviewers read it as a numbering bug. The hobby plates carry plain
+ *  labels, not figure numbers.
+ *
+ *  (historical note) FIG. 00 was the climbing topo, FIG. 01 was
  *  the recall curve on the homepage, and the three system plates follow. The
  *  offset lives here so both pages that render these cards number them
  *  identically. */
-const FIRST_SYSTEM_FIGURE = 2;
+const FIRST_SYSTEM_FIGURE = 1;
 
 /** The plate label format, zero-padded: "FIG. 02 · lodestone". Figure numbers
  *  belong to objects that genuinely are figures — the three systems, the curve,

@@ -71,6 +71,13 @@
      figure lacked once the crosshair worked: no cursor change, no hint, so the
      plate read as a static PNG. */
   cursor: col-resize;
+  /* The caption invites a drag, so a drag must not select text instead. Four of
+     six cold reviewers dragged the plot and all four got the whole figure
+     highlighted blue. Scoped to the scroller and the drawing ONLY — the readout
+     line, the key and the footnote below stay selectable, because those are the
+     numbers a reader may legitimately want to copy. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .sweep-scroll > * {

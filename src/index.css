@@ -2099,6 +2099,17 @@ button.btn {
   margin-top: var(--space-1);
 }
 
+/* A project's license is metadata about the CODE, not provenance about the
+   person — it must not share `.role-meta`, which is the slot that carries
+   "University of Maryland" and role dates. Set quieter and smaller than the
+   institution rank so "MIT" can never again read as a university. */
+.project-license {
+  font-family: var(--font-mono);
+  font-size: var(--fs-300);
+  color: var(--ink-3);
+  margin-top: var(--space-1);
+}
+
 .role-bullets {
   margin: var(--space-3) 0 0;
   padding-left: 20px;

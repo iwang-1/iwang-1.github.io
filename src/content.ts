@@ -66,6 +66,10 @@ export const hero = {
       href: "https://github.com/iwang-1/parallax-kv",
       value: "2.9M",
       unit: "client operations checked",
+      // The one hero metric that shipped without a gloss, and the exact row both
+      // non-engineer reviewers named as the one they could not judge. Names what
+      // the number IS; asserts no second measurement.
+      plain: "reads and writes replayed under failure",
     },
     {
       repo: "accretion-db",
@@ -190,7 +194,8 @@ export const featuredSystems: FeaturedSystem[] = [
     // template. It restates the footnote's checker-bug fact in plain prose;
     // no second copy of any number.
     aside: "The first bug the stress harness found was in my checker, not in the consensus code.",
-    provenance: "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms",
+    provenance:
+      "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     artifactLinks: [
       {
@@ -222,7 +227,8 @@ export const featuredSystems: FeaturedSystem[] = [
       "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Results are benchmarked against sled, including the cases where sled wins.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
-    provenance: "16-byte keys / 100-byte values · ext4 on NVMe · Xeon 8488C",
+    provenance:
+      "16-byte keys / 100-byte values · ext4 on NVMe · Xeon 8488C · measured 2026-07-13",
     repoHref: "https://github.com/iwang-1/accretion-db",
     artifactLinks: [
       {
@@ -249,10 +255,11 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 cores while the search runs on one, so the two sides of that ratio are not core-for-core.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
-    provenance: "50,000 x 128-d · k=10 · single core · Xeon 8488C",
+    provenance:
+      "50,000 x 128-d · k=10 · search on 1 core, brute-force baseline on 48 · Xeon 8488C · measured 2026-07-16",
     repoHref: "https://github.com/iwang-1/lodestone",
     artifactLinks: [
       {
@@ -286,7 +293,11 @@ export interface Education {
 export const education: Education[] = [
   {
     school: "University of Maryland, College Park",
-    degree: "B.S./M.S. in Computer Science — Departmental Honors (research track)",
+    // Which degree lands in May 2027 was unresolved: B.S.-new-grad and
+    // M.S.-new-grad are different reqs with different bands, and routing a
+    // candidate is literally the recruiter's job. FACTS.md:14 already recorded
+    // the answer ("M.S. expected May 2027"); this states it.
+    degree: "B.S./M.S. in Computer Science, M.S. expected May 2027 — Departmental Honors (research track)",
     dates: "Aug 2023 – May 2027",
     detailLines: [
       "On the faculty-mentored research track; minors in Data Science and Philosophy",

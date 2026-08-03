@@ -130,7 +130,14 @@ export function ProjectCard({ project }: { project: Project }) {
     <article className={repoHref ? "card card-live" : "card"} id={project.id}>
       <h3>{repoHref ? <ExternalLink href={repoHref}>{project.title}</ExternalLink> : project.title}</h3>
       <div className="project-meta">
-        {project.license && <span className="role-meta">{project.license}</span>}
+        {/* NOT `.role-meta`: that class is the institution/date provenance slot
+            ("University of Maryland", "{dates} · {location}"), so a bare "MIT"
+            one line under a project title read as Massachusetts Institute of
+            Technology to two of six cold reviewers — one of them three times
+            before getting suspicious. The word "License" is the whole fix. */}
+        {project.license && (
+          <span className="project-license">{project.license} License</span>
+        )}
       </div>
       {project.description.map((d) => (
         <p key={d} style={{ marginTop: 12, marginBottom: 0 }}>
