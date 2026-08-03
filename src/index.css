@@ -539,6 +539,26 @@ button.btn {
   margin-top: auto;
 }
 
+/* THE LAST-CHILD RULE, generalised (2026-08-03). The rule above states the
+   principle for one element — a block that closes its container owns that
+   container's bottom edge, so it may not carry a trailing margin — but three
+   other closing blocks still did, and a bottom margin inside a container whose
+   own padding-bottom already states the edge is two spacing mechanisms on one
+   boundary. Measured at every width: `.project-links` closes each of the three
+   system plates (16px x3), `.skills-row` closes the skills block (24px), and
+   `.hero-email-plain` closes the hero tail (16px) — 64px of doubled air, and it
+   is doubled at 1440 too, which is why this is NOT in a mobile block. It is not
+   collapsed away: all four parents are flex or grid containers, where adjoining
+   margins do not collapse, so the margin is painted in full.
+   `:last-child`, not a blanket zero: each of these elements ALSO appears
+   mid-container on other pages (`.project-links` above a chip rail on
+   /projects/), where the trailing margin is the correct separation. */
+.system-copy > .project-links:last-child,
+.skills-block > .skills-row:last-child,
+.hero-tail > .hero-email-plain:last-child {
+  margin-bottom: 0;
+}
+
 /* AXIS RULE — the only decorative line on the site: a 1px rule carrying four
    5px ticks, opening a section the way an axis opens a plot.
 
@@ -1343,8 +1363,18 @@ button.btn {
    not by a qualified duplicate rule, which DESIGN.md forbids. Keep this block
    last of the three; do not move it back above `.hero-band`. */
 @media (max-width: 639px) {
+  /* 32px, not 48 (2026-08-03). The token steps 96 -> 64 -> 48 by width, and 48
+     was still a desktop measure wearing a phone's number: at 390w it is 12% of
+     the viewport's height spent, five times, on nothing, and the home page
+     measured 9,288px against the ~6,000px budget DESIGN.md states. 32px is the
+     next rung DOWN THE SAME LADDER (--space-6), not a new literal, and it is
+     still the largest single vertical on the phone page, so the sections stay
+     ranked. Section separation is the ONLY thing this changes: the token is
+     read by .section, .contact-band and .not-found alone, so one edit moves
+     every section boundary and no plate interior. Costs 27px per boundary
+     against the 48px it replaces (the rank-2 sections read it at 0.66). */
   :root {
-    --section-gap: 48px;
+    --section-gap: var(--space-6);
   }
 
   /* ONE mobile padding step for the primitive under BOTH its names. `.card` is
@@ -1371,13 +1401,86 @@ button.btn {
   }
 
   .section-head {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
   }
 
   .hero-band {
     padding-bottom: var(--space-6);
   }
+
+  /* ---- the phone rhythm, one rung down (2026-08-03) ----------------------
+     Every rule below steps an EXISTING vertical one rung down the 4→96px
+     ladder — 48→32 or 32→24 or 16→12 — for the reason the block's own opening
+     comment already gives: a 32px gap between a heading and its own paragraph
+     is a desktop measure, and at 390w the page was spending it 30-odd times.
+     Nothing here changes a horizontal, a type size, a colour, or any spacing
+     at ≥640px, and nothing is removed: these are the same boundaries, stated
+     at the phone's scale. The one drawn figure whose height these could
+     distort — the topo — is untouched; see its own comment for why its 320px
+     phone cap is a rendering constraint and not whitespace.
+
+     Attribution at 390w, measured: hero 20px, hobby row 40px, sweep margin
+     16px, section exit 8px, skills block 40px, contact 20px, footer 40px,
+     the three system plates 84px, the education card 20px, the six footnote
+     strips 24px, the four axis rules 12px. */
+  .hero {
+    padding-top: var(--space-6);
+  }
+
+  .hero-lead h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-subhead {
+    margin-bottom: var(--space-3);
+  }
+
+  /* The rail's own rows keep their 8px padding: they are hairline-ruled data
+     rows and the padding is what keeps a 44px tap target on the repo link. */
+  .hero-layout {
+    row-gap: var(--space-5);
+  }
+
+  .hero-aws {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+  }
+
+  .axis-rule {
+    margin-bottom: var(--space-3);
+  }
+
+  .systems-sweep {
+    margin-bottom: var(--space-6);
+  }
+
+  .plate-footnote {
+    padding-top: var(--space-2);
+  }
+
+  .section-exit {
+    margin-top: var(--space-5);
+  }
+
+  .skills-block {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+  }
 }
+
+/* The rest of the phone rhythm CANNOT live in the block above, and the reason is
+   this file's own cascade convention rather than a preference: `.system-feature`,
+   `.system-evidence`, `.system-proof`, `.skills-row`, `.contact-layout`,
+   `.contact-copy h2`, `.footer`, `.footer-colophon`, `.edu-coursework` and the
+   `.edu-card` rows are all authored BELOW line 1365, so a mobile override up
+   there sits before its own base rule and loses on source order at equal (0,1,0)
+   specificity. Written there first and measured: eight of the ten computed to the
+   desktop value on a 390px phone — .contact-layout 48px, .footer 48px,
+   .system-feature 16px, .skills-row 24px, .contact-copy h2 16px — exactly the
+   failure the block's opening comment records for `.section-head` and
+   `.hero-band`. Each override now sits immediately after the rule it overrides,
+   which is the fix that comment prescribes (ORDER, never a qualified duplicate).
+   Keep them there. */
 
 /* --------------------------------------------------------- system feature */
 .system-list {
@@ -1442,13 +1545,33 @@ button.btn {
   border-top: var(--hairline) solid var(--grid);
 }
 
+/* The phone step for this plate's own verticals — one rung down the ladder
+   (2026-08-03), continuing the block at ~line 1365. 12px, not 8, on the two
+   gaps: the copy/evidence boundary carries the plate's one hairline divider, so
+   it needs air either side to read as a rule and not a collision. The copy
+   ladder (kicker → title → summary → chips → proof → aside → links) ran at a
+   uniform 16px, three plates deep, which is 84px per plate of desktop rhythm on
+   a 390px screen. Nothing is removed and no type changes: same seven blocks,
+   same order, same sizes. */
 @media (max-width: 639px) {
-  .system-feature {
-    gap: var(--space-4);
+  .system-feature,
+  .system-evidence {
+    gap: var(--space-3);
   }
 
-  .system-evidence {
-    gap: var(--space-4);
+  .system-copy > .kicker,
+  .system-summary,
+  .system-aside {
+    margin-bottom: var(--space-3);
+  }
+
+  .system-proof {
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .system-copy > .project-links {
+    margin-top: var(--space-2);
   }
 }
 
@@ -2015,6 +2138,23 @@ button.btn {
   border-bottom: var(--hairline) solid var(--grid);
 }
 
+/* One rung down on phones (2026-08-03), row gap only. At ≥1024 this grid's row
+   gap is already --space-2 (see the block below) because the cells subgrid onto
+   three named rows; below it the grid is ONE column, so the row gap is the space
+   between one hobby's figure and the next hobby's heading, and 32px is a desktop
+   measure there. The COLUMN gap is untouched by construction — there is one
+   column — and the closing hairline the comment above describes stays. */
+@media (max-width: 639px) {
+  .hobby-intro {
+    margin-bottom: var(--space-5);
+  }
+
+  .hobby-grid {
+    row-gap: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
+}
+
 @media (min-width: 1024px) {
   .hobby-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2113,6 +2253,46 @@ button.btn {
   color: var(--ink);
 }
 
+/* PHONE: two tracks, not two lines. The stacked shape above exists because a
+   two-column TABLE in a third-width DESKTOP column wrapped both cells every two
+   words — that reason is real at ≥1024, where the cell is 304-336px wide and the
+   figure is one of three side by side. On a phone the cell is the container's
+   full measure (288-382px) and the stack spends two lines on four words: the four
+   rows measured 4 x 2 lines and 275px of a 336px plate, with the note's own line
+   never longer than 24 characters. Set as tracks they measure one line each and
+   the plate closes 96px earlier, with every topic and every note still rendered
+   in full — no truncation, no toggle.
+   SUBGRID, not a fixed first track: `max-content` on the parent sizes the topic
+   column to the longest of the four topics ("the industry"), and each row
+   inherits that one column pair, so all four notes start on ONE left edge. A
+   literal 7.5rem track was measured first and rejected — it put the four notes on
+   the same edge but wrapped "launches and reviews" at 320w, which is a fixed
+   track deciding a phone's line breaks.
+   FROM 360px UP, and the floor is measured, not guessed: at 320w the note column
+   computes to ~150px and three of the four notes wrap to two lines, which is
+   taller than the stack it replaces. Below 360 the stacked shape is correct and
+   stays; there is no width where this rule makes the plate taller. */
+@media (min-width: 360px) and (max-width: 639px) {
+  .feed-list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .feed-row {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+    align-items: baseline;
+    column-gap: var(--space-4);
+  }
+
+  /* The note is beside its topic now, not under it, so the 4px that separated
+     them vertically would push it off the shared baseline. */
+  .feed-list dd {
+    margin-top: 0;
+  }
+}
+
 /* Bottom-align nothing: each hobby cell is its own column, and a figure that
    stretches to match its neighbours would distort the drawings. Instead the
    cells share a top edge and the figures keep their natural height. */
@@ -2199,12 +2379,34 @@ button.btn {
   max-width: var(--measure-mono);
 }
 
+/* The education card's interior, one rung down on phones (2026-08-03). The
+   --measure-mono cap above stays exactly as it is: measured at 320/360/390/414w
+   it computes to 532px against a 254-348px box, so it is inert on every phone
+   and is NOT what makes this card tall — the four 16px steps between its six
+   stacked rows were. */
+@media (max-width: 639px) {
+  .edu-card .edu-degree,
+  .edu-card .role-meta {
+    margin-bottom: var(--space-2);
+  }
+
+  .edu-coursework {
+    margin-top: var(--space-2);
+  }
+}
+
 /* ---------------------------------------------------------------- skills */
 .skills-row {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   margin-bottom: var(--space-5);
+}
+
+@media (max-width: 639px) {
+  .skills-row {
+    margin-bottom: var(--space-4);
+  }
 }
 
 /* Desktop: label rail + chips share the row, so the rails span the full
@@ -2340,6 +2542,21 @@ button.btn {
   }
 }
 
+/* One rung further down on phones (2026-08-03): the band already steps 64 → 48
+   at 768, and 48px of pad top and bottom is a desktop measure on a 390px screen.
+   Both CTAs, the address and the whole paragraph stay. */
+@media (max-width: 639px) {
+  .contact-layout {
+    row-gap: var(--space-5);
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  .contact-copy h2 {
+    margin-bottom: var(--space-3);
+  }
+}
+
 /* ---------------------------------------------------------------- footer */
 /* The footer owns no vertical gap of its own. Every page either ends in a
    .contact-band (whose own --section-gap already separates it from the content
@@ -2381,6 +2598,18 @@ button.btn {
 }
 
 .footer-email, .footer-colophon { color: var(--ink-2); }
+
+/* The footer's own verticals, one rung down on phones (2026-08-03). Every link,
+   the address and both colophon lines stay; only the frame tightens. */
+@media (max-width: 639px) {
+  .footer {
+    padding: var(--space-6) 0;
+  }
+
+  .footer-colophon {
+    margin-top: var(--space-5);
+  }
+}
 
 /* --------------------------------------------------------------- 404 page */
 /* The 404 has no .contact-band, so it is the one page whose last main block

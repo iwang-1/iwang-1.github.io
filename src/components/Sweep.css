@@ -23,6 +23,25 @@
   gap: var(--space-4);
 }
 
+/* The Sweep is a `.plate`, so it takes the primitive's mobile gap step (16 ->
+   8px, index.css's 639px block) like every other plate — but it did NOT, and
+   this file is why: it ships in its own stylesheet, which Vite emits AFTER
+   index.css, so this unmediated `gap: var(--space-4)` out-ordered the mobile
+   rule at equal (0,1,0) specificity and won. Measured at 320/360/390/414w: 16px
+   on the Sweep against 8px on the keyboard, topo and feed plates — one
+   primitive rendering two gaps on one page, the same class of defect the
+   `.plate, .card` padding comment in index.css records. Six children, so it cost
+   40px of phone height at every width.
+   Declared HERE, not by raising specificity in index.css: the loss is caused by
+   this file's own rule, and a `.plate.sweep` qualifier in index.css would be the
+   duplicate-with-a-qualifier that DESIGN.md forbids. If the primitive's mobile
+   step ever changes, this rule has to follow it. */
+@media (max-width: 639px) {
+  .sweep {
+    gap: var(--space-2);
+  }
+}
+
 /* The plate is focusable, so it needs a real focus ring — the crosshair is
    keyboard-operable and the arrow keys have to have somewhere to land. */
 .sweep:focus-visible {

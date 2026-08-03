@@ -288,11 +288,38 @@ its column, which is exactly what the display serif produces at a raised root fo
 ## Layout
 
 A 1120px container with 24px gutters (16px below 480px). One vertical rhythm token,
-`--section-gap`, owns section separation: 96px on desktop, 64px below 768px, and 48px
-below 640px. Every section-level block carries its gap *above* itself and nothing carries
-a gap below, so the four stacked verticals that used to compound (section padding, main
-padding, contact-band margin, footer margin) resolve to a single value and need no patch
-rule.
+`--section-gap`, owns section separation: 96px on desktop, 64px below 768px, and 32px
+below 640px (48px until 2026-08-03 — see the mobile-budget bullet). Every section-level
+block carries its gap *above* itself and nothing carries a gap below, so the four stacked
+verticals that used to compound (section padding, main padding, contact-band margin,
+footer margin) resolve to a single value and need no patch rule.
+
+**The Last-Child Rule.** A block that closes its container owns that container's bottom
+edge and carries no trailing margin — a bottom margin inside a box whose own padding or
+hairline already states the edge is two spacing mechanisms on one boundary. The stylesheet
+stated this for `.plate-footnote` alone; generalised 2026-08-03 to `.project-links`,
+`.skills-row` and `.hero-email-plain`, which were doubling 64px at *every* width (all four
+parents are flex or grid, so the margins never collapsed). Scoped with `:last-child`, since
+each of those elements also appears mid-container elsewhere, where the margin is correct.
+
+**The Media-Block-Goes-After Rule** (2026-08-03). This stylesheet resolves overrides by
+SOURCE ORDER at equal specificity, never by adding a qualifier — so a `@media (max-width:
+639px)` rule must sit *after* the base rule it overrides, and one consolidated mobile block
+near the top of the file is therefore a trap, not a convenience. The file already recorded
+this failing three times (`.section-head`, `.hero-band`, `--section-gap`); the 2026-08-03
+pass reproduced it a fourth time at larger scale by writing the phone rhythm into that one
+block, where **eight of ten rules silently computed the desktop value at 390w** —
+`.contact-layout` 48px, `.footer` 48px, `.system-feature` 16px, `.skills-row` 24px,
+`.contact-copy h2` 16px — with the build green and every gate passing. Only a computed-style
+probe caught it. The rules were split to sit beside the base rules they override, and each
+now carries a comment saying so. **The cross-file version is worse and is the same rule:**
+a component stylesheet (`Sweep.css`) is emitted *after* `index.css`, so its unmediated
+declaration beats index.css's mobile block regardless of which file "looks" more specific —
+this is exactly how the Sweep kept a 16px plate gap while every other plate stepped to 8px.
+Mobile overrides for a component belong in that component's own file.
+Corollary for any future pass: after changing a mobile vertical, assert its **computed**
+value at 320 and 390, per declaration. The twelve verify combos cannot see this class of
+defect — a rule losing the cascade renders a taller page, not a broken one.
 
 Space is a nine-step ladder (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px). Plate padding is
 24px, tightening to 16px below 640px — a 24px frame on a 390px screen spends an eighth of
@@ -363,8 +390,46 @@ Responsive behaviour, as built:
   44px without changing the page's height budget.
 - **Mobile budget**: the phone page is held to ~6,000px. Supplementary illustration is
   dropped rather than shrunk — the box diagrams hide below 640px because the readout and
-  the artifact links are the proof, and the diagram was ~200px per plate. Known overrun:
-  the home page measures ~9,300px at 390w, which predates and survives the spine pass.
+  the artifact links are the proof, and the diagram was ~200px per plate.
+  **Structural pass 2026-08-03**, on the owner's ask: the home page went 9,288 → 8,635px at
+  390w (−653, −7.0%), 10,593 → 10,036 at 320w, 9,661 → 9,009 at 360w, 8,795 → 8,143 at 414w;
+  /experience/ and /projects/ fell 120 and 290px at 390w from the shared rules. Every pixel
+  came from whitespace or a cascade defect — **no content was removed, nothing was hidden on
+  mobile, no `display:none` was added to any number, metric, repo link or footnote, and no
+  "read more" was introduced.** Attribution is leave-one-out — each group reverted against
+  the shipped stylesheet and re-measured — and the parts sum to the whole exactly
+  (557 at 320w, 653 at 390w, versus 557 / 653 measured for all of them together, so nothing
+  below is double-counted):
+
+  | group | 320w | 390w |
+  |---|---|---|
+  | the three system plates' interior copy ladder, 16 → 12px | 88 | 88 |
+  | the Last-Child Rule above (also −64 at 1440) | 64 | 64 |
+  | hero interior (pad, row gap, `h1`, subhead, AWS line) | 56 | 56 |
+  | `--section-gap` 48 → 32px, 5 boundaries | 53 | 53 |
+  | skills block frame + 5 rows | 48 | 48 |
+  | contact band | 44 | 44 |
+  | the Sweep's cross-file plate-gap cascade loss | 40 | 40 |
+  | footer frame + colophon | 40 | 40 |
+  | hobby row rhythm | 32 | 32 |
+  | 6 footnote strips, 12 → 8px pad | 24 | 24 |
+  | 4 axis rules + section heads | 24 | 24 |
+  | Sweep bottom margin + section exit | 24 | 24 |
+  | education card interior | 20 | 20 |
+  | feed list as two subgrid tracks (≥360px only) | 0 | 96 |
+
+  Text was verified NOT to reflow: hobby leads 4/5/4 lines, coursework 6, skills 2×5,
+  footnotes 1/2/3/7/6/7 — identical before and after, so no measure changed.
+  What was measured and REJECTED: shrinking the boulder topo's phone cap (320 → 280px buys
+  40px but the holds are fixed-px over a percentage wall, so hold density went 11.2% → 15.1%
+  and hold-on-hold collisions 1 → 3 — that distorts a drawing); the 68ch mono caps, which
+  are *inert* on phones (padding-right computes to 0px at 320/360/390/414 and the coursework
+  cap is 532px against a 254-348px box, so they add no phone height and there was nothing to
+  reclaim); and the system plates' diagram containers, which already collapse to exactly 0px
+  under `display:none` and reserve no space. The remaining ~8,635px is ~5,578px of
+  irreducible content (276 painted text rows = 4,844px, three drawn figures = 669px, the
+  64px nav) plus ~3,057px of structural air across 40-odd boundaries; going materially below
+  that means cutting copy, which is an owner decision and not a layout pass.
 
 ### Named Rules
 **The One-Left-Spine Rule.** The page has exactly one alignment spine: the container's

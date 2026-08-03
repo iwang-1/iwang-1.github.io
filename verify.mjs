@@ -541,6 +541,65 @@ async function checkPage(spec, viewport) {
     for (const w of wrapped) problems.push(`${tag}: hero readout repo name — ${w}`);
   }
 
+  // MOBILE RHYTHM CASCADE gate (2026-08-03). Same lesson as the wrap gate above,
+  // for spacing: a mobile override that LOSES the cascade renders a taller page,
+  // not a broken one, so nothing else here can see it. The 2026-08-03 phone-height
+  // pass wrote its rules into one consolidated 639px block near the top of
+  // index.css and EIGHT OF TEN silently computed the desktop value at 390w
+  // (.contact-layout 48px, .footer 48px, .system-feature 16px, .skills-row 24px,
+  // .contact-copy h2 16px) — build green, all twelve combos PASS. The file's
+  // convention is that source order decides at equal specificity, and these rules
+  // sat BEFORE the base rules they override.
+  //
+  // This asserts the COMPUTED value of the phone verticals that were most
+  // expensive to get wrong, at the two phone viewports only. It states each
+  // boundary's intended step, so re-tuning a value means updating one line here on
+  // purpose rather than discovering months later that a rule never applied. It is
+  // deliberately not a page-height assertion: a height total would drift with
+  // every copy edit and would not say WHICH rule stopped applying.
+  if (spec.path === "/" && viewport.width <= 640) {
+    const EXPECTED = [
+      [".hero", "paddingTop", "32px"],
+      [".hero-layout", "rowGap", "24px"],
+      [".hobby-grid", "rowGap", "24px"],
+      [".sweep", "rowGap", "8px"], // cross-file: Sweep.css ships after index.css
+      [".system-feature", "rowGap", "12px"],
+      [".system-evidence", "rowGap", "12px"],
+      [".system-proof", "marginTop", "12px"],
+      [".plate-footnote", "paddingTop", "8px"],
+      [".skills-row", "marginBottom", "16px"],
+      [".skills-block", "paddingTop", "24px"],
+      [".contact-layout", "paddingTop", "32px"],
+      [".contact-copy h2", "marginBottom", "12px"],
+      [".footer", "paddingTop", "32px"],
+      [".footer-colophon", "marginTop", "24px"],
+    ];
+    const drift = await page.evaluate((expected) => {
+      const out = [];
+      for (const [sel, prop, want] of expected) {
+        const el = document.querySelector(sel);
+        if (!el) {
+          out.push(`${sel} not found`);
+          continue;
+        }
+        const got = getComputedStyle(el)[prop];
+        if (got !== want) out.push(`${sel} { ${prop} } computed ${got}, expected ${want}`);
+      }
+      // The Last-Child Rule: these close their containers at EVERY width.
+      for (const sel of [
+        ".system-copy > .project-links:last-child",
+        ".skills-block > .skills-row:last-child",
+        ".hero-tail > .hero-email-plain:last-child",
+      ])
+        for (const el of document.querySelectorAll(sel)) {
+          const mb = getComputedStyle(el).marginBottom;
+          if (mb !== "0px") out.push(`${sel} carries a trailing margin-bottom of ${mb}`);
+        }
+      return out;
+    }, EXPECTED);
+    for (const d of drift) problems.push(`${tag}: mobile rhythm lost the cascade — ${d}`);
+  }
+
   // footer contact links + mailto on every page
   for (const needle of ["github.com/iwang-1", "linkedin.com/in/ivanwang1"]) {
     const n = await page.locator(`footer a[href*="${needle}"]`).count();
