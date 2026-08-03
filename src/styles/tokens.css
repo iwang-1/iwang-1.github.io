@@ -67,10 +67,21 @@
   --lh-sub: 1.2;
   --lh-body: 1.65;
 
-  /* Measures. Three, replacing six one-off ch values. */
+  /* Measures. Four, replacing six one-off ch values.
+     `ch` is the width of the element's OWN "0", so the same number means two
+     different things in the two families and the mono step is not a duplicate of
+     --measure-prose. In the sans body face 66ch (714px) renders 54-60 characters
+     per line, because "0" is wider than the average lowercase glyph. In mono
+     every glyph IS one ch, so a mono box set to 66ch renders at most 66
+     characters and the number is literal. --measure-mono is therefore stated
+     against the craft floor's 65-75ch reading band directly: 68ch is mid-band,
+     and it is what caps the footnote strips and the coursework line, which ran
+     unbounded at 113-131ch (117 characters on one measured coursework line at
+     1440) because both declared `max-width: none`. */
   --measure-tight: 22ch;
   --measure-body: 56ch;
   --measure-prose: 66ch;
+  --measure-mono: 68ch;
 
   /* Space ladder. Absorbs the 5/7/26/33/34/36/50/88px one-offs. */
   --space-1: 4px;

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { enableJs } from "../../js-flag";
 import "../../enhance";
 import "../../index.css";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { Footer } from "../../components/Footer";
 import { LabelButton } from "../../components/LabelButton";
 import { Nav } from "../../components/Nav";
@@ -49,7 +50,9 @@ function NotFound() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <NotFound />
+    <ErrorBoundary>
+      <NotFound />
+    </ErrorBoundary>
   </StrictMode>,
 );
 // AFTER render — see src/js-flag.ts.

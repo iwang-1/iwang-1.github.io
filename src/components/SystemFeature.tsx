@@ -172,8 +172,12 @@ export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem;
         </div>
         <div className="system-evidence">
           <SystemDiagram kind={project.diagram} />
-          {/* As many rows as the repo actually measured — three, two, two. */}
-          <Readout cells={project.metrics.map((m) => ({ value: m.value, label: m.label }))} />
+          {/* As many rows as the repo actually measured — three, two, two. The
+              `plain` gloss rides along on the rows whose label is an axis label
+              rather than English; see the field's contract in content.ts. */}
+          <Readout
+            cells={project.metrics.map((m) => ({ value: m.value, label: m.label, plain: m.plain }))}
+          />
         </div>
       </Plate>
     </Reveal>

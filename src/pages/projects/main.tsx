@@ -5,6 +5,7 @@ import "../../enhance";
 import "../../index.css";
 import { featuredSystems, projects } from "../../content";
 import { ContactBand, ProjectCard } from "../../components/cards";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { Footer } from "../../components/Footer";
 import { Nav } from "../../components/Nav";
 import { Reveal } from "../../components/Reveal";
@@ -62,7 +63,9 @@ function Projects() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Projects />
+    <ErrorBoundary>
+      <Projects />
+    </ErrorBoundary>
   </StrictMode>,
 );
 // AFTER render — see src/js-flag.ts.

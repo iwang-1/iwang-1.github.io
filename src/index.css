@@ -65,6 +65,17 @@ h1,
 h2,
 h3 {
   text-wrap: balance; /* progressive enhancement; ignored by non-supporting engines */
+  /* A heading breaks before the page does. `text-wrap: balance` balances the
+     lines it is given; it cannot break a word that is wider than the column, and
+     the display serif at a raised root font size produces exactly that: under
+     text-only zoom at 320px, "Programming" measured 193.6px inside a 140px
+     timeline column and "Experience" 357.6px inside a 288px page-head, so the h1
+     and two h3s painted 10px (20px root) and 42px (24px root) of horizontal
+     DOCUMENT scroll — WCAG 1.4.4 failing on the role titles a recruiter is
+     reading. `break-word`, not `anywhere`: it only breaks a word with no other
+     option, so min-content sizing and the balanced result are unchanged at every
+     width where the heading already fits. Measured identical at a 16px root. */
+  overflow-wrap: break-word;
 }
 
 /* No mobile h1 override: --fs-display is a clamp, so the display size falls
@@ -115,8 +126,20 @@ img {
   min-height: 100vh;
 }
 
-#root > main {
+#root > main,
+#root > .static-fallback > main {
   flex: 1 0 auto;
+}
+
+/* The page-root ErrorBoundary's restored-static-page wrapper
+   (src/components/ErrorBoundary.tsx). `contents` because the wrapper exists only
+   to hold a snapshot: with a box of its own it becomes the single flex item of
+   #root, and Nav/main/Footer stop being flex items at all — the footer would
+   float mid-viewport on the 404. The paired `#root > .static-fallback > main`
+   selector above is required and not redundant: `display: contents` removes the
+   BOX, never the element, so `#root > main` still does not match through it. */
+.static-fallback {
+  display: contents;
 }
 
 .container {
@@ -224,10 +247,47 @@ img {
 
 .nav-brand, .nav-wordmark { color: var(--ink); }
 
+/* The tab row PANS, it never pushes the page. Under text-only zoom (WCAG 1.4.4:
+   the reader raises the root font size and the viewport stays at 320px) the four
+   tabs grow past the nav's own measure, and as a flex item at its default
+   `min-width: auto` the row could not shrink — so it drove the whole DOCUMENT
+   into horizontal scroll: measured 30px of page overflow at 320w with the root
+   at 18px, 47px at 19px and 65px at 20px, with the Contact tab's right edge
+   1.7 / 15.5 / 29.3px outside the viewport. That is 1.4.10 (reflow) failing on
+   the primary navigation, i.e. the one component every page depends on.
+
+   `min-width: 0` lets the row shrink to its share and `overflow-x: auto` gives
+   the overflow somewhere local to go — the same answer .sweep-scroll gives a
+   plot too wide for its plate. The nav's frozen geometry is untouched: 64px
+   height, and the progress rail still measures navBottom−3px (delta 2.0,
+   unchanged at every root size tested up to 32px).
+
+   Two details are load-bearing, not decoration:
+   - `padding-block`/`margin-block` cancel out, so the box is the same size it
+     always was, but the 5px of padding puts a focused tab's 2px ring + 2px
+     offset INSIDE the scroll container's clip box. Without it the ring was
+     clipped 4px top and bottom on every tab; 5px rather than exactly 4 leaves
+     1px of slack so a sub-pixel layout can never shave the ring's last row.
+     The current tab's inset amber tick sits inside the clip box at every width
+     and root size measured (320–1920px, 16–24px).
+   - the scrollbar is hidden, because a classic horizontal scrollbar would be
+     drawn inside a 64px bar whose height is gate-asserted. What pans here is
+     6px at a 24px root and 19px at 32px, focusing a tab scrolls it into view,
+     and every tab is still a real link in the tab order. */
 .nav-tabs {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-block: 5px;
+  margin-block: -5px;
+  scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 /* Mobile nav: these descendant selectors out-specify the base label-button
@@ -337,6 +397,16 @@ img {
     border-color var(--t-tap) ease, background-color var(--t-tap) ease;
 }
 
+/* The primitive is shared between anchors and <button>s. An anchor is
+   pointer-cursor by UA default and a button is not, so the copy-email control
+   read `cursor: default` while looking identical to the links beside it. Stated
+   here, on the primitive, rather than inline on the one component that noticed:
+   a style belongs in the stylesheet, and the next <button class="btn"> inherits
+   it instead of re-discovering the bug. */
+button.btn {
+  cursor: pointer;
+}
+
 /* Primary: amber fill. The label is --ground (8.98:1) — --ink on amber is
    1.98:1 and is never used. */
 .btn-primary {
@@ -420,16 +490,39 @@ img {
 
 /* The footnote strip: provenance, measurement conditions, and the † limits
    note. Under a hairline, at the 14px floor --ink-3 is legible against
-   (6.06:1 on --plate, 5.60:1 on --plate-2). */
+   (6.06:1 on --plate, 5.60:1 on --plate-2).
+   The strip is PROSE, not a caption — the † limits note is two sentences — so it
+   is bound by --measure-mono like any other reading block. It used to be
+   `max-width: none` and ran 121ch at 1440 and 2560 (a measured 101-character
+   line inside a 1022px box), and the coursework line ran 131ch; the craft floor's
+   band is 65-75.
+   The cap is spent on PADDING-RIGHT, not on max-width, and that is the whole
+   subtlety of this rule: this element's `border-top` IS the plate's internal
+   divider, so a narrowed box narrows the rule. Measured at 1440 with
+   `max-width: 68ch`: the box fell 1022px -> 607px, so the hairline stopped 415px
+   short of the plate's inner right edge, and on the Sweep it broke DESIGN.md's
+   stated contract that "the plot, the gloss and the footnote all end on one right
+   edge" (footnote right 1109 -> 816 against an unmoved plot). Padding leaves the
+   border box — and therefore the rule — on the plate's full measure and shortens
+   only the line box the text is laid into.
+   `max()` floors the padding at 0, so below the cap width nothing is subtracted
+   and the narrow-viewport renders are byte-identical: measured 0px of added
+   padding at 320, 390 and 480, and no document overflow at any width. */
 .plate-footnote {
   margin: 0;
   padding-top: var(--space-3);
+  padding-right: max(0px, 100% - var(--measure-mono));
   border-top: var(--hairline) solid var(--grid);
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--fs-400); /* 14px floor — never smaller */
-  line-height: 1.5;
+  /* 1.6, not 1.5. Light --ink-3 text on a near-black plate needs compensating
+     leading (DESIGN.md sets the body face at 1.65 for the same reason), and 1.5
+     was the one explicit line-height on the page still set below the sans body's
+     — on the block with the LONGEST measure of any prose on the site. Costs
+     ~1.4px per line at 14px. */
+  line-height: 1.6;
   max-width: none;
 }
 
@@ -466,10 +559,10 @@ img {
   background-position: right 0 top 0;
 }
 
-/* READOUT — value / unit / label on one left-aligned baseline, tabular
-   figures, as many rows as the project actually measured. Deliberately NOT a
-   3-column grid: a fixed column count is what makes varied evidence read as
-   a filled-in schema. */
+/* READOUT — value / label on one left-aligned baseline, tabular figures, as
+   many rows as the project actually measured. Deliberately NOT a 3-column grid:
+   a fixed column count is what makes varied evidence read as a filled-in
+   schema. */
 .readout {
   display: flex;
   flex-direction: column;
@@ -496,7 +589,12 @@ img {
   line-height: 1.2;
 }
 
-.readout-unit,
+/* `.readout-unit` was DELETED here (2026-08-02) along with `ReadoutCell.unit`:
+   18 lines for a track that never rendered. Every caller is
+   SystemFeature.tsx, which maps only `{ value, label }`, so `cell.unit` was
+   always undefined and the span was never emitted — measured 0 occurrences on all
+   four rendered pages. The unit track that DOES ship is the hero rail's
+   `.hero-readout-unit`, a different component with its own fixed grid track. */
 .readout-label {
   color: var(--ink-3);
   font-family: var(--font-mono);
@@ -505,8 +603,28 @@ img {
   line-height: 1.4;
 }
 
-.readout-unit {
-  color: var(--ink-2);
+/* The metric, said in words — the plate's copy of the treatment the hero rail
+   already ships (see `.hero-readout-plain`, whose register this deliberately
+   matches rather than inventing a second one). Same reasoning, same failure it
+   fixes: the hero proves the pattern 300px above, and then "878 µs fdatasync
+   p50" and "0.976 HNSW recall@10" shipped untranslated inside the plates.
+   --font-body, NOT the row's mono: a plain-English gloss set in the register of
+   the jargon it translates is invisible as a gloss. That exact bug was found and
+   fixed on the hero rail (an undeclared --font-sans silently inheriting mono),
+   so this states the family that actually exists. */
+.readout-plain {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-3);
+  font-family: var(--font-body);
+  font-variant-numeric: normal;
+  /* --fs-400 (14px), NOT the --fs-300 the hero rail's gloss uses: DESIGN.md's
+     Fourteen-Pixel Floor Rule is that nothing set in --ink-3 goes below 14px, and
+     13px --ink-3 would have introduced a second violation of it rather than
+     copying a treatment. The register still separates from the mono label beside
+     it, because the distinction here is FAMILY (sans against mono), not size. */
+  font-size: var(--fs-400);
+  line-height: 1.4;
 }
 
 /* SAMPLE POINT — one atom for chart points, timeline nodes, list bullets and
@@ -623,6 +741,39 @@ img {
   border-radius: 50%;
   background: var(--series-3);
   flex: none;
+}
+
+/* The dot rides the FIRST line of its label, not the centre of the chip.
+   `align-items: center` above is right while a chip is one line — all eleven
+   single-line proof chips measured 0.22px off their line's centre. But the hero
+   availability chip wraps: two lines at every width from 640 up, three at 390,
+   and centring on the 54.8px two-line box put the dot a measured 11.9px below
+   the first line's centre at 1440 and 23.1px below it at 390 — a status dot
+   floating in the gutter BETWEEN two lines of the string it qualifies, which on
+   this site is the difference between a checked number and a tech tag sitting in
+   the wrong place.
+
+   `flex-start` plus half the line's own leading is arithmetically identical to
+   `center` on a single-line chip (dot mid = line-box top + lh/2 = line-box
+   centre), so nothing that already reads correctly moves; a wrapping chip's dot
+   lands on line one. `1lh` is the element's OWN used line-height, so the 13px
+   chip and the 16px hero chip each derive their own offset and no literal is
+   hard-coded for either.
+
+   Behind @supports because `lh` is recent: without it the declaration would be
+   dropped while `flex-start` still applied, which would ride every dot up to the
+   line box's top edge. Guarded, a non-supporting engine renders exactly what
+   ships today — the same progressive-enhancement shape as the subgrid hobby row
+   and `text-wrap: balance`. Both properties must stay inside the block. */
+@supports (margin-top: 1lh) {
+  .chip,
+  .proof-chip {
+    align-items: flex-start;
+  }
+
+  .proof-chip .dot {
+    margin-top: calc((1lh - 6px) / 2);
+  }
 }
 
 .chip-rail {
@@ -784,6 +935,15 @@ img {
 .hero .kicker {
   margin-bottom: var(--space-4);
   font-size: var(--fs-400);
+  /* The kicker is a two-line 56ch string carrying the two facts a recruiter
+     checks first, and unbalanced it broke 535 / 105px at 768, 1440, 1920 and
+     2560 — an 11-character "SUMMER 2026" hanging alone under a line five times
+     its length, on the page's first line of type. `balance` is the right
+     primitive rather than `pretty`: this is a heading-register label, not prose,
+     and `pretty` only protects the LAST line from a single-word orphan, which is
+     why a two-word orphan survived it at four widths. Progressive enhancement —
+     a non-supporting engine renders exactly what ships today. */
+  text-wrap: balance;
 }
 
 .hero h1 {
@@ -920,6 +1080,19 @@ img {
   line-height: 1.6;
   color: var(--ink-2);
   text-wrap: pretty;
+}
+
+/* "Full timeline →" is one action label and it split mid-phrase, leaving the
+   arrow alone at the end of one line and the words on the next, at 390, 480, 640
+   and 1440 — measured two client rects with the 27.4px arrow fragment stranded
+   above the 83.5px text fragment. It is the hero's only route to the experience
+   page, so half of it reading as a leftover glyph on the line above is a
+   navigation defect, not a typographic nicety. `nowrap` on the anchor keeps the
+   whole label on one line and pushes the break to the space before it, which the
+   paragraph has: the label is 116px inside a 594-631px measure, so it cannot
+   overflow, and the arrow's 4px hover translate has no effect on wrapping. */
+.hero-aws a {
+  white-space: nowrap;
 }
 
 /* A section's exit link: where to go next, set quietly at the end of the
@@ -1174,8 +1347,26 @@ img {
     --section-gap: 48px;
   }
 
-  .plate {
+  /* ONE mobile padding step for the primitive under BOTH its names. `.card` is
+     the same object as `.plate` in this stylesheet — same fill, same hairline,
+     same radius, same pad — but only `.plate` carried the step, so at 390w the
+     page rendered three paddings for one primitive: 16px on a plate, 24px on
+     every `.card` / `.edu-card` / `.role-card` (no mobile step at all), and a raw
+     20px on `.system-feature` below 479px, which was both off the 4→96px ladder
+     and BACKWARDS — a narrower screen got a wider frame than the 480-639px one.
+     Now every plate-shaped surface is 24px down to 640 and 16px below it.
+     No qualified duplicate is needed: this block already sits after `.card`'s
+     own base rule, so source order at equal specificity decides, which is this
+     file's stated convention. Do not move it back above `.card`. */
+  .plate,
+  .card {
     padding: var(--space-4);
+  }
+
+  /* The gap does NOT travel with the padding: `.plate` is the flex column, and
+     `.card-grid .card` is a flex column too but authors its own child rhythm in
+     margins — an 8px gap there would add 8px between every child. */
+  .plate {
     gap: var(--space-2);
   }
 
@@ -1273,13 +1464,25 @@ img {
    3–4 wrapped lines at 1024–1440w. Same static caption, one fewer new failure.
 
    The right pad keeps the last stage box off the column edge, where four widths
-   measured a 1px gutter. */
+   measured a 1px gutter.
+
+   FLEX-START, not centre (2026-08-02). Below 1024 the evidence column is the
+   plate's full measure, and a centred drawing floated off the page's one
+   alignment spine by a measured 191.8 / 224.8 / 257.8 / 307.8 / 319.3px at
+   768 / 834 / 900 / 1000 / 1023w — the widest single left-edge miss on the site,
+   against a plate label, a readout and a footnote strip that all start on the
+   container's inner left edge. DESIGN.md's One-Left-Spine Rule permits a
+   drawing's INTERIOR to leave that edge but requires the drawing itself to be
+   pinned to the plate's padding edge, which is what this does; the same change
+   takes the ≥1024 column's split field (20.5-38.3px each side) onto one edge
+   too. The caption is left-set for the same reason — a centred caption under a
+   left-pinned drawing puts the figure's two halves on two different edges. */
 .system-diagram {
   display: flex;
   flex-wrap: wrap;
   position: relative;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   row-gap: 0;
   column-gap: 10px;
   min-height: 176px;
@@ -1375,7 +1578,6 @@ img {
 .diagram-caption {
   flex: 0 0 100%;
   margin-top: var(--space-3);
-  text-align: center;
   color: var(--ink-2);
 }
 
@@ -1389,36 +1591,13 @@ img {
   white-space: nowrap;
 }
 
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin: 0;
-  padding-top: var(--space-4);
-  border-top: var(--hairline) solid var(--grid);
-}
-
-.metric-grid div {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-}
-
-.metric-grid dd {
-  order: -1;
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: var(--fs-500);
-  font-weight: 600;
-}
-
-.metric-grid dt {
-  margin-top: var(--space-1);
-  color: var(--ink-2);
-  font-size: var(--fs-200);
-  line-height: 1.35;
-}
+/* `.metric-grid` was DELETED here (2026-08-02): 31 lines and a breakpoint
+   override for a fixed three-column dl that nothing emitted — measured 0
+   occurrences on all four rendered pages, and no `metric-grid` string anywhere in
+   src/. It is also the exact object DESIGN.md forbids ("Don't build a fixed-column
+   metric grid to hold varying evidence"): the readout replaced it, with a row
+   count that varies 3/2/2 with the evidence. Kept as a note rather than silence
+   so a future pass reads the deletion as a decision. */
 
 /* Two columns only from 1024px up — below that, the evidence column cannot hold
    its own figure (see .system-feature). */
@@ -1435,11 +1614,22 @@ img {
   }
 }
 
-@media (max-width: 479px) {
-  .system-feature {
-    padding: 20px;
-  }
+/* `.system-feature { padding: 20px }` was DELETED from this block (2026-08-02).
+   It was the only off-ladder space value on the page — 20px is not a step on the
+   4→96px ladder — and it made the primitive render THREE paddings for one object
+   at 390w (16px plate / 20px system plate / 24px card). It also ran backwards:
+   ≤479px got 20px where 480-639px got 16px, so a narrower screen spent MORE of
+   its width on frame. The ≤639px `.plate, .card` step above is now the single
+   mobile pad for every plate-shaped surface.
 
+   Everything left in this block styles `.system-diagram` and its descendants,
+   which the ≤639px rule above sets to `display: none` — measured at 390w, all
+   three diagrams compute `display: none` and every descendant box is 0x0. So
+   these declarations cannot paint at any width they apply to. They are kept, not
+   deleted, because they are the geometry the diagram would need if the ≤639px
+   hide were ever lifted, and the hide is a mobile-budget decision (~200px per
+   plate) rather than a permanent one. */
+@media (max-width: 479px) {
   .system-diagram {
     min-height: 150px;
     column-gap: 3px;
@@ -1456,10 +1646,6 @@ img {
   .diagram-flow {
     width: 8px;
     flex-basis: 8px;
-  }
-
-  .metric-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -1997,14 +2183,20 @@ img {
 }
 
 /* Coursework as one mono metadata line — it is provenance, not evidence, so it
-   is set like a footnote rather than a chip wall. */
+   is set like a footnote rather than a chip wall.
+   Capped at --measure-mono for the same reason .plate-footnote is: it was
+   `max-width: none` and ran 118ch at 1024, 131ch at 1440 and 2560, with 117
+   characters on its first measured line — the widest reading line on the site, in
+   the smallest type on it. Here the cap can be a plain max-width, because unlike
+   the footnote strip this element draws no rule; nothing but the text depends on
+   the box. */
 .edu-coursework {
   margin: var(--space-3) 0 0;
   font-family: var(--font-mono);
   font-size: var(--fs-300);
   line-height: 1.7;
   color: var(--ink-3);
-  max-width: none;
+  max-width: var(--measure-mono);
 }
 
 /* ---------------------------------------------------------------- skills */
@@ -2061,9 +2253,16 @@ img {
   margin-top: var(--space-1);
 }
 
+/* "Inspect the repository →" plus its visually-hidden "(opens in new tab)" is
+   one long unbroken action label, and under text-only zoom it was the widest
+   single thing on the page: measured scrollWidth 295px against a 246px content
+   box at a 17px root, 313 at 18px, 330 at 19px, 348 at 20px, painting 30–65px
+   outside a 320px viewport. Same fix the plate footnote already carries for
+   artifact filenames — the label breaks instead of the layout. */
 .project-links {
   margin-top: var(--space-3);
   font-size: var(--fs-400);
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------- contact band */
@@ -2118,10 +2317,16 @@ img {
 /* Standalone text links used as actions (CTA bands, card .project-links):
    44px tap target. gap restores the word-spacing that inline-flex collapses
    between the label text and the arrow span; the visually-hidden new-tab
-   span is absolutely positioned, so it contributes no gap. */
+   span is absolutely positioned, so it contributes no gap.
+
+   `flex-wrap: wrap` is what lets the label above actually break: an inline-flex
+   row holds its items on one line, so a label allowed to wrap inside a row that
+   is not still measured its max-content width and painted 384.7px into a 320px
+   viewport at a 20px root. */
 .cta-text-link {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.3em;
   min-height: 44px;
 }
@@ -2406,13 +2611,27 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 }
 
 /* command-palette / help overlay */
+/* The overlay SCROLLS. A centred flex item taller than its container overflows
+   both ends equally, and `align-items: center` on an unscrollable box makes that
+   overflow unreachable: measured at 320x256 the 444px card sat at y −86..358, so
+   its title started 61.5px above the top of the screen and the Close button
+   ended 77.5px below the bottom — the dialog's name and its only visible exit,
+   both off-screen, with no way to get to either. At 1024x300 the same defect
+   measured 13.1px above and 29.1px below. Both viewports are ordinary: 400%
+   zoom on a laptop, or a short window.
+   `overflow: auto` gives the overflow somewhere to go, and `align-items: start`
+   plus `margin: auto` on the card keeps the centred rest state at full height
+   while letting the box grow past the container instead of being cut in half by
+   it (a centred flex item's top overflow is not scrollable). */
 .kbd-help {
   position: fixed;
   inset: 0;
   z-index: 40;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
+  overflow: auto;
+  overscroll-behavior: contain;
   padding: var(--space-5);
   opacity: 0;
   transition: opacity var(--t-hover) ease;
@@ -2421,8 +2640,13 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-help.is-open { opacity: 1; }
 .kbd-help[hidden] { display: none; }
 
+/* FIXED, not absolute: the overlay is a scroll container now, and an absolutely
+   positioned child of one is laid out at the scroll origin and then scrolls with
+   the content — so on a short screen the backdrop slid up off the top and left
+   raw page showing above the card. Anchored to the viewport it covers the screen
+   at every scroll offset, and it stays the click-to-close target verify asserts. */
 .kbd-help-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: color-mix(in srgb, var(--ground) 66%, transparent);
   backdrop-filter: blur(2px);
@@ -2435,6 +2659,18 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-help-card {
   position: relative;
   width: min(420px, 100%);
+  /* `margin: auto` centres the card while the overlay is a scroll container:
+     auto margins on a flex item absorb the free space when there is any, and
+     collapse to zero when there is not — which is what makes the top of a
+     too-tall card reachable instead of clipped. */
+  margin: auto;
+  /* The panel never exceeds the screen it is drawn on, so its hairline frame is
+     always whole and its own content is what scrolls — a plate that got taller
+     than the page, not a plate sliced by it. 100% is the overlay's content box,
+     i.e. the viewport less its 24px padding. */
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--plate);
   border: var(--hairline) solid var(--ink-3);
   border-radius: var(--r-xs);
@@ -2640,10 +2876,19 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     display: block !important;
   }
 
-  /* With the grid collapsed the three hero blocks flow in DOM order, so the
-     negative margin that de-doubles a grid gap has no gap left to correct. */
+  /* Collapsing the grid discards its 32px row gap, and `display: block` gives
+     block children no gap primitive — so on a cold print load the three hero
+     blocks butted at a measured 0px / 0px at both 1440 and 794 (A4 at 96dpi):
+     the identity, the evidence rail and the AWS-plus-CTA block ran together as
+     one undifferentiated column on the printed first page. Restore the SAME 32px
+     the screen grid spends, as a margin on the two blocks that follow one, so the
+     paper rhythm matches the screen's without reintroducing a grid the print
+     sheet deliberately drops.
+     `:not(:first-child)` is not needed and not used: `.hero-lead` is the first
+     child and gets no rule, so nothing opens the band with dead air. */
+  .hero-side,
   .hero-tail {
-    margin-top: 0 !important;
+    margin-top: var(--space-6) !important;
   }
 
   /* Injected chrome and decoration carry no meaning on paper. */

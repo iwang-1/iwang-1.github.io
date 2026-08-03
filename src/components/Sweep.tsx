@@ -32,7 +32,108 @@ import "./Sweep.css";
  *  sample's `data-sweep-*` attributes. No props: the figure IS the data, and a
  *  second copy of these numbers in a page file is a second thing to keep true. */
 
-const READOUT_DEFAULT = "ef=32 · recall 0.9759 · ~31.8K q/s · single core";
+/** The ten measured samples, declared ONCE. Every number below is the value
+ *  already carried by this figure's own `data-sweep-readout` strings — the run
+ *  committed at benchmarks/raw/bench_50k_128d.txt. Nothing here is new, rounded
+ *  or derived: the readout strings and the transcription table are now two
+ *  renderings of one table instead of two copies of the same figures.
+ *
+ *  ORDERED BY THROUGHPUT ASCENDING, which is left-to-right on the log x-axis and
+ *  therefore also the order the arrow keys walk (src/enhance.ts sorts on x). That
+ *  order is load-bearing, not incidental: the transcription table below renders
+ *  this array as-authored and its caption states the ordering, so this is the one
+ *  array whose sequence a reader is told about. Grouping the rows by series is the
+ *  obvious tidy-up and it would silently falsify both. The interleaved pair is the
+ *  tell — ef=256 (~8.9K, x=368.6) sits BETWEEN nprobe=4 and nprobe=1 (~9.8K,
+ *  x=379), which is exactly where the arrow keys visit it and exactly where a
+ *  series-grouped table would not have it.
+ *
+ *  Plot COORDINATES stay as literal attributes on the markup below. They are
+ *  hand-solved against the two axis mappings and individually nudged for label
+ *  collisions, so they are geometry, not data — and the repo's fact gate only
+ *  masks coordinate runs inside `d="…"`, which is why they are never expressed as
+ *  numbers a reader could mistake for a claim. */
+const SAMPLES = [
+  { series: "IVF-PQ", setting: "nprobe=32", recall: "0.9747", qps: "~1.2K" },
+  { series: "IVF-PQ", setting: "nprobe=16", recall: "0.9747", qps: "~2.3K" },
+  { series: "IVF-PQ", setting: "nprobe=8", recall: "0.9748", qps: "~4.1K" },
+  { series: "IVF-PQ", setting: "nprobe=4", recall: "0.9409", qps: "~6.1K" },
+  { series: "HNSW", setting: "ef=256", recall: "1.0000", qps: "~8.9K" },
+  { series: "IVF-PQ", setting: "nprobe=1", recall: "0.4850", qps: "~9.8K" },
+  { series: "HNSW", setting: "ef=128", recall: "1.0000", qps: "~13.5K" },
+  { series: "HNSW", setting: "ef=64", recall: "0.9964", qps: "~20.9K" },
+  { series: "HNSW", setting: "ef=32", recall: "0.9759", qps: "~31.8K" },
+  { series: "HNSW", setting: "ef=16", recall: "0.8996", qps: "~47.3K" },
+] as const;
+
+type Sample = (typeof SAMPLES)[number];
+type Setting = Sample["setting"];
+
+/** One readout string shape, so the crosshair's live text and the transcription
+ *  table can never disagree about a sample. */
+const readoutOf = (s: Sample) =>
+  `${s.setting} · recall ${s.recall} · ${s.qps} q/s · single core`;
+
+/** Settings → readout string, resolved once at module scope and keyed on the
+ *  literal union of the settings above. A mistyped key is a TYPE ERROR (`npm run
+ *  typecheck`, which `npm run build` runs first) rather than a runtime throw or,
+ *  worse, an empty attribute the crosshair would silently skip. */
+const READOUT: Record<Setting, string> = Object.fromEntries(
+  SAMPLES.map((s) => [s.setting, readoutOf(s)]),
+) as Record<Setting, string>;
+
+/** The knee: the figure's server-rendered default state. */
+const READOUT_DEFAULT = READOUT["ef=32"];
+
+/** THE TRANSCRIPTION. The plot draws ten samples at once; the crosshair reports
+ *  one at a time. Neither of those serves a reader who is at 400% zoom (where the
+ *  plot pans and the per-point labels leave the window) or on a screen reader
+ *  (where the SVG is one `role="img"` summary and the readout is a single live
+ *  line). This table is the same ten samples as text, in one place, in the same
+ *  order the axis and the arrow keys use.
+ *
+ *  Visually hidden rather than shown: the drawing IS the figure at every width
+ *  the drawing is legible, and a second visible copy of ten rows would be the
+ *  duplicated-legend defect this figure already fixed once. It is server-rendered
+ *  markup, so it is in the static HTML with the bundle blocked — the same
+ *  no-JS-proof contract every other number in this plate holds to.
+ *
+ *  The `.visually-hidden` class is on a WRAPPER, not on the <table>. That is not
+ *  a style preference: the primitive's `width: 1px` is a MINIMUM for a CSS table,
+ *  which sizes to its columns' min-content regardless, so hiding the table
+ *  directly measured 605.5px wide and drove the home page into 285px of
+ *  horizontal document overflow at 320w — the exact class of bug this batch is
+ *  fixing. A block wrapper honours the 1px and `overflow: hidden` clips the table
+ *  inside it, so the transcription costs zero layout at every width. */
+function SweepTable() {
+  return (
+    <div className="visually-hidden">
+      <table className="sweep-table">
+        <caption>
+          Figure 1, as measured values: ten samples, ordered by throughput.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Index</th>
+            <th scope="col">Setting</th>
+            <th scope="col">Recall at k=10</th>
+            <th scope="col">Queries per second</th>
+          </tr>
+        </thead>
+        <tbody>
+          {SAMPLES.map((s) => (
+            <tr key={s.setting}>
+              <th scope="row">{s.series}</th>
+              <td>{s.setting}</td>
+              <td>{s.recall}</td>
+              <td>{s.qps}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export function Sweep() {
   return (
@@ -61,8 +162,32 @@ export function Sweep() {
       {/* The plot keeps a minimum width and pans inside the plate rather than
           scaling its labels into illegibility on a phone. The numbers a reader
           actually needs are in the readout and footnote below, at body size,
-          either way. */}
-      <div className="sweep-scroll">
+          either way.
+
+          IT KEEPS ITS TAB STOP, AND THE STOP IS NAMED. Below ~680px this div
+          actually scrolls (measured pan: 38px at 640w, 256px at 390w, 326px at
+          320w) and Chromium then makes it a keyboard tab stop by itself — which it
+          did silently, as an unnamed DIV whose name computed from its own contents
+          ("recall 0.90 floor ·ef=16 falls below it…"). An unlabelled emergent stop
+          is a 4.1.2 defect, so the fix is to name it or to remove it, and the
+          measurement decides: with JAVASCRIPT BLOCKED, Home on the <figure> pans
+          0px — there is no crosshair to move — while ArrowLeft here pans 80px. On
+          the no-JS render the whole proof story rests on, this is the ONLY keyboard
+          route to the plot's left half, so removing the stop would delete a working
+          affordance to tidy the tab order.
+          NO `tabIndex` IS SET, deliberately. The UA heuristic already grants the
+          stop exactly when the box scrolls and withholds it when it does not
+          (measured: a stop at 640/390/320, none at 680/998/1366), so writing
+          `tabIndex={0}` would have ADDED a dead stop at every desktop width — the
+          mirror of the defect being fixed. `role="group"` is what makes the label
+          count on a generic element; the label names the job this control does,
+          which is panning, not measuring. The figure above still owns the
+          sample-stepping contract. */}
+      <div
+        className="sweep-scroll"
+        role="group"
+        aria-label="lodestone plot, pannable — move across the figure with the arrow keys"
+      >
       <svg
         className="sweep-plot"
         viewBox="0 0 680 360"
@@ -193,7 +318,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-ivf"
             data-sweep-x="153.2"
             data-sweep-y="79.8"
-            data-sweep-readout="nprobe=32 · recall 0.9747 · ~1.2K q/s · single core"
+            data-sweep-readout={READOUT["nprobe=32"]}
           >
             <circle cx="153.2" cy="79.8" r="4" />
             <text x="153.2" y="99.8">nprobe=32</text>
@@ -202,7 +327,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-ivf"
             data-sweep-x="221.6"
             data-sweep-y="79.8"
-            data-sweep-readout="nprobe=16 · recall 0.9747 · ~2.3K q/s · single core"
+            data-sweep-readout={READOUT["nprobe=16"]}
           >
             <circle cx="221.6" cy="79.8" r="4" />
             <text x="221.6" y="99.8">nprobe=16</text>
@@ -211,7 +336,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-ivf"
             data-sweep-x="284.5"
             data-sweep-y="79.8"
-            data-sweep-readout="nprobe=8 · recall 0.9748 · ~4.1K q/s · single core"
+            data-sweep-readout={READOUT["nprobe=8"]}
           >
             <circle cx="284.5" cy="79.8" r="4" />
             <text x="284.5" y="99.8">nprobe=8</text>
@@ -220,7 +345,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-ivf"
             data-sweep-x="328"
             data-sweep-y="94"
-            data-sweep-readout="nprobe=4 · recall 0.9409 · ~6.1K q/s · single core"
+            data-sweep-readout={READOUT["nprobe=4"]}
           >
             <circle cx="328" cy="94" r="4" />
             <text x="328" y="81">nprobe=4</text>
@@ -229,7 +354,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-ivf"
             data-sweep-x="379"
             data-sweep-y="285.5"
-            data-sweep-readout="nprobe=1 · recall 0.4850 · ~9.8K q/s · single core"
+            data-sweep-readout={READOUT["nprobe=1"]}
           >
             <circle cx="379" cy="285.5" r="4" />
             <text x="379" y="272.5">nprobe=1</text>
@@ -239,7 +364,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-hnsw"
             data-sweep-x="368.6"
             data-sweep-y="69.2"
-            data-sweep-readout="ef=256 · recall 1.0000 · ~8.9K q/s · single core"
+            data-sweep-readout={READOUT["ef=256"]}
           >
             <circle cx="368.6" cy="69.2" r="4" />
             <text x="368.6" y="56.2">ef=256</text>
@@ -248,7 +373,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-hnsw"
             data-sweep-x="414"
             data-sweep-y="69.2"
-            data-sweep-readout="ef=128 · recall 1.0000 · ~13.5K q/s · single core"
+            data-sweep-readout={READOUT["ef=128"]}
           >
             <circle cx="414" cy="69.2" r="4" />
             <text x="414" y="56.2">ef=128</text>
@@ -257,7 +382,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-hnsw"
             data-sweep-x="461.7"
             data-sweep-y="70.7"
-            data-sweep-readout="ef=64 · recall 0.9964 · ~20.9K q/s · single core"
+            data-sweep-readout={READOUT["ef=64"]}
           >
             <circle cx="461.7" cy="70.7" r="4" />
             <text x="461.7" y="57.7">ef=64</text>
@@ -277,7 +402,7 @@ export function Sweep() {
             className="sweep-sample sweep-sample-hnsw"
             data-sweep-x="550.4"
             data-sweep-y="111.4"
-            data-sweep-readout="ef=16 · recall 0.8996 · ~47.3K q/s · single core"
+            data-sweep-readout={READOUT["ef=16"]}
           >
             <circle cx="550.4" cy="111.4" r="4" />
             <text x="550.4" y="124">ef=16</text>
@@ -304,6 +429,11 @@ export function Sweep() {
         </g>
       </svg>
       </div>
+
+      {/* --- the same ten samples as text, immediately after the drawing they
+              transcribe, so the reading order is "figure, then figure's values".
+              Visually hidden; see the note on SweepTable. -------------------- */}
+      <SweepTable />
 
       {/* --- the series key, in HTML, OUTSIDE the pannable window. The SVG
               legend is the real one on desktop, but below ~600px the plot pans

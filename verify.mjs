@@ -491,6 +491,56 @@ async function checkPage(spec, viewport) {
     for (const o of railOverlaps) problems.push(`${tag}: hero readout — ${o}`);
   }
 
+  // HERO RAIL MID-TOKEN WRAP gate. The overlap gate above is necessary and not
+  // sufficient, and the project has shipped the gap between them: raising the
+  // stacking ceiling 379 -> 411 (2026-08-01) fixed a state where the row had
+  // STOPPED overlapping but had not started fitting. The name track computed to
+  // 80-111px against mono anchors needing 92.7 / 101.2 / 75.9px, so
+  // `parallax-kv` and `accretion-db` broke mid-token with the hyphen dangling at
+  // 380 / 385 / 390 and accretion-db alone at 400, clean from 402. A repo name
+  // split over two lines is not a name a reader can recognise or retype, and on
+  // this rail it is the fold's only clickable route into the evidence — DESIGN.md
+  // states the trade explicitly ("a whole unbroken name outranks a compact row").
+  //
+  // Re-measured 2026-08-02 by reverting the ceiling to 379: the defect returns at
+  // exactly those widths INCLUDING 390, which is this file's own mobile viewport,
+  // and all twelve page/viewport combos still reported PASS. Nothing here could
+  // see it: the boxes do not intersect, so the overlap gate is silent by
+  // construction; there is no document overflow; contrast, facts and spine are
+  // untouched. Counting LINE BOXES per painted text node is the only signal that
+  // distinguishes "fits" from "merely no longer colliding".
+  //
+  // Distinct rounded rect tops = distinct line boxes, and the count is compared
+  // against 1 rather than against a width, so the assertion survives any future
+  // re-tuning of the breakpoint: it states the contract (one line per name), not
+  // the number that currently satisfies it.
+  if (spec.path === "/") {
+    const wrapped = await page.evaluate(() => {
+      const out = [];
+      for (const a of document.querySelectorAll(".hero-readout-repo")) {
+        const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
+        const tops = new Set();
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          if (!n.nodeValue?.trim()) continue;
+          // Same ancestry filter as the overlap gate: the ".visually-hidden"
+          // new-tab string is a second text node inside this anchor and Range
+          // reports its full natural width, which would read as an extra line.
+          if (n.parentElement?.closest(".visually-hidden")) continue;
+          const r = document.createRange();
+          r.selectNodeContents(n);
+          for (const b of r.getClientRects())
+            if (b.width > 0 && b.height > 0) tops.add(Math.round(b.top));
+        }
+        if (tops.size > 1)
+          out.push(
+            `${a.textContent?.replace("(opens in new tab)", "").trim()} breaks across ${tops.size} lines (track ${a.parentElement?.getBoundingClientRect().width.toFixed(1)}px)`,
+          );
+      }
+      return out;
+    });
+    for (const w of wrapped) problems.push(`${tag}: hero readout repo name — ${w}`);
+  }
+
   // footer contact links + mailto on every page
   for (const needle of ["github.com/iwang-1", "linkedin.com/in/ivanwang1"]) {
     const n = await page.locator(`footer a[href*="${needle}"]`).count();

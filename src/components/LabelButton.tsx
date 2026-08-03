@@ -85,9 +85,15 @@ export function ExternalLink({
 export function CopyEmailButton({ email }: { email: string }) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
 
-  // The confirmation is transient: it reads as a receipt, not as a new label.
+  // BOTH outcomes are transient: each reads as a receipt, not as a new label.
+  // "Copy blocked" used to be terminal (the guard returned early on anything but
+  // "copied"), so one denied clipboard permission renamed the control for the rest
+  // of the session — a button whose label is a past event, pointing at a recovery
+  // the reader has already taken. It clears on the same timer as the success, so
+  // the button always returns to naming its action, and a second attempt after the
+  // reader grants permission is offered rather than hidden behind a stale failure.
   useEffect(() => {
-    if (state !== "copied") return;
+    if (state === "idle") return;
     const t = window.setTimeout(() => setState("idle"), 2400);
     return () => window.clearTimeout(t);
   }, [state]);
@@ -103,14 +109,10 @@ export function CopyEmailButton({ email }: { email: string }) {
 
   return (
     <>
-      <button
-        type="button"
-        className="btn"
-        onClick={copy}
-        /* The primitive is shared with anchors, which are already pointer-cursor
-           by default; a <button> is not. */
-        style={{ cursor: "pointer" }}
-      >
+      {/* The pointer cursor lives on `button.btn` in index.css — the primitive is
+          shared with anchors, which are pointer-cursor by UA default, and a
+          <button> is not. It is a style, so it belongs in the stylesheet. */}
+      <button type="button" className="btn" onClick={copy}>
         {state === "copied" ? "Copied" : state === "failed" ? "Copy blocked" : "Copy email"}
       </button>
       {/* Live region, always present in the DOM so the announcement is an

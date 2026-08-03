@@ -5,6 +5,7 @@ import "../../enhance";
 import "../../index.css";
 import { communityRoles, engineeringRoles } from "../../content";
 import { ContactBand } from "../../components/cards";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { Footer } from "../../components/Footer";
 import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
@@ -47,7 +48,9 @@ function Experience() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Experience />
+    <ErrorBoundary>
+      <Experience />
+    </ErrorBoundary>
   </StrictMode>,
 );
 // AFTER render — see src/js-flag.ts.

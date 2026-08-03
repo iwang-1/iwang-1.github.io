@@ -51,12 +51,17 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   overlay.className = "kbd-help";
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", "Legend and shortcuts");
+  // aria-labelledby, not aria-label: the dialog's name is the heading it already
+  // renders, so the two can never drift, and the panel now has a real heading in
+  // the document outline instead of a <p> styled to look like one. The title is
+  // an <h2> because the dialog is a sibling of the page's content, one rank under
+  // its <h1> — every id and class here is asserted by verify.mjs.
+  overlay.setAttribute("aria-labelledby", "kbd-help-title");
   overlay.hidden = true;
   overlay.innerHTML =
     `<div class="kbd-help-backdrop" data-close></div>` +
     `<div class="kbd-help-card">` +
-    `<p class="kbd-help-title">Legend &amp; shortcuts</p>` +
+    `<h2 class="kbd-help-title" id="kbd-help-title">Legend &amp; shortcuts</h2>` +
     `<ul class="kbd-help-list">${rows}</ul>` +
     `<p class="kbd-help-foot"><kbd>?</kbd> toggles this panel · <kbd>Esc</kbd> closes it</p>` +
     `<button type="button" class="btn kbd-help-close" data-close>Close</button>` +

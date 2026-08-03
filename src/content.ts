@@ -164,7 +164,15 @@ export interface FeaturedSystem {
   artifactLinks: { label: string; href: string }[];
   chips: string[];
   diagram: "raft" | "lsm" | "ann";
-  metrics: { value: string; label: string }[];
+  /** `plain` is the metric said in words, on the labels that are axis labels
+   *  rather than English. Identical contract to the hero rail's own `plain`
+   *  field: it NAMES WHAT THE LABEL IS and may not assert a second measurement
+   *  or introduce any number. Two of the three reuse the rail's already-approved
+   *  wording verbatim, so the same jargon is never translated two ways.
+   *  Omitted wherever the label already reads as English — "client operations
+   *  checked" and "queries/sec · 1 core" need no gloss, and writing one anyway
+   *  would fill in a schema. */
+  metrics: { value: string; label: string; plain?: string }[];
 }
 
 export const featuredSystems: FeaturedSystem[] = [
@@ -192,9 +200,15 @@ export const featuredSystems: FeaturedSystem[] = [
     ],
     chips: ["Go", "Raft", "gRPC", "Porcupine", "deterministic simulation"],
     diagram: "raft",
+    // Two of the three labels are already English — "durable writes" and
+    // "client operations checked" — so only the percentile one is glossed. A
+    // gloss on every row would be the filled-in schema the readout exists to
+    // avoid.
     metrics: [
       { value: "272 w/s", label: "durable writes · c=8" },
-      { value: "41 ms", label: "p99 latency · c=8" },
+      // p99 = the 99th percentile, i.e. all but the slowest hundredth. Names
+      // what the 41 ms IS; asserts nothing the label did not already say.
+      { value: "41 ms", label: "p99 latency · c=8", plain: "near-worst-case write time" },
       { value: "2.9M", label: "client operations checked" },
     ],
   },
@@ -219,8 +233,13 @@ export const featuredSystems: FeaturedSystem[] = [
     chips: ["Rust", "LSM tree", "group commit", "crash consistency", "proptest"],
     diagram: "lsm",
     metrics: [
-      { value: "~29x", label: "WAL-bound group commit" },
-      { value: "878 µs", label: "fdatasync p50" },
+      // "WAL-bound" and "group commit" are both jargon; the gloss says what the
+      // batching IS. No number, and no claim about the rest of the engine — the
+      // footnote's † already states the compaction limit.
+      { value: "~29x", label: "WAL-bound group commit", plain: "gain from batching log writes" },
+      // Verbatim from the hero rail's approved gloss for the same label, so
+      // "fdatasync p50" is never translated two different ways on one page.
+      { value: "878 µs", label: "fdatasync p50", plain: "median durable-write flush" },
     ],
   },
   {
@@ -244,7 +263,9 @@ export const featuredSystems: FeaturedSystem[] = [
     chips: ["Rust", "HNSW", "IVF-PQ", "AVX-512 SIMD", "RAG retrieval"],
     diagram: "ann",
     metrics: [
-      { value: "0.976", label: "HNSW recall@10" },
+      // Verbatim from the hero rail's approved gloss for recall@10. "queries/sec
+      // · 1 core" below it is already English and gets none.
+      { value: "0.976", label: "HNSW recall@10", plain: "top-10 search accuracy" },
       { value: "~31.8K", label: "queries/sec · 1 core" },
     ],
   },
@@ -347,7 +368,29 @@ export interface Role {
 // public/, never hotlinked from a CDN). Every one of the seven is a real
 // vendor mark, so nothing on a recruiting page is ever the WRONG company's
 // logo.
-export type RoleLogo = { kind: "img"; src: string; alt: string; wide?: boolean; pad?: boolean };
+//
+// `w`/`h` are the asset's INTRINSIC pixel dimensions, read out of each file's own
+// header rather than assumed — and the headers are the reason to read them: five of
+// these seven are named `.png` and are actually JPEG (progressive, SOF2), so the
+// extension is not a source of truth about the file and neither is the eye. Three
+// distinct sizes across the seven (200², 240², 100²).
+//
+// They render as the `width`/`height` attributes and change nothing about the drawn
+// box — the chip is a fixed 48px and `.role-logo-img` is `100%`/`100%`, measured
+// 46x46 for all seven before and after. What they buy is the aspect ratio being
+// known before a byte of image arrives, which is what keeps the `.role-logo-wide`
+// variant (`height: auto`) honest and what stops a future layout that sizes on one
+// axis from re-introducing a shift. Measured CLS is 0 before and after, at 9Mbps
+// and at 400Kbps: this is a guard, not a fix for a live defect.
+export type RoleLogo = {
+  kind: "img";
+  src: string;
+  alt: string;
+  w: number;
+  h: number;
+  wide?: boolean;
+  pad?: boolean;
+};
 
 export const engineeringRoles: Role[] = [
   {
@@ -355,7 +398,7 @@ export const engineeringRoles: Role[] = [
     org: "Amazon Web Services (AWS) — EC2 Networking (Amazon VPC)",
     dates: "May 2026 – Aug 2026",
     location: "Herndon, VA",
-    logo: { kind: "img", src: "/logos/aws.png", alt: "Amazon Web Services logo" },
+    logo: { kind: "img", src: "/logos/aws.png", alt: "Amazon Web Services logo", w: 200, h: 200 },
     bullets: [
       "Built an autonomous Claude Code agent with custom skills that migrated seven production EC2/VPC canaries from Scala to Java and JUnit 5, reducing per-test migration from about one week to about one day, gated on live integration testing.",
       "Extended an existing canary framework with AWS SDK v2, CDK, and CloudWatch, adding LIFO resource cleanup, a VPC test suite spanning eight AWS services in us-east-1, and an authentication fix that unblocked CI.",
@@ -367,7 +410,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland (Observatory)",
     dates: "May 2025 – Sep 2025",
     location: "College Park, MD",
-    logo: { kind: "img", src: "/logos/umd.png", alt: "University of Maryland logo" },
+    logo: { kind: "img", src: "/logos/umd.png", alt: "University of Maryland logo", w: 200, h: 200 },
     bullets: [
       "Independently built a full-stack search platform (Python/Flask REST APIs, SQLite, JavaScript front end) giving UMD astrophysicists query and filtering over 50,000+ telescope observation records.",
       "Cut data-processing time 75% with a Python ETL pipeline ingesting FITS files.",
@@ -381,7 +424,7 @@ export const engineeringRoles: Role[] = [
     org: "University of Maryland (IonQ & NQL partnership)",
     dates: "Aug 2023 – Jan 2025",
     location: "College Park, MD",
-    logo: { kind: "img", src: "/logos/ionq.png", alt: "IonQ logo" },
+    logo: { kind: "img", src: "/logos/ionq.png", alt: "IonQ logo", w: 240, h: 240 },
     bullets: [
       "Shipped an open-source quantum NLP text classifier on a four-person team, building the Python pipeline that fed parsed sentences into parameterized quantum circuits (Qiskit, DisCoPy, pytket).",
       "Unlocked IonQ quantum-hardware execution via qiskit-ionq backends; the team's enhanced SPSA/Adam/genetic optimizers cut test error from 41% to 4–9% in simulation.",
@@ -395,7 +438,7 @@ export const engineeringRoles: Role[] = [
     org: "Washington Software Inc.",
     dates: "Mar 2022 – Aug 2023",
     location: "Gaithersburg, MD",
-    logo: { kind: "img", src: "/logos/washington-software.png", alt: "Washington Software Inc. logo" },
+    logo: { kind: "img", src: "/logos/washington-software.png", alt: "Washington Software Inc. logo", w: 200, h: 200 },
     bullets: [
       "Saved ~15 engineering hours weekly by designing an automated presentation-generation system in Python (Selenium, BeautifulSoup) that replaced the manual client-reporting workflow.",
       "Replaced recurring manual research and data-gathering across three product teams with modular, reusable Python automation integrated into CI/CD pipelines.",
@@ -411,7 +454,7 @@ export const communityRoles: Role[] = [
     org: "Kids For Code",
     dates: "Dec 2021 – May 2023",
     location: "Remote",
-    logo: { kind: "img", src: "/logos/kids-for-code.png", alt: "Kids For Code logo" },
+    logo: { kind: "img", src: "/logos/kids-for-code.png", alt: "Kids For Code logo", w: 100, h: 100 },
     bullets: [
       "Led curriculum and instructor operations for a Python/JavaScript program serving 3,000+ students.",
       "Delivered 400+ lessons and standardized materials to keep instruction consistent across classes.",
@@ -424,7 +467,7 @@ export const communityRoles: Role[] = [
     org: "CodeDay",
     dates: "Nov 2019 – Dec 2022",
     location: "Washington DC–Baltimore Area",
-    logo: { kind: "img", src: "/logos/codeday.jpg", alt: "CodeDay logo" },
+    logo: { kind: "img", src: "/logos/codeday.jpg", alt: "CodeDay logo", w: 200, h: 200 },
     bullets: [
       "Ran regional hackathon programs end-to-end, coordinating planning, logistics, and stakeholder communication for 500+ participants.",
       "Drove outreach to 200+ schools and secured sponsorships (including Vercel and Brave) to support event delivery.",
@@ -437,7 +480,7 @@ export const communityRoles: Role[] = [
     org: "Panda Programmer",
     dates: "Mar – Nov 2022",
     location: "Gaithersburg, MD",
-    logo: { kind: "img", src: "/logos/panda-programmer.png", alt: "Panda Programmer logo" },
+    logo: { kind: "img", src: "/logos/panda-programmer.png", alt: "Panda Programmer logo", w: 200, h: 200 },
     bullets: [
       "Taught Python, JavaScript, and Scratch to students ages 6–12 through hands-on projects and structured practice.",
       "Built lesson plans and adapted pacing/explanations to match each student's level while reinforcing core CS fundamentals.",
@@ -567,6 +610,26 @@ export const contact = {
 export const footer = {
   colophon: "Built with React + TypeScript + Vite · Deployed on GitHub Pages · No trackers",
   copyright: "© 2026 Ivan Wang",
+};
+
+// The page-root ErrorBoundary's last resort, and it renders on ONE path only: a
+// mount that failed on a page carrying no prerendered markup to restore, which in
+// practice means `npm run dev`. Every built page is asserted to have that markup
+// (scripts/prerender.mjs fails the build otherwise), so on the deployed site the
+// boundary shows the complete static page instead and none of this renders.
+//
+// It names the problem and the recovery and stops — no apology, no explanation of
+// a layer the reader cannot see, and no joke. The routes are the recovery, which
+// is why they are the bulk of it.
+export const errorFallback = {
+  heading: "This page didn't finish loading.",
+  body: "Reloading usually fixes it. These pages work either way:",
+  links: [
+    { label: "Home", href: "/" },
+    { label: "Experience", href: "/experience/" },
+    { label: "Projects", href: "/projects/" },
+    { label: "Email me", href: "mailto:ivanwang8989@gmail.com" },
+  ],
 };
 
 export const siteUrl = "https://iwang-1.github.io";

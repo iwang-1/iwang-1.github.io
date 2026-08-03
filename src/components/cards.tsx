@@ -6,7 +6,44 @@ import { Reveal } from "./Reveal";
 /** RoleLogo — the employer's real logo in a white chip, so transparent and dark
  *  marks read on the plate. `wide` lets a wordmark span the chip. Every role has
  *  a real vendor mark, so nothing on a recruiting page is ever the wrong
- *  company's logo. */
+ *  company's logo.
+ *
+ *  `width`/`height` carry the asset's real intrinsic size from content.ts (read
+ *  out of each file's own header). The chip is a fixed 48px box and the image is
+ *  `100%`/`100%` inside it, so this moves nothing — it declares the aspect ratio
+ *  before the bytes land, which is the guard the drawn box currently doesn't need
+ *  and the `-wide` variant (`height: auto`) does.
+ *
+ *  ALL SEVEN KEEP `loading="lazy"`, AND THE FIRST TWO ARE NOT AN EXCEPTION —
+ *  measured, after trying it the other way. The reasoning for dropping it on the
+ *  above-fold pair is sound on fetch COUNT: React replaces the prerendered nodes
+ *  mid-load, so the browser re-creates every logo while the document is still
+ *  loading and fetches all seven in one wave regardless (all seven requests within
+ *  3ms of each other at 1440, 65ms at 390), which makes the attribute inert there,
+ *  and `lazy` on an in-viewport image is the one case it is specified not to be
+ *  used for.
+ *
+ *  What that argument misses is fetch TIMING. Dropping it moved 16.8KB (aws.png +
+ *  umd.png) out of the post-paint wave into the FIRST one, where on a
+ *  bandwidth-constrained link it shares the pipe with the render-blocking
+ *  stylesheet that gates first paint. Measured on /experience/ at 400Kbps / 400ms
+ *  RTT / 6x CPU: the pair started at +524ms instead of +2370ms, `Nav-*.css`
+ *  responseEnd slipped 2280 -> 2661ms, and FCP and LCP slipped with it, 2384 ->
+ *  2764ms — +380ms across seven runs with a 12ms spread, so not noise. The 381ms
+ *  measured matches the 328ms that 16.8KB costs at 51.2KB/s, which is why
+ *  `fetchpriority="low"` was tried and did NOT recover it (CSS still 2661ms): the
+ *  contention is bandwidth, not request ordering, and a low-priority request
+ *  already in flight still spends the bytes.
+ *
+ *  So the trade is +380ms to first paint on a slow link against zero benefit: these
+ *  are 46px vendor marks in a 48px chip, the LCP element on this page is a text
+ *  `<li>`, and CLS is 0 either way because the box is fixed by CSS and now also
+ *  declared by the attributes below. Nothing above the fold waits on them, so they
+ *  go last, all seven, with no per-position knob — an `eager` flag plumbed through
+ *  here and RoleCard for a case that measured worse is a switch whose only setting
+ *  is wrong. If these are ever inlined or subset, or this tree stops being replaced
+ *  mid-load, the number to re-measure is `Nav-*.css` responseEnd on /experience/ at
+ *  400Kbps; that is what moved. */
 function RoleLogo({ logo }: { logo: Role["logo"] }) {
   return (
     <span className={`role-logo${logo.pad ? " role-logo-pad" : ""}`}>
@@ -14,6 +51,8 @@ function RoleLogo({ logo }: { logo: Role["logo"] }) {
         src={logo.src}
         alt={logo.alt}
         className={logo.wide ? "role-logo-img role-logo-wide" : "role-logo-img"}
+        width={logo.w}
+        height={logo.h}
         loading="lazy"
         decoding="async"
       />

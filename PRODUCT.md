@@ -88,6 +88,17 @@ it is "here is the raw file."
   roles, the climbing labels, caption/figure non-overlap, primary-CTA contrast at
   rest AND hover, dark-surface luminance, both reduced-motion strings, no
   horizontal overflow), plus a private confidentiality scanner outside the repo.
+  Two gates are viewport-independent and are NOT part of the 12 combos: the hero
+  rail's overlap check and the hero rail's **mid-token wrap** check
+  (`verify.mjs:494–536`), both home-page-only. The wrap gate is the one to know
+  about, because it exists as evidence that the combos are not a safety net: it was
+  added 2026-08-02 after **all twelve combos reported PASS with its defect live at
+  verify's own 390px mobile viewport** — `parallax-kv` and `accretion-db` breaking
+  across two lines. Nothing else could see it (the boxes do not intersect, so the
+  overlap gate is silent by construction; there is no document overflow), and it
+  counts LINE BOXES per painted text node against 1 rather than asserting a width,
+  so re-tuning the 411px stacking breakpoint cannot quietly retire it. Do not
+  re-tune that breakpoint believing the overlap gate covers it.
 - **Confidentiality:** AWS content uses only public product terms exactly as they
   appear on Ivan's resume. No internal system names, ever.
 - **Locked verbatim strings** (gate-asserted, do not paraphrase): the DANN result

@@ -49,7 +49,7 @@ typography:
     fontFamily: "ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace"
     fontSize: "0.875rem"
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.6
     fontFeature: "tabular-nums"
 rounded:
   xs: "2px"
@@ -236,11 +236,19 @@ always with tabular figures so columns of numbers align down the page.
   serif runs this far down so a flagship repo name reads with a heading's authority.
 - **Body** (400, 1.0625rem, 1.65): prose, capped at 66ch (`measure-prose`); hero subhead
   and page deks at 56ch (`measure-body`); the `h1` is held to 22ch (`measure-tight`) so
-  the name breaks where it should.
+  the name breaks where it should. MONO prose has its own step, 68ch
+  (`measure-mono`), because `ch` is the element's own "0": at 66ch the sans body renders
+  54–60 characters per line, while a mono box renders exactly its ch count, so one number
+  cannot serve both families. It binds the two mono reading blocks — the plate footnote
+  strips and the coursework line — which ran unbounded at 113–131ch (a measured
+  117-character line at 1440) because both declared `max-width: none`.
 - **Label** (400, 0.8125rem, 0.08em, uppercase, mono): kickers, provenance lines, chips,
   the skills rails, callouts. The 13px mono step is the same rank as an axis label.
-- **Footnote** (400, 0.875rem, 1.5, mono): plate footnote strips and readout units. 14px
-  is a floor, not a default — `ink-3` earns AA only at or above it.
+- **Footnote** (400, 0.875rem, 1.6, mono): plate footnote strips and the coursework line.
+  14px is a floor, not a default — `ink-3` earns AA only at or above it. Leading is 1.6, not
+  the 1.5 that shipped through 2026-08-01: light `ink-3` on a near-black plate wants
+  compensating leading like the body face does, and 1.5 was the last explicit line-height on
+  the page set below the sans body's — on the longest-measure prose on the site.
 
 The scale is ten steps (`--fs-100` 11px through `--fs-900` 2.6rem plus `--fs-display`),
 replacing fifteen literal font sizes. Weights are three: 400 body, 600 headings, 700
@@ -262,6 +270,21 @@ at rank-2, while "Featured engineering work" keeps the page's biggest type.
 **The Tabular Rule.** Any element that shows a measured number carries the mono family
 and `font-variant-numeric: tabular-nums`. Numbers in this world line up.
 
+**The Break-Before-The-Page Rule** (2026-08-02). Two declarations, both added because
+`text-wrap: balance` balances the lines it is GIVEN and cannot break a word wider than
+its column, which is exactly what the display serif produces at a raised root font size:
+- `overflow-wrap: break-word` on `h1`/`h2`/`h3`. Under text-only zoom at 320px,
+  "Programming" measured 193.6px inside a 140px timeline column and "Experience" 357.6px
+  inside a 288px page-head, painting 10px (20px root) and 42px (24px root) of horizontal
+  DOCUMENT scroll — WCAG 1.4.4 failing on the role titles a recruiter reads. `break-word`
+  and not `anywhere`: it breaks a word only when there is no other option, so min-content
+  sizing and the balanced result are unchanged at every width where the heading fits
+  (measured identical at a 16px root).
+- `flex-wrap: wrap` on `.cta-text-link`. An `inline-flex` row holds its items on one
+  line, so a label allowed to wrap inside a row that is not still measured its max-content
+  width and painted 384.7px into a 320px viewport at a 20px root. The wrap is what lets
+  the label above actually break, which is why the two travel together.
+
 ## Layout
 
 A 1120px container with 24px gutters (16px below 480px). One vertical rhythm token,
@@ -273,7 +296,14 @@ rule.
 
 Space is a nine-step ladder (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px). Plate padding is
 24px, tightening to 16px below 640px — a 24px frame on a 390px screen spends an eighth of
-the width on air.
+the width on air. That step belongs to the primitive under BOTH its names, `.plate` AND
+`.card`, in one rule (corrected 2026-08-02): only `.plate` carried it, so one object
+rendered three paddings at 390w — 16px on a plate, 24px on every `.card` / `.edu-card` /
+`.role-card` with no mobile step at all, and a raw off-ladder 20px on `.system-feature`
+below 479px that also ran BACKWARDS, giving a narrower screen a wider frame than the
+480-639px one. The 20px literal is deleted; there is one mobile pad for every plate-shaped
+surface, and the recovered measure took the phone pages down 133 / 517 / 381px (home /
+experience / projects at 320-390w).
 
 Responsive behaviour, as built:
 - **Hero**: three named grid areas — `lead` (kicker, name, bio, the availability chip),
@@ -349,6 +379,17 @@ deliberately, as a decision, not as drift. `verify.mjs` gates both the hero kick
 first section head against the nav anchor at every viewport, so re-centring anything fails
 the build rather than shipping.
 
+The box diagram inside a system plate obeys this rule too (corrected 2026-08-02). It shipped
+`justify-content: center`, which is the "allowed to float" case the paragraph above rules
+out: below 1024px the evidence column is the plate's full measure, so the drawing sat a
+measured 191.8 / 224.8 / 257.8 / 307.8 / 319.3px off the spine at 768 / 834 / 900 / 1000 /
+1023w — the largest single left-edge miss on the site, inside a plate whose label, readout
+and footnote strip all start on that edge. `flex-start` pins it to the plate's padding edge
+(deadLeft 0.0 at every width from 640 to 2560), and the caption drops its `text-align:
+center` for the same reason: a centred caption under a left-pinned drawing puts one figure's
+two halves on two different edges. The dead field moves to the drawing's right, where a
+figure is entitled to end before its plate does.
+
 ## Elevation & Depth
 
 There is no elevation. No blur, no ambient shadow, no gradient wash, no glow. Depth comes
@@ -411,6 +452,17 @@ a surface.
   false affordance.
 - **Proof chip:** the same tag plus a mandatory 6px teal status dot. The dot is what
   separates a checked number from a tech tag, so it is not an option the caller can drop.
+  It rides the FIRST line of its label, not the centre of the chip. `align-items: center` is
+  right while a chip is one line — all eleven single-line proof chips measure 0.22px off
+  their line's centre — but the hero availability chip wraps (two lines from 640px up, three
+  at 390), and centring on its 54.8px box put the dot 11.9px below the first line's centre
+  at 1440 and 23.1px at 390: a status dot floating in the gutter *between* two lines of the
+  string it qualifies. `flex-start` plus `margin-top: calc((1lh - 6px) / 2)` is
+  arithmetically identical to `center` on one line, so nothing that already read correctly
+  moved (0.22px before and after), and `1lh` lets the 13px chip and the 16px hero chip each
+  derive their own offset. Both declarations live inside one `@supports (margin-top: 1lh)`
+  block, and must stay there: without the guard a non-supporting engine would keep
+  `flex-start` and drop the offset, riding every dot to the line box's top edge.
 
 ### Cards / Containers
 - **Corner Style:** 2px.
@@ -418,7 +470,9 @@ a surface.
 - **Shadow Strategy:** none. See Elevation & Depth.
 - **Border:** 1px `grid`; brightens to `ink-3` on hover for non-link cards, to amber for
   link-bearing ones.
-- **Internal Padding:** 24px (20px below 480px on system plates).
+- **Internal Padding:** 24px, 16px below 640px — one step, one rule, both names. The
+  `20px below 480px on system plates` that used to be recorded here is deleted (2026-08-02):
+  see the space-ladder paragraph under Layout.
 - A card is a plate that has not been named yet: same fill, same hairline, same radius,
   same padding. Link-bearing cards add a 2px lift on `:hover` and `:focus-within` and
   thicken the title underline; cards with nothing to click brighten their boundary and do
@@ -433,6 +487,31 @@ on every page.
 
 The nav's geometry is frozen: 64px height, and the progress rail pinned at
 `bottom: -3px; height: 7px`. Restyle its appearance; do not move its box.
+
+**The tab row PANS, it never pushes the page** (2026-08-02). `.nav-tabs` is an
+`overflow-x: auto` scroll container with `min-width: 0` — the same answer
+`.sweep-scroll` gives a plot too wide for its plate, applied to the one component
+every page depends on. Under text-only zoom (the reader raises the root font size
+and the viewport stays at 320px) the four tabs outgrow the nav's measure, and as a
+flex item at its default `min-width: auto` the row could not shrink, so it drove the
+whole DOCUMENT into horizontal scroll: 30px of page overflow at 320w with the root at
+18px, 47px at 19px, 65px at 20px, with the Contact tab's right edge 1.7 / 15.5 /
+29.3px outside the viewport. Measured after: 0px of document overflow at every root
+size to 24px, where the row itself pans 6px instead. The frozen box is untouched —
+64px at every root size tested, rail delta 2.0.
+
+Two details are load-bearing, and the reason this rule is recorded here rather than
+left in the stylesheet is that both look like removable noise:
+- **The `padding-block: 5px` / `margin-block: -5px` pair cancels out**, so the box is
+  the size it always was — but the padding is what puts a focused tab's 2px ring plus
+  2px offset INSIDE the scroll container's clip box. Delete it and every tab's ring is
+  clipped 4px top and bottom. 5px rather than exactly 4 leaves 1px of slack (measured
+  slackTop 1.0 / slackBot 1.0 at 320 / 390 / 1366w) so a sub-pixel layout cannot shave
+  the ring's last row. The current tab's inset amber tick stays inside the clip box at
+  every width and root size measured.
+- **The scrollbar is hidden**, because a classic horizontal scrollbar drawn inside a
+  64px bar whose height is gate-asserted would break that assertion. Focusing a tab
+  scrolls it into view and every tab is still a real link in the tab order.
 
 ### The Sweep (signature)
 One inspectable measured figure, on the homepage, once. A 680×360 inline SVG of
@@ -453,6 +532,41 @@ Its rules, all load-bearing:
 - Below its floor width the plate **pans** rather than scaling labels into illegibility,
   and the pan starts at the annotated end (`direction: rtl` on the scroller, restored on
   the child) so the default state is never behind a gesture.
+- **The pan is a named control, and its tab stop is the UA's, not ours.** `.sweep-scroll`
+  carries `role="group"` plus an `aria-label` naming the job it does — panning, not
+  measuring — because Chromium makes a scrolling box a tab stop by itself, and it did so
+  silently as an unnamed DIV whose name computed from its own contents. **No `tabIndex`
+  is set, deliberately**: the UA heuristic grants the stop exactly when the box scrolls
+  and withholds it when it does not (measured pan 326 / 256 / 38px at 320 / 390 / 640w
+  with the stop present, 0px and no stop at 680 / 998 / 1366), so writing `tabIndex={0}`
+  would ADD a dead stop at every desktop width — the mirror of the defect being fixed.
+  The stop is not removable either: with JavaScript blocked, Home on the `<figure>` pans
+  0px because there is no crosshair to move, while ArrowLeft here pans 80px, making this
+  the only keyboard route to the plot's left half on the no-JS render the proof story
+  rests on. The `<figure>` still owns the sample-stepping contract.
+- **A visually-hidden transcription table carries the same ten samples as text**, server-
+  rendered, immediately after the drawing. It is the accessible copy of the evidence: the
+  drawing pans its per-point labels out of the window at 400% zoom, and to a screen reader
+  the SVG is one `role="img"` summary plus a single live line. Hidden rather than shown
+  because the drawing IS the figure wherever the drawing is legible, and a second visible
+  copy of ten rows is the duplicated-legend defect this figure already fixed once.
+  Two rules hold it up:
+  - **`.visually-hidden` goes on a WRAPPER, never on the `<table>`.** Not a style
+    preference: the primitive's `width: 1px` is a MINIMUM for a CSS table, which sizes to
+    its columns' min-content regardless. Measured by moving the class onto the table in
+    the live page — the table renders 573.5px wide and the home page takes **285px of
+    horizontal document overflow at 320w**, against 0px with the wrapper. A block wrapper
+    honours the 1px and `overflow: hidden` clips the table inside it, so the transcription
+    costs zero layout at every width (wrapper 1.0px at 1366 / 390 / 320).
+  - **The caption states an ordering, so the row order must BE that ordering.** Both the
+    caption and the arrow keys claim throughput-ascending, and `enhance.ts` sorts the
+    samples on `data-sweep-x`, so the `SAMPLES` array is authored in true x-ascending
+    order — which interleaves the two series (`ef=256` at ~8.9K sits between `nprobe=4`
+    and `nprobe=1` at ~9.8K). Grouping the rows by series is the obvious tidy-up and it
+    silently falsifies the caption for the one reader who has no drawing to cross-check
+    against: it shipped that way and the table put `ef=256` sixth while the keys visited
+    it fifth. Verified in the browser: the ten rows and a Home-then-ArrowRight walk now
+    read the same sequence.
 - Coordinates are literal `d="…"` path attributes and axis labels are decimals, never
   percentages — the repo's fact gate masks path data before its numeric tripwires run, so
   a coordinate run can never be read as a claim.
@@ -466,11 +580,30 @@ set as the card's last paragraph is a closing argument against yourself. Provena
 and the strip carries `overflow-wrap: anywhere` because artifact filenames are long
 unbroken tokens.
 
+The strip is prose (the † limits note is two sentences), so it is bound by `measure-mono`
+like any other reading block — but the cap is spent on `padding-right`, never on
+`max-width`, and that distinction is load-bearing. This element's `border-top` IS the
+plate's internal divider, so narrowing the box narrows the rule: measured at 1440 with
+`max-width: 68ch` the box fell 1022px → 607px and the hairline stopped 415px short of the
+plate's inner right edge, and on the Sweep it broke the stated contract that the plot, the
+gloss and the footnote all end on one right edge (footnote right 1109 → 816 against an
+unmoved plot). Padding leaves the border box on the plate's full measure and shortens only
+the line box, and a `max()` floor of 0 keeps every narrow render byte-identical.
+
 ### The Readout
-Value / unit / label on one left-aligned baseline, in tabular figures, with as many rows
+Value / label on one left-aligned baseline, in tabular figures, with as many rows
 as the project actually measured. Explicitly **not** a fixed-column grid: three cards with
 exactly three metrics each is a schema, and a schema reads as filled in rather than
-measured. The hero variant is a three-row rail of hairline-separated rows — repo name as
+measured.
+
+A row whose label is an *axis* label rather than English carries a `plain` gloss under it —
+sans against the row's mono, at the 14px `ink-3` floor — on the same contract the hero
+rail's gloss carries: it NAMES WHAT THE METRIC IS and may never assert a second measurement
+or introduce a number. "fdatasync p50" and "recall@10" reuse the rail's already-approved
+wording verbatim so one piece of jargon is never translated two ways on one page. Rows whose
+label is already English ("client operations checked", "durable writes", "queries/sec ·
+1 core") get none — glossing all of them would be the filled-in schema this primitive
+exists to avoid, which is why 4 of the 7 plate rows carry one. The hero variant is a three-row rail of hairline-separated rows — repo name as
 the amber link, value in `ink`, unit in `ink-3` — and it lives in the hero's right column,
 which is what makes the first screen a figure rather than a decorated résumé header. It
 must read and click with everything else ignored entirely. Its value and unit tracks are
@@ -504,6 +637,61 @@ Hairline row rules, `plate-2` stripes on even rows, mono uppercase 12px headers 
 `ink-2`, tabular figures, no vertical borders. A figure-world native for tabular or
 demoted content.
 
+### The Legend Modal (`.kbd-help`)
+The site's one dialog — the `?` legend-and-shortcuts panel, injected by `enhance.ts`.
+It is a plate that happens to be modal: hairline boundary, flat fill, and the backdrop
+is what separates it from the page rather than a blur under its own edge. The `?`
+affordance is a fixed button, hidden on touch and below 640px.
+
+Its name and its geometry both carry rules (2026-08-02):
+- **`aria-labelledby` pointing at the `<h2 id="kbd-help-title">` it already renders**,
+  not a hand-written `aria-label`. Two strings for one name can drift; one cannot. The
+  title is a real `<h2>` — a rank under the page `<h1>` — instead of a `<p>` styled to
+  look like a heading, so the panel exists in the document outline. Measured accessible
+  name: "Legend & shortcuts" at 320×256, 1024×300 and 1366×900. Every id and class in
+  the injected markup is asserted by `verify.mjs`.
+- **The overlay SCROLLS, and both halves of that fix are load-bearing.** A centred flex
+  item taller than its container overflows both ends equally, and a centred item's TOP
+  overflow is not scrollable — at 320×256 the 444px card sat at y −86..358, putting the
+  dialog's name 61.5px above the screen and its only visible exit 77.5px below it, with
+  no way to reach either; 13.1px above and 29.1px below at 1024×300. Both are ordinary
+  viewports (400% zoom on a laptop, a short window). So: `overflow: auto` on the
+  overlay, `align-items: start` plus `margin: auto` on the card — the auto margin
+  absorbs free space when there is any and collapses to zero when there is not, which
+  is what keeps the centred rest state at full height while letting a too-tall card grow
+  past the container. Measured after: the card is fully on-screen at 24..232 (320×256)
+  and 24..276 (1024×300), its own content scrolls 235 / 137px, and the title and the
+  Close button are both reachable. `cardMargin` computes 0px on the short viewports and
+  231.4px at 1366×900 — the same rule doing both jobs.
+- **The backdrop is `fixed`, not `absolute`.** An absolutely positioned child of a
+  scroll container is laid out at the scroll origin and then scrolls with the content,
+  so on a short screen the backdrop slid off the top and left raw page showing above the
+  card. Anchored to the viewport it covers the screen at every scroll offset and stays
+  the click-to-close target `verify.mjs` asserts.
+
+### The Static Fallback (`.static-fallback`)
+Not a visual primitive — a contract, recorded here because it owns two CSS rules that
+each read as redundant on their own. Every page root is wrapped in an `ErrorBoundary`
+(`src/components/ErrorBoundary.tsx`) whose fallback is not an apology but **the
+prerendered page**: it snapshots `#root`'s markup at module evaluation, before
+`createRoot` replaces it, and on a caught error re-renders that snapshot and strips the
+root `.js` class. The design argument is that this site already ships a complete static
+render of every page and PRODUCT.md requires the no-JS page to carry everything that
+constitutes proof, so the correct fallback for a broken interactive layer is the no-JS
+page. There is deliberately **no visible banner** — reporting a failed layer the reader
+cannot see is a defect with no user-facing consequence and no action available; the
+failure is announced to `console.error` and as a `data-static-fallback` attribute.
+
+The two rules, both mandatory:
+- **`.static-fallback { display: contents }`.** The wrapper exists only to hold a
+  snapshot. With a box of its own it becomes the single flex item of `#root`, and Nav /
+  main / Footer stop being flex items at all — the footer would float mid-viewport on
+  the 404.
+- **The paired `#root > .static-fallback > main` selector beside `#root > main`.** Not
+  redundant: `display: contents` removes the BOX, never the element, so a `>` selector
+  still does not match through it, and without the pair the restored `<main>` loses its
+  `flex: 1 0 auto`.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -531,13 +719,43 @@ demoted content.
   button primitive use fixed values, not tokens, so no later `:root` remap can
   re-introduce a low-contrast collision; the hero collapses to one column and injected
   chrome (progress rail, legend swatch, modal, figures) is hidden.
+  **A collapsed grid must re-declare its gap.** `display: block` on `.hero-layout` discards
+  the 32px row gap and `block` has no gap primitive, so on a cold print load (`emulateMedia`
+  set BEFORE navigation — the case a hot reload hides) the identity, the evidence rail and
+  the AWS-plus-CTA block butted at a measured 0px / 0px at both 1440 and 794px, printing as
+  one undifferentiated column. The two blocks that FOLLOW one carry `margin-top: 32px` in
+  print — the same value the screen grid spends — and `.hero-lead`, being first, carries
+  none, so the band never opens on dead air. Measured after: 32 / 32 at both widths, with
+  the print CTA still at 11.46:1.
 - **Do** let a figure pan on narrow screens rather than shrinking its labels below
   legibility, and start the pan at the annotated end.
 - **Do** treat the build gates as part of the design system: the fact gate
-  (`scripts/check-facts.mjs`, run on every build), and `verify.mjs`'s twelve checks —
+  (`scripts/check-facts.mjs`, run on every build), and `verify.mjs`'s checks —
   including the dark-surface luminance ceiling, the caption/figure non-overlap assertion,
   and the primary-CTA contrast assertion at rest *and* hovered. A visual rule that cannot
   survive them is not shipped.
+- **Do** prove a new gate by reverting the defect it claims to catch. A gate nobody has
+  seen fail is a comment. All three geometry gates on the hero rail and the reveal
+  contract were re-proved this way on 2026-08-02, and the exercise is recorded because
+  each revert also measured *which* gates stayed silent:
+  - **Reveal / parked offset** — `useReveal`'s threshold back to a bare `0.15` (from
+    `[0, 0.15]`): 5 failures across `/`, `/experience/` and `/projects/`. The
+    pre-existing full-scroll reveal gate stayed green throughout, because it always
+    walks from y=0 and every block enters the root from below.
+  - **Rail overlap** — the `@media (max-width: 411px)` stacking block disabled entirely,
+    which is the state at `c49cdf6`: 10.4 / 38.1 / 20.0px of glyph overlap at 320w,
+    reproducing the recorded figures exactly. Only the rail gate fired; the other
+    eleven checks passed at the same viewport.
+  - **Rail mid-token wrap** (added 2026-08-02) — the ceiling back to the shipped `379px`
+    (`c108bcf`): `parallax-kv` and `accretion-db` break across two lines at 380 / 385 /
+    390 and `accretion-db` alone at 400, clean from 402. This is the gate the other two
+    could not cover, and the reason it exists is that **verify reported all twelve
+    combos PASS with the defect live at its own 390px mobile viewport** — the boxes do
+    not intersect, so the overlap gate is silent by construction, and there is no
+    document overflow to catch. Counting line boxes per painted text node is what
+    separates "fits" from "merely no longer colliding"; the assertion is written
+    against 1 line rather than against a width, so re-tuning the breakpoint cannot
+    quietly retire it.
 
 ### Don't:
 - **Don't** give `series-1` an interactive role, or give amber a data role.
@@ -560,7 +778,9 @@ demoted content.
 - **Don't** let anything revealable start hidden under `prefers-reduced-motion: reduce`,
   and don't place a revealable element inside a `display:none` container.
 - **Don't** put a figure number on About, Education, Skills, or the contact band.
-- **Don't** build a fixed-column metric grid to hold varying evidence.
+- **Don't** build a fixed-column metric grid to hold varying evidence. The `.metric-grid`
+  rule that contradicted this shipped unrendered for weeks and was deleted 2026-08-02, along
+  with a `.readout-unit` track no caller ever populated.
 - **Don't** colour metadata — coursework, skills, tech tags — to compete with evidence.
 - **Don't** set `padding` shorthand on `.hero`, `.page-head`, or `.not-found`: they share
   their element with `.container`, and a shorthand zeroes the page's horizontal gutter.

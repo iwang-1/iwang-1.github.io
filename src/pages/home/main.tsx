@@ -5,6 +5,7 @@ import "../../enhance";
 import "../../index.css";
 import { education, featuredSystems, hero, hobbies, person, skills } from "../../content";
 import { ContactBand, EduCard } from "../../components/cards";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { ProofChip } from "../../components/chips";
 import { ClimbingRoute } from "../../components/ClimbingRoute";
 import { Footer } from "../../components/Footer";
@@ -205,7 +206,9 @@ function Home() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Home />
+    <ErrorBoundary>
+      <Home />
+    </ErrorBoundary>
   </StrictMode>,
 );
 // AFTER render, never before: `.js` is the receipt for a completed mount. See

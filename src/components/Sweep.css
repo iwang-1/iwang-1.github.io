@@ -397,10 +397,25 @@
 
 /* The drag invitation. Hidden until the bundle proves it can honour it — see
    the note in Sweep.tsx. Quiet register: it is an instruction, not evidence, so
-   it must never compete with the amber value beside it. */
+   it must never compete with the amber value beside it.
+
+   SHRINKABLE, for the same measured reason .keyboard-hint is (see the note in
+   Keyboard.css, which fixed this on the sibling figure and left this copy at
+   `flex: none`). `flex: none` pins a flex item at its max-content width, and this
+   string is ~30 mono characters: under text-only zoom at 320px it measured 336.4px
+   at a 18px root, 353.2 at 19px and 370.1 at 20px against a 320px viewport, and
+   because a pinned item cannot shrink it dragged the whole DOCUMENT into 16 / 33 /
+   50px of horizontal scroll. Letting it shrink lets it wrap instead — the row is
+   already `flex-wrap: wrap`, so nothing changes at 1366 / 640 / 480 / 390 (row
+   height 48.4 / 48.4 / 77.2 / 96.8px, identical either way).
+   The one measured cost, stated rather than buried: at 320px the hint now takes
+   two lines instead of one, so the row grows 96.8 -> 113.6px and the page 10,499
+   -> 10,516px (+17px, +0.16% of the phone budget). A wrapped instruction line is
+   worth 17px; a navigation-and-figure column the reader has to scroll sideways to
+   read is not. Keyboard.css already made this exact trade on the sibling figure. */
 .sweep-readout-hint {
   display: none;
-  flex: none;
+  flex: 0 1 auto;
   color: var(--ink-3);
   font-size: var(--fs-200);
   letter-spacing: 0.04em;

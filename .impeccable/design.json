@@ -1,6 +1,6 @@
 {
  "schemaVersion": 2,
- "generatedAt": "2026-08-01T00:00:00.000Z",
+ "generatedAt": "2026-08-02T00:00:00.000Z",
  "title": "Design System: Figure One",
  "extensions": {
   "colorMeta": {
@@ -212,7 +212,7 @@
    },
    "body": {
     "displayName": "Body",
-    "purpose": "Prose at 66ch; hero subhead and page deks at 56ch."
+    "purpose": "Prose at 66ch; hero subhead and page deks at 56ch; the h1 at 22ch. Mono reading blocks take their own 68ch step (--measure-mono), because ch is the element's own zero and one number cannot serve both families."
    },
    "label": {
     "displayName": "Label / Mono",
@@ -220,7 +220,7 @@
    },
    "footnote": {
     "displayName": "Footnote",
-    "purpose": "Plate footnote strips, readout units, measurement conditions. 14px is a floor, not a default \u2014 ink-3 earns AA only at or above it."
+    "purpose": "Plate footnote strips and the coursework line. 14px is a floor, not a default \u2014 ink-3 earns AA only at or above it. Leading is 1.6, not 1.5: light ink-3 on a near-black plate wants compensating leading, on the longest-measure prose on the site."
    }
   },
   "shadows": [
@@ -281,7 +281,7 @@
    {
     "name": "sm",
     "value": "479px",
-    "note": "Container gutter 16px; system-plate padding 20px."
+    "note": "Nav gap and tab padding tighten again. The off-ladder 20px system-plate padding that used to sit here was deleted 2026-08-02; the single mobile plate pad is the 16px step at 639px. Container gutter drops to 16px at 480px."
    },
    {
     "name": "mobile",
