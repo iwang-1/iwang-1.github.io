@@ -49,8 +49,13 @@ const FORBIDDEN = [
     why: "phone-number-shaped string (no phone number anywhere in site text)",
   },
   {
-    re: /30[–-]48x/,
-    why: "retired lodestone claim — 48.7x occurs at 0.8996 recall, below the asserted 90%; true ≥0.90 band is 9.2x–32.8x",
+    // Widened 2026-08-03: the original /30[–-]48x/ caught only the hyphen and
+    // en-dash spellings it happened to ship in. An independent verifier probed
+    // it and it missed "30—48x", "30 - 48x", "30 to 48x", "48× the oracle",
+    // bare "48x faster", and the stale "~31,700" — which is exactly how a
+    // retracted number creeps back in a slightly different skin.
+    re: /3\s*0\s*[-–—]\s*4\s*8\s*[x×]|30\s*to\s*48\s*[x×]|(?<![\d.])48\s*[x×]\s*(?:the\s+)?(?:oracle|exact|brute|faster|speedup)|31,?700/i,
+    why: "retired lodestone claim — 48.7x occurs at 0.8996 recall, below the asserted 90%; true ≥0.90 HNSW band is 9.2x–32.8x, and the QPS figure is ~31,800 not ~31,700",
   },
   { re: /\b80(\.0)?\s?%/, why: "rounded classifier accuracy (79.5% never becomes 80%)" },
   { re: /\b99(\.\d+)?\s?%/, why: "rounded coverage (98.56% never becomes 99%)" },
