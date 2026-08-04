@@ -18,12 +18,17 @@ html {
 
 body {
   margin: 0;
-  background: var(--ground);
+  background: var(--surface-page);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--fs-600);
   line-height: var(--lh-body);
-  -webkit-font-smoothing: antialiased;
+  /* NO -webkit-font-smoothing: antialiased here (removed with the DOUBLE-SHOT
+     palette). That declaration thins stems, which is a correction for LIGHT
+     type on a DARK surface — the world it was written for. This world is dark
+     ink on cap beige, where the same declaration works against the reader by
+     lightening body text that is already at its intended weight. Default
+     (subpixel) smoothing is the right choice for dark-on-light. */
 }
 
 body.modal-open {
@@ -154,15 +159,22 @@ img {
   }
 }
 
+/* The mono primitive. NOTE the missing declaration, because its absence is a
+   decision (DOUBLE-SHOT, 2026-08-04): this rule and sixteen others used to
+   carry `font-variant-numeric: tabular-nums`, and all seventeen are deleted.
+   Martian Mono ships NO `tnum` feature — verified against the font binary's
+   GSUB table, which lists only calt/ccmp/dnom/frac/locl/numr/rvrn. Every glyph
+   in it has the same 0.750 em advance, so columns of numbers align natively and
+   the property had nothing to switch on. Keeping it would have left seventeen
+   inert declarations reading as a guarantee the shipped font cannot make.
+   verify.mjs asserts the built CSS contains no tabular-nums for that reason. */
 .mono {
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
 }
 
 /* The provenance line: 13px mono, the same rank as an axis label. */
 .kicker {
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-300);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -359,6 +371,14 @@ img {
   }
 }
 
+/* The label button's TEXT is UI, not data. Martian Mono's cap-I and lowercase-l
+   are near-identical at 16px, which rendered "GitHub" as "GItHub" in the fold —
+   a legibility failure in the one place a reader is deciding whether to click.
+   Legends and data stay in Martian; button labels take the body face. */
+.btn {
+  font-family: var(--font-body);
+}
+
 /* ---------------------------------------------------------- label button */
 /* The figure world's one interactive primitive: a flat plate with a hairline
    border and a mono-adjacent label. Nav tabs, CTA buttons, footer links.
@@ -479,7 +499,6 @@ button.btn {
    set quieter than the content it names. */
 .plate-label {
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-200);
   font-weight: 400;
   letter-spacing: 0.08em;
@@ -515,7 +534,6 @@ button.btn {
   border-top: var(--hairline) solid var(--grid);
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-400); /* 14px floor — never smaller */
   /* 1.6, not 1.5. Light --ink-3 text on a near-black plate needs compensating
      leading (DESIGN.md sets the body face at 1.65 for the same reason), and 1.5
@@ -589,7 +607,6 @@ button.btn {
   gap: var(--space-2);
   margin: 0;
   padding: 0;
-  font-variant-numeric: tabular-nums;
 }
 
 .readout-row {
@@ -603,7 +620,6 @@ button.btn {
 .readout-value {
   color: var(--ink);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-700);
   font-weight: 600;
   line-height: 1.2;
@@ -618,7 +634,6 @@ button.btn {
 .readout-label {
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-400);
   line-height: 1.4;
 }
@@ -637,7 +652,6 @@ button.btn {
   margin-top: 2px;
   color: var(--ink-3);
   font-family: var(--font-body);
-  font-variant-numeric: normal;
   /* --fs-400 (14px), NOT the --fs-300 the hero rail's gloss uses: DESIGN.md's
      Fourteen-Pixel Floor Rule is that nothing set in --ink-3 goes below 14px, and
      13px --ink-3 would have introduced a second violation of it rather than
@@ -678,7 +692,6 @@ button.btn {
   gap: var(--space-2);
   color: var(--series-2);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-300);
   line-height: 1.4;
 }
@@ -696,7 +709,6 @@ button.btn {
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-400);
 }
 
@@ -742,7 +754,6 @@ button.btn {
   border: var(--hairline) solid var(--grid);
   background: var(--plate);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-300);
   color: var(--ink);
   white-space: nowrap;
@@ -1063,7 +1074,10 @@ button.btn {
 
 @media (min-width: 1024px) {
   .hero-layout {
-    grid-template-columns: minmax(0, 56fr) minmax(360px, 44fr);
+    /* 50/50, not 56/44: at 44% the readout's unit column wrapped to three lines
+       and "878 µs" broke across two — Martian Mono is wide (caps at 0.800 em), so
+       the rail needs more room in this world than the old narrow-mono one. */
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
     grid-template-areas:
       "lead rail"
       "tail rail";
@@ -1182,7 +1196,6 @@ button.btn {
 .hero-readout {
   display: flex;
   flex-direction: column;
-  font-variant-numeric: tabular-nums;
 }
 
 /* FIXED number columns, not content-sized ones. With the value and unit tracks
@@ -1213,6 +1226,8 @@ button.btn {
   font-size: var(--fs-500);
   font-weight: 600;
   text-align: right;
+  /* "878 µs" is one datum; it broke across two lines at the old column width. */
+  white-space: nowrap;
 }
 
 .hero-readout-unit {
@@ -2093,7 +2108,6 @@ button.btn {
 
 .role-meta {
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-400);
   color: var(--ink-2);
   margin-top: var(--space-1);
@@ -2595,7 +2609,6 @@ button.btn {
 .footer-colophon {
   margin-top: var(--space-6);
   font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
   font-size: var(--fs-300);
   color: var(--ink-2);
   display: flex;

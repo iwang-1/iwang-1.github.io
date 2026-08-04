@@ -1,89 +1,190 @@
-/* Design tokens — the figure palette.
-   Sampled from the committed benchmark plots; amber darkened for contrast.
-   The page is a measurement report: ground and plate are reading surfaces,
-   grid and axis are hairlines, and colour is spent on two things only —
-   evidence (series) and the things you can click (amber).
+/* ============================================================================
+   DOUBLE-SHOT — design tokens.
 
-   The signature rule: BLUE IS DATA, AMBER IS THE HUMAN ANNOTATION.
-   --series-1 appears only inside plates, where the source plots already put
-   it. Every interactive affordance — link, focus ring, active tab, primary
-   button fill, crosshair readout — is --series-2.
+   The world is a mechanical-keyboard SPEC SHEET: not a page about keyboards, a
+   page whose drawing conventions come from them, because a switch datasheet
+   (a force-versus-travel curve beside a spec column) is structurally the same
+   object as a recall-versus-throughput sweep. So the evidence and the hobby
+   share one grammar instead of the hobby being dressed in the evidence's
+   costume — which is what made one template look like it had drawn everything.
 
-   Contrast, measured (WCAG 2.1, against --ground / --plate / --plate-2):
-     --ink     17.76 / 16.98 / 15.71
-     --ink-2    9.10 /  8.70 /  8.05
-     --ink-3    6.33 /  6.06 /  5.60   (footnotes; 14px floor)
-     --series-1 9.14 /  8.74 /  8.09
-     --series-2 8.98 /  8.58 /  7.94
-     --series-3 10.52 / 10.06 /  9.31
-   Amber is a FILL as often as a text colour: label on amber is --ground
-   (8.98:1). --ink on amber is 1.98:1 and is never used.
-   Surface luminance: ground 0.0036, plate 0.0061, plate-2 0.0106. */
+   TWO LAYERS, deliberately:
+     LAYER 1 — RAW. The double-shot colorway itself (alpha / modifier /
+       accent). These are the physical facts of the palette and carry no
+       meaning. Nothing outside this file should reference them.
+     LAYER 2 — SEMANTIC. What each raw value is FOR. Every component reads
+       these. A dark counterpart is then ~10 re-pointed roles in one media
+       query, not a re-audit of the stylesheet — which is the mitigation for
+       accepted risk #4 (this world reverses the earlier light-primary
+       rejection).
+
+   CONTRAST — measured here, not copied. Every ratio below was computed from
+   these exact hexes with the WCAG 2.1 relative-luminance formula
+   (scripts/measure.mjs re-reads them from the LIVE computed styles, so the
+   table cannot drift from the values above it). The direction contract's eight
+   claims were checked one by one and all eight are CONFIRMED to 2 d.p.:
+
+     token            on cap beige   on case grey   floor it must clear
+     charcoal ink        12.58           10.30       4.5 body
+     modifier rust        7.65            6.26       4.5 body / 3.0 large
+     slate                6.32            5.17       4.5 body
+     sublegend grey       6.01            4.92       4.5 body  <- tightest
+     ---------------------------------------------------------------------
+     cap beige ON a rust fill                7.65
+     case grey ON a rust fill                6.26
+     charcoal ON a rust fill                 1.64   <- BANNED, see below
+
+   Surface luminance: cap beige 0.8022, case grey 0.6474, inset 0.6000.
+   verify.mjs asserts the page surface is LIGHT against these numbers, which is
+   the light-world counterpart of the dark-luminance gate it replaces.
+   ========================================================================== */
+
+/* ==========================================================================
+   LAYER 1 — RAW. The colorway. No meaning attached; do not use directly.
+   Named for the parts of a double-shot keycap set, which is where the logic
+   comes from: an alpha, a modifier, and one accent.
+   ========================================================================== */
 :root {
-  color-scheme: dark;
+  --raw-cap-beige: #ede7da; /* the alpha keycap — the page */
+  --raw-case-grey: #d9d2c2; /* the case — every figure fill */
+  --raw-case-shade: #d2cbbb; /* case in shadow — table stripes, insets.
+      Derived: 4% charcoal into case grey. That percentage is not a taste
+      choice — it is the largest step that keeps SUBLEGENT GREY, the palette's
+      lowest-contrast ink, above the 4.5 body floor on it (4.58; it is 4.49 at
+      5%, which fails). A third surface is worth having only if every ink that
+      is allowed on the second one is still legal on it. */
+  --raw-charcoal: #26241f; /* legend ink — text and rules */
+  --raw-rust: #7a2e12; /* the modifier accent. One accent, and it is a
+      FILL as often as a text colour. */
+  --raw-slate: #33566e; /* data traces and links */
+  --raw-sublegend: #5a554b; /* the sublegend — units, secondary */
+  --raw-rule: #7a766e; /* structural hairline. Derived: 58% charcoal into
+      cap beige, which is the SMALLEST fraction reaching 3:1 on BOTH reading
+      surfaces (3.67 on cap, 3.00 on case) — the non-text contrast floor, so a
+      drawn rule is a rule and not a suggestion. */
+  --raw-rule-soft: #c1bcb1; /* the quiet divider inside a figure: 22%
+      charcoal into cap beige, 1.54 on cap / 1.26 on case. Deliberately below
+      3:1 — it separates rows of a spec column and carries no information a
+      reader could miss, so a structural rule must never be swapped for it. */
+}
 
-  /* ---------------------------------------------------------- figure palette */
-  /* surfaces */
-  --ground: #080C13;   /* page */
-  --plate: #0B1220;    /* figure / card fill */
-  --plate-2: #101B2A;  /* table stripes */
-  /* hairlines */
-  --grid: #1B293D;
-  --axis: #24354A;
-  /* ink */
-  --ink: #EEF5F7;
-  --ink-2: #9FB3C8;
-  --ink-3: #8295A5;
-  /* series — data only for series-1; series-2 is every interaction */
-  --series-1: #38BDF8;
-  --series-2: #E9A13B;
-  --series-3: #2DD4BF;
-  /* The one true white: the chip behind employer logos. Vendor marks are
-     drawn for paper, so they sit on paper — never on a dark plate. */
-  --logo-chip: #FFFFFF;
+/* ==========================================================================
+   LAYER 2 — SEMANTIC. What things are FOR. Components read only these.
+   ========================================================================== */
+:root {
+  color-scheme: light;
 
-  /* ------------------------------------------------------------- geometry */
+  /* --- surfaces ------------------------------------------------------------ */
+  --surface-page: var(--raw-cap-beige);
+  --surface-figure: var(--raw-case-grey);
+  --surface-inset: var(--raw-case-shade);
+
+  /* --- ink ---------------------------------------------------------------- */
+  --ink: var(--raw-charcoal); /* text, rules, the case border */
+  --ink-accent: var(--raw-rust); /* the one accent: interaction + fills */
+  --ink-data: var(--raw-slate); /* data traces, links */
+  --ink-secondary: var(--raw-sublegend); /* units, sublegends, secondary */
+
+  /* --- structure ---------------------------------------------------------- */
+  --rule: var(--raw-rule); /* a drawn rule: axes, the case border */
+  --rule-soft: var(--raw-rule-soft); /* a divider between spec rows */
+
+  /* THE LABEL-ON-ACCENT RULE. A rust fill takes CAP BEIGE as its label
+     (7.65:1). Charcoal on rust measures 1.64:1 — it is the invisible-CTA
+     defect in this palette, and verify.mjs gates the primary control's label
+     contrast at rest, hovered and focused precisely so it cannot come back. */
+  --on-accent: var(--raw-cap-beige);
+
+  /* ----------------------------------------------------------------- legacy
+     The OUTGOING world's token names, re-pointed at the new roles so the
+     3,200-line stylesheet keeps computing while the components are restyled in
+     the steps that follow. These are a MIGRATION SHIM, not part of the system:
+     every one of them is deleted as its components move to the semantic roles
+     above. Do not write new rules against them.
+     The mapping inverts the old dark ramp (ground was the darkest surface and
+     ink the brightest); here the page is the LIGHTEST thing and ink is
+     darkest, so --ink-2/--ink-3 point DOWN the contrast ramp, not up it. */
+  --ground: var(--surface-page);
+  --plate: var(--surface-figure);
+  --plate-2: var(--surface-inset);
+  --grid: var(--rule-soft);
+  --axis: var(--rule);
+  --ink-2: var(--ink-secondary);
+  --ink-3: var(--ink-secondary);
+  --series-1: var(--ink-data);
+  --series-2: var(--ink-accent);
+  --series-3: var(--ink-data);
+  --logo-chip: #ffffff; /* vendor marks are drawn for paper; they sit on paper */
+
+  /* ------------------------------------------------------------- geometry
+     The case-and-gasket construction: a plate is a 2px charcoal border (the
+     case) with a 12px inner margin (the gasket). One radius, because a drawn
+     frame is not a soft object. */
   --hairline: 1px;
+  --case-border: 2px;
+  --gasket: 12px;
   --r-xs: 2px;
   --r-chip: 999px;
 
-  /* Type scale. Ten steps: the seven text ranks plus the 13px provenance
-     step, the 14px footnote floor, and the two display sizes the hierarchy
-     ranks need. Replaces the fifteen literal font sizes. */
-  --fs-100: 0.6875rem;  /* 11px — tick labels */
-  --fs-200: 0.75rem;    /* 12px — mono plate labels */
-  --fs-300: 0.8125rem;  /* 13px — provenance / kicker */
-  --fs-400: 0.875rem;   /* 14px — footnote floor */
-  --fs-500: 1rem;       /* 16px — label buttons, UI */
-  --fs-600: 1.0625rem;  /* 17px — body */
-  --fs-700: 1.25rem;    /* 20px — h3, lead */
-  --fs-800: 1.5rem;     /* 24px — rank-2 headings */
-  --fs-900: 2.6rem;     /*      — rank-1 headings */
+  /* ------------------------------------------------------------------- type
+     Self-hosted, subsetted, committed to public/fonts/ — see
+     scripts/subset-fonts.mjs for the real byte cost and the cut it makes.
+
+     MARTIAN MONO — display, all labels, all data. A genuine display mono:
+     measured cap height exactly 0.800 em (that IS what a keycap legend looks
+     like) and a fixed 0.750 em advance for every glyph. wdth is pinned at
+     112.5, the widest the axis goes and the face's own default.
+     IT SHIPS NO `tnum` FEATURE — verified against the font binary's GSUB
+     table. Nothing in this stylesheet may depend on font-variant-numeric;
+     columns of numbers align because the advance is fixed, which is a stronger
+     guarantee than a feature flag.
+
+     FAMILJEN GROTESK — body prose only. Real quirk in the g and the a.
+
+     The fallback stacks name a mono/sans of the right proportion so a blocked
+     font request degrades to something with the same job, and they are also
+     load-bearing for three characters: ← → ≈ are in NO upstream file of either
+     family (measured across all 18 shipped .woff2 files), so they render from
+     the fallback by necessity. Naming the fallback makes that substitution a
+     CHOICE instead of whatever the UA happens to pick. */
+  --font-display: "Martian Mono Subset", ui-monospace, "SF Mono", "Cascadia Code",
+    Menlo, Consolas, monospace;
+  --font-mono: var(--font-display);
+  --font-body: "Familjen Grotesk Subset", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Type scale — SURVIVES from the outgoing world. Ten steps: the seven text
+     ranks plus the 13px provenance step, the 14px footnote floor, and the two
+     display sizes. Martian Mono is a WIDE face, so the same px value buys
+     fewer characters per line than the old serif did; that is why the contract
+     sequences the three systems instead of putting them side by side. */
+  --fs-100: 0.6875rem; /* 11px — tick labels */
+  --fs-200: 0.75rem; /* 12px — the sublegend line, plate labels */
+  --fs-300: 0.8125rem; /* 13px — provenance / kicker */
+  --fs-400: 0.875rem; /* 14px — footnote floor */
+  --fs-500: 1rem; /* 16px — label buttons, UI */
+  --fs-600: 1.0625rem; /* 17px — body */
+  --fs-700: 1.25rem; /* 20px — h3, lead */
+  --fs-800: 1.5rem; /* 24px — rank-2 headings */
+  --fs-900: 2.6rem; /*      — rank-1 headings */
   --fs-display: clamp(2.4rem, 5.2vw, 3.75rem); /* h1 */
 
-  /* Line heights. h2 inherited 1.65 and rendered 52.8px on a 32px face. */
   --lh-display: 1.02;
   --lh-heading: 1.15;
   --lh-sub: 1.2;
   --lh-body: 1.65;
 
-  /* Measures. Four, replacing six one-off ch values.
-     `ch` is the width of the element's OWN "0", so the same number means two
-     different things in the two families and the mono step is not a duplicate of
-     --measure-prose. In the sans body face 66ch (714px) renders 54-60 characters
-     per line, because "0" is wider than the average lowercase glyph. In mono
-     every glyph IS one ch, so a mono box set to 66ch renders at most 66
-     characters and the number is literal. --measure-mono is therefore stated
-     against the craft floor's 65-75ch reading band directly: 68ch is mid-band,
-     and it is what caps the footnote strips and the coursework line, which ran
-     unbounded at 113-131ch (117 characters on one measured coursework line at
-     1440) because both declared `max-width: none`. */
+  /* Measures. `ch` is the width of the element's OWN "0", so the same number
+     means different things per family and the mono step is not a duplicate.
+     Martian Mono's advance is 0.750 em against the old system mono's ~0.600,
+     so a mono box set to 68ch is now materially wider in px — the caps are
+     re-derived where they bind as components move, not adjusted blind here. */
   --measure-tight: 22ch;
   --measure-body: 56ch;
   --measure-prose: 66ch;
   --measure-mono: 68ch;
 
-  /* Space ladder. Absorbs the 5/7/26/33/34/36/50/88px one-offs. */
+  /* Space ladder — SURVIVES. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -93,9 +194,6 @@
   --space-7: 48px;
   --space-8: 64px;
   --space-9: 96px;
-  /* One vertical rhythm for section separation, so the four stacked verticals
-     (section padding-top, main padding-bottom, contact-band and footer
-     margin-top) collapse into one value instead of a patch rule. */
   --section-gap: var(--space-9);
 
   /* --------------------------------------------------------------- motion */
@@ -103,14 +201,113 @@
   --t-hover: 180ms;
   --t-reveal: 300ms;
   --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
 
-  /* ----------------------------------------------------------------- type */
-  /* System fonts only (no CDN fonts, zero font bytes). */
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
-    'Times New Roman', serif;
-  --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas,
-    monospace;
+/* ==========================================================================
+   THE FONTS. Self-hosted from public/fonts/ (committed .woff2, generated by
+   scripts/subset-fonts.mjs — CI never regenerates them).
 
+   Two faces per family, split on `unicode-range`:
+     the LATIN cut, which is everything the site normally paints, and
+     a one-glyph SUPPLEMENT carrying U+2020 †.
+   The dagger split is not a micro-optimisation, it is a correctness fix:
+   upstream ships † only in its `latin-ext` file, and this site's entire
+   footnote convention is built on that character. Measured cost of the
+   supplements: 760 B + 848 B. Total shipped: 21,516 B across the four files.
+
+   `font-display: swap` on all four: the first paint must never be blank, and
+   every number on this site exists as real HTML text, so a swap re-flows type
+   and never withholds evidence.
+   ========================================================================== */
+
+/* --- Martian Mono ---------------------------------------------------------- */
+@font-face {
+  font-family: "Martian Mono Subset";
+  font-style: normal; /* the ONLY style. There is no italic — see below. */
+  font-weight: 400 700;
+  font-stretch: 112.5%;
+  font-display: swap;
+  src: url("/fonts/martian-mono-latin-400-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F,
+    U+2122, U+2212, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Martian Mono Subset";
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 112.5%;
+  font-display: swap;
+  src: url("/fonts/martian-mono-sup-400-700.woff2") format("woff2");
+  unicode-range: U+2020; /* † — the footnote dagger */
+}
+
+/* --- Familjen Grotesk ------------------------------------------------------ */
+@font-face {
+  font-family: "Familjen Grotesk Subset";
+  font-style: normal; /* the italic file is deliberately not shipped */
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/familjen-grotesk-latin-400-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F,
+    U+2122, U+2212, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Familjen Grotesk Subset";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/familjen-grotesk-sup-400-700.woff2") format("woff2");
+  unicode-range: U+2020;
+}
+
+/* ==========================================================================
+   THE DERIVED RULE — THERE IS NO ITALIC ANYWHERE ON THIS SITE.
+
+   Because a keycap legend has no italic. That is the whole point of the type
+   system: the rule can only be reached by someone who has actually looked at a
+   keycap, and it proves the fixation without a sentence claiming it. It also
+   follows from what is shipped — no italic face exists in public/fonts/, so an
+   italic here would be a browser-SYNTHESISED slant of a display mono, which is
+   exactly the cheap-looking artefact the ban prevents.
+
+   Emphasis is set the way a legend marks a shifted character: small caps,
+   +0.06em tracking, and a 0.08em underline held 0.1em off the baseline.
+
+   `font-synthesis-style: none` is the second half of the ban and is not
+   decoration: `font-style: normal` on the element does not stop a UA from
+   slanting a face when some other rule asks for italic. This refuses the
+   synthesis at the root, so the site cannot produce a fake oblique at all.
+
+   verify.mjs FAILS if any rendered element on any of the four pages computes
+   `font-style: italic` — proven by adding one and watching it fail. */
+:root {
+  font-synthesis-style: none;
+}
+
+em,
+i,
+cite,
+dfn,
+var,
+address,
+.em {
+  font-style: normal;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.1em;
+  /* all-small-caps is a FEATURE, not a transform: it never changes the text a
+     screen reader reads or a reader copies, unlike text-transform. Where the
+     face has no small-cap glyphs the UA falls back to the lowercase forms and
+     the tracking plus the underline still carry the emphasis. */
+}
+
+/* An emphasis inside a heading keeps the heading's own tracking — the heading
+   ranks already carry negative tracking, and adding +0.06em there would open a
+   gap mid-word rather than reading as a marked character. */
+h1 em, h2 em, h3 em, h4 em,
+h1 i, h2 i, h3 i, h4 i,
+h1 .em, h2 .em, h3 .em, h4 .em {
+  letter-spacing: inherit;
 }

@@ -101,7 +101,18 @@ const files = [
   join(root, "projects", "index.html"),
   join(root, "404.html"),
   join(root, "README.md"),
-].filter((p) => TEXT_EXT.test(p) && existsSync(p));
+]
+  .filter((p) => TEXT_EXT.test(p) && existsSync(p))
+  // Third-party font LICENCE texts are excluded, and the exclusion is narrow on
+  // purpose. This gate polices IVAN'S CLAIMS: its tripwires are tuned to the
+  // site's own voice (e.g. "contributed to" is allowed in exactly one
+  // CCD-data-archive sentence). The SIL Open Font License contains that phrase
+  // in its own legal boilerplate, which is not a claim about Ivan, is not
+  // rendered anywhere on the site, and may not be edited — the OFL requires the
+  // text to travel verbatim with the fonts. Scoped to this exact filename shape
+  // rather than to all of public/fonts/, so a future .txt dropped in that
+  // directory is still scanned.
+  .filter((p) => !/public\/fonts\/LICENSE-[\w-]+\.txt$/.test(p.replace(/\\/g, "/")));
 
 const problems = [];
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;

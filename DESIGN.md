@@ -1,117 +1,292 @@
 ---
-name: Figure One
-description: A recruiting site set like a measurement report — plates, axes, readouts, and one figure you can scrub.
+name: Double-Shot
+description: A recruiting site set like a mechanical-keyboard spec sheet — a force curve beside a spec column, which is what a benchmark sweep already is.
+status: IN PROGRESS — step 1 of 4 (foundation) has landed. The tokens, the two
+  typefaces, the no-italic rule and the gate swap are real and gated. The
+  COMPONENTS below the "Figure One" heading still describe the OUTGOING world
+  and are being replaced; where the two disagree, this front matter is current
+  and the section below is history. Do not treat the component descriptions as
+  the spec for new work.
 colors:
-  ground: "#080C13"
-  plate: "#0B1220"
-  plate-2: "#101B2A"
-  grid: "#1B293D"
-  axis: "#24354A"
-  ink: "#EEF5F7"
-  ink-2: "#9FB3C8"
-  ink-3: "#8295A5"
-  series-1: "#38BDF8"
-  series-2: "#E9A13B"
-  series-3: "#2DD4BF"
-  logo-chip: "#FFFFFF"
+  raw-cap-beige: "#EDE7DA"
+  raw-case-grey: "#D9D2C2"
+  raw-case-shade: "#D2CBBB"
+  raw-charcoal: "#26241F"
+  raw-rust: "#7A2E12"
+  raw-slate: "#33566E"
+  raw-sublegend: "#5A554B"
+  raw-rule: "#7A766E"
+  raw-rule-soft: "#C1BCB1"
+semanticColors:
+  surface-page: "{colors.raw-cap-beige}"
+  surface-figure: "{colors.raw-case-grey}"
+  surface-inset: "{colors.raw-case-shade}"
+  ink: "{colors.raw-charcoal}"
+  ink-accent: "{colors.raw-rust}"
+  ink-data: "{colors.raw-slate}"
+  ink-secondary: "{colors.raw-sublegend}"
+  rule: "{colors.raw-rule}"
+  rule-soft: "{colors.raw-rule-soft}"
+  on-accent: "{colors.raw-cap-beige}"
 typography:
   display:
-    fontFamily: "'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif"
+    fontFamily: "'Martian Mono Subset', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace"
     fontSize: "clamp(2.4rem, 5.2vw, 3.75rem)"
     fontWeight: 700
     lineHeight: 1.02
-    letterSpacing: "-0.015em"
-  headline:
-    fontFamily: "'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif"
-    fontSize: "clamp(1.75rem, 4.4vw, 2.6rem)"
-    fontWeight: 600
-    lineHeight: 1.15
-    letterSpacing: "-0.01em"
-  title:
-    fontFamily: "'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif"
-    fontSize: "1.25rem"
-    fontWeight: 600
-    lineHeight: 1.2
-    letterSpacing: "-0.01em"
   body:
-    fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontFamily: "'Familjen Grotesk Subset', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: "1.0625rem"
     fontWeight: 400
     lineHeight: 1.65
   label:
-    fontFamily: "ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace"
-    fontSize: "0.8125rem"
-    fontWeight: 400
-    lineHeight: 1.4
+    fontFamily: "{typography.display.fontFamily}"
+    fontSize: "0.75rem"
     letterSpacing: "0.08em"
-    fontFeature: "tabular-nums"
-  footnote:
-    fontFamily: "ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace"
-    fontSize: "0.875rem"
-    fontWeight: 400
-    lineHeight: 1.6
-    fontFeature: "tabular-nums"
-rounded:
-  xs: "2px"
-  chip: "999px"
-spacing:
-  1: "4px"
-  2: "8px"
-  3: "12px"
-  4: "16px"
-  5: "24px"
-  6: "32px"
-  7: "48px"
-  8: "64px"
-  9: "96px"
-components:
-  button:
-    backgroundColor: "{colors.plate}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xs}"
-    padding: "10px 16px"
-    height: "44px"
-  button-primary:
-    backgroundColor: "{colors.series-2}"
-    textColor: "{colors.ground}"
-    rounded: "{rounded.xs}"
-    padding: "10px 16px"
-    height: "44px"
-  button-current:
-    backgroundColor: "{colors.plate-2}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.xs}"
-    padding: "10px 16px"
-    height: "44px"
-  plate:
-    backgroundColor: "{colors.plate}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.xs}"
-    padding: "24px"
-  plate-label:
-    textColor: "{colors.ink-2}"
-    typography: "{typography.label}"
-  plate-footnote:
-    textColor: "{colors.ink-3}"
-    typography: "{typography.footnote}"
-    padding: "12px 0 0"
-  chip:
-    backgroundColor: "{colors.plate}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.chip}"
-    padding: "4px 12px"
-  data-table-header:
-    textColor: "{colors.ink-2}"
-    typography: "{typography.label}"
-    padding: "8px 12px"
-  readout-value:
-    textColor: "{colors.ink}"
-    typography: "{typography.title}"
+geometry:
+  case-border: "2px"
+  gasket: "12px"
+  r-xs: "2px"
+  r-chip: "999px"
 ---
 
-# Design System: Figure One
+# Design System: Double-Shot — FOUNDATION (step 1 of 4)
+
+## The complaint this answers
+
+The owner looked at the previous site and said **"it looks like ai."** Two
+mechanical causes were found, and both were real:
+
+1. `--font-display` was **byte-identical** to samwho.dev's `--heading-font`.
+2. `--series-1` / `--series-3` were **exactly** Tailwind sky-400 and teal-400.
+
+And the structural cause, which the old codebase admitted in its own comment
+(`Keyboard.tsx`): the hobbies were *"drawn in the same grammar as the measured
+plates."* When the keyboard, the boulder problem and the benchmark all wear one
+treatment, the reader concludes one template made all three. **That uniformity
+is the signature** — not any single colour. Note the negative result behind the
+fix: 12 comparable sites were checked for fake-handmade devices (rotated paper,
+tape, handwriting faces) and eleven use none. The answer is specificity, not
+texture.
+
+## Thesis
+
+The site is set like a **mechanical-keyboard spec sheet**. Not a page about
+keyboards — a page whose *drawing conventions come from* keyboards, because the
+native literature of that hobby is already a measurement document: a switch
+datasheet is a force-versus-travel curve with a spec column beside it, which is
+structurally the same object as a recall-versus-throughput sweep. The world is
+therefore not a costume over the evidence; it is a grammar the evidence and the
+hobby both already fit.
+
+## Colour — two layers, and why
+
+`tokens.css` is split into a RAW layer (the colorway: an alpha, a modifier, one
+accent — the logic of a double-shot keycap set) and a SEMANTIC layer (what each
+value is *for*). Components read only the semantic roles. That split is what
+makes a dark counterpart ~10 re-pointed roles instead of a stylesheet re-audit,
+which is the standing mitigation for the fact that this world **reverses the
+earlier light-primary rejection**.
+
+**Every ratio was re-measured, not copied.** The direction contract made eight
+contrast claims; all eight are CONFIRMED to two decimals, computed from the
+hexes above and independently re-read from the live computed styles by
+`scripts/measure.mjs`:
+
+| token | on cap beige | on case grey | on inset |
+|---|---|---|---|
+| charcoal ink | 12.58 | 10.30 | 9.60 |
+| modifier rust | 7.65 | 6.26 | 5.84 |
+| slate | 6.32 | 5.17 | 4.82 |
+| sublegend grey | 6.01 | 4.92 | 4.58 |
+
+Surface luminance: page 0.8022, figure 0.6474, inset 0.6000.
+
+Three values are DERIVED rather than given, and each derivation is a constraint,
+not a preference:
+- `--raw-case-shade` `#D2CBBB` is 4% charcoal into case grey — the largest step
+  that keeps sublegend grey, the palette's weakest ink, above the 4.5 body floor
+  on it (4.58; 5% gives 4.49 and fails). A third surface earns its place only if
+  every ink legal on the second is still legal on it.
+- `--raw-rule` `#7A766E` is 58% charcoal into cap beige — the **smallest**
+  fraction reaching the 3:1 non-text floor on *both* reading surfaces (3.67 /
+  3.00), so a drawn rule is a rule.
+- `--raw-rule-soft` `#C1BCB1` is deliberately *below* 3:1 (1.54 / 1.26). It
+  divides rows of a spec column and carries nothing a reader could miss. A
+  structural rule must never be swapped for it.
+
+### Named rules
+
+**The Label-On-Accent Rule.** A rust fill takes **cap beige** as its label
+(7.65:1). Charcoal on rust measures **1.64:1** — this palette's version of the
+invisible-CTA defect. The existing primary-CTA gate (rest, hover *and* focus)
+is what keeps it out.
+
+**The Legacy Shim Is Temporary.** The outgoing token names (`--ground`,
+`--plate`, `--series-*`, `--ink-2/3`…) still exist, re-pointed at the semantic
+roles, so a 3,200-line stylesheet keeps computing while components move. They
+are a migration shim: delete each as its component is restyled, and write no new
+rule against them. Note the mapping **inverts** the old ramp — the page is now
+the lightest surface and ink the darkest.
+
+## Type — and the rule the whole system exists for
+
+Two self-hosted, subsetted, committed faces. **Real shipped cost: 21,516 B
+(21.0 KiB) across four files**, against the contract's 21,440 B projection.
+
+- **Martian Mono** (wght 400–700, wdth pinned 112.5) — display, all labels, all
+  data. Verified against the font binary: cap height **exactly 0.800 em**, and a
+  **fixed 0.750 em advance for every glyph**. That is what a keycap legend looks
+  like, and it means numeric columns align natively.
+- **Familjen Grotesk** (wght 400–700) — body prose only. The italic file is not
+  shipped, because there is no italic here to ship it for.
+
+**THE DERIVED RULE: there is no italic anywhere on this site, because a keycap
+legend has no italic.** Emphasis is set the way a legend marks a shifted
+character — small caps, `+0.06em` tracking, a `0.08em` underline at `0.1em`
+offset. Two declarations enforce it (`font-style: normal` on
+`em/i/cite/dfn/var/address/.em`, and `font-synthesis-style: none` at the root,
+which is the half that stops a UA *synthesising* a slant), and **`verify.mjs`
+fails on any element that computes `font-style: italic` on any of the four
+pages.** Proven by adding one and watching it fail — see the gate log below.
+
+Why the rule matters: it can only be derived by someone who has looked closely
+at a keycap. It proves the fixation without a sentence claiming it.
+
+### Named rules
+
+**The No-Tabular-Nums Rule.** Martian Mono ships **no `tnum` feature** —
+verified against its GSUB table, which lists only
+`calt/ccmp/dnom/frac/locl/numr/rvrn`. Seventeen `font-variant-numeric`
+declarations were deleted because all seventeen had become inert: they would
+have read as a guarantee the shipped font cannot make. Alignment comes from the
+fixed advance, which is stronger. The built CSS is gated against the property.
+
+**The Named-Fallback Rule.** `←`, `→` and `≈` exist in **no upstream file of
+either family** (checked across all 18 shipped `.woff2`). They render from the
+fallback by necessity, so the fallback stacks name a mono and a sans of the right
+proportion — the substitution is *chosen*, not left to the UA.
+
+**The Licence Travels With The Bytes.** Both families are OFL-1.1. pyftsubset
+drops name IDs 0 (copyright) and 14 (licence URL) by default, and the first cut
+of these files shipped without them — a real compliance gap, not a nit. The
+subsetter now keeps `0,1,2,3,4,5,6,13,14`, and the full licence texts sit beside
+the fonts in `public/fonts/`.
+
+**The Cut Is Reproducible.** woff2 writes `head.modified` from the clock, so the
+first version of the subsetter produced four different files on every run with
+no input change (all four md5s moved across back-to-back runs). Because these
+binaries are *committed*, that made any font rebuild an unreviewable diff.
+`SOURCE_DATE_EPOCH` is pinned, so identical inputs give identical bytes and a
+font diff always means a real change.
+
+**The Dagger Split.** `†` — which this site's entire footnote convention rests
+on — is not in either family's `latin` file; upstream ships it in `latin-ext`.
+Each family therefore has a second one-glyph face (760 B / 848 B) on a
+`unicode-range` split. This is a correctness fix, not a micro-optimisation.
+
+## Performance — measured, with the trade stated
+
+Fast 3G (1.6 Mbps / 150 ms RTT), real builds, 5 loads, median. Request
+interception was tried first and **rejected as a method**: it distorts timing
+enough to invert the answer (it reported 1064ms for a configuration that really
+measures 980ms).
+
+| page | LCP | CLS |
+|---|---|---|
+| `/` | 976ms | 0.0000 |
+| `/experience/` | 824ms | 0.0000 |
+| `/projects/` | 856ms | 0.0000 |
+| `/404.html` | 796ms | 0.0000 |
+
+The pre-DOUBLE-SHOT baseline was **884ms / CLS 0.0000** with zero font bytes, so
+home pays **~92ms** for two typefaces. Unthrottled LCP is 96ms.
+
+Both faces are preloaded on every page, and that is a measured choice:
+
+| preload | home LCP | home CLS |
+|---|---|---|
+| neither | 884ms | 0.0626 |
+| Familjen only | 964ms | 0.0011 |
+| both | 980ms | 0.0000 |
+
+The no-preload CLS is *entirely* the font swap (0.0000 with fonts blocked; three
+shifts at ~1.05–1.20s) and is dominated by **body prose** reflowing, which is
+why Familjen alone recovers almost all of it. The 404 is the page that needed
+Martian preloaded most — its LCP element is an `<h1>` set in Martian, which
+measured **1464ms** before and **796ms** after. `verify.mjs` asserts all eight
+preload tags, because deleting them looks harmless: the page still renders and
+simply reflows.
+
+`font-display: swap` on all four faces. Every number on this site is real HTML
+text, so a swap re-flows type and never withholds evidence.
+
+## Gate changes, and the proof each one works
+
+- **The dark-luminance gate is REPLACED, not deleted.** It asserted
+  `lum > 0.05` → fail. It now asserts the page surface sits in the light band
+  **0.62–0.93**, two-sided on purpose: the floor is just under the figure fill
+  (0.6474) so a page that ever computed its *figure's* colour fails, and the
+  ceiling refuses a drift to paper white (1.0), which is the regression that
+  would make this generic again. Same strictness, inverted world.
+- **The no-italic gate is NEW** and was proved by reverting: an explicit
+  `font-style: italic` on `.kicker` plus a real `<em>` with the ban's
+  `font-style: normal` removed. Result: **exit 1, all twelve combos FAIL, 33
+  findings**, naming both defect classes and quoting the offending text. With
+  both defects removed: twelve PASS, exit 0.
+- **New build-artifact gates:** the four subsetted faces exist in `dist/`, the
+  font budget (24,000 B ceiling), no remote `@font-face`, no `tabular-nums`, and
+  the eight preload tags. The preload gate was proved by stripping one tag.
+
+Unchanged and still binding: every locked fact string, the absent-text lists,
+the contrast gates, the overflow gates, the hero-rail overlap and mid-token wrap
+gates, the reveal contracts, the no-JS/broken-mount fallbacks, and the
+confidentiality scanner. **No truth assertion was weakened.**
+
+## Slots left for later, deliberately
+
+- **Photos: none.** The owner said "maybe later", so nothing here needs one and
+  nothing stands in for one — no stock imagery, no illustration substituting for
+  a photograph, no generated image. When real photos arrive they drop into
+  documented slots.
+- **A dark counterpart** is ~10 re-pointed semantic roles, which is the reason
+  for the two-layer split.
+
+## Known follow-ups for step 2+ (measured, not yet fixed)
+
+- **`--series-1` and `--series-3` now resolve to the same slate**, because this
+  palette has one accent and the old world had three series colours. Two-series
+  figures (the Sweep, the OG card) therefore draw both series in one colour and
+  their legends cannot be read. The figures are being redrawn in the datasheet
+  grammar in a later step; until then this is a real legibility defect, recorded
+  here so it is not mistaken for finished.
+- The components below still carry the outgoing world's plate/card/chip
+  language, including the `.card` primitive the direction contract bans outright
+  ("no card ever appears").
+- `--measure-mono` was left at 68ch: Martian's 0.750 em advance makes a mono box
+  materially wider in px than the old system mono did, so the caps need
+  re-deriving where they actually bind, per component, rather than blind here.
+
+---
+
+# Design System: Figure One — SUPERSEDED (history)
+
+> **SUPERSEDED 2026-08-04 by Double-Shot, above.** Everything from here down
+> describes the OUTGOING world and is retained as the record of what was built
+> and why, because several of its rules were paid for with real measured defects
+> and the reasoning still applies to their replacements. It is NOT the spec for
+> new work.
+>
+> Already false as of the foundation step, so do not read these as current:
+> the three near-black surfaces (the world is light now), the Iowan Old Style /
+> system-font stacks and "the shipped site loads zero font bytes" (two
+> self-hosted faces, 21,516 B), the Tabular Rule's dependence on
+> `font-variant-numeric` (Martian Mono ships no `tnum`; all seventeen
+> declarations are deleted and the built CSS is gated against the property), the
+> dark-surface luminance ceiling (replaced by a two-sided light band), and
+> `PRODUCT.md`'s "Dark-first" line, which this rebuild reverses by owner
+> direction. The blue-is-data / amber-is-interaction pairing is also gone: this
+> palette has ONE accent.
 
 ## Overview
 

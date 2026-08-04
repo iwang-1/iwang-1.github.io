@@ -23,27 +23,53 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public", "og.png");
 
 // --- live tokens -------------------------------------------------------------
+// tokens.css became TWO-LAYERED with DOUBLE-SHOT (2026-08-04): the semantic
+// roles point at raw values through `var()`, and the outgoing world's names are
+// a migration shim pointing at the semantic roles. So a single regex lookup now
+// returns the STRING "var(--surface-page)" rather than a colour — and this file
+// interpolates its results straight into SVG paint attributes, where `var()`
+// does not resolve (there is no CSS cascade in a standalone SVG document). That
+// would have produced a social card painted in invalid colours, silently, with
+// the build green.
+//
+// So `token()` FOLLOWS the var() chain to a literal, and throws if it cannot
+// reach one. A cycle or a dangling reference is a build failure here, not a
+// broken image discovered on Twitter.
 const tokensCss = readFileSync(join(root, "src", "styles", "tokens.css"), "utf8");
-function token(name) {
+function rawToken(name) {
   const m = tokensCss.match(new RegExp(`--${name}:\\s*([^;]+);`));
   if (!m) throw new Error(`token --${name} not found in src/styles/tokens.css`);
   return m[1].trim();
 }
+function token(name, seen = new Set()) {
+  if (seen.has(name)) throw new Error(`token --${name} is part of a var() cycle`);
+  seen.add(name);
+  const value = rawToken(name);
+  const ref = value.match(/^var\(\s*--([\w-]+)\s*\)$/);
+  return ref ? token(ref[1], seen) : value;
+}
 const T = {
-  ground: token("ground"),
-  plate: token("plate"),
-  grid: token("grid"),
-  axis: token("axis"),
+  // Named against the SEMANTIC roles, which is what this world calls them. The
+  // legacy aliases still resolve, but nothing new should be written against
+  // them (see the migration-shim note in tokens.css).
+  ground: token("surface-page"),
+  plate: token("surface-figure"),
+  grid: token("rule-soft"),
+  axis: token("rule"),
   ink: token("ink"),
-  ink2: token("ink-2"),
-  ink3: token("ink-3"),
-  series1: token("series-1"),
-  series2: token("series-2"),
-  series3: token("series-3"),
+  ink2: token("ink-secondary"),
+  ink3: token("ink-secondary"),
+  series1: token("ink-data"),
+  series2: token("ink-accent"),
+  series3: token("ink-data"),
   display: token("font-display"),
   body: token("font-body"),
   mono: token("font-mono"),
 };
+// Every colour must be a literal a standalone SVG can paint.
+for (const [name, value] of Object.entries(T)) {
+  if (/\bvar\(/.test(value)) throw new Error(`token ${name} still holds an unresolved var(): ${value}`);
+}
 
 // --- the miniature figure ----------------------------------------------------
 // Committed measurements (lodestone/benchmarks/raw/bench_50k_128d.txt), the

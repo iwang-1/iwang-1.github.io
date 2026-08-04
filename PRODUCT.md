@@ -75,7 +75,17 @@ it is "here is the raw file."
    "thoughtful", "reproducible"). The owner has rejected these twice by name.
 4. **The hobby blurbs are the owner's own words**, edited for grammar only. Do not
    rewrite them into cleverness.
-5. **Dark-first.** A light theme was explicitly rejected.
+5. ~~**Dark-first.** A light theme was explicitly rejected.~~ **REVERSED
+   2026-08-04 by owner direction.** The owner's judgement on the dark
+   measurement-report world was "it looks like ai", and the replacement
+   direction (DOUBLE-SHOT — a mechanical-keyboard spec sheet, see DESIGN.md) is
+   light by construction: it is a printed datasheet on stock. The earlier
+   rejection is recorded rather than deleted because it was a real owner
+   decision and this is a real reversal of it, not drift. Two consequences bind
+   future work: the page surface is gated to a light luminance band in
+   `verify.mjs` (so this cannot silently revert), and the tokens are two-layered
+   specifically so a dark counterpart stays cheap (~10 re-pointed semantic
+   roles) if the owner ever asks for one.
 
 ## Evidence and truth discipline
 
@@ -86,8 +96,14 @@ it is "here is the raw file."
   (rendered-string fact gate), `npm run lint`, `npm run build`, `npm run verify`
   (Playwright: 12 page-viewport combos — locked facts, nav structure, 7 timeline
   roles, the climbing labels, caption/figure non-overlap, primary-CTA contrast at
-  rest AND hover, dark-surface luminance, both reduced-motion strings, no
-  horizontal overflow), plus a private confidentiality scanner outside the repo.
+  rest AND hover, **light-surface luminance** (a two-sided 0.62–0.93 band, which
+  REPLACED the dark-surface ceiling on 2026-08-04 — see the reversal at
+  constraint 5), **no italic anywhere** (the DOUBLE-SHOT derived rule), both
+  reduced-motion strings, no horizontal overflow), plus a private confidentiality
+  scanner outside the repo. `npm run typecheck` is a fifth, and the build runs
+  `tsc -b` anyway. Build-artifact gates added 2026-08-04: the four subsetted
+  fonts exist in `dist/`, the font budget ceiling, no remote `@font-face`, no
+  `tabular-nums` (Martian Mono ships no `tnum`), and the eight font preload tags.
   Two gates are viewport-independent and are NOT part of the 12 combos: the hero
   rail's overlap check and the hero rail's **mid-token wrap** check
   (`verify.mjs:494–536`), both home-page-only. The wrap gate is the one to know
