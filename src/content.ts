@@ -92,9 +92,15 @@ export const hero = {
   // the "Email me" button directly above it; now the same line carries the ONE
   // affordance a screener could otherwise only find 5,000px down in the contact
   // band. Not a new claim — contact.body has published "I can send a full resume
-  // on request" all along, and verify.mjs still blocks any public PDF, so the
-  // sentence IS the artifact. Unaccented "Resume": the accented literal is on
-  // the gate's absent list for "/".
+  // on request" all along, and verify.mjs still blocks any published résumé file
+  // (and any link offering one), so the sentence IS the artifact.
+  //
+  // The spelling is free. This used to read "Unaccented 'Resume': the accented
+  // literal is on the gate's absent list" — i.e. the copy was shaped to dodge a
+  // gate, which meant the gate was satisfied by construction and checked nothing.
+  // That entry is gone (2026-08-05); the gate now reads both spellings
+  // accent-blind and asserts what actually matters, that no file is offered.
+  // Write the word however it should read.
   emailLine: "Resume on request",
   // The paid production work, in the hero in body type. It is the highest-signal
   // thing a new grad has and the one thing GitHub can't show, and it used to
@@ -607,8 +613,22 @@ export const projects: Project[] = [
     title: "This site",
     repoHref: "https://github.com/iwang-1/iwang-1.github.io",
     license: "MIT",
+    // "won't DEPLOY", not "won't build" — this is the one claim on the page a
+    // reader can falsify from the repo in under a minute, so it has to name the
+    // right gate. Both halves are now true, but of different steps:
+    //   fact check          -> `prebuild` (package.json) runs check-facts.mjs, so
+    //                          this genuinely fails `npm run build`;
+    //   Playwright assertion -> verify.mjs drives the BUILT dist/, so it cannot
+    //                          fail a build that already finished. In
+    //                          .github/workflows/deploy.yml it runs as the last
+    //                          step of the `build` job, before
+    //                          upload-pages-artifact and before the `deploy`
+    //                          job that needs it — so a failed assertion stops
+    //                          the DEPLOY, which is the accurate word for both.
+    // Do not "restore" the stronger verb: it overstates one half to tidy the
+    // sentence, and the sentence is the site's rigour claim about itself.
     description: [
-      "The page you're reading: a multi-page React + TypeScript + Vite site on GitHub Pages. It prerenders to static HTML, works without JavaScript, and won't build if a fact check or Playwright assertion fails.",
+      "The page you're reading: a multi-page React + TypeScript + Vite site on GitHub Pages. It prerenders to static HTML, works without JavaScript, and won't deploy if a fact check or Playwright assertion fails.",
     ],
     chips: ["React + TypeScript + Vite", "fact-gate in CI", "Playwright-verified", "no trackers"],
   },
@@ -620,8 +640,10 @@ export const projects: Project[] = [
 export const contact = {
   heading: "Get in touch",
   // "Full resume on request" removes the screener's dead end without shipping a
-  // PDF — verify.mjs blocks any public résumé/PDF link, so the sentence IS the
-  // affordance. No accented spelling: that literal is on the gate's absent list.
+  // PDF — verify.mjs blocks any published résumé file and any link that offers
+  // one, so the sentence IS the affordance. The spelling is free: the old
+  // accented-literal entry on the gate's absent list is gone (2026-08-05), since
+  // choosing "resume" over "résumé" satisfied it without proving anything.
   //
   // BOTH tracks named, matching the hero chip's already-approved phrasing
   // (hero.availability). This band is the peak-end position on all three content

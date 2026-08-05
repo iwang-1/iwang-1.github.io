@@ -74,6 +74,26 @@ const OFF_ROUTE: Hold[] = [
   { x: 250, y: 196, type: "crimp", r: -16 },
 ];
 
+/** Every hold the SVG paints, counted from the two collections that paint them.
+ *
+ *  DERIVED, because the accessible name says it out loud. The label used to read
+ *  "nineteen holds" as a spelled-out word, which was true of these 14 + 5 shapes
+ *  on the day it was typed and would have gone quietly false the first time
+ *  anyone added or removed one: verify.mjs asserts only LOWER BOUNDS on the
+ *  drawing (>= 12 on-route, >= 4 off-route, so the wall still reads as a wall),
+ *  which means a 15th hold changes the picture, falsifies the label, and passes
+ *  every gate. And a wrong number inside an accessible name is invisible to every
+ *  sighted reviewer — nobody would ever see the rot.
+ *
+ *  Same reason the routes are built FROM `HOLDS` above rather than re-typed: one
+ *  copy of a fact cannot disagree with itself. Do not inline a literal here.
+ *
+ *  The "three sequences" in the label stays a word on purpose — that count is
+ *  pinned by an EXACT gate (verify.mjs: `boulder must show exactly 3 sequences`),
+ *  not a lower bound, and the figcaption below spells it out too, so it cannot
+ *  drift unnoticed the way a hold count could. */
+const HOLD_COUNT = Object.keys(HOLDS).length + OFF_ROUTE.length;
+
 /** Three sequences up the same boulder. All three finish on the same hold,
  *  because they are ways up ONE boulder; two share a start, because two really
  *  would. Equal weight and equal colour, distinguished only by dash: the moment
@@ -149,7 +169,10 @@ export function Boulder() {
         className="boulder-svg"
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label="A drawn bouldering wall with nineteen holds, and three different sequences of holds leading to the same finishing hold at the top."
+        // Prose, not a spec line: a screen reader announces the numeral as a
+        // word ("19 holds"), so this hears the same as the spelled-out version it
+        // replaces while being true by construction. See HOLD_COUNT.
+        aria-label={`A drawn bouldering wall with ${HOLD_COUNT} holds, and three different sequences of holds leading to the same finishing hold at the top.`}
       >
         <defs>
           {/* The t-nut grid is clipped to the panels so no hardware floats off

@@ -81,7 +81,10 @@ proof + caveat + metric grid). Every number below is the exact repo/benchmark
 figure — NOT the résumé figure. The résumé's soak counts (1,400 / 2,640) are on
 verify.mjs's `absent` list for `/` and `/projects/`, so they must never render
 here; the site quotes the operation count and the recall/QPS/compression curve
-instead.
+instead. That list is the ONLY gate on those two numbers — `check-facts.mjs` has
+no pattern for either — and it is a REGRESSION TRIPWIRE, not live coverage: no
+source produces them today, so the assertion cannot currently fail (see the
+`absent` policy note at the top of verify.mjs).
 
 | Rendered | Source |
 | --- | --- |

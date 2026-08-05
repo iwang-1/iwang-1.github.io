@@ -54,7 +54,9 @@ it is "here is the raw file."
   is named on the site, deliberately — maximum geographic breadth.
 - **Email is the only contact channel offered**: ivanwang8989@gmail.com.
   Deliberate: no phone number anywhere on the site, ever.
-- **No resume PDF is published.** `verify.mjs` enforces the absence. The site says
+- **No resume PDF is published.** `verify.mjs` enforces the absence two ways: no
+  document file of any name ships in `dist/`, and no rendered link offers one
+  (accent- and case-blind, so the spelling of the word is free). The site says
   "Resume on request" instead. Changing this is a product decision, not an edit.
 - **No photograph of Ivan exists to use.** Do not design a layout that needs one.
 

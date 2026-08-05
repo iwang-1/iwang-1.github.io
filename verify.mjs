@@ -13,6 +13,52 @@ import { chromium } from "playwright";
 const PORT = 4173;
 const ORIGIN = `http://localhost:${PORT}`;
 
+// `facts` are strings that MUST render on this page. `absent` are strings that
+// must NOT — and that list needs reading carefully, because everything on it is
+// vacuous TODAY BY DESIGN: each string was grepped across src/, public/ and the
+// four HTML entries (2026-08-05) and no source can produce it. So an `absent`
+// entry is a REGRESSION TRIPWIRE for something deliberately removed, never
+// coverage of current copy. Do not read a passing run as evidence that these
+// strings were checked against anything live.
+//
+// The bar for staying on the list is that the string would be UNTRUE, not merely
+// old, if it came back:
+//   "Hong Kong"            HKU was cut from education (b237ed5). check-facts
+//                          forbids it in SOURCE; this is the rendered-DOM half,
+//                          and on "/" it is re-checked against page HTML below
+//                          so JSON-LD cannot smuggle it past innerText.
+//   74.2% / 67.7% / 64,000 DANN report figures with no reproducible committed
+//                          evidence (FACTS.md: un-renderable by design).
+//   95%                    the retired RAG QA figure, same reason.
+//   1,400 / 2,640          résumé soak counts; the site quotes the operation
+//                          count instead. THIS LIST IS THEIR ONLY GATE —
+//                          check-facts has no pattern for either — so unlike the
+//                          rest of these they are not duplicated anywhere.
+//   star-catalog / star-spectral / sky map
+//                          the removed three-repo system. The GitHub repos are
+//                          DELETED, so re-rendering any of these would advertise
+//                          work that no longer exists. FACTS.md names this trio
+//                          as verify's job by name; they travel together.
+//
+// DROPPED 2026-08-05, and the distinction is the point: a retired DESIGN is not
+// a falsehood, and freezing one is not a truth gate.
+//   "Now — SDE Intern"     the deleted hero now-strip (703544a). A future
+//                          Now/Next strip would be a design choice, not a lie.
+//                          Note the framing rule it gestured at — FACTS.md's
+//                          "always date-anchored, never 'currently'" — was never
+//                          what this literal checked, and is still ungated.
+//   "1M+ customers"        cut when the AWS bullets were rewritten (9eb1023),
+//                          but FACTS.md explicitly still sanctions it as a
+//                          résumé claim Ivan stands behind.
+//   "4 upstream PRs"       a WORDING that was replaced, not a claim that was
+//                          withdrawn: the same claim renders today as the chip
+//                          "4 merged PRs" (content.ts). Forbidding the dead
+//                          spelling while the live one ships reads as coverage
+//                          of a claim nobody is checking.
+//   "Résumé"               accent-only, so it was satisfied by a spelling
+//                          choice — see the accent-blind resume-affordance gate
+//                          in checkPage, which asserts the risk that actually
+//                          matters.
 const PAGES = [
   {
     path: "/",
@@ -30,7 +76,7 @@ const PAGES = [
     // the figure, so the fact is still gated on this page — in the form this page
     // prints. Both spellings trace to the same content.ts record.
     facts: ["May 2027", "mechanical keyboards", "rock climbing", "Departmental Honors", "2.9M"],
-    absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000", "1,400", "2,640", "Résumé"],
+    absent: ["Hong Kong", "74.2%", "67.7%", "64,000", "1,400", "2,640"],
   },
   {
     path: "/experience/",
@@ -40,7 +86,7 @@ const PAGES = [
     noindex: false,
     activeTab: "/experience/",
     facts: ["7 agent-migrated tests", "3,000+ students", "50,000+ records"],
-    absent: ["Hong Kong", "1M+ customers", "4 upstream PRs", "Résumé"],
+    absent: ["Hong Kong"],
   },
   {
     path: "/projects/",
@@ -50,7 +96,7 @@ const PAGES = [
     noindex: false,
     activeTab: "/projects/",
     facts: ["Unsupervised Domain Adaptation", "Four-person research project", "This site", "2.9 million"],
-    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map", "74.2%", "67.7%", "95%", "1,400", "2,640", "4 upstream PRs", "Résumé"],
+    absent: ["Hong Kong", "star-catalog", "star-spectral", "sky map", "74.2%", "67.7%", "95%", "1,400", "2,640"],
   },
   {
     path: "/404.html",
@@ -60,7 +106,7 @@ const PAGES = [
     noindex: true,
     activeTab: null,
     facts: [],
-    absent: ["Résumé"],
+    absent: [],
   },
 ];
 
@@ -121,8 +167,23 @@ for (const f of [
   if (/<html[^>]*class="[^"]*\bjs\b/.test(html))
     problems.push(`${f}: .js class baked into static HTML — content would hide without the bundle`);
 }
-if (existsSync("dist/Ivan-Wang-Resume.pdf"))
-  problems.push("dist: stale public résumé PDF must not be deployed");
+// NO PUBLISHED RÉSUMÉ FILE, as a build artifact. PRODUCT.md: "No resume PDF is
+// published. verify.mjs enforces the absence." WIDENED 2026-08-05 from
+// `existsSync("dist/Ivan-Wang-Resume.pdf")` — one hardcoded filename, which any
+// other name (`resume.pdf`, `Ivan_Wang_CV.pdf`, `resume.docx`) walks past. The
+// deployed tree is small and fully enumerable, so the check is now "no document
+// file of any name is deployed" rather than "not that one file". Measured on this
+// build: 30 files, extensions png/js/woff2/txt/html/css/xml/jpg — zero documents,
+// so the allowed set costs nothing and a new one has to be argued for here.
+{
+  const docFiles = readdirSync("dist", { recursive: true })
+    .map(String)
+    .filter((f) => /\.(pdf|docx?|rtf|odt|pages)$/i.test(f));
+  if (docFiles.length)
+    problems.push(
+      `dist: document file(s) deployed (${docFiles.join(", ")}) — no résumé/CV file is published (PRODUCT.md); the site says "Resume on request" instead`,
+    );
+}
 
 // SELF-HOSTED FONT gates (DOUBLE-SHOT, 2026-08-04). Three build-artifact
 // assertions, all about bytes rather than pixels:
@@ -345,8 +406,8 @@ async function checkPage(spec, viewport) {
     problems.push(`${tag}: 404 page must not mark any tab aria-current (got ${currentCount})`);
   }
 
-  // The progress rail stays attached to the sticky header, without the old
-  // unexplained yellow hold markers, and its marker moves as the page scrolls.
+  // The progress rail stays attached to the sticky header, carries nothing but
+  // its two functional parts, and its marker moves as the page scrolls.
   const rail = page.locator("#progress-rail");
   if ((await rail.count()) !== 1) {
     problems.push(`${tag}: expected exactly one progress rail inside the nav`);
@@ -354,9 +415,28 @@ async function checkPage(spec, viewport) {
     const navContainsRail = await page.locator("header.nav #progress-rail").count();
     if (navContainsRail !== 1)
       problems.push(`${tag}: progress rail is not a child of the sticky header`);
-    const holdMarkers = await page.locator(".route-progress-hold").count();
-    if (holdMarkers !== 0)
-      problems.push(`${tag}: obsolete yellow progress holds still render (${holdMarkers})`);
+    // WAS (until 2026-08-05): `.route-progress-hold` count must be 0. That class
+    // was deleted with the four decorative yellow climbing holds in 69b8709 and
+    // NO component has emitted it since — grep src/ returns only this file — so
+    // the assertion could only ever read 0. It named a real risk (the rail is a
+    // 7px axis whose box is frozen to a ±2px measurement; decorative children
+    // squatting in it is how that box drifts) but checked for it by one dead
+    // class name, which a differently-named ornament walks straight past.
+    //
+    // So it is stated as the contract instead: the rail's ONLY children are the
+    // scrub fill and the scrub marker. Whitelisted by class, so re-adding holds
+    // under ANY name fails, and the assertion does not have to be re-taught every
+    // time an ornament is invented. enhance.ts appends its overlay/FAB to
+    // document.body, never here, so two is the count at every viewport.
+    const railChildren = await rail.evaluate((el) =>
+      [...el.children].map((c) => c.className || c.tagName.toLowerCase()),
+    );
+    const allowedRailChildren = ["route-progress-fill", "route-progress-marker"];
+    const strayRailChildren = railChildren.filter((c) => !allowedRailChildren.includes(c));
+    if (railChildren.length !== 2 || strayRailChildren.length)
+      problems.push(
+        `${tag}: progress rail carries ${railChildren.length} children [${railChildren.join(", ")}] — only the scrub fill and marker belong inside its frozen 7px box`,
+      );
     if (spec.path === "/") {
       // enhance.ts initializes one animation frame after React settles.
       await page.waitForTimeout(200);
@@ -466,6 +546,27 @@ async function checkPage(spec, viewport) {
     for (const banned of ["SET 01", "BOULDER / SET", "top out at"])
       if (bodyText.includes(banned))
         problems.push(`${tag}: retired invented boulder identity rendered: ${banned}`);
+    // THE LABEL MUST AGREE WITH THE DRAWING. The two counts above are LOWER
+    // BOUNDS on purpose (a wall stays a wall at 13 or 20 holds), which left the
+    // accessible name free to rot: it hardcoded the word "nineteen", so adding or
+    // removing one hold redrew the figure, made the label false, and still passed
+    // every one of the twelve combos. A wrong number inside an accessible name is
+    // invisible to every sighted reviewer, so no amount of looking would catch it.
+    // Boulder.tsx now derives the number from the hold data; this asserts the
+    // agreement rather than trusting it, so re-hardcoding a stale literal fails
+    // here too. Spelled-out numbers are rejected outright — a word cannot be
+    // derived, so its presence IS the defect.
+    const label = (await page.locator(".boulder-svg").getAttribute("aria-label")) ?? "";
+    const painted = onHolds + offHolds;
+    const stated = Number(label.match(/(\d+)\s+holds/)?.[1]);
+    if (!Number.isFinite(stated))
+      problems.push(
+        `${tag}: boulder aria-label states no numeric hold count (must be derived from the data, not spelled out): ${JSON.stringify(label)}`,
+      );
+    else if (stated !== painted)
+      problems.push(
+        `${tag}: boulder aria-label says ${stated} holds but ${painted} are painted (${onHolds} on / ${offHolds} off route)`,
+      );
   }
   if (spec.path === "/experience/") {
     // timeline structural gate: 7 role cards; alternating L/R on desktop,
@@ -473,11 +574,38 @@ async function checkPage(spec, viewport) {
     const items = page.locator(".alt-timeline-item");
     if ((await items.count()) !== 7)
       problems.push(`${tag}: expected 7 timeline items, got ${await items.count()}`);
-    // Each role shows its employer's logo: a real mark (img with alt) or a
-    // lettermark tile (role="img" with aria-label). Expect 7 total.
-    const roleLogos = page.locator('.role-logo img[alt], .role-logo-mark[role="img"]');
-    if ((await roleLogos.count()) !== 7)
-      problems.push(`${tag}: expected 7 role logos, got ${await roleLogos.count()}`);
+    // Each role shows its employer's REAL logo, one <img> per card.
+    //
+    // TIGHTENED 2026-08-05. This accepted `.role-logo img[alt]` OR
+    // `.role-logo-mark[role="img"]` — a lettermark-tile fallback that lived from
+    // 6f39476 to 9eb1023 and whose CSS went in 17e6af0. Grep src/ for
+    // `role-logo-mark`: only this file. So the gate was LOOSER than the code, and
+    // in the one direction that matters on a recruiting page — content.ts says
+    // "every one of the seven is a real vendor mark, so nothing on a recruiting
+    // page is ever the WRONG company's logo", and the disjunction quietly
+    // permitted a drawn initial standing in for a company's own mark. RoleLogo
+    // has exactly one branch (an <img> from `logo.src`); the gate now says so.
+    //
+    // Counted PER CARD, not 7-in-total: a total is satisfied by one card carrying
+    // two marks while another carries none, which is the worse defect of the two.
+    // (Empty `alt=""` is caught by the site-wide img-alt gate near the end of this
+    // function, which treats the empty string as missing.)
+    const perCardLogos = await items.evaluateAll((cards) =>
+      cards.map((card) => card.querySelectorAll(".role-logo img[alt]").length),
+    );
+    const wrongLogoCards = perCardLogos.filter((n) => n !== 1).length;
+    if (wrongLogoCards)
+      problems.push(
+        `${tag}: ${wrongLogoCards} of ${perCardLogos.length} role cards do not carry exactly one real <img> logo (counts: ${perCardLogos.join(", ")})`,
+      );
+    // No stand-in marks. Asserted separately from the count above so the failure
+    // message says WHICH thing went wrong, and so a lettermark that replaces an
+    // <img> can't read as "still 7 logos".
+    const lettermarks = await page.locator('[class*="role-logo"][role="img"], .role-logo svg').count();
+    if (lettermarks)
+      problems.push(
+        `${tag}: ${lettermarks} drawn/lettermark role logo(s) — every role must show its employer's real mark, never a stand-in`,
+      );
     const b1 = await items.nth(0).boundingBox();
     const b2 = await items.nth(1).boundingBox();
     if (viewport.name === "desktop") {
@@ -816,8 +944,47 @@ async function checkPage(spec, viewport) {
   }
   if ((await page.locator('a[href^="mailto:ivanwang8989@gmail.com"]').count()) === 0)
     problems.push(`${tag}: mailto link missing`);
-  if ((await page.locator('a[href*="Ivan-Wang-Resume"], a[href$=".pdf"]').count()) !== 0)
-    problems.push(`${tag}: public résumé/PDF link must not be present`);
+  // NO RÉSUMÉ AS A FILE, in the rendered DOM. This replaces the `"Résumé"`
+  // entry that sat on every page's `absent` list, and the swap is the whole
+  // point: that entry watched ONE ACCENTED SPELLING of a word, and content.ts
+  // states in two places that the copy is written unaccented BECAUSE the gate
+  // watches the accented form ("Unaccented 'Resume': the accented literal is on
+  // the gate's absent list"). A gate whose subject can satisfy it by choosing a
+  // spelling checks nothing — and the accent was never the risk. PRODUCT.md's
+  // rule is that no résumé FILE is published; the sentence "Resume on request"
+  // IS the affordance.
+  //
+  // So: the word may be spelled any way, in any case — and this reads BOTH
+  // spellings accent-blind (NFD-strip, so "résumé", "Resumé", "RÉSUMÉ" and
+  // "resume" are one thing) — but it may never be a download. Two directions,
+  // because either alone is escapable: an href that fetches a document (any
+  // name, any extension, any origin — the old check named one filename and
+  // `.pdf`), and a link whose own text offers a résumé (which catches a Drive or
+  // Dropbox URL that has no document extension at all).
+  //
+  // `.pdf` at the end of any href is still a failure on its own: this site
+  // publishes no documents of any kind, so there is nothing legitimate to allow.
+  const resumeLinks = await page.$$eval("a", (anchors) => {
+    // NFD splits "é" into "e" + U+0301; stripping the combining range collapses
+    // every accented spelling onto the plain one. Escapes, not literal combining
+    // marks, so the source stays readable (a raw mark renders on top of the "[").
+    const deaccent = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const out = [];
+    for (const a of anchors) {
+      const href = a.getAttribute("href") ?? "";
+      const text = deaccent(a.textContent ?? "");
+      const isDoc = /\.(pdf|docx?|rtf|odt|pages)(\?|#|$)/i.test(href);
+      const offersResume = /\b(resume|cv)\b/.test(text) && /\b(download|pdf|view|open|my)\b/.test(text);
+      const hasDownload = a.hasAttribute("download");
+      if (isDoc || offersResume || hasDownload)
+        out.push(`<a href="${href}" download=${hasDownload}> "${(a.textContent ?? "").trim().slice(0, 40)}"`);
+    }
+    return out;
+  });
+  for (const r of new Set(resumeLinks))
+    problems.push(
+      `${tag}: a résumé/document is offered as a file — no résumé file is published (PRODUCT.md); the site says "Resume on request": ${r}`,
+    );
   if (spec.path !== "/404.html") {
     const contactBands = await page.locator(".contact-band").count();
     if (contactBands !== 1) problems.push(`${tag}: expected one contact band, got ${contactBands}`);
@@ -928,6 +1095,70 @@ async function checkPage(spec, viewport) {
     els.filter((e) => getComputedStyle(e).opacity !== "1").length);
   if (hiddenRM) problems.push(`${tag}: ${hiddenRM} element(s) hidden under reduced motion`);
   await rm.close();
+
+  // PRINT-PALETTE GATE. Nothing in this file emulated `print` media before, and
+  // that blind spot is how a real defect survived a whole rebuild: the print
+  // block rebases the raw tokens to measured PAPER values, then hardcoded three
+  // literals from the RETIRED dark palette over the top of them — #c4ccd4 sheet
+  // borders, #6b7885 button hairlines, #0b3a6b link ink. Every printed sheet
+  // border wore the old world's colour and no screen test could see it.
+  //
+  // WHAT THIS ASSERTS, and what it deliberately does NOT. A first version of
+  // this gate failed everything cool and was WRONG: `--raw-slate` is a genuine
+  // blue in the shipped palette (#33566e on screen, "data traces and links"),
+  // so its darkened paper value #24405a is correct, not drift. Hue is therefore
+  // not the test.
+  // The test is that every printed value must be one the print block's own
+  // rebase declares. Those nine values are the paper palette; anything else is a
+  // literal someone left behind. This also keeps working if the palette changes,
+  // because it reads the expected set out of the stylesheet rather than hardcoding
+  // it here — and it does not force tokens, which the print block explains would
+  // regress the printed primary button (a token let a later :root remap reach into
+  // the print sheet and measured 1.59:1).
+  if (viewport.name === "desktop") {
+    // The paper palette, read out of the print block's own :root rebase.
+    const printRoot = builtCss.match(/@media\s+print\s*\{[\s\S]*?:root\s*\{([^}]*)\}/);
+    const allowed = new Set(
+      [...(printRoot?.[1] ?? "").matchAll(/#([0-9a-f]{6})/gi)].map((m) => m[1].toLowerCase()),
+    );
+    if (allowed.size < 5) {
+      problems.push(
+        `${tag}: could not read the print block's :root rebase out of the built CSS — the print-palette gate must never silently pass`,
+      );
+    } else {
+      const pr = await browser.newPage({ viewport: { width: 1024, height: 1400 } });
+      await pr.emulateMedia({ media: "print" });
+      await pr.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+      const printed = await pr.evaluate(() => {
+        const grab = (sel, prop) => {
+          const el = document.querySelector(sel);
+          return el ? getComputedStyle(el)[prop] : null;
+        };
+        return {
+          "body color": grab("body", "color"),
+          "body background": grab("body", "backgroundColor"),
+          "link color": grab("a", "color"),
+          "sheet border": grab(".sheet-block", "borderTopColor"),
+          "button ink": grab(".btn", "color"),
+          "button border": grab(".btn", "borderTopColor"),
+        };
+      });
+      await pr.close();
+      const hex = (v) => {
+        const m = v && v.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (!m) return null;
+        return [1, 2, 3].map((i) => Number(m[i]).toString(16).padStart(2, "0")).join("");
+      };
+      for (const [what, value] of Object.entries(printed)) {
+        const h = hex(value);
+        if (!h) continue;
+        if (!allowed.has(h))
+          problems.push(
+            `${tag}: printed ${what} is #${h} (${value}), which is not one of the paper values the print block's own :root rebase declares (${[...allowed].map((c) => "#" + c).join(", ")}) — a leftover literal from a retired palette`,
+          );
+      }
+    }
+  }
 
   // 9. screenshot (before the skip-link focus test so it stays hidden; after
   //    the full-scroll reveal pass so docs/ shots show revealed content)

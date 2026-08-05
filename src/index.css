@@ -2879,13 +2879,27 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .role-card,
   .edu-card {
     background: #ffffff !important;
-    border: 1px solid #c4ccd4 !important;
+    /* #d5d1c8, not #c4ccd4. Both are near-white hairlines, but #c4ccd4 sits at
+       hue 210deg — a COOL blue-grey inherited from the retired dark palette,
+       printed on a page whose every other paper value is warm (the rebased
+       --raw-rule is 39deg, --raw-rule-soft 42deg). So every sheet border on
+       paper was the one element still wearing the old world's colour.
+       #d5d1c8 is the same value the rebase block above assigns --raw-rule-soft,
+       written literally here for the reason that block states: a token would let
+       a later :root remap reach into the print sheet. Contrast against paper is
+       1.52:1 vs 1.62:1 — both far below any text threshold, which is correct for
+       a hairline that is structure rather than information. */
+    border: 1px solid #d5d1c8 !important;
     box-shadow: none !important;
     break-inside: avoid;
   }
 
   a {
-    color: #0b3a6b !important;
+    /* #24405a, not #0b3a6b: the value the rebase block above assigns
+       --raw-slate, measured at 10.74:1 on paper (the old cool #0b3a6b was
+       11.46:1, so this costs nothing a reader can see and stops the printed
+       sheet carrying two different blues). Literal, per the rebase note. */
+    color: #24405a !important;
     text-decoration: underline;
   }
 
@@ -2893,21 +2907,24 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
      filled amber (or ochre) chip.
 
      This override is not belt-and-braces, it is the fix for a measured cold-load
-     defect. The buttons are anchors, so the `a { color: #0b3a6b !important }`
-     rule above beats the primitive's own unprefixed `color: var(--btn-label)`,
+     defect. The buttons are anchors, so the `a { color: … !important }` rule
+     above beats the primitive's own unprefixed `color: var(--btn-label)`,
      and the primary's fill still resolved through --series-2. The result was a
      dark-blue label on an ochre field at 1.59–1.86:1 on the first Save-as-PDF
      from a fresh load. Fixed values, not tokens, so no later :root remap can
-     re-introduce the collision: #0b3a6b on #ffffff is 11.4:1 and the #6b7885
-     hairline is 4.5:1 against the paper.
+     re-introduce the collision: #24405a on #ffffff is 10.7:1 and the #8a857c
+     hairline is 3.7:1 against the paper — above the 3:1 non-text floor a control
+     boundary has to clear.
 
-     re-introduce the collision. */
+     Both were cool blue-greys (#0b3a6b, #6b7885 at hue 210-211deg) held over
+     from the retired dark palette; they are now the warm paper values the rebase
+     block above defines, so the printed sheet carries ONE world's colour. */
   .btn,
   .btn-primary,
   .btn-current {
     background: #ffffff !important;
-    color: #0b3a6b !important;
-    border-color: #6b7885 !important;
+    color: #24405a !important;
+    border-color: #8a857c !important;
     box-shadow: none !important;
     transform: none !important;
   }
