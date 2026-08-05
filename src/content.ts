@@ -189,7 +189,16 @@ export const featuredSystems: FeaturedSystem[] = [
     proof:
       "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety or linearizability violations.",
     limits:
-      "† The first bug the harness caught was in the linearizability checker, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
+      // "election-safety check", NOT "linearizability checker" — those are two
+      // different components, and the repo's own ledger names the first one.
+      // docs/BUG_LEDGER.md: "During S2c bring-up the election-safety check fired
+      // on every fault-injecting scenario ... the fault was in the *checker*, not
+      // the core: it keyed election safety on a stale proxy for the leader's
+      // term." The profile README already said this correctly; only the site
+      // said "linearizability checker", so one surface named the wrong component
+      // of the candidate's own project — the kind of detail an interviewer who
+      // opens the ledger will find.
+      "† The first bug the harness caught was in my own election-safety check, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
     // One plate carries an aside so the three do not read as one filled-in
     // template. It restates the footnote's checker-bug fact in plain prose;
     // no second copy of any number.
