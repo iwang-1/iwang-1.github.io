@@ -64,7 +64,7 @@ function RoleLogo({ logo }: { logo: Role["logo"] }) {
  *  mono line, then the bullets. */
 export function RoleCard({ role }: { role: Role }) {
   return (
-    <article className="card role-card">
+    <article className="sheet-block role-card">
       <header className="role-card-head">
         <RoleLogo logo={role.logo} />
         <div>
@@ -100,7 +100,7 @@ export function RoleCard({ role }: { role: Role }) {
 /** EduCard — the Home #education entry. */
 export function EduCard({ edu }: { edu: Education }) {
   return (
-    <article className="card edu-card">
+    <article className="sheet-block edu-card">
       <h3>{edu.school}</h3>
       <p className="edu-degree">{edu.degree}</p>
       <p className="role-meta">{edu.dates}</p>
@@ -122,12 +122,12 @@ export function EduCard({ edu }: { edu: Education }) {
 }
 
 /** ProjectCard — one project. Every project links a public repo, so the linked
- *  title is the card's primary affordance and `.card-live` is what carries the
+ *  title is the block's primary affordance and `.sheet-live` is what carries the
  *  hover promise. */
 export function ProjectCard({ project }: { project: Project }) {
   const { repoHref } = project;
   return (
-    <article className={repoHref ? "card card-live" : "card"} id={project.id}>
+    <article className={repoHref ? "sheet-block sheet-live" : "sheet-block"} id={project.id}>
       <h3>{repoHref ? <ExternalLink href={repoHref}>{project.title}</ExternalLink> : project.title}</h3>
       <div className="project-meta">
         {/* NOT `.role-meta`: that class is the institution/date provenance slot

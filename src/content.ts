@@ -193,7 +193,12 @@ export const featuredSystems: FeaturedSystem[] = [
     // One plate carries an aside so the three do not read as one filled-in
     // template. It restates the footnote's checker-bug fact in plain prose;
     // no second copy of any number.
-    aside: "The first bug the stress harness found was in my checker, not in the consensus code.",
+    // The aside is GONE, not moved. It existed to break the three-plate
+    // sameness back when `limits` was a 14px dagger footnote nobody read — so it
+    // restated the checker-bug fact in body register where it would land. Now
+    // `limits` IS a titled column at body size, so the aside was the same
+    // sentence twice in one block, 200px apart. The fact keeps its stronger
+    // position; the duplicate goes.
     provenance:
       "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
     repoHref: "https://github.com/iwang-1/parallax-kv",

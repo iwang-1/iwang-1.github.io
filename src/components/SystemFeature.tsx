@@ -132,26 +132,18 @@ export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem;
     <Reveal delay={index}>
       <Plate
         id={project.id}
-        /* `card` alongside `plate`: a card in this stylesheet IS a plate that has
-           not been named yet — same fill, same hairline, same radius, same pad —
-           and keeping the class is what carries the hover transition, the
-           --ink title colour, the mobile 44px tap padding and the print
-           overrides that are all authored against `.card`. `card-live` is the
-           hover promise: the title is a link, so the plate answers the pointer. */
-        className="system-feature card card-live"
+        /* `.sheet-block` carries the block's fill, hairline, radius and pad;
+           `.sheet-live` is the hover promise, because the title is a link.
+           A datasheet block does NOT lift on hover — only its rule warms. */
+        className="system-feature sheet-block sheet-live"
         label={figureLabel(figureNumber, project.title)}
         stripStyle={PLATE_STRIP}
-        footnote={
-          <>
-            {project.provenance}
-            {project.limits && (
-              <>
-                <br />
-                {project.limits}
-              </>
-            )}
-          </>
-        }
+        /* The footnote is now provenance ONLY — the measurement conditions.
+           `limits` moved OUT of here into the NOTES column below, at body size.
+           A 14px dagger footnote is where a page puts something it hopes you
+           skim; on a datasheet the thing a part does NOT do is a titled column,
+           printed at the same size as everything it qualifies. */
+        footnote={project.provenance}
       >
         <div className="system-copy">
           <p className="kicker">{project.eyebrow}</p>
@@ -178,6 +170,7 @@ export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem;
           </p>
         </div>
         <div className="system-evidence">
+          <p className="spec-col-head">Specifications</p>
           <SystemDiagram kind={project.diagram} />
           {/* As many rows as the repo actually measured — three, two, two. The
               `plain` gloss rides along on the rows whose label is an axis label
@@ -185,6 +178,15 @@ export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem;
           <Readout
             cells={project.metrics.map((m) => ({ value: m.value, label: m.label, plain: m.plain }))}
           />
+          {project.limits && (
+            <div className="spec-notes">
+              <p className="spec-col-head">Notes &amp; limits</p>
+              {/* Ivan's own limit text, verbatim. The leading dagger is dropped
+                  because the column is titled — a marker pointing at a footnote
+                  that no longer exists reads as a broken reference. */}
+              <p>{project.limits.replace(/^†\s*/, "")}</p>
+            </div>
+          )}
         </div>
       </Plate>
     </Reveal>

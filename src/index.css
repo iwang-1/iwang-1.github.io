@@ -895,32 +895,75 @@ button.btn {
    2px radius, no shadow. The blur-shadow stack is gone from the whole file —
    the hairline IS the separation, so a card that wants more presence gets a
    brighter border, never a soft edge. */
-.card {
-  background: var(--plate);
-  border: var(--hairline) solid var(--grid);
+/* THE SHEET BLOCK — a datasheet's bounded region, not a web "card".
+   The rename is not cosmetic: a card is a floating object with a shadow and a
+   hover lift, and a page of equal cards is the single most template-shaped thing
+   a portfolio can do. A block sits ON the sheet: it shares the sheet's own fill,
+   it is separated by a rule rather than by elevation, and it never lifts. */
+.sheet-block {
+  background: var(--surface-figure);
+  border: var(--hairline) solid var(--rule);
   border-radius: var(--r-xs);
   padding: var(--space-5);
-  transition: transform var(--t-hover) var(--ease-out),
-    border-color var(--t-hover) var(--ease-out);
+  transition: border-color var(--t-hover) var(--ease-out);
 }
 
-.card-grid {
+/* THE SPECIFICATIONS / NOTES SPLIT — 42/58, the proportion a switch datasheet
+   uses: the measured column is narrower than the column that qualifies it,
+   because a caveat needs prose room and a number does not. Single column below
+   900px; the NOTES text must never drop below body size, which is the whole
+   point of moving limits out of a 14px dagger footnote. */
+.spec-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .spec-split {
+    grid-template-columns: 42fr 58fr;
+    gap: var(--space-6);
+  }
+}
+
+.spec-col-head {
+  font-family: var(--font-mono);
+  font-size: var(--fs-200);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  border-bottom: var(--hairline) solid var(--rule);
+}
+
+/* The NOTES column carries what the measurement does NOT cover, at BODY size.
+   It used to be a 14px dagger footnote, which is where a site puts something it
+   hopes you skim. */
+.spec-notes p {
+  font-size: var(--fs-600);
+  color: var(--ink);
+  margin: 0 0 var(--space-3);
+  max-width: none;
+}
+
+.sheet-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5);
 }
 
 @media (min-width: 768px) {
-  .card-grid {
+  .sheet-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .card-grid-3 {
+  .sheet-grid-3 {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.card h3 a {
+.sheet-block h3 a {
   color: var(--ink);
 }
 
@@ -940,7 +983,7 @@ button.btn {
    lift. The 34px keycaps are deliberately NOT in this list — Keyboard.css
    documents that trade and it is sound. */
 @media (max-width: 767px) {
-  .card h3 a,
+  .sheet-block h3 a,
   .system-copy h3 a,
   .hero-readout-repo,
   .sweep-source {
@@ -1392,24 +1435,24 @@ button.btn {
     --section-gap: var(--space-6);
   }
 
-  /* ONE mobile padding step for the primitive under BOTH its names. `.card` is
+  /* ONE mobile padding step for the primitive under BOTH its names. `.sheet-block` is
      the same object as `.plate` in this stylesheet — same fill, same hairline,
      same radius, same pad — but only `.plate` carried the step, so at 390w the
      page rendered three paddings for one primitive: 16px on a plate, 24px on
-     every `.card` / `.edu-card` / `.role-card` (no mobile step at all), and a raw
+     every `.sheet-block` / `.edu-card` / `.role-card` (no mobile step at all), and a raw
      20px on `.system-feature` below 479px, which was both off the 4→96px ladder
      and BACKWARDS — a narrower screen got a wider frame than the 480-639px one.
      Now every plate-shaped surface is 24px down to 640 and 16px below it.
-     No qualified duplicate is needed: this block already sits after `.card`'s
+     No qualified duplicate is needed: this block already sits after `.sheet-block`'s
      own base rule, so source order at equal specificity decides, which is this
-     file's stated convention. Do not move it back above `.card`. */
+     file's stated convention. Do not move it back above `.sheet-block`. */
   .plate,
-  .card {
+  .sheet-block {
     padding: var(--space-4);
   }
 
   /* The gap does NOT travel with the padding: `.plate` is the flex column, and
-     `.card-grid .card` is a flex column too but authors its own child rhythm in
+     `.sheet-grid .sheet-block` is a flex column too but authors its own child rhythm in
      margins — an 8px gap there would add 8px between every child. */
   .plate {
     gap: var(--space-2);
@@ -1757,7 +1800,7 @@ button.btn {
    4→96px ladder — and it made the primitive render THREE paddings for one object
    at 390w (16px plate / 20px system plate / 24px card). It also ran backwards:
    ≤479px got 20px where 480-639px got 16px, so a narrower screen spent MORE of
-   its width on frame. The ≤639px `.plate, .card` step above is now the single
+   its width on frame. The ≤639px `.plate, .sheet-block` step above is now the single
    mobile pad for every plate-shaped surface.
 
    Everything left in this block styles `.system-diagram` and its descendants,
@@ -2685,15 +2728,15 @@ button.btn {
 .nav-brand svg { transition: transform var(--t-tap) ease; }
 .nav-brand:hover svg, .nav-brand:focus-visible svg { transform: translateY(-1px); }
 
-/* Link-bearing cards (.card-live added in JSX). The border goes amber and the
+/* Link-bearing cards (.sheet-live added in JSX). The border goes amber and the
    plate lifts 2px — the same two signals as the label button, because they are
    the same promise. The lift is 2px, not 4px: a card is a heavier object than a
    button and a 4px hop reads as a card that is falling off the page. */
-.card-live:hover, .card-live:focus-within {
+.sheet-live:hover, .sheet-live:focus-within {
   transform: translateY(-2px);
   border-color: var(--series-2);
 }
-.card-live:hover h3 a, .card-live:focus-within h3 a { text-decoration-thickness: 2px; }
+.sheet-live:hover h3 a, .sheet-live:focus-within h3 a { text-decoration-thickness: 2px; }
 
 /* Non-link cards get attention, not invitation: the boundary brightens and the
    card does not move, because there is nothing to click. */
@@ -2731,15 +2774,15 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 /* Reveal wrappers are grid children on card grids: the inner card fills the
    stretched wrapper so rows keep equal-height cards. */
-.card-grid > .reveal > .card { height: 100%; }
+.sheet-grid > .reveal > .sheet-block { height: 100%; }
 
 /* Equal-height rows: pin the footer row (chips/links) to the card bottom so
-   short cards don't float their links mid-card. Scoped to .card-grid only —
+   short cards don't float their links mid-card. Scoped to .sheet-grid only —
    timeline/edu cards keep normal block flow. */
-.card-grid .card { display: flex; flex-direction: column; }
-.card-grid .card > p { margin-bottom: 0; }
-.card-grid .card > .chip-rail:last-child,
-.card-grid .card > .project-links:last-child { margin-top: auto; padding-top: 12px; }
+.sheet-grid .sheet-block { display: flex; flex-direction: column; }
+.sheet-grid .sheet-block > p { margin-bottom: 0; }
+.sheet-grid .sheet-block > .chip-rail:last-child,
+.sheet-grid .sheet-block > .project-links:last-child { margin-top: auto; padding-top: 12px; }
 
 /* -------------------------------------------------- progressive enhancement */
 /* Runtime enhancements share this section. The progress route is rendered
@@ -3082,7 +3125,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     box-shadow: none !important;
   }
 
-  .card,
+  .sheet-block,
   .system-feature,
   .role-card,
   .edu-card {
@@ -3204,8 +3247,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     --btn-lift: 0px;
   }
 
-  .card-live:hover,
-  .card-live:focus-within,
+  .sheet-live:hover,
+  .sheet-live:focus-within,
   .kbd-fab:hover,
   .kbd-fab:focus-visible,
   .kbd-fab:active,

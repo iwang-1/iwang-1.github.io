@@ -45,7 +45,7 @@ function Projects() {
         </Section>
 
         <Section id="selected" title="More projects">
-          <div className="card-grid card-grid-3">
+          <div className="sheet-grid sheet-grid-3">
             {projects.map((p, i) => (
               <Reveal key={p.title} delay={i}>
                 <ProjectCard project={p} />
