@@ -955,19 +955,27 @@ the case a still-earlier pass missed): body text **17.72:1**, primary CTA
 **11.46:1**, on true white. Re-measure those two numbers before touching this
 block, and do not re-tokenise it.
 
-### 2. SVG text inside the force curve is a drawing dimension
+### 2. SVG text inside a drawing is a drawing dimension
 
-`font-size: 10px` and `11px` inside `.sweep-plot` are **viewBox user units**, not
+`font-size` values inside an SVG — `10px`/`11px` in `.sweep-plot`, `10px`/`8px`
+on the drawn keyboard's legends and sublegends — are **viewBox user units**, not
 CSS ramp steps. The plot is 680 units wide and scales with its container, so these
 render at roughly 9–11px and are tuned so ten per-point labels never collide — the
 same class of value as a tick length or a stroke width. Putting them on the type
 ramp would couple a drawing's internal geometry to the page's reading sizes, which
 are unrelated systems.
 
-Everything the reader must actually READ from this figure — every recall value,
-every QPS figure, the annotation — also exists as real HTML text in the
+Everything the reader must actually READ from the force curve — every recall
+value, every QPS figure, the annotation — also exists as real HTML text in the
 transcription table beside it, at ramp sizes. The SVG labels are the drawing's own
 annotation layer, not the proof.
+
+The drawn keyboard is the clearer case: its keys are 34 user units wide, so a
+legend at 10 units is proportioned to the cap it is printed on, exactly as the
+1.25-unit case stroke is proportioned to the case. Putting a keycap legend on the
+page's reading ramp would size a drawn object's internal detail by the body text
+around it, which is not a relationship that exists. Nothing on that drawing is
+information a reader needs — it carries no claim and no number.
 
 ## Do's and Don'ts
 

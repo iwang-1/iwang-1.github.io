@@ -1,208 +1,153 @@
-/* FIG. 00B — the keyboard's own stylesheet.
-   Imported by src/components/Keyboard.tsx, so it ships only where the figure
-   ships, exactly like Sweep.css.
+/* THE DRAWN KEYBOARD.
+ *
+ * The file this replaces opened by declaring the defect that got the previous
+ * version of this site called machine-made: "a keycap in this world is a tick
+ * label that happens to be square — flat fill, 2px radius, no bevel, no
+ * gradient, because a 3D keycap would be the first piece of decoration on the
+ * site." Everything on the page wore that one grammar, so a reader concluded one
+ * template made all of it.
+ *
+ * A keycap is not a tick label. It is a dished plastic object with a wall you can
+ * see from above, and drawing it as one is not decoration — it is the difference
+ * between a drawing and a chart. The plots keep the hairline grammar. The
+ * drawings look drawn. That contrast is the point.
+ *
+ * Concretely: the case has a wall and a recessed well, every cap is two shapes
+ * (outline + sculpted top), legends sit where a real cap prints them, modifiers
+ * are the darker half of a two-tone set, and the only motion is a press that
+ * travels — the distance a real switch moves before it actuates.
+ */
 
-   The whole drawing is three tokens deep: --plate-2 for a cap face (the same
-   second surface the data table stripes and the topo's wall use), --grid for
-   its hairline, --ink for the legend. A keycap in this world is a tick label
-   that happens to be square — flat fill, 2px radius, no bevel, no gradient, no
-   glow, because a 3D keycap would be the first piece of decoration on the site.
-
-   Amber appears in exactly two places and both are interaction: the border and
-   legend of the cap that is currently down, and the readout that logs it. That
-   is the site's one colour rule and a key tester is the most literal object it
-   could be applied to. */
-
-/* A <figure> carries a UA margin of `1em 40px` — unreset it indents the plate
-   40px off every alignment anchor on the page. Same reset the Sweep and the
-   topo both carry. */
-.keyboard-fig {
+.kb {
+  position: relative;
   margin: 0;
-  /* Compact by intent: a hobby figure is a marginal note, and at the plate's
-     own 24px padding this holds two five-cap rows without wrapping. */
-  max-width: 440px;
+  max-width: 620px;
 }
 
-/* ------------------------------------------------------------------- rows */
-/* Flex, not grid: the caps must be free to wrap at 320px rather than
-   overflowing the plate, and a wrapped row of a key tester still reads as a key
-   tester. The lower row is nudged half a cap right, the way a real staggered
-   board offsets its rows. */
-.keyboard-rows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+.kb-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 
-.keyboard-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+/* ------------------------------------------------------------------- case */
+.kb-case {
+  fill: var(--surface-inset);
+  stroke: var(--rule);
+  stroke-width: 1.25;
 }
 
-.keyboard-row-lower {
-  padding-left: var(--space-5);
+.kb-well {
+  fill: color-mix(in srgb, var(--surface-inset) 88%, var(--ink));
+  stroke: none;
 }
 
-/* The stagger is the first thing to go on a narrow plate: at 320px those 24px
-   are the difference between five caps on one line and a widowed fifth. */
-@media (max-width: 400px) {
-  .keyboard-row-lower {
-    padding-left: 0;
-  }
+/* -------------------------------------------------------------------- caps */
+/* Two shapes per key. The outline is the cap's wall, filled darker so the
+   sculpted top reads as raised out of it; the top is the surface a finger lands
+   on. One shape is a rectangle; two is a keycap. */
+.kb-cap {
+  fill: color-mix(in srgb, var(--surface-figure) 82%, var(--ink));
+  stroke: none;
 }
 
-/* ------------------------------------------------------------------- caps */
-/* A cap is a label button's smaller cousin: flat --plate-2 face, hairline
-   boundary, 2px radius, mono legend. It is deliberately NOT `.btn` — the
-   button primitive is a 44px page affordance and ten of them in a row would
-   read as a toolbar. 34px is a toy's tap target, above the 32px floor a
-   decorative control is held to, and the plate is not load-bearing content.
+.kb-top {
+  fill: var(--surface-page);
+  stroke: none;
+}
 
-   `flex: 0 1 auto` with a min-width lets the row shrink the caps a little
-   before it wraps them, so a 320px screen gets one tidy wrapped row rather
-   than a scrollbar. */
-.keyboard-cap {
-  --cap-lift: 0px;
-  flex: 0 1 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  min-height: 34px;
-  padding: var(--space-2);
-  border: var(--hairline) solid var(--grid);
-  border-radius: var(--r-xs);
-  background: var(--plate-2);
-  color: var(--ink);
+/* Modifiers are the darker half of a two-tone board — the one place this drawing
+   takes a colour relationship from a keycap set rather than from the page. */
+.kb-key-mod .kb-cap {
+  fill: color-mix(in srgb, var(--ink) 78%, var(--surface-inset));
+}
+
+.kb-key-mod .kb-top {
+  fill: color-mix(in srgb, var(--ink) 68%, var(--surface-inset));
+}
+
+.kb-key-mod .kb-legend,
+.kb-key-mod .kb-sub {
+  fill: var(--surface-page);
+}
+
+/* ----------------------------------------------------------------- legends */
+.kb-legend {
+  fill: var(--ink);
   font-family: var(--font-mono);
-  font-size: var(--fs-400);
-  line-height: 1;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transform: translateY(var(--cap-lift));
-  transition: transform var(--t-tap) var(--ease-out),
-    border-color var(--t-tap) ease, color var(--t-tap) ease;
+  /* Drawing dimensions, in viewBox units: a legend is sized to its cap, not to
+     the page's reading ramp. Same class of value as the stroke widths above. */
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
 }
 
-/* Hover / focus: the boundary becomes the amber annotation and the cap rises
-   1px — the same border-not-blur state the label button uses, written once for
-   every cap at one specificity. */
-.keyboard-cap:hover,
-.keyboard-cap:focus-visible {
-  --cap-lift: -1px;
-  border-color: var(--series-2);
-}
-
-/* A real 2px amber ring, since these are the only focusable things in the
-   plate and a tester you can tab through has to show where you are. */
-.keyboard-cap:focus-visible {
-  outline: 2px solid var(--series-2);
-  outline-offset: 2px;
-}
-
-/* PRESSED. The one state the figure exists to draw: the cap travels DOWN 2px
-   (past the hover lift, so a hovered cap still visibly moves when it fires),
-   its boundary and its legend go amber, and the face brightens to the plate the
-   surrounding surface uses. `.is-down` is React state, `:active` is the
-   pointer's own — both land here so a mouse-down reads instantly, before any
-   re-render.
-   No box-shadow: the travel and the boundary are the whole affordance. */
-.keyboard-cap.is-down,
-.keyboard-cap:active {
-  --cap-lift: 2px;
-  border-color: var(--series-2);
-  background: var(--plate);
-  color: var(--series-2);
-}
-
-/* --------------------------------------------------------------- readout */
-/* The tester's log line, set exactly like the Sweep's readout: a mono key, a
-   value in the interaction colour, and a quiet hint. Same object, same rank. */
-.keyboard-readout {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-3);
-  margin: 0;
+/* Dual-legend caps print left-aligned, upper and lower — so these two opt out of
+   the centred anchor the single-legend caps use. */
+.kb-sub {
+  fill: var(--ink-secondary);
   font-family: var(--font-mono);
-  font-size: var(--fs-400);
-  line-height: 1.4;
+  font-size: 8px;
+  text-anchor: start;
+  pointer-events: none;
 }
 
-.keyboard-readout-key {
-  flex: none;
-  color: var(--ink-3);
-  font-size: var(--fs-200);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.kb-legend-dual {
+  text-anchor: start;
 }
 
-.keyboard-readout-value {
-  color: var(--series-2);
-  /* Legends are single glyphs joined by spaces; a long log must break rather
-     than push the plate wider. */
-  overflow-wrap: anywhere;
+/* ------------------------------------------------------------------ press */
+.kb-key {
+  transition: transform 90ms ease-out;
 }
 
-/* Nothing has been pressed, so nothing is annotated yet: the idle string is
-   footnote grey, not amber. Amber that is always on stops meaning "you did
-   this". */
-.keyboard-readout-value.is-idle {
-  color: var(--ink-3);
+.kb-key.is-down {
+  transform: translateY(1.5px);
 }
 
-/* The invitation. Hidden until the bundle proves it can honour it — the same
-   contract as .sweep-readout-hint.
-
-   Shrinkable on purpose, unlike the Sweep's hint: `flex: none` holds a flex item
-   at its max-content width, and this string is ~36 mono characters — 23px wider
-   than the plate's content box at 320px, which pushed the whole figure into
-   overflow. Letting it shrink lets it wrap instead. */
-.keyboard-hint {
-  display: none;
-  color: var(--ink-3);
-  font-size: var(--fs-200);
-  letter-spacing: 0.04em;
+.kb-key.is-down .kb-top {
+  fill: color-mix(in srgb, var(--ink-accent) 24%, var(--surface-page));
 }
 
-/* Two hints, one per input register, and never both. The old single string told
-   a phone reader to "type while hovering" — an instruction for hardware they do
-   not have, on the first interactive thing the page now shows them. Tapping a
-   cap always worked; only the sentence was wrong. */
-@media (hover: hover) and (pointer: fine) {
-  .js .keyboard-hint-fine {
-    display: inline;
-  }
+.kb-key-mod.is-down .kb-top {
+  fill: var(--ink-accent);
 }
 
-@media (hover: none) {
-  .js .keyboard-hint-coarse {
-    display: inline;
-  }
-}
-
-/* --------------------------------------------------------- reduced motion */
-/* The press is user-driven, so under `reduce` it still happens — it just stops
-   easing. Stated here as well as globally so the figure's contract is readable
-   in the figure's own file. */
 @media (prefers-reduced-motion: reduce) {
-  .keyboard-cap {
-    transition-duration: 0ms;
+  .kb-key {
+    transition: none;
   }
 }
 
-/* ------------------------------------------------------------------ print */
-/* Paper has no pointer and no keyboard. The caps print as the drawing they
-   are; the hint and the log line, which only describe an interaction, do not. */
-@media print {
-  .js .keyboard-hint,
-  .js .keyboard-hint-fine,
-  .js .keyboard-hint-coarse {
-    display: none;
-  }
+/* ------------------------------------------------------------- hit targets */
+/* Real buttons over the drawing, so the interaction is accessible without the
+   SVG becoming a control surface. Invisible until focused: a visible button grid
+   laid over a drawing would destroy the drawing. */
+.kb-hit {
+  position: absolute;
+  inset: 0;
+}
 
-  .keyboard-cap {
-    transform: none;
-  }
+.kb-hit-btn {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.kb-hit-btn:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------- caption */
+/* Prose, not a footnote strip. It says what was DRAWN, never what anyone owns. */
+.kb-caption {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-400);
+  color: var(--ink-secondary);
+  max-width: 52ch;
 }
