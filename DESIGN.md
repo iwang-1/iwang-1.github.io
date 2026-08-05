@@ -932,6 +932,43 @@ The two rules, both mandatory:
   still does not match through it, and without the pair the restored `<main>` loses its
   `flex: 1 0 auto`.
 
+## The two places a literal value is CORRECT
+
+Everything on this site takes its colour and size from a token. There are exactly
+two documented exceptions, both deliberate, both verified, and both re-flagged by
+the design detector on every pass — so the reasoning lives here rather than in a
+commit message nobody re-reads.
+
+### 1. The print sheet is fixed values, not tokens
+
+`@media print` re-declares the nine raw tokens to paper values and then uses
+literal hexes for the surfaces it must force (`#ffffff`, `#1a1815`, `#c4ccd4`).
+This is not drift.
+
+A previous pass tokenised the print block. The printed primary button regressed
+to a **measured 1.59:1**, because any later `:root` remap silently reaches into
+the print sheet — the print rules inherit whatever the screen world decides next.
+Fixed values cannot be reached that way.
+
+Measured on a COLD print load (print media emulated *before* navigation, which is
+the case a still-earlier pass missed): body text **17.72:1**, primary CTA
+**11.46:1**, on true white. Re-measure those two numbers before touching this
+block, and do not re-tokenise it.
+
+### 2. SVG text inside the force curve is a drawing dimension
+
+`font-size: 10px` and `11px` inside `.sweep-plot` are **viewBox user units**, not
+CSS ramp steps. The plot is 680 units wide and scales with its container, so these
+render at roughly 9–11px and are tuned so ten per-point labels never collide — the
+same class of value as a tick length or a stroke width. Putting them on the type
+ramp would couple a drawing's internal geometry to the page's reading sizes, which
+are unrelated systems.
+
+Everything the reader must actually READ from this figure — every recall value,
+every QPS figure, the annotation — also exists as real HTML text in the
+transcription table beside it, at ramp sizes. The SVG labels are the drawing's own
+annotation layer, not the proof.
+
 ## Do's and Don'ts
 
 ### Do:
