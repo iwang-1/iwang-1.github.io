@@ -7,7 +7,7 @@ import { education, featuredSystems, hero, hobbies, person, skills } from "../..
 import { ContactBand, EduCard } from "../../components/cards";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { ProofChip } from "../../components/chips";
-import { ClimbingRoute } from "../../components/ClimbingRoute";
+import { Boulder } from "../../components/Boulder";
 import { Footer } from "../../components/Footer";
 import { Keyboard } from "../../components/Keyboard";
 import { ExternalLink, LabelButton } from "../../components/LabelButton";
@@ -130,7 +130,7 @@ function Home() {
             <div className="hobby-cell">
               <h3 className="hobby-blurb">{hobbies.climb.blurb}</h3>
               <p className="hobby-lead">{hobbies.climb.lead}</p>
-              <ClimbingRoute />
+              <Boulder />
             </div>
             <div className="hobby-cell">
               <h3 className="hobby-blurb">{hobbies.tech.blurb}</h3>

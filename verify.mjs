@@ -433,13 +433,34 @@ async function checkPage(spec, viewport) {
     if (/hong\s?kong/i.test(html))
       problems.push(`${tag}: "Hong Kong" present in page HTML (JSON-LD?)`);
 
-    const routeHolds = await page.locator(".climb-hold-route").count();
-    const secondaryHolds = await page.locator(".climb-hold-off-route").count();
-    if (routeHolds < 8 || secondaryHolds < 6)
-      problems.push(`${tag}: climbing wall lacks a complete route (${routeHolds}/${secondaryHolds})`);
-    for (const label of ["START", "TOP", "BOULDER / SET 01"])
-      if (!(await page.locator(".climbing-route", { hasText: label }).count()))
-        problems.push(`${tag}: climbing route label missing: ${label}`);
+    // THE BOULDER'S CONTRACT. The gate this replaces asserted the literals
+    // "START", "TOP" and "BOULDER / SET 01" and a single 8-hold route — i.e. it
+    // PINNED IN PLACE the invented problem and the one-correct-sequence framing
+    // that contradicted Ivan's own paragraph 30px above the drawing. A gate that
+    // locks a defect is worse than no gate, so what is asserted now is the thing
+    // that must stay true: THREE sequences at equal weight, and no invented
+    // problem identity.
+    const paths = page.locator(".boulder-path");
+    if ((await paths.count()) !== 3)
+      problems.push(`${tag}: boulder must show exactly 3 sequences, got ${await paths.count()}`);
+    const onHolds = await page.locator(".boulder-hold-on").count();
+    const offHolds = await page.locator(".boulder-hold-off").count();
+    if (onHolds < 12 || offHolds < 4)
+      problems.push(`${tag}: boulder wall is not a wall (${onHolds} on / ${offHolds} off route)`);
+    // Equal weight is the honesty rule, not a style preference: if one sequence
+    // is heavier or a different colour, the drawing is asserting a correct beta.
+    const weights = await paths.evaluateAll((els) =>
+      els.map((el) => {
+        const cs = getComputedStyle(el);
+        return `${cs.stroke}|${cs.strokeWidth}|${cs.opacity}`;
+      }),
+    );
+    if (new Set(weights).size !== 1)
+      problems.push(`${tag}: boulder sequences are not equal weight: ${weights.join(" / ")}`);
+    // The retired invention may not come back in any skin.
+    for (const banned of ["SET 01", "BOULDER / SET", "top out at"])
+      if (bodyText.includes(banned))
+        problems.push(`${tag}: retired invented boulder identity rendered: ${banned}`);
   }
   if (spec.path === "/experience/") {
     // timeline structural gate: 7 role cards; alternating L/R on desktop,
@@ -489,7 +510,7 @@ async function checkPage(spec, viewport) {
       const c = cap.getBoundingClientRect();
       if (!c.width || !c.height) continue;
       for (const el of parent.querySelectorAll(
-        ".diagram-stage, .diagram-node, .diagram-sstables span, .sweep-plot, .climb-topo",
+        ".diagram-stage, .diagram-node, .diagram-sstables span, .sweep-plot, .boulder-svg",
       )) {
         if (cap.contains(el) || el.contains(cap)) continue;
         const e = el.getBoundingClientRect();

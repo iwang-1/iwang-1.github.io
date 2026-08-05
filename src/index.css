@@ -1831,166 +1831,6 @@ button.btn {
 }
 
 /* ------------------------------------------- FIG. 00 — the boulder topo */
-/* The topo is a plate like every other figure: label, drawing, footnote. It
-   sits in the About column beside the Climbing Club paragraph — the one drawn
-   figure about the person, set exactly like the measured figures about the
-   work. The wall is an SVG silhouette; holds are positioned over it in the
-   same percentage space.
-
-   Gate contract: START / TOP / "BOULDER / SET 01" are visible text
-   descendants of .climbing-route at every viewport; >=8 route holds and
-   >=6 off-route holds. Do not hide any of them. */
-
-.climbing-route {
-  /* Reset the UA <figure> margin (1em 40px) — it indents the plate 40px off
-     every alignment anchor on the page. Same reset the Sweep carries. */
-  margin: 0;
-  max-width: 440px;
-}
-
-/* On a phone the topo is a marginal figure, not a second hero. */
-@media (max-width: 639px) {
-  .climbing-route {
-    max-width: 320px;
-  }
-}
-
-/* SQUARE, not 5:6. At 5:6 the topo stood 492px against a 264px key tester and a
-   356px feed — 1.86x its shortest sibling, and by pixel count the largest and
-   most saturated object in the whole document (2.12% amber against the Sweep's
-   0.21%), one screen above the benchmark it out-shouted tenfold. A hobby drawing
-   does not get to be the loudest thing on a recruiting page. Square takes it to
-   ~435px in the same column and halves the row's ragged bottom.
-   Nothing has to be redrawn: the wall's viewBox is preserveAspectRatio="none"
-   and every hold sits at a percentage coordinate, so the wall and the route
-   rescale together. */
-.climb-topo {
-  position: relative;
-  aspect-ratio: 1 / 1;
-}
-
-.climb-wall {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* The wall face and its two seams: contour lines, not scenery. Strokes are
-   non-scaling so the hairline survives preserveAspectRatio="none". */
-.climb-wall-face {
-  fill: var(--plate-2);
-  stroke: var(--grid);
-  stroke-width: 1px;
-  vector-effect: non-scaling-stroke;
-}
-
-.climb-wall-seam {
-  fill: none;
-  stroke: var(--grid);
-  stroke-width: 1px;
-  vector-effect: non-scaling-stroke;
-}
-
-.climb-wall-bolt {
-  fill: var(--axis);
-}
-
-/* The marked route: a dashed amber leader between the numbered holds — the
-   same "human annotation on the measurement" amber as every callout. */
-.climb-route-path {
-  fill: none;
-  stroke: var(--series-2);
-  stroke-width: 1.5px;
-  stroke-dasharray: 5 6;
-  vector-effect: non-scaling-stroke;
-  opacity: 0.65;
-}
-
-/* Holds are sample points with a shape: flat fill plus a hairline halo, the
-   same treatment as .sample-point, sized for a plate column rather than a
-   full-bleed band. */
-.climb-hold {
-  position: absolute;
-  left: var(--hold-x);
-  top: var(--hold-y);
-  width: 34px;
-  height: 18px;
-  transform: translate(-50%, -50%) rotate(var(--hold-rotate));
-  border-radius: 58% 42% 52% 48% / 68% 54% 46% 32%;
-  box-shadow: 0 0 0 var(--hairline) var(--grid);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Two colours, one meaning each: the marked route is amber (the route IS the
-   annotation on the wall); everything off it is the unhighlighted sample
-   grey. That distinction is why the topo reads as a figure, not a photo of
-   a gym. */
-.climb-hold-route {
-  background: var(--series-2);
-}
-
-/* The hold number, set on the amber like a data label. */
-.climb-num {
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-weight: 600;
-  font-size: var(--fs-100);
-  line-height: 1;
-  color: var(--ground);
-}
-
-/* Four hold types, four silhouettes: jug = the big obvious positive hold,
-   edge = the thin one, start = squat and deep, top = the finish (ringed the
-   way a plot rings its annotated point). */
-.climb-hold-jug {
-  width: 40px;
-  height: 22px;
-  border-radius: 62% 38% 58% 42% / 72% 62% 38% 28%;
-}
-
-.climb-hold-edge {
-  width: 28px;
-  height: 14px;
-  border-radius: 35% 65% 42% 58% / 66% 44% 56% 34%;
-}
-
-.climb-hold-start {
-  width: 32px;
-  height: 18px;
-}
-
-.climb-hold-top {
-  box-shadow: 0 0 0 var(--hairline) var(--grid), 0 0 0 3px var(--plate-2), 0 0 0 4px var(--series-2);
-}
-
-.climb-hold-off-route {
-  width: 20px;
-  height: 11px;
-  background: var(--ink-3);
-  opacity: 0.55;
-}
-
-/* START / TOP are axis tick labels on the topo, set like every other tick
-   label: mono, 11px, hairline plate, 2px radius. Gate-asserted visible. */
-.climb-label {
-  position: absolute;
-  z-index: 2;
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-100);
-  letter-spacing: 0.08em;
-  padding: 2px 5px;
-  border: var(--hairline) solid var(--axis);
-  border-radius: var(--r-xs);
-  background: var(--plate);
-}
-
-.climb-label-start { left: 8%; bottom: 4%; }
-.climb-label-top { right: 8%; top: 1%; }
-
 /* ------------------------------------------------------------ page heads */
 .page-head-band {
   background: var(--plate);
@@ -2262,7 +2102,8 @@ button.btn {
 }
 
 /* OPT-IN, not a blanket un-cap. The rule here used to be
-   `.hobby-cell .plate:not(.climbing-route) { max-width: none }` — written to
+   `.hobby-cell .plate:not(.climbing-route) { max-width: none }` (that class is
+   retired; the boulder now carries its own cap) — written to
    un-kill the topo's cap, but its (0,1,1) `:not()` also stripped
    `.keyboard-fig`'s own 440px cap (Keyboard.css: "Compact by intent: a hobby
    figure is a marginal note"). In the single-column band that left empty plate
@@ -2270,7 +2111,7 @@ button.btn {
    357px @900, 480px @1023; feed 521 / 653 / 776 — beside a topo correctly
    holding 440px with 25px, which is this world's signature of unfinished.
    `.feed-fig` is the one hobby figure authored with no cap of its own, so it
-   gets one here, matched to its siblings. `.keyboard-fig` and `.climbing-route`
+   gets one here, matched to its siblings. `.kb` and `.boulder`
    now keep the caps their own files declare. Inert at >=1024, where all three
    subgrid cells measure 304-336px. */
 .hobby-cell > .feed-fig {
@@ -2282,7 +2123,7 @@ button.btn {
    this file, so the third hobby plate rendered 256px inside its 336px cell at
    x=960 while its two siblings ran flush at 336px from x=184 and x=552 (1440);
    same at 1024 (224 in 304), 768 (640 in 720), 390 (278 in 358) and 320 (208 in
-   288, x=56 against siblings at x=16). Same reset .sweep and .climbing-route
+   288, x=56 against siblings at x=16). Same reset .sweep and .boulder
    already carry. */
 .feed-fig {
   margin: 0;
@@ -3193,7 +3034,11 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   #progress-rail,
   .kbd-fab,
   .kbd-help,
-  .climbing-route,
+  /* .boulder, not .climbing-route: the retired topo's class was still listed
+     here after the drawing was replaced, so this rule matched nothing and the
+     boulder printed. A stale selector in a print block is invisible until
+     someone prints the page. */
+  .boulder,
   .about-visual,
   .system-diagram {
     display: none !important;

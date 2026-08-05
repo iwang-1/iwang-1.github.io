@@ -1,0 +1,174 @@
+/* THE DRAWN BOULDER — the figure's own stylesheet.
+ *
+ * The rules this replaces described themselves: holds were "sample points with a
+ * shape … the same treatment as .sample-point", START and TOP were "axis tick
+ * labels on the topo", the route was "the human annotation on the measurement".
+ * Every one of those sentences is a chart's sentence. The drawing that came out
+ * of them looked like the benchmark plot two screens below it, which is how one
+ * template ends up appearing to have made the whole page.
+ *
+ * A hold is not a sample point. It is a lump of textured resin bolted to
+ * plywood, and drawing it as one is the same repair the keyboard got: the plots
+ * keep the hairline grammar, the drawings look drawn.
+ *
+ * Colour carries ONE meaning here and it is not "which route is correct": on
+ * route vs off route. The three sequences are deliberately identical in weight
+ * and colour — see the note at ROUTES in Boulder.tsx. The moment one of them is
+ * brighter, the drawing is asserting a correct beta and contradicting Ivan's own
+ * sentence above it.
+ */
+
+.boulder {
+  margin: 0;
+  max-width: 440px;
+}
+
+/* On a phone this is a marginal figure, not a second hero. */
+@media (max-width: 639px) {
+  .boulder {
+    max-width: 320px;
+  }
+}
+
+.boulder-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ----------------------------------------------------------------- plywood */
+/* Two panels at two angles. The upper one is lighter because it kicks back away
+   from the viewer and catches more light — the single cue that says "this wall
+   changes angle" without drawing a diagram of the change. */
+.boulder-face {
+  fill: var(--surface-inset);
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.boulder-face-upper {
+  fill: color-mix(in srgb, var(--surface-inset) 78%, var(--surface-page));
+}
+
+/* T-nuts: hardware, not texture. Faint enough to read as a drilled grid at a
+   glance and never as a scatter plot. */
+.boulder-tnut {
+  fill: var(--ink);
+  opacity: 0.16;
+}
+
+.boulder-seam {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.2;
+}
+
+/* ----------------------------------------------------------------- routes */
+/* Three sequences, EQUAL weight, ONE colour, distinguished only by dash pattern
+   — the accessible way to separate series, and here also the honest one: dash is
+   a difference without a hierarchy, where colour or width would rank them. */
+.boulder-path {
+  fill: none;
+  stroke: var(--ink-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.5;
+}
+
+.boulder-path-1 {
+  stroke-dasharray: 7 5;
+}
+
+.boulder-path-2 {
+  stroke-dasharray: 2 4;
+}
+
+.boulder-path-3 {
+  stroke-dasharray: 11 4 2 4;
+}
+
+/* ------------------------------------------------------------------ holds */
+/* Three shapes per hold: shadow, body, bolt. The offset shadow is the whole
+   reason a hold reads as bolted ON the wall rather than printed on it — the same
+   role the sculpted inset plays on a keycap. */
+.boulder-hold-shadow {
+  fill: var(--ink);
+  opacity: 0.22;
+}
+
+.boulder-hold-body {
+  stroke: color-mix(in srgb, var(--ink) 35%, transparent);
+  stroke-width: 0.75;
+}
+
+.boulder-hold-on .boulder-hold-body {
+  fill: var(--ink-accent);
+}
+
+/* Off-route holds are the wall's furniture: same drawing, no accent. They are
+   what makes the three sequences read as CHOSEN out of a wall rather than as the
+   only holds on it. */
+.boulder-hold-off .boulder-hold-body {
+  fill: color-mix(in srgb, var(--surface-figure) 72%, var(--ink));
+}
+
+.boulder-hold-off .boulder-hold-shadow {
+  opacity: 0.14;
+}
+
+/* The bolt in the middle. Every real hold has exactly one, and it is the detail
+   that reads as hardware at thumbnail size. */
+.boulder-bolt {
+  fill: var(--ink);
+  opacity: 0.4;
+}
+
+.boulder-hold-on .boulder-bolt {
+  fill: var(--surface-page);
+  opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------- caption */
+/* Prose, not a footnote strip — it says what was DRAWN. */
+.boulder-caption {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-400);
+  color: var(--ink-secondary);
+  max-width: 52ch;
+}
+
+/* ----------------------------------------------- forced colours (HCM) */
+/* Windows High Contrast Mode forces the page background but does NOT override
+   SVG `fill`, so without this the wall keeps its own palette on the user's
+   scheme. The three dash patterns already carry the route distinction, which is
+   why collapsing all three to one forced colour loses nothing. */
+@media (forced-colors: active) {
+  .boulder-face,
+  .boulder-face-upper {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .boulder-path {
+    stroke: CanvasText;
+    opacity: 1;
+  }
+
+  .boulder-hold-on .boulder-hold-body {
+    fill: Highlight;
+  }
+
+  .boulder-hold-off .boulder-hold-body {
+    fill: Canvas;
+  }
+
+  .boulder-hold-body {
+    stroke: CanvasText;
+  }
+
+  .boulder-hold-shadow {
+    fill: none;
+  }
+}
