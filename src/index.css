@@ -661,26 +661,8 @@ button.btn {
   line-height: 1.4;
 }
 
-/* SAMPLE POINT — one atom for chart points, timeline nodes, list bullets and
-   route holds. 7px fill plus a hairline halo, which is what makes four
-   different pages read as one document. */
-.sample-point {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--series-1);
-  box-shadow: 0 0 0 var(--hairline) var(--grid);
-}
 
-.sample-point-annotated {
-  background: var(--series-2);
-}
 
-.sample-point-off {
-  background: var(--ink-3);
-}
 
 /* CALLOUT — leader line plus label, exactly as the source plots annotate a
    knee. The site's only annotation style, and the mechanism of the
@@ -704,44 +686,11 @@ button.btn {
   background: var(--series-2);
 }
 
-/* DATA TABLE — a figure-world native, for demoted or tabular items. Striped
-   with --plate-2, hairline rules, tabular figures, no vertical borders. */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-400);
-}
 
-.data-table th,
-.data-table td {
-  padding: var(--space-2) var(--space-3);
-  border-bottom: var(--hairline) solid var(--grid);
-  text-align: left;
-  vertical-align: baseline;
-}
 
-.data-table th {
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-200);
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
 
-.data-table td {
-  color: var(--ink);
-}
 
-.data-table tbody tr:nth-child(even) {
-  background: var(--plate-2);
-}
 
-.data-table-num {
-  font-family: var(--font-mono);
-  white-space: nowrap;
-}
 
 /* ----------------------------------------------------------- chips/pills */
 .chip,
@@ -908,23 +857,6 @@ button.btn {
   transition: border-color var(--t-hover) var(--ease-out);
 }
 
-/* THE SPECIFICATIONS / NOTES SPLIT — 42/58, the proportion a switch datasheet
-   uses: the measured column is narrower than the column that qualifies it,
-   because a caveat needs prose room and a number does not. Single column below
-   900px; the NOTES text must never drop below body size, which is the whole
-   point of moving limits out of a 14px dagger footnote. */
-.spec-split {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
-}
-
-@media (min-width: 900px) {
-  .spec-split {
-    grid-template-columns: 42fr 58fr;
-    gap: var(--space-6);
-  }
-}
 
 .spec-col-head {
   font-family: var(--font-mono);
@@ -1361,22 +1293,8 @@ button.btn {
   font-size: var(--fs-300);
 }
 
-/* The AWS line under the rail: the paid production work, in the rail's own mono
-   register but off the hairline grid, because it is not one of the three repos. */
-.hero-readout-aside {
-  margin-bottom: var(--space-6);
-  font-size: var(--fs-300);
-}
 
-.hero-readout-aside a {
-  color: var(--ink-2);
-  letter-spacing: 0.02em;
-}
 
-.hero-readout-aside a:hover,
-.hero-readout-aside a:focus-visible {
-  color: var(--series-2);
-}
 
 /* Home hero band — the band wrapping the hero. The bottom hairline is the
    band's stated edge: six points of luminance against ground is not enough for
@@ -1586,10 +1504,6 @@ button.btn {
   color: var(--ink-2);
 }
 
-.system-caveat {
-  color: var(--ink-2);
-  font-size: var(--fs-400);
-}
 
 /* Evidence packs to the top instead of distributing. `space-between` left
    188/160/297px of dead field between the figure and the metrics on the three
@@ -2349,12 +2263,6 @@ button.btn {
   color: var(--ink-2);
 }
 
-/* -------------------------------------------------------------- projects */
-.no-repo-tag {
-  font-family: var(--font-mono);
-  font-size: var(--fs-300);
-  color: var(--ink-2);
-}
 
 .project-meta {
   display: flex;
@@ -3039,7 +2947,10 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
      boulder printed. A stale selector in a print block is invisible until
      someone prints the page. */
   .boulder,
-  .about-visual,
+  /* `.about-visual` was here too and is now gone: the class is emitted by no
+     component, so it was a second stale selector sitting directly beside the
+     .climbing-route one, missed when that was fixed. Print blocks are where
+     dead selectors hide — nothing renders differently until someone prints. */
   .system-diagram {
     display: none !important;
   }

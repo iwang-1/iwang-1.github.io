@@ -160,8 +160,13 @@ function Home() {
             <Sweep />
           </div>
           <div className="system-list">
+            {/* PREVIEW, not the full sheet. These three used to render byte-for-
+                byte identically to /projects/ — 13 identical text blocks across
+                the two pages, measured on the built output — so a reader met the
+                same three projects twice and the home page ran 6,400px to do it.
+                See the `variant` note in SystemFeature.tsx. */}
             {featuredSystems.map((project, i) => (
-              <SystemFeature key={project.id} project={project} index={i} />
+              <SystemFeature key={project.id} project={project} index={i} variant="preview" />
             ))}
           </div>
           {/* An exit that points at what the reader has NOT seen — and NAMES it.

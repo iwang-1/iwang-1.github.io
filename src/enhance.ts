@@ -167,7 +167,17 @@ function mountCommandPalette(): void {
    *  it. Queried per event rather than cached, because the figure is a React
    *  node that boot may not have seen yet. */
   const armedKeyTester = (): boolean => {
-    const fig = document.querySelector<HTMLElement>(".keyboard-fig");
+    /* `.kb`, NOT `.keyboard-fig`. The drawn keyboard renamed its root class and
+       this selector was not updated with it, so this guard queried a class that
+       exists nowhere, returned false unconditionally, and the g-chord fired over
+       the armed key tester again — the exact defect the block below documents as
+       fixed. Measured on the built site: hovering the keyboard and typing g then
+       e navigated / -> /experience/ and reset scrollY from 773 to 0. A figure
+       that invites "type while the pointer is over it" threw the reader off the
+       page on the second keystroke.
+       verify.mjs now presses this sequence over the keyboard and fails on
+       navigation, because a class rename cannot otherwise fail a build. */
+    const fig = document.querySelector<HTMLElement>(".kb");
     if (!fig) return false;
     return fig.matches(":hover") || fig.contains(document.activeElement);
   };

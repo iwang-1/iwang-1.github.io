@@ -206,10 +206,6 @@
   fill: var(--ink-2);
 }
 
-.sweep-legend-hnsw {
-  stroke: var(--series-1);
-  stroke-width: 2;
-}
 
 .sweep-legend-ivf {
   stroke: var(--series-3);

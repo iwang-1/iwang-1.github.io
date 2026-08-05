@@ -31,6 +31,47 @@ const REQUIRED = [
   "ivanwang8989@gmail.com",
   "Departmental Honors (research track)",
   "faculty-mentored research track",
+  // MEASURED VALUES, locked as exact strings — the cheap half of the fix an
+  // independent mutation test forced. It changed each of these to an inflated
+  // value (2.9M -> 9.9M ops, 878 µs -> 78 µs, ~29x -> ~299x) and check-facts
+  // passed every time: the gate policed GPA, phone numbers and team size but not
+  // one number the site rests its credibility on. The lodestone figures are
+  // locked ARITHMETICALLY below (derived from the committed benchmark, which is
+  // strictly better); these three live in sibling repos this gate cannot read,
+  // so they are pinned to the exact strings their sources support:
+  //   2.9 million  <- parallax-kv docs/BUG_LEDGER.md: "2,914,245 client operations"
+  //   878 µs       <- accretion-db benchmarks/RESULTS.md: "sync_data (fdatasync, 4 KiB) | 878 µs"
+  //   ~29x         <- accretion-db benchmarks/RESULTS.md: "8,082 / 276 ≈ 29× at c=64"
+  // Changing a value now means changing this list, which is a decision rather
+  // than a typo.
+];
+
+// ---------------------------------------------------------------------------
+// 1b. RENDERED-VALUE LOCK — required in src/content.ts SPECIFICALLY.
+//
+// These four were first added to REQUIRED above, and that was WRONG in a way
+// worth recording: REQUIRED is satisfied by the string appearing ANYWHERE in the
+// scanned corpus, which includes every comment in every file it reads. Deleting
+// "878 µs" from content.ts still passed because a CSS comment in src/index.css
+// mentions it, and the parallelism disclosure passed because the generated
+// figure quotes it. A gate a comment can satisfy is not a gate on the site.
+//
+// So these are checked against ONE file: the module that actually renders. Each
+// is a measured value whose source lives in a sibling repo this script cannot
+// read (the lodestone numbers are locked arithmetically further down, which is
+// strictly better), plus the honesty sentence that makes the headline ratio fair
+// to quote:
+//   2.9 million        <- parallax-kv docs/BUG_LEDGER.md: "2,914,245 client operations"
+//   878 µs             <- accretion-db benchmarks/RESULTS.md: "sync_data (fdatasync, 4 KiB) | 878 µs"
+//   ~29x               <- accretion-db benchmarks/RESULTS.md: "8,082 / 276 ≈ 29× at c=64"
+//   not core-for-core  <- the 1-core-vs-48-core caveat on the 33x ratio. The most
+//                         deletable sentence on the site: removing it strengthens
+//                         the claim and breaks nothing, which is why it is gated.
+const REQUIRED_IN_CONTENT = [
+  "2.9 million client operations",
+  "878 µs",
+  "~29x",
+  "not core-for-core",
 ];
 
 // ---------------------------------------------------------------------------
@@ -167,6 +208,115 @@ for (const file of files) {
 for (const s of REQUIRED)
   if (!corpus.includes(s))
     problems.push(`REQUIRED string missing from the scanned corpus: ${JSON.stringify(s)}`);
+
+const contentSrc = readFileSync(join(root, "src", "content.ts"), "utf8");
+for (const s of REQUIRED_IN_CONTENT)
+  if (!contentSrc.includes(s))
+    problems.push(
+      `RENDERED-VALUE missing from src/content.ts: ${JSON.stringify(s)} — this is checked against content.ts alone, because a mention in any comment would otherwise satisfy it`,
+    );
+
+// ---------------------------------------------------------------------------
+// 5. DERIVED NUMBER LOCK — the rendered lodestone prose must agree with the
+//    committed benchmark, arithmetically.
+//
+// WHY THIS EXISTS. Everything above is a DENYLIST: it catches retired claims in
+// the spellings someone thought to enumerate. An independent reviewer
+// mutation-tested that approach against 14 single-number falsifications of
+// content.ts and NINE SURVIVED — recall 0.976 -> 0.999, QPS 31,800 -> 91,800,
+// 2.9M ops -> 9.9M, 878 µs -> 78 µs, ~29x -> ~299x, 33x -> 49x, and the retired
+// "48.7x" itself (the `(?<![\d.])` lookbehind written to stop "148x" matching
+// also rejects the ".7", so the tripwire could not match the exact number its
+// own error message names). The gate caught GPA, phone numbers and team size —
+// the categories already imagined — and no measured value on the page.
+//
+// The generator already asserts that the FIGURE's numbers are byte-exact
+// substrings of the benchmark. That says nothing about the PROSE beside it: a
+// doctored benchmark row regenerated the plot to 41,845 q/s while the plate kept
+// saying ~31,800, and both gates passed.
+//
+// So this reads the benchmark and recomputes what the prose is allowed to say.
+// An inflated number now has to survive arithmetic, not just avoid a spelling.
+const BENCH = join(root, "benchmarks", "lodestone", "bench_50k_128d.txt");
+if (existsSync(BENCH)) {
+  const bench = readFileSync(BENCH, "utf8");
+  const oracle = Number(bench.match(/oracle:\s*(\d+)\s*QPS/i)?.[1]);
+  // The HNSW table only — the IVF-PQ table has the same row shape, so the parse
+  // is scoped to the section between the two headings.
+  const hnswBlock = bench.slice(
+    bench.indexOf("## HNSW"),
+    bench.indexOf("## IVF-PQ") >= 0 ? bench.indexOf("## IVF-PQ") : undefined,
+  );
+  const rows = [...hnswBlock.matchAll(/^\|\s*(\d+)\s*\|\s*([\d.]+)\s*\|\s*(\d+)\s*\|/gm)].map((m) => ({
+    ef: Number(m[1]),
+    recall: Number(m[2]),
+    qps: Number(m[3]),
+  }));
+
+  if (!oracle || rows.length < 3) {
+    problems.push(
+      `derived-number lock: could not parse the benchmark (oracle=${oracle}, ${rows.length} HNSW rows) — the lock must never silently pass`,
+    );
+  } else {
+    // The band the site is allowed to quote: rows at or above the 0.90 recall
+    // floor the page itself draws. 48.7x lives at 0.8996, which is why it is
+    // retired — that exclusion is now arithmetic rather than a banned string.
+    const band = rows.filter((r) => r.recall >= 0.9);
+    const ratios = band.map((r) => r.qps / oracle);
+    const maxRatio = Math.max(...ratios);
+    const minRatio = Math.min(...ratios);
+    const best = band.reduce((a, b) => (b.qps > a.qps ? b : a));
+
+    // Every "<N>x" the site claims about this benchmark must fall inside the
+    // measured band (1x tolerance for honest rounding of a ratio).
+    for (const m of corpus.matchAll(/(\d{1,3}(?:\.\d)?)\s*[x×]\s*(?:the\s+)?(?:exact|brute|oracle)/gi)) {
+      const claimed = Number(m[1]);
+      if (claimed > maxRatio + 1)
+        problems.push(
+          `derived-number lock: "${m[0].trim()}" exceeds the measured band — the benchmark's best ≥0.90-recall row is ${best.qps} q/s against a ${oracle} q/s oracle (${maxRatio.toFixed(1)}x)`,
+        );
+    }
+    // The stated band's endpoints must be the real endpoints.
+    for (const m of corpus.matchAll(/(\d{1,3})\s*[–-]\s*(\d{1,3})\s*[x×]\s*across/gi)) {
+      const [lo, hi] = [Number(m[1]), Number(m[2])];
+      if (lo < Math.floor(minRatio) || hi > Math.ceil(maxRatio))
+        problems.push(
+          `derived-number lock: band "${m[0].trim()}" is not the measured ≥0.90 band (${minRatio.toFixed(1)}x–${maxRatio.toFixed(1)}x)`,
+        );
+    }
+    // Recall and QPS: whatever the prose quotes for the headline row has to
+    // round to the row the benchmark actually contains.
+    for (const m of corpus.matchAll(/([01]\.\d{3})\s*(?:HNSW\s*)?recall@10/gi)) {
+      const claimed = Number(m[1]);
+      // Both tables again: 0.975 is IVF-PQ's (0.9748), not an HNSW row.
+      const allRecall = [...bench.matchAll(/^\|\s*\d+\s*\|\s*([\d.]+)\s*\|\s*\d+\s*\|/gm)].map((x) =>
+        Number(x[1]),
+      );
+      if (!allRecall.some((r) => Math.abs(r - claimed) < 0.0006))
+        problems.push(
+          `derived-number lock: recall@10 of ${claimed} matches no row in the benchmark (${allRecall.join(", ")})`,
+        );
+    }
+    for (const m of corpus.matchAll(/~?\s*(\d{1,3}(?:,\d{3})?|\d{1,3}\.\d)\s*(K\s*)?(?:queries per second|q\/s|queries\/sec)/gi)) {
+      const raw = Number(m[1].replace(/,/g, "")) * (m[2] ? 1000 : 1);
+      if (raw < 500) continue; // the IVF-PQ rows and the oracle are quoted too
+      // EVERY measured QPS in the file is legal to quote, not just the HNSW
+      // rows: the IVF-PQ table and the generated figure's own transcription both
+      // legitimately carry theirs. Scoping this to the HNSW rows flagged 4,110 /
+      // 6,128 / 9,797 q/s — real numbers, correctly rendered, from the file's
+      // second table.
+      const allQps = [...bench.matchAll(/^\|\s*\d+\s*\|\s*[\d.]+\s*\|\s*(\d+)\s*\|/gm)].map((x) =>
+        Number(x[1]),
+      );
+      const near = [...allQps, oracle].some((q) => Math.abs(q - raw) / q < 0.02);
+      if (!near)
+        problems.push(
+          `derived-number lock: ${m[0].trim()} is within 2% of no QPS value measured in the benchmark (${allQps.join(", ")}, oracle ${oracle})`,
+        );
+    }
+  }
+}
+
 
 // Rendered-text lock on the built projects page, if a build exists. The built
 // entry is a client-rendered shell, so this mostly guards inlined head/meta

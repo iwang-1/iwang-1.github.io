@@ -125,9 +125,81 @@ function SystemDiagram({ kind }: { kind: FeaturedSystem["diagram"] }) {
  *  the measured numbers, and the links you can open to check them.
  *
  *  `index` staggers the reveal. It is the card's position in the rendered list,
- *  not its figure number. */
-export function SystemFeature({ project, index = 0 }: { project: FeaturedSystem; index?: number }) {
+ *  not its figure number.
+ *
+ *  ---
+ *
+ *  `variant` EXISTS BECAUSE THE HOME PAGE WAS THE PROJECTS PAGE. Measured on the
+ *  built output: 13 blocks of rendered text were BYTE-IDENTICAL across `/` and
+ *  `/projects/` — same summaries, same diagrams, same numbers, same NOTES &
+ *  LIMITS, same footnotes. A cold recruiter reviewer put it first of five:
+ *  "The home page is the projects page … ~6,400px tall to deliver three projects
+ *  I'm about to see again. Nothing new is on the Projects page above 'More
+ *  projects'." With the hero readout rail also quoting one metric per repo, each
+ *  project was making its case three times on one site.
+ *
+ *  So the two pages now do different jobs with one component and one source of
+ *  truth:
+ *
+ *  - `variant="preview"` (home) — label, title, eyebrow, summary, chips, the
+ *    measured numbers, and a link INTO the full sheet. It is an index entry: it
+ *    says what the thing is and what it measured, and stops.
+ *  - `variant="full"` (default, /projects/) — everything: the proof paragraph,
+ *    the diagram, NOTES & LIMITS, the artifact deep links, the provenance strip.
+ *
+ *  Nothing is duplicated and nothing is retyped: both variants read the same
+ *  `content.ts` record, so a number can still only be wrong in one place. What
+ *  the preview drops is only ever re-stated in full one click away, which is why
+ *  dropping it costs the reader nothing.  */
+export function SystemFeature({
+  project,
+  index = 0,
+  variant = "full",
+}: {
+  project: FeaturedSystem;
+  index?: number;
+  variant?: "full" | "preview";
+}) {
   const figureNumber = FIRST_SYSTEM_FIGURE + featuredSystems.findIndex((s) => s.id === project.id);
+  const preview = variant === "preview";
+  if (preview) {
+    return (
+      <Reveal delay={index}>
+        <Plate
+          id={project.id}
+          className="system-feature system-preview sheet-block sheet-live"
+          label={figureLabel(figureNumber, project.title)}
+          stripStyle={PLATE_STRIP}
+        >
+          <div className="system-copy">
+            <p className="kicker">{project.eyebrow}</p>
+            <h3>
+              <ExternalLink href={project.repoHref}>{project.title}</ExternalLink>
+            </h3>
+            <p className="system-summary">{project.summary}</p>
+            <div className="chip-rail">
+              {project.chips.map((chip) => (
+                <Chip key={chip} label={chip} />
+              ))}
+            </div>
+          </div>
+          <div className="system-evidence">
+            <Readout
+              cells={project.metrics.map((m) => ({ value: m.value, label: m.label, plain: m.plain }))}
+            />
+            {/* An internal link, NOT the repo: the preview's job is to hand the
+                reader the full sheet, and the repo link is already on the title
+                above and on the full sheet it points to. */}
+            <p className="project-links" style={LINK_ROW}>
+              <a className="cta-text-link" href={`/projects/#${project.id}`}>
+                Full sheet and limits <span className="arrow" aria-hidden="true">→</span>
+              </a>
+            </p>
+          </div>
+        </Plate>
+      </Reveal>
+    );
+  }
   return (
     <Reveal delay={index}>
       <Plate

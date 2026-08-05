@@ -24,7 +24,12 @@ const PAGES = [
     // "Secretary of the UMD Climbing Club" was retired 2026-07-27 by owner
     // request — the hobby section deliberately carries no leadership claims.
     // The hobby anchors below keep the section gate-visible instead.
-    facts: ["May 2027", "mechanical keyboards", "rock climbing", "Departmental Honors", "2.9 million"],
+    // "2.9M", not "2.9 million": the spelled-out form lived in the proof
+    // paragraph that the home page's PREVIEW variant no longer renders (the full
+    // sentence is on /projects/, which locks it there). The readout still carries
+    // the figure, so the fact is still gated on this page — in the form this page
+    // prints. Both spellings trace to the same content.ts record.
+    facts: ["May 2027", "mechanical keyboards", "rock climbing", "Departmental Honors", "2.9M"],
     absent: ["Hong Kong", "Now — SDE Intern", "74.2%", "67.7%", "64,000", "1,400", "2,640", "Résumé"],
   },
   {
@@ -708,8 +713,13 @@ async function checkPage(spec, viewport) {
       [".sweep", "rowGap", "8px"], // cross-file: Sweep.css ships after index.css
       [".system-feature", "rowGap", "12px"],
       [".system-evidence", "rowGap", "12px"],
-      [".system-proof", "marginTop", "12px"],
-      [".plate-footnote", "paddingTop", "8px"],
+      // `.system-proof` and the system plate's `.plate-footnote` are NOT in this
+      // list any more: the home page renders SystemFeature's preview variant,
+      // which has no proof paragraph and no provenance strip. They are asserted
+      // on /projects/ instead (the block below), where they actually render.
+      // Watching a selector on a page that no longer has it turns a rhythm gate
+      // into a "not found" gate for a rule that is fine.
+      [".sweep-readout", "rowGap", "12px"],
       [".skills-row", "marginBottom", "16px"],
       [".skills-block", "paddingTop", "24px"],
       [".contact-layout", "paddingTop", "32px"],
@@ -741,6 +751,62 @@ async function checkPage(spec, viewport) {
       return out;
     }, EXPECTED);
     for (const d of drift) problems.push(`${tag}: mobile rhythm lost the cascade — ${d}`);
+  }
+
+  // KEYBOARD-TRAP GATE. The drawn keyboard invites "type while the pointer is
+  // over it", and the page also binds a `g`-chord shortcut (g+e -> /experience/).
+  // enhance.ts guards the chord by checking whether the key tester is armed —
+  // but that guard queried `.keyboard-fig` after the component renamed its root
+  // to `.kb`, so it silently returned false forever and the chord fired anyway:
+  // measured / -> /experience/ with scrollY reset from 773 to 0, i.e. the reader
+  // thrown off the page mid-read by accepting the figure's own invitation.
+  // No other gate could see it — a class rename breaks no type and no build. So
+  // this presses the real sequence over the real figure and asserts we stayed.
+  if (spec.path === "/" && viewport.name === "desktop") {
+    const kb = page.locator(".kb").first();
+    if (await kb.count()) {
+      await kb.scrollIntoViewIfNeeded();
+      await kb.hover();
+      await page.waitForTimeout(120);
+      const urlBefore = page.url();
+      for (const key of ["g", "e"]) {
+        await page.keyboard.press(key);
+        await page.waitForTimeout(120);
+      }
+      await page.waitForTimeout(400);
+      if (page.url() !== urlBefore)
+        problems.push(
+          `${tag}: typing over the drawn keyboard navigated away (${urlBefore} -> ${page.url()}) — the g-chord guard is not matching the figure`,
+        );
+      // Restore state for any later check on this page object.
+      if (page.url() !== urlBefore) await page.goto(urlBefore, { waitUntil: "networkidle" });
+    }
+  }
+
+  // The two rhythm rules that MOVED to /projects/ with the full spec sheets.
+  // `.system-proof` and the system plate's `.plate-footnote` used to be asserted
+  // in the home-page block above; the home page now renders SystemFeature's
+  // preview variant, which has neither. Rather than dropping the assertions with
+  // the elements — which would have quietly retired two live rules — they are
+  // re-asserted here, on the page that renders them.
+  if (spec.path === "/projects/" && viewport.width <= 640) {
+    const drift2 = await page.evaluate(() => {
+      const out = [];
+      for (const [sel, prop, want] of [
+        [".system-proof", "marginTop", "12px"],
+        [".plate-footnote", "paddingTop", "8px"],
+      ]) {
+        const el = document.querySelector(sel);
+        if (!el) {
+          out.push(`${sel} not found`);
+          continue;
+        }
+        const got = getComputedStyle(el)[prop];
+        if (got !== want) out.push(`${sel} { ${prop} } computed ${got}, expected ${want}`);
+      }
+      return out;
+    });
+    for (const d of drift2) problems.push(`${tag}: mobile rhythm lost the cascade — ${d}`);
   }
 
   // footer contact links + mailto on every page
@@ -943,6 +1009,43 @@ for (const spec of PAGES) {
     await checkPage(spec, viewport);
     failCountAt[`${spec.path} @ ${viewport.name}`] = problems.length - preCount;
   }
+}
+
+// ---------------------------------------------------------------------------
+// CROSS-PAGE GATE: the home page may not BE the projects page.
+//
+// Every per-page gate above passed while `/` and `/projects/` rendered 13
+// BYTE-IDENTICAL blocks of text — the same three project sheets, same diagrams,
+// same numbers, same NOTES & LIMITS — because no single-page check can see a
+// duplicate that lives on the other page. A cold recruiter reviewer ranked it
+// first of five problems: the home page ran 6,400px to deliver three projects
+// they were about to meet again.
+//
+// The home page now renders previews and /projects/ carries the full sheets, so
+// the only text the two legitimately share is each project's one-sentence
+// summary — an index entry and its full entry may open the same way. The
+// threshold is 3 (one summary per featured project) with a message that names
+// what leaked, so this fails loudly if a full sheet is ever pasted back onto the
+// home page.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const textBlocks = async (path) => {
+    await page.goto(ORIGIN + path, { waitUntil: "networkidle" });
+    return page.evaluate(() =>
+      Array.from(document.querySelectorAll(".system-feature"))
+        .flatMap((el) => Array.from(el.querySelectorAll("p, li")))
+        .map((el) => el.innerText.replace(/\s+/g, " ").trim())
+        .filter((t) => t.length > 150),
+    );
+  };
+  const home = await textBlocks("/");
+  const projects = new Set(await textBlocks("/projects/"));
+  const shared = home.filter((t) => projects.has(t));
+  if (shared.length > 3)
+    problems.push(
+      `cross-page: / and /projects/ share ${shared.length} identical text blocks (max 3, one summary per project). First leak: ${JSON.stringify(shared[0].slice(0, 90))}`,
+    );
+  await page.close();
 }
 
 await browser.close();
