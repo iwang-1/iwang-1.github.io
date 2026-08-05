@@ -166,6 +166,11 @@
   --fs-600: 1.0625rem; /* 17px — body */
   --fs-700: 1.25rem; /* 20px — h3, lead */
   --fs-800: 1.5rem; /* 24px — rank-2 headings */
+  /* 28px — the rank-1 heading FLOOR, and a real step rather than a literal
+     buried in two clamps. The value is load-bearing: it must sit strictly above
+     --fs-800, or rank-1 and rank-2 headings compute identically below 640px and
+     the hierarchy the ranks exist to express disappears on a phone. */
+  --fs-850: 1.75rem;
   --fs-900: 2.6rem; /*      — rank-1 headings */
   --fs-display: clamp(2.4rem, 5.2vw, 3.75rem); /* h1 */
 

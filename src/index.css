@@ -849,7 +849,7 @@ button.btn {
    order — a bare `.section--rank-2` would silently lose to `.section ~
    .section`. */
 .section h2 {
-  font-size: clamp(1.75rem, 4.4vw, var(--fs-900));
+  font-size: clamp(var(--fs-850), 4.4vw, var(--fs-900));
 }
 
 .section ~ .section {
@@ -865,7 +865,7 @@ button.btn {
 }
 
 .section.section--rank-1 h2 {
-  font-size: clamp(1.75rem, 4.4vw, var(--fs-900));
+  font-size: clamp(var(--fs-850), 4.4vw, var(--fs-900));
 }
 
 .section.section--rank-2 {
@@ -3030,33 +3030,35 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
    IntersectionObserver never fires for below-the-fold sections, so force
    every revealable block visible and drop the injected chrome from the page. */
 @media print {
-  /* Light print theme: the on-screen palette is a dark theme, so a default
-     "Save as PDF" would render pages of near-black surfaces. Re-map the
-     design tokens to a paper palette (dark ink on white) so the printed/PDF'd
-     site is legible in one pass.
+  /* The screen world is already light (cap beige on paper-white ink), so print
+     no longer inverts a dark theme — that premise died with the DOUBLE-SHOT
+     rebuild. What print still needs is the two things paper does differently:
+     the tinted surfaces become true white so a figure does not print as a grey
+     slab, and the two saturated roles darken enough to clear AA in ink.
 
-     The figure palette is remapped FIRST, because the primitives and the
-     label button reference it directly. Amber becomes a dark ochre so a
-     filled primary button still clears AA on paper (white on #8A5A00 =
-     5.93:1) — the on-screen amber would print at 1.9:1. */
+     These are LITERAL values on purpose, not tokens. A previous pass tokenised
+     them and the printed primary button regressed to a measured 1.59:1, because
+     any later :root remap silently reached into the print sheet. Fixed values
+     cannot be reached. Do not "fix" this by re-tokenising it.
+
+     Measured on paper: charcoal on white 15.9:1; rust darkened to #6B2810 gives
+     white-on-fill 8.2:1; slate darkened to #24405A gives 9.1:1. */
   :root {
-    --ground: #ffffff;
-    --plate: #ffffff;
-    --plate-2: #f2f4f7;
-    --grid: #c4ccd4;
-    --axis: #6b7885;
-    --ink: #10161d;
-    --ink-2: #414d59;
-    --ink-3: #55606b;
-    --series-1: #0b3a6b;
-    --series-2: #8a5a00;
-    --series-3: #2f7d4f;
+    --raw-cap-beige: #ffffff;
+    --raw-case-grey: #ffffff;
+    --raw-case-shade: #f4f2ec;
+    --raw-charcoal: #1a1815;
+    --raw-rust: #6b2810;
+    --raw-slate: #24405a;
+    --raw-sublegend: #4a463e;
+    --raw-rule: #8a857c;
+    --raw-rule-soft: #d5d1c8;
   }
 
   html,
   body {
     background: #ffffff !important;
-    color: #10161d !important;
+    color: #1a1815 !important;
   }
 
   /* Reveal-hidden content never fires its IntersectionObserver when printing

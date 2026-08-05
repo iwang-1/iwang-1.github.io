@@ -1,199 +1,88 @@
 {
  "schemaVersion": 2,
- "generatedAt": "2026-08-03T00:00:00.000Z",
- "title": "Design System: Figure One",
+ "generatedAt": "2026-08-05T00:00:00.000Z",
+ "title": "Design System: Double-Shot",
  "extensions": {
   "colorMeta": {
-   "ground": {
+   "cap-beige": {
     "role": "neutral",
-    "displayName": "Ground",
-    "canonical": "#080C13",
-    "note": "Page surface. Measured luminance 0.0036 against the dark-theme gate ceiling of 0.05.",
+    "displayName": "Cap Beige",
+    "canonical": "#EDE7DA",
+    "note": "The alpha keycap: the page surface. The world is light-first by owner choice after the dark instrument-panel look was called machine-made.",
     "tonalRamp": [
-     "#04070B",
-     "#080C13",
-     "#0E1521",
-     "#17202F",
-     "#26313F",
-     "#3D4957",
-     "#66727F",
-     "#A8B2BC"
+     "#EDE7DA"
     ]
    },
-   "plate": {
+   "case-grey": {
     "role": "neutral",
-    "displayName": "Plate",
-    "canonical": "#0B1220",
-    "note": "Figure/card/nav/footer/modal fill. Matches the source benchmark plots' canvas, so a real plot drops in unrestyled. Luminance 0.0061.",
+    "displayName": "Case Grey",
+    "canonical": "#D9D2C2",
+    "note": "The case: every figure fill.",
     "tonalRamp": [
-     "#050912",
-     "#0B1220",
-     "#111C31",
-     "#1A2942",
-     "#293A56",
-     "#41546F",
-     "#6A7C95",
-     "#AAB8C9"
+     "#D9D2C2"
     ]
    },
-   "plate-2": {
+   "case-shade": {
     "role": "neutral",
-    "displayName": "Plate Two",
-    "canonical": "#101B2A",
-    "note": "Second-level surface: data-table stripes, current nav tab, topo wall face. Luminance 0.0106.",
+    "displayName": "Case Shade",
+    "canonical": "#D2CBBB",
+    "note": "Case in shadow: table stripes and insets.",
     "tonalRamp": [
-     "#070D16",
-     "#101B2A",
-     "#18263A",
-     "#22354D",
-     "#334965",
-     "#4B6280",
-     "#75899F",
-     "#B2BECD"
+     "#D2CBBB"
     ]
    },
-   "grid": {
+   "charcoal": {
     "role": "neutral",
-    "displayName": "Grid Hairline",
-    "canonical": "#1B293D",
-    "note": "The universal 1px boundary: every card border, strip divider, chart gridline, sample-point halo.",
+    "displayName": "Charcoal",
+    "canonical": "#26241F",
+    "note": "Legend ink: all text and rules.",
     "tonalRamp": [
-     "#0A1119",
-     "#111C29",
-     "#1B293D",
-     "#25384F",
-     "#334A66",
-     "#4A6382",
-     "#7389A3",
-     "#B0BECE"
+     "#26241F"
     ]
    },
-   "axis": {
+   "rust": {
     "role": "neutral",
-    "displayName": "Axis Hairline",
-    "canonical": "#24354A",
-    "note": "Reserved for drawn axes and axis ticks, so an axis reads as structure and a gridline as reference.",
+    "displayName": "Rust",
+    "canonical": "#7A2E12",
+    "note": "The modifier accent. One accent, and it is a keycap colorway role rather than a mood.",
     "tonalRamp": [
-     "#0C131B",
-     "#16212E",
-     "#24354A",
-     "#2F455E",
-     "#3E5878",
-     "#547093",
-     "#7C93AE",
-     "#B5C2D2"
+     "#7A2E12"
     ]
    },
-   "ink": {
+   "slate": {
     "role": "neutral",
-    "displayName": "Ink",
-    "canonical": "#EEF5F7",
-    "note": "Body text, headings, readout values. 17.76:1 on ground.",
+    "displayName": "Slate",
+    "canonical": "#33566E",
+    "note": "Data traces and links.",
     "tonalRamp": [
-     "#20292C",
-     "#33403F",
-     "#4B5C5F",
-     "#66797D",
-     "#87999D",
-     "#AFC0C4",
-     "#D2DFE2",
-     "#EEF5F7"
+     "#33566E"
     ]
    },
-   "ink-2": {
+   "sublegend": {
     "role": "neutral",
-    "displayName": "Ink Two",
-    "canonical": "#9FB3C8",
-    "note": "Plate labels, kickers, captions, deks, secondary metadata. 9.10:1 on ground.",
+    "displayName": "Sublegend",
+    "canonical": "#5A554B",
+    "note": "The sublegend: units and secondary text.",
     "tonalRamp": [
-     "#1B242E",
-     "#2A3746",
-     "#3D4E62",
-     "#54687F",
-     "#6F849C",
-     "#8AA0B7",
-     "#9FB3C8",
-     "#C9D6E2"
+     "#5A554B"
     ]
    },
-   "ink-3": {
+   "rule": {
     "role": "neutral",
-    "displayName": "Ink Three",
-    "canonical": "#8295A5",
-    "note": "Footnotes, units, tick labels, off-route samples. 6.06:1 on plate and 5.60:1 on plate-2 \u2014 which is why footnotes never go below 14px.",
+    "displayName": "Rule",
+    "canonical": "#7A766E",
+    "note": "Structural hairline, derived from charcoal.",
     "tonalRamp": [
-     "#171D22",
-     "#242D34",
-     "#374349",
-     "#4C5A64",
-     "#647483",
-     "#8295A5",
-     "#A6B5C1",
-     "#CCD6DD"
+     "#7A766E"
     ]
    },
-   "series-1": {
-    "role": "secondary",
-    "displayName": "Series Blue",
-    "canonical": "#38BDF8",
-    "note": "DATA ONLY. Sampled from the committed benchmark plots. Draws the HNSW curve, its sample points, and the site mark's sample line \u2014 never an affordance.",
-    "tonalRamp": [
-     "#062434",
-     "#08384F",
-     "#0A506F",
-     "#0D6E97",
-     "#1490C4",
-     "#22A6E0",
-     "#38BDF8",
-     "#8FDAFB"
-    ]
-   },
-   "series-2": {
-    "role": "primary",
-    "displayName": "Signal Amber",
-    "canonical": "#E9A13B",
-    "note": "EVERY INTERACTION. Sampled from the plots and darkened for contrast: 8.98:1 on ground. Links, focus ring, active-tab tick, primary fill, crosshair, callouts, timeline nodes, scroll trace. On a fill the label is always --ground; ink-on-amber is 1.98:1 and is never used.",
-    "tonalRamp": [
-     "#33210A",
-     "#4C3210",
-     "#6B4715",
-     "#8F5F1D",
-     "#B67C27",
-     "#D69433",
-     "#E9A13B",
-     "#F3CA8E"
-    ]
-   },
-   "series-3": {
-    "role": "tertiary",
-    "displayName": "Series Teal",
-    "canonical": "#2DD4BF",
-    "note": "The second measured series (IVF-PQ), plus the proof-chip status dot. Never used for emphasis.",
-    "tonalRamp": [
-     "#052E29",
-     "#07443D",
-     "#0A5F55",
-     "#0D8074",
-     "#12A192",
-     "#1FBFAE",
-     "#2DD4BF",
-     "#8AE9DD"
-    ]
-   },
-   "logo-chip": {
+   "rule-soft": {
     "role": "neutral",
-    "displayName": "Logo Chip",
-    "canonical": "#FFFFFF",
-    "note": "The one true white: the chip behind employer logos, because vendor marks are drawn for paper. Nothing else on the dark theme is pure white. The @media print remap reuses raw paper values (#ffffff, #10161d, #0b3a6b, #8a5a00, #6b7885, #c4ccd4, #f2f4f7, #2f7d4f, #55606b) by design so no :root remap can regress the printed page.",
+    "displayName": "Rule Soft",
+    "canonical": "#C1BCB1",
+    "note": "The quiet divider inside a figure.",
     "tonalRamp": [
-     "#10161d",
-     "#414d59",
-     "#6b7885",
-     "#8a97a4",
-     "#aab4be",
-     "#c4ccd4",
-     "#f2f4f7",
-     "#FFFFFF"
+     "#C1BCB1"
     ]
    }
   },

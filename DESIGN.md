@@ -8,15 +8,15 @@ status: IN PROGRESS — step 1 of 4 (foundation) has landed. The tokens, the two
   and the section below is history. Do not treat the component descriptions as
   the spec for new work.
 colors:
-  raw-cap-beige: "#EDE7DA"
-  raw-case-grey: "#D9D2C2"
-  raw-case-shade: "#D2CBBB"
-  raw-charcoal: "#26241F"
-  raw-rust: "#7A2E12"
-  raw-slate: "#33566E"
-  raw-sublegend: "#5A554B"
-  raw-rule: "#7A766E"
-  raw-rule-soft: "#C1BCB1"
+  cap-beige: "#EDE7DA"
+  case-grey: "#D9D2C2"
+  case-shade: "#D2CBBB"
+  charcoal: "#26241F"
+  rust: "#7A2E12"
+  slate: "#33566E"
+  sublegend: "#5A554B"
+  rule: "#7A766E"
+  rule-soft: "#C1BCB1"
 semanticColors:
   surface-page: "{colors.raw-cap-beige}"
   surface-figure: "{colors.raw-case-grey}"
