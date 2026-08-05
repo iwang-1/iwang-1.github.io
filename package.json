@@ -11,9 +11,10 @@
   },
   "homepage": "https://iwang-1.github.io/",
   "scripts": {
-    "dev": "vite",
-    "check": "node scripts/check-facts.mjs",
-    "prebuild": "node scripts/check-facts.mjs",
+    "dev": "node scripts/generate-figures.mjs && vite",
+    "check": "node scripts/generate-figures.mjs && node scripts/check-facts.mjs",
+    "generate:figures": "node scripts/generate-figures.mjs",
+    "prebuild": "node scripts/generate-figures.mjs && node scripts/check-facts.mjs",
     "build": "tsc -b && vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
