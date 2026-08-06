@@ -112,6 +112,13 @@ const PAGES = [
 
 const VIEWPORTS = [
   { width: 1366, height: 900, name: "desktop" },
+  // TABLET, added 2026-08-06 because its absence hid a real defect for months.
+  // The list was 1366 / 390 / 320 — desktop, phone, small phone — and 768 sat in
+  // the gap. /projects/ carried 112px of DOCUMENT horizontal overflow across the
+  // whole 768-876px band (an unbreakable 276px chip flooring a `1fr` grid track),
+  // and the existing horizontal-overflow gate WOULD have caught it at any width in
+  // that band. Three viewports that skip the tablet range are three viewports.
+  { width: 768, height: 1024, name: "tablet" },
   { width: 390, height: 844, name: "mobile" },
   { width: 320, height: 700, name: "narrow" },
 ];
@@ -908,6 +915,131 @@ async function checkPage(spec, viewport) {
       problems.push(
         `${tag}: ${dead.length} button(s) render visible but inert without JavaScript (${[...new Set(dead)].join(", ")}) — gate them on the .js class or remove them`,
       );
+  }
+
+  // EVERY MEASURED SAMPLE MUST BE REACHABLE BY POINTER OR FINGER. The plot has a
+  // 580px floor width (below it the axis labels stop being legible), so at phone
+  // widths the plate pans a ~254px window over it — and `nearest()` maps only pixels
+  // INSIDE that window to a sample. Measured at 320px: scrubbing the full width
+  // reached 5 of 10; panning fully and scrubbing again reached 3; the union was 8 of
+  // 10. Two measured samples were unreachable by pointer or finger at every phone
+  // width, under a hint reading "tap a point". Arrow keys always reached them, so
+  // the mechanism existed and only the pointer affordance was missing — hence the
+  // steppers. This asserts the OUTCOME (all ten reachable), not the mechanism.
+  if (spec.path === "/" && viewport.width <= 480) {
+    const step = page.locator("[data-sweep-step]");
+    if ((await step.count()) !== 2) {
+      problems.push(
+        `${tag}: expected 2 sweep steppers below 560px, found ${await step.count()} — two samples are otherwise unreachable by pointer`,
+      );
+    } else {
+      const prev = page.locator('[data-sweep-step="-1"]');
+      const next = page.locator('[data-sweep-step="1"]');
+      const readNow = async () =>
+        (await page.locator(".sweep-readout-value").first().innerText()).split("·")[0].trim();
+      await page.locator("figure.sweep").scrollIntoViewIfNeeded();
+      const seen = new Set([await readNow()]);
+      // 14 clicks each way covers a 10-sample run from any starting index.
+      for (let i = 0; i < 14; i++) {
+        await prev.click();
+        await page.waitForTimeout(45);
+        seen.add(await readNow());
+      }
+      for (let i = 0; i < 14; i++) {
+        await next.click();
+        await page.waitForTimeout(45);
+        seen.add(await readNow());
+      }
+      const total = await page.locator(".sweep-table tbody tr").count();
+      if (seen.size < total)
+        problems.push(
+          `${tag}: steppers reach only ${seen.size} of ${total} measured samples — every sample the figure plots must be reachable without a keyboard`,
+        );
+      // A stepper must be a real touch target, since it exists FOR touch.
+      const box = await prev.boundingBox();
+      if (box && (box.width < 44 || box.height < 44))
+        problems.push(
+          `${tag}: sweep stepper is ${Math.round(box.width)}x${Math.round(box.height)}px — below the 44px tap target it exists to serve`,
+        );
+      await page.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+    }
+  }
+
+  // A WIDGET MAY NOT SWALLOW KEYS FOR ITS DESCENDANTS. Two measured defects, one
+  // gate: (a) the sweep figure claimed Home/End/arrows for its whole SUBTREE, so
+  // with the ordinary benchmark-file link inside it focused, Home and End left
+  // scrollY pinned at 2078 against a document max of 4175 — two document-level jump
+  // keys silently dead; (b) `?` was handled ABOVE the key-tester truce, so pressing
+  // it over the drawn keyboard — which prints `?` on its slash cap and invites you
+  // to type — opened the shortcut overlay and threw focus into a modal.
+  // Both are invisible to every other check: nothing crashes, nothing overflows.
+  if (spec.path === "/" && viewport.name === "desktop") {
+    const docMax = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight,
+    );
+    // (a) End on a LINK inside the figure must still jump the document.
+    const link = page.locator("a.sweep-source").first();
+    if (await link.count()) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await link.focus();
+      await page.keyboard.press("End");
+      await page.waitForTimeout(350);
+      const y = await page.evaluate(() => Math.round(window.scrollY));
+      if (y < docMax - 50)
+        problems.push(
+          `${tag}: End on the link INSIDE the sweep figure left scrollY at ${y} (document max ${docMax}) — a widget may claim Home/End only while focus is on the widget itself, not its descendants`,
+        );
+    }
+    // (a2) …and the widget itself must still own them, or the fix went too far.
+    const fig = page.locator("figure.sweep").first();
+    if (await fig.count()) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await fig.focus();
+      const before = (await page.locator(".sweep-readout-value").first().innerText()).trim();
+      await page.keyboard.press("End");
+      await page.waitForTimeout(300);
+      const after = (await page.locator(".sweep-readout-value").first().innerText()).trim();
+      if (before === after)
+        problems.push(
+          `${tag}: End on the sweep figure itself no longer moves the readout (${before}) — the widget must keep the keys it advertises`,
+        );
+    }
+    // (b) `?` over the armed key tester must not open the overlay…
+    const kb = page.locator(".kb").first();
+    const overlayOpen = () =>
+      page.evaluate(() => {
+        const d = document.querySelector(".kbd-help");
+        return d ? !d.hidden && getComputedStyle(d).display !== "none" : false;
+      });
+    if (await kb.count()) {
+      await kb.scrollIntoViewIfNeeded();
+      await kb.hover();
+      await page.waitForTimeout(120);
+      await page.keyboard.press("?");
+      await page.waitForTimeout(300);
+      if (await overlayOpen())
+        problems.push(
+          `${tag}: "?" over the armed key tester opened the shortcut overlay — the figure prints ? on its slash cap and invites typing, so the truce must cover it`,
+        );
+      // …and must STILL open it everywhere else, or the shortcut is just broken.
+      await page.mouse.move(4, 4);
+      await page.waitForTimeout(250);
+      await page.keyboard.press("?");
+      await page.waitForTimeout(300);
+      if (!(await overlayOpen()))
+        problems.push(`${tag}: "?" no longer opens the shortcut overlay away from the keyboard`);
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(200);
+    }
+    /* LEAVE NO FOCUS BEHIND — and a blur() is NOT enough. This block focuses a
+       link and a figure, and a later check presses Tab and asserts the first stop is
+       the skip link. Chromium resumes SEQUENTIAL focus navigation from the last
+       focused position even after blur(), so that check failed with "first focusable
+       is bench_50k_128d.txt". Reloading the page is the only reliable way to reset
+       the sequential focus origin, and it is cheap here (one navigation on one
+       viewport). Without it this gate silently breaks an unrelated one. */
+    await page.goto(ORIGIN + spec.path, { waitUntil: "networkidle" });
+    await page.waitForTimeout(150);
   }
 
   // FIGURE-NAME AGREEMENT GATE. A figure's accessible name must contain the same

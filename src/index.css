@@ -327,6 +327,25 @@ img {
   }
 }
 
+/* THE SAME RULE, UNCONDITIONALLY — and this is a bug fix, not a tidy.
+   The relaxation above stated the right principle ("must wrap instead of forcing
+   page scroll") and then scoped it to `max-width: 639px`, which left the 640-876px
+   band holding an unbreakable pill. Measured on /projects/: the chip
+   "React + TypeScript + Vite" is 276px with `white-space: nowrap`, and at 768px the
+   `.sheet-grid-3` three-column rule resolves its tracks to 246/326/236px inside a
+   720px container — because `1fr` is `minmax(auto, 1fr)` and so is floored at each
+   track's min-content width, which that one chip sets. Result: 112px of DOCUMENT
+   overflow at 768, decaying 80 @800, 30 @850, 4 @876, 0 @880. The whole page,
+   sticky nav included, slid sideways, and two cards' headings were clipped.
+   It shipped because verify.mjs tested 1366 / 390 / 320 and 768 sits in the gap —
+   a tablet-width band nobody looked at. The viewport is now in the gate list.
+   Unconditional, because a chip must never set a grid track's floor at ANY width:
+   the phone-only scope was the whole defect. */
+span.chip,
+span.proof-chip {
+  white-space: normal;
+}
+
 /* Narrow phones: tighten further so brand + 4 tabs never overflow. */
 @media (max-width: 479px) {
   .nav-inner {

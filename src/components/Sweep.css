@@ -457,6 +457,52 @@
   }
 }
 
+/* THE STEPPERS. Hidden until JavaScript can drive them — a stepper that cannot
+   step is a dead control, the same rule the copy-email button follows. The static
+   readout and the footnote carry the numbers without JS, so nothing is lost.
+   Only shown where they are NEEDED: from 560px up a pointer scrub already reaches
+   all ten samples (measured), so above that width these would be a second control
+   for something the plot already does. Below it, two samples were unreachable by
+   pointer or finger at every width — 5 of 10 reachable at 320, 8 of 10 even after
+   panning and scrubbing again. */
+.sweep-step {
+  display: none;
+  margin: 0;
+  gap: var(--space-2);
+}
+
+@media (max-width: 559px) {
+  .js .sweep-step {
+    display: flex;
+  }
+}
+
+.sweep-step-btn {
+  /* 44px, the site's own tap-target size — these exist FOR touch, so they may not
+     be the smallest control on the page. */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: var(--hairline) solid var(--axis);
+  border-radius: var(--r-xs);
+  background: var(--plate);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-500);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sweep-step-btn:hover {
+  border-color: var(--series-2);
+  color: var(--series-2);
+}
+
+.sweep-step-btn:focus-visible {
+  outline: 2px solid var(--series-2);
+  outline-offset: 2px;
+}
+
 .sweep-source {
   color: var(--ink-3);
   text-decoration-thickness: 1px;

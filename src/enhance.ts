@@ -227,12 +227,6 @@ function mountCommandPalette(): void {
 
     if (typingTarget(e.target)) return;
 
-    if (e.key === "?") {
-      e.preventDefault();
-      toggle();
-      return;
-    }
-
     // THE KEY-TESTER TRUCE. The hobby figure invites "type while hovering" and
     // draws the home row — which contains both halves of the g→h "Go to Home"
     // chord. Typing a s d f g h over that figure lit five caps and then
@@ -245,6 +239,18 @@ function mountCommandPalette(): void {
     // to never intercepting a key.
     if (armedKeyTester()) {
       resetChord();
+      return;
+    }
+
+    // `?` LIVES BELOW THE TRUCE, and that placement is the fix for a real defect:
+    // it used to be handled ABOVE it, so the truce covered only the g-chords the
+    // comment describes. `/` and `?` are both printed on the drawn keyboard's slash
+    // cap, so `?` is a key the figure explicitly invites you to type — and typing it
+    // opened the shortcut overlay, made #root inert and threw focus into a modal.
+    // Same class of defect as the g-chord, one guard too early.
+    if (e.key === "?") {
+      e.preventDefault();
+      toggle();
       return;
     }
 
@@ -417,6 +423,14 @@ function mountSweep(): void {
    *  rAF-coalesced, so a hybrid device firing both a pointer and a touch event
    *  for the same frame costs one redundant select at worst. */
   const track = (target: EventTarget | null, clientX: number): void => {
+    /* THE STEPPER BUTTONS ARE INSIDE THE FIGURE, AND POINTER TRACKING MUST IGNORE
+       THEM. Without this guard, tapping a stepper fired both the click handler
+       (step to the next sample) and `pointerdown` -> `track()` -> `nearest()`,
+       which mapped the BUTTON's own x-position to whatever sample sits nearest that
+       column and overwrote the step immediately. Measured: the readout got stuck at
+       one end and would not come back, 1 of 10 samples reachable — a control that
+       cancels itself. The plot is what a scrub reads; a button is not part of it. */
+    if ((target as Element | null)?.closest?.("[data-sweep-step]")) return;
     const v = resolve(target);
     if (!v) return;
     pointerView = v;
@@ -457,10 +471,32 @@ function mountSweep(): void {
     { passive: true },
   );
 
+  /* The stepper buttons. Same `select()` path as the arrow keys — including
+     `announce: true`, which is what pans the window so the chosen dot is visible.
+     Delegated from the document so a re-rendered figure needs no rebinding, exactly
+     like the pointer and keydown handlers above. */
+  document.addEventListener("click", (event: MouseEvent) => {
+    const btn = (event.target as Element | null)?.closest?.<HTMLElement>("[data-sweep-step]");
+    if (!btn) return;
+    const v = resolve(btn);
+    if (!v) return;
+    const delta = Number(btn.dataset.sweepStep) || 0;
+    select(v, v.index + delta, true);
+  });
+
   document.addEventListener("keydown", (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     const v = resolve(event.target);
     if (!v) return;
+    /* THE FIGURE OWNS THESE KEYS; ITS DESCENDANTS DO NOT.
+       `resolve()` matches `closest("figure.sweep")`, so this fired for the WHOLE
+       SUBTREE — including the ordinary external link inside the plate
+       (`a.sweep-source`, the benchmark file). Measured: with that link focused,
+       Home and End both left scrollY pinned at 2078 against a document max of
+       4175, i.e. two document-level jump keys silently dead, while the same keys
+       on a link outside the figure scrolled normally. A composite widget may claim
+       arrow/Home/End only while focus is ON the widget itself. */
+    if (event.target !== v.figure) return;
     let next = v.index;
     if (event.key === "ArrowRight") next = v.index + 1;
     else if (event.key === "ArrowLeft") next = v.index - 1;

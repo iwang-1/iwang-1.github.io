@@ -225,9 +225,35 @@ export function Sweep() {
         <span className="sweep-readout-hint sweep-readout-hint-fine">
           drag across the plot · or press ← →
         </span>
+        {/* "or step" names the buttons below. The string used to promise only "tap a
+            point", and two of the ten points could not be tapped at any phone width
+            — so the hint was accurate about the gesture and wrong about the
+            outcome. */}
         <span className="sweep-readout-hint sweep-readout-hint-coarse">
-          tap a point · drag to pan
+          tap a point · drag to pan · or step
         </span>
+      </p>
+      {/* STEPPERS, because a pointer alone could not reach every sample.
+          Measured at 320px: the plot has a 580px floor width (its axis labels stop
+          being legible below it), so the plate pans a 254px window over it — and
+          `nearest()` maps only pixels INSIDE that window to a sample. Scrubbing the
+          full width reached 5 of 10 samples; panning fully and scrubbing again
+          reached 3; the UNION was 8 of 10. Two measured samples were unreachable by
+          pointer or finger at every phone width, while the hint said "tap a point".
+          Arrow keys always reached them (`revealSample` pans correctly), so the
+          mechanism existed and only the pointer affordance was missing — which is
+          what these two buttons are. They drive the exact same `select()` path the
+          keys do, so nothing new can drift out of sync.
+          Progressive-enhancement note: these are `.js`-gated in CSS, like the copy
+          button, because a stepper that cannot step is a dead control — and the
+          static readout plus the footnote already carry the numbers without JS. */}
+      <p className="sweep-step">
+        <button type="button" className="sweep-step-btn" data-sweep-step="-1" aria-label="Previous sample">
+          ←
+        </button>
+        <button type="button" className="sweep-step-btn" data-sweep-step="1" aria-label="Next sample">
+          →
+        </button>
       </p>
       <p className="sweep-live visually-hidden" aria-live="polite" />
 
