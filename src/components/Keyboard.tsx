@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
 import "./Keyboard.css";
 
 /** A DRAWN KEYBOARD — 60% layout, and deliberately not a figure.
@@ -128,13 +129,96 @@ const ROW_WIDTH = 15 * U;
 const SVG_W = ROW_WIDTH + PAD * 2;
 const SVG_H = ROWS.length * ROW_H + PAD * 2;
 
-/** Which physical keys map to which drawn cap, so typing presses the right one. */
+/** Which physical keys map to which drawn cap, so typing presses the right one.
+ *
+ *  EVERY cap that prints a typeable character is mapped, not just the alphanumerics.
+ *  It used to test `/[A-Z0-9]/i`, which left twelve drawn caps dead to the keyboard
+ *  while CLICKING them worked (the button path calls tap() directly) — so the two
+ *  affordances the figure advertises behaved differently, and the SVG's own label
+ *  promised "type … to press that key" without qualification. Typing `-`, `[`, `;`
+ *  or `,` lit nothing.
+ *
+ *  Both the base legend AND the shifted sub-legend map to the cap, because that is
+ *  what a real cap does: pressing `?` presses the `/` key. The modifier caps
+ *  (tab/caps/shift/ctrl/cmd/alt/fn/return/delete) are deliberately NOT mapped —
+ *  they are chords and browser-owned keys, and hijacking Tab in particular would
+ *  trap a keyboard user inside a toy. */
 const BY_KEY = new Map<string, string>();
 for (const row of ROWS)
   for (const k of row) {
-    if (k.legend.length === 1 && /[A-Z0-9]/i.test(k.legend)) BY_KEY.set(k.legend.toUpperCase(), k.id);
+    if (k.type === "mod") continue;
+    if (k.legend.length === 1) {
+      BY_KEY.set(k.legend.toUpperCase(), k.id);
+      if (k.legend !== k.legend.toUpperCase()) BY_KEY.set(k.legend, k.id);
+    }
+    if (k.sub && k.sub.length === 1) BY_KEY.set(k.sub, k.id);
   }
 BY_KEY.set(" ", "space");
+
+/** The caps flattened into one indexed list, with their pixel geometry resolved
+ *  once. The hit targets used to recompute `x` inside the render, duplicating the
+ *  same running-offset arithmetic the SVG does — two copies of one layout, which
+ *  is how a hit target drifts off the cap it covers. This is the single copy, and
+ *  it also carries what arrow-key navigation needs (row/col) and a unique
+ *  accessible name per cap.
+ *
+ *  `a11yLabel` disambiguates the doubled modifiers. Four names appeared twice —
+ *  shift, ctrl, cmd, alt — so a screen-reader user heard "shift, button… shift,
+ *  button" with nothing to tell them apart. The side is a fact the layout already
+ *  knows (a cap in the left half of its row is the left one), so it costs nothing
+ *  to say. */
+type FlatKey = {
+  id: string;
+  legend: string;
+  row: number;
+  col: number;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  a11yLabel: string;
+};
+
+const FLAT: FlatKey[] = (() => {
+  const out: FlatKey[] = [];
+  ROWS.forEach((row, r) => {
+    /* `x` MUST advance per cap. A first version of this loop omitted the
+       `x += ...` step, which collapsed every cap in a row onto the first
+       position: all 61 hit targets stacked on the top-left key and every doubled
+       modifier resolved to the same side, so the a11y names read "left shift"
+       twice. Caught by reading back the rendered labels rather than by trusting
+       the arithmetic. */
+    let x = PAD;
+    row.forEach((k, c) => {
+      const w = (k.u ?? 1) * U - GAP;
+      const centre = x + w / 2;
+      out.push({
+        id: k.id,
+        legend: k.legend,
+        row: r,
+        col: c,
+        left: (x / SVG_W) * 100,
+        top: ((PAD + r * ROW_H) / SVG_H) * 100,
+        width: (w / SVG_W) * 100,
+        height: ((U - GAP) / SVG_H) * 100,
+        /* Side is decided here, where the true centre is known; whether it is
+           USED is decided below, once every name's duplicate count is known. */
+        a11yLabel: centre < PAD + ROW_WIDTH / 2 ? "left" : "right",
+      });
+      x += (k.u ?? 1) * U;
+    });
+  });
+  // Only the genuinely duplicated names take a side prefix — shift, ctrl, cmd and
+  // alt, which appear twice each. A unique cap keeps its plain legend, because
+  // "left Q" is noise in a screen reader.
+  const counts = new Map<string, number>();
+  for (const k of out) counts.set(k.legend || "space", (counts.get(k.legend || "space") ?? 0) + 1);
+  for (const k of out) {
+    const base = k.legend || "space";
+    k.a11yLabel = (counts.get(base) ?? 0) > 1 ? `${k.a11yLabel} ${base}` : base;
+  }
+  return out;
+})();
 
 const TAP_MS = 190;
 
@@ -153,7 +237,11 @@ export function Keyboard() {
   const [down, setDown] = useState<readonly string[]>([]);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  /** Which cap the roving tabindex is on. `null` until the grid is first entered,
+   *  so nothing is focused on load. */
+  const [active, setActive] = useState<number | null>(null);
   const timers = useRef(new Map<string, number>());
+  const capRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const press = useCallback((id: string) => {
     setDown((held) => (held.includes(id) ? held : [...held, id]));
@@ -187,6 +275,73 @@ export function Keyboard() {
     };
   }, []);
 
+  /** Move the roving focus, and press on Enter/Space. Left/Right walk the flat
+   *  order (so they cross row boundaries the way reading order does); Up/Down hold
+   *  the horizontal position and change row, landing on whichever cap sits nearest
+   *  the current one — a 1u alpha above a 6.25u spacebar has to go SOMEWHERE, and
+   *  "nearest by centre" is the only answer that feels like a keyboard.
+   *  Home/End go to the ends of the current row. Every handled key calls
+   *  preventDefault so the page does not also scroll; ARROW KEYS ONLY — Tab is
+   *  never intercepted, because trapping Tab inside a hobby toy is the exact
+   *  defect this change exists to remove. */
+  const onGridKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const i = active ?? 0;
+      const cur = FLAT[i];
+      const centre = cur.left + cur.width / 2;
+      const rowOf = (r: number) => FLAT.filter((k) => k.row === r);
+      const nearestIn = (r: number) => {
+        const cands = rowOf(r);
+        if (!cands.length) return null;
+        return cands.reduce((best, k) =>
+          Math.abs(k.left + k.width / 2 - centre) < Math.abs(best.left + best.width / 2 - centre)
+            ? k
+            : best,
+        );
+      };
+      let next: number | null = null;
+      switch (e.key) {
+        case "ArrowRight":
+          next = Math.min(i + 1, FLAT.length - 1);
+          break;
+        case "ArrowLeft":
+          next = Math.max(i - 1, 0);
+          break;
+        case "ArrowDown": {
+          const k = nearestIn(Math.min(cur.row + 1, ROWS.length - 1));
+          next = k ? FLAT.indexOf(k) : null;
+          break;
+        }
+        case "ArrowUp": {
+          const k = nearestIn(Math.max(cur.row - 1, 0));
+          next = k ? FLAT.indexOf(k) : null;
+          break;
+        }
+        case "Home":
+          next = FLAT.indexOf(rowOf(cur.row)[0]);
+          break;
+        case "End": {
+          const r = rowOf(cur.row);
+          next = FLAT.indexOf(r[r.length - 1]);
+          break;
+        }
+        case "Enter":
+        case " ":
+          e.preventDefault();
+          setActive(i);
+          tap(cur.id);
+          return;
+        default:
+          return;
+      }
+      if (next === null) return;
+      e.preventDefault();
+      setActive(next);
+      capRefs.current[next]?.focus();
+    },
+    [active, tap],
+  );
+
   const armed = hovered || focused;
   useEffect(() => {
     if (!armed) return;
@@ -211,6 +366,9 @@ export function Keyboard() {
   return (
     <figure
       className="kb"
+      /* The hit layer's aspect ratio comes from the SVG's own viewBox, so the two
+         boxes are the same shape by construction. See the note in Keyboard.css. */
+      style={{ "--kb-aspect": `${SVG_W} / ${SVG_H}` } as React.CSSProperties}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -291,30 +449,62 @@ export function Keyboard() {
         })}
       </svg>
 
-      {/* Buttons live OUTSIDE the SVG, absolutely positioned over each cap by
-          CSS grid, so the drawing stays a drawing and the interaction stays
-          accessible: real buttons, real focus rings, real labels. */}
-      <div className="kb-hit" aria-hidden="false">
-        {ROWS.map((row, r) => {
-          let x = PAD;
-          return row.map((k) => {
-            const left = (x / SVG_W) * 100;
-            const width = (((k.u ?? 1) * U - GAP) / SVG_W) * 100;
-            const top = ((PAD + r * ROW_H) / SVG_H) * 100;
-            const height = ((U - GAP) / SVG_H) * 100;
-            x += (k.u ?? 1) * U;
-            return (
-              <button
-                key={k.id}
-                type="button"
-                className="kb-hit-btn"
-                style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%` }}
-                onClick={() => tap(k.id)}
-                aria-label={k.legend || "space"}
-              />
-            );
-          });
-        })}
+      {/* ONE TAB STOP, not sixty-one.
+
+          Buttons live OUTSIDE the SVG so the drawing stays a drawing and the
+          interaction stays real: real hit targets, real focus ring, real labels.
+          That part was right. What was wrong was giving each of the 61 caps its
+          own tab stop. Measured on the built page: 90 focusable elements, 61 of
+          them keycaps, the first at index 12 — so a keyboard-only reader tabbing
+          from the skip link pressed Tab 61 times through single-character buttons
+          that each flash a cap for 190ms, BEFORE reaching the benchmark figure,
+          any repository link, or any other evidence. Four labels were duplicated
+          ("shift, button… shift, button"), because two shift caps announced
+          identically.
+
+          A grid of related controls is one widget, so this is the standard
+          composite pattern: the container is the single tab stop, arrow keys move
+          between caps inside it, Home/End jump to the row's ends, and Enter or
+          Space presses the focused cap. Roving tabindex, so only the active cap is
+          reachable by Tab and the rest stay operable by arrow. That is how a real
+          keyboard's own key navigation works, and it takes the figure from 61 tab
+          stops to 1 without removing a single affordance.
+
+          The caps keep `aria-hidden` off and keep their labels: a screen-reader
+          user in browse mode can still read the board cap by cap. */}
+      <div
+        className="kb-hit"
+        role="grid"
+        aria-label="Keycaps. Use the arrow keys to move between keys, then Enter or Space to press one."
+        tabIndex={0}
+        onFocus={(e) => {
+          if (e.target === e.currentTarget && active === null) setActive(0);
+        }}
+        onKeyDown={onGridKeyDown}
+      >
+        {FLAT.map((k, i) => (
+          <button
+            key={k.id}
+            type="button"
+            className="kb-hit-btn"
+            style={{ left: `${k.left}%`, top: `${k.top}%`, width: `${k.width}%`, height: `${k.height}%` }}
+            onClick={() => {
+              setActive(i);
+              tap(k.id);
+            }}
+            /* Roving tabindex: the container owns the tab stop, so every cap is
+               -1 and reached by arrow key instead. */
+            tabIndex={-1}
+            ref={(el) => {
+              capRefs.current[i] = el;
+            }}
+            /* Two shift caps, two ctrls, two cmds and two alts announced with
+               identical names, so a screen-reader user could not tell which one
+               they were on. Position is the distinguishing fact, and it is in the
+               data already. */
+            aria-label={k.a11yLabel}
+          />
+        ))}
       </div>
 
       <figcaption className="kb-caption">

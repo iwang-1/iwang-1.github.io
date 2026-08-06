@@ -881,6 +881,76 @@ async function checkPage(spec, viewport) {
     for (const d of drift) problems.push(`${tag}: mobile rhythm lost the cascade — ${d}`);
   }
 
+  // KEYBOARD TAB-BUDGET + HIT-ALIGNMENT GATE.
+  //
+  // Two defects, neither of which any existing check could see.
+  //
+  // (1) TAB BUDGET. The board emitted one <button> per keycap, so 61 of the home
+  // page's 90 focusable elements were keycaps, the first at index 12 — a
+  // keyboard-only reader pressed Tab 61 times through single-character buttons
+  // that each flash a cap for 190ms BEFORE reaching the benchmark figure or any
+  // repository link. It is now one composite grid (roving tabindex, arrow keys
+  // inside), which is the standard pattern for a grid of related controls. This
+  // asserts the budget rather than the implementation: at most 2 real tab stops
+  // may live inside the figure, so re-adding per-cap buttons fails here.
+  //
+  // (2) HIT ALIGNMENT. The buttons are positioned in PERCENT over the drawing, and
+  // the layer they sit in was `inset: 0` on the <figure> — which includes the
+  // caption, so it measured 182px against the SVG's 124px and each row drifted ~10px
+  // further down (-8.7/-18.7/-28.6/-38.6/-48.6px), leaving the bottom rows' targets
+  // off the caps they name. Both boxes start at the same y, so the drift is
+  // invisible unless centres are compared row by row. This does that comparison.
+  if (spec.path === "/" && viewport.name === "desktop") {
+    const kbA11y = await page.evaluate(() => {
+      const fig = document.querySelector(".kb");
+      if (!fig) return null;
+      /* REAL tab stops, which means checking each element's own tabIndex — the
+         obvious selector `[tabindex]:not([tabindex="-1"])` counts a <button> with
+         tabIndex -1 as a stop, because the button is focusable BY DEFAULT and the
+         attribute selector does not see the property. That mistake made this gate
+         report 62 stops for a board that a real Tab walk lands on once. */
+      const stops = [...fig.querySelectorAll("a[href],button,input,select,textarea,[tabindex]")].filter(
+        (el) =>
+          el.tabIndex >= 0 &&
+          !el.hasAttribute("disabled") &&
+          (el.offsetParent !== null || el.getClientRects().length),
+      );
+      const caps = [...fig.querySelectorAll(".kb-key")];
+      const btns = [...fig.querySelectorAll(".kb-hit-btn")];
+      let worst = 0;
+      let missed = 0;
+      for (let i = 0; i < Math.min(caps.length, btns.length); i++) {
+        const c = caps[i].getBoundingClientRect();
+        const t = btns[i].getBoundingClientRect();
+        worst = Math.max(worst, Math.abs(c.top + c.height / 2 - (t.top + t.height / 2)));
+        if (!(t.left < c.right && c.left < t.right && t.top < c.bottom && c.top < t.bottom)) missed++;
+      }
+      const names = btns.map((b) => b.getAttribute("aria-label") || "");
+      const dupes = names.filter((n, i) => n && names.indexOf(n) !== i);
+      return { stops: stops.length, caps: caps.length, btns: btns.length, worst, missed, dupes };
+    });
+    if (!kbA11y) {
+      problems.push(`${tag}: the drawn keyboard is missing — its a11y gates cannot run`);
+    } else {
+      if (kbA11y.stops > 2)
+        problems.push(
+          `${tag}: the keyboard figure owns ${kbA11y.stops} tab stops (max 2) — a keyboard user must not tab through every keycap to reach the page's evidence`,
+        );
+      if (kbA11y.caps !== kbA11y.btns)
+        problems.push(
+          `${tag}: ${kbA11y.caps} drawn caps but ${kbA11y.btns} hit targets — every cap must be operable and none may be phantom`,
+        );
+      if (kbA11y.missed)
+        problems.push(
+          `${tag}: ${kbA11y.missed} hit target(s) do not overlap the cap they name (worst centre offset ${kbA11y.worst.toFixed(1)}px) — the hit layer's box has diverged from the drawing's`,
+        );
+      if (kbA11y.dupes.length)
+        problems.push(
+          `${tag}: duplicated keycap accessible names (${[...new Set(kbA11y.dupes)].join(", ")}) — a screen-reader user cannot tell the doubled modifiers apart`,
+        );
+    }
+  }
+
   // KEYBOARD-TRAP GATE. The drawn keyboard invites "type while the pointer is
   // over it", and the page also binds a `g`-chord shortcut (g+e -> /experience/).
   // enhance.ts guards the chord by checking whether the key tester is armed —

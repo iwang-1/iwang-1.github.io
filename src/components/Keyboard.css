@@ -123,10 +123,27 @@
 /* ------------------------------------------------------------- hit targets */
 /* Real buttons over the drawing, so the interaction is accessible without the
    SVG becoming a control surface. Invisible until focused: a visible button grid
-   laid over a drawing would destroy the drawing. */
+   laid over a drawing would destroy the drawing.
+
+   THE HIT LAYER MUST BE EXACTLY THE DRAWING'S BOX. It used to be `inset: 0` on
+   the <figure>, which also contains the <figcaption> — so the layer measured 182px
+   tall against the SVG's 124px, and because every button is positioned in PERCENT,
+   each row's offset resolved against the wrong height and drifted about 10px
+   further down per row: measured -8.7 / -18.7 / -28.6 / -38.6 / -48.6px across the
+   five rows, with the bottom rows' buttons not overlapping the caps they name at
+   all. A hit target that misses its key is worse than no hit target, and nothing
+   caught it because both boxes START at the same y — the drift is invisible unless
+   you compare centres row by row.
+   `bottom: auto` + `aspect-ratio` matching the SVG's own viewBox ties the layer to
+   the drawing rather than to the figure, so the two boxes cannot diverge when the
+   caption wraps to a different number of lines. */
 .kb-hit {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  aspect-ratio: var(--kb-aspect);
 }
 
 .kb-hit-btn {
@@ -138,7 +155,21 @@
   cursor: pointer;
 }
 
-.kb-hit-btn:focus-visible {
+/* The grid itself is the tab stop, so it needs a visible ring of its own — a
+   keyboard user has to see that they have landed on the board before they know to
+   press an arrow key. Inset, so it reads as "inside this object" rather than as a
+   box drawn around a figure. */
+.kb-hit:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* And the individual cap ring stays, for the roving focus inside the grid. Both
+   are needed: the outer ring says which widget you are in, the inner one says
+   which key you are on. */
+.kb-hit-btn:focus-visible,
+.kb-hit-btn:focus {
   outline: 2px solid var(--ink-accent);
   outline-offset: 1px;
 }
