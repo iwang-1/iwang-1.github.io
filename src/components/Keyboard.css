@@ -21,7 +21,15 @@
 .kb {
   position: relative;
   margin: 0;
-  max-width: 620px;
+  /* 484px, not 620px, and the number is derived rather than chosen: the viewBox is
+     538 units wide, so at 484px the scale is 0.9 and the 13px legend renders 11.7px
+     — just under the page's 13px mono label rank, which DESIGN.md requires a figure's
+     own type to stay beneath. At the old 620px cap the single-column band (768-1023w)
+     rendered the board at full width and its legends hit 15.0px, ABOVE that rank, so
+     the drawing's keycaps would have outranked the section labels around it.
+     This only binds in the single-column band; in the three-up hobby row the column
+     is ~336px and is the narrower constraint. */
+  max-width: 484px;
 }
 
 .kb-svg {
@@ -77,8 +85,17 @@
   fill: var(--ink);
   font-family: var(--font-mono);
   /* Drawing dimensions, in viewBox units: a legend is sized to its cap, not to
-     the page's reading ramp. Same class of value as the stroke widths above. */
-  font-size: 10px;
+     the page's reading ramp. Same class of value as the stroke widths above.
+     13px, not 10px. The viewBox is 538 units wide and the figure renders 288-358px
+     in its hobby column, so the scale is 0.54-0.67 and a 10px legend rendered at
+     5.35px @320w, 6.65 @390 and 6.25 @1366 — with the shifted sub-legends at
+     4.28-5.0px, which a screenshot at 320 shows as illegible smudges. A 61-key board
+     needs ~484px of render width for a 9px legend and it never gets it.
+     Raising the drawing dimension is the honest correction: the legends are now
+     7.0-8.7px rendered, which is small-but-readable at the size the figure actually
+     occupies, and it costs nothing structural because these are viewBox units — the
+     caps do not move. The sub-legends scale with them below. */
+  font-size: 13px;
   text-anchor: middle;
   pointer-events: none;
 }
@@ -88,7 +105,9 @@
 .kb-sub {
   fill: var(--ink-secondary);
   font-family: var(--font-mono);
-  font-size: 8px;
+  /* 10px against the legend's 13px, holding the same ~0.77 ratio the original pair
+     had (8/10). Rendered 5.4-6.7px. */
+  font-size: 10px;
   text-anchor: start;
   pointer-events: none;
 }
@@ -146,6 +165,19 @@
   aspect-ratio: var(--kb-aspect);
 }
 
+/* THE CAPS ARE 17-28px, AND THEY DO NOT MEET THE 44px TAP TARGET. Recorded as a
+   deliberate exception rather than left as an unexamined gap, because the site holds
+   44px everywhere it matters (`.btn`, the nav tabs, the sweep steppers).
+   Why it is not raised: 61 caps at 44px would need the board ~1,200px wide, which no
+   layout on this page has room for and which would make a hobby drawing the largest
+   object on a recruiting page — the exact defect the boulder's square aspect was
+   changed to fix. The caps are PARTS OF A DRAWING that happen to respond, not
+   controls carrying a task: nothing on the site depends on pressing one, each press
+   flashes a cap for 190ms, and the figure promises nothing else.
+   The affordance a keyboard user needs is met a different way: the board is ONE tab
+   stop with arrow-key navigation inside it, so no one has to hit a 17px target to
+   operate it. Both facts are gated — the tab budget in verify.mjs, and hit/cap
+   alignment to <4px so a tap that looks aimed at a cap presses that cap. */
 .kb-hit-btn {
   position: absolute;
   padding: 0;

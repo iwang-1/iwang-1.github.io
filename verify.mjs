@@ -917,6 +917,83 @@ async function checkPage(spec, viewport) {
       );
   }
 
+  // KEYCAP LEGENDS MUST BE READABLE, AND MUST NOT OUTRANK THE PAGE. SVG text scales
+  // with the drawing, so a font-size in viewBox units says nothing about what a
+  // reader sees. Measured with a 10px declaration: legends rendered 5.35px @320w,
+  // 6.65 @390 and 6.25 @1366, with the shifted sub-legends at 4.28-5.0px — a
+  // screenshot at 320 showed those as smudges. The declaration is now 13px/10px and
+  // the figure's cap is derived (484px) rather than chosen.
+  // Two bounds, because fixing one direction broke the other: raising the size took
+  // the 768-1023 single-column band to 15.0px, ABOVE the page's 13px mono label rank
+  // that DESIGN.md requires a figure's own type to stay under — the keycaps would
+  // have outranked the section labels around them.
+  if (spec.path === "/") {
+    const legend = await page.evaluate(() => {
+      const svg = document.querySelector(".kb-svg");
+      const el = document.querySelector(".kb-legend");
+      const sub = document.querySelector(".kb-sub");
+      if (!svg || !el) return null;
+      const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+      return {
+        legend: parseFloat(getComputedStyle(el).fontSize) * scale,
+        sub: sub ? parseFloat(getComputedStyle(sub).fontSize) * scale : null,
+      };
+    });
+    if (!legend) {
+      problems.push(`${tag}: the drawn keyboard's legends are missing — their size gates cannot run`);
+    } else {
+      // 6.5px floor: below it the glyphs stop resolving at this scale (5.35px was
+      // measured illegible). Not a WCAG number — a legibility floor for a drawing.
+      if (legend.legend < 6.5)
+        problems.push(
+          `${tag}: keycap legends render at ${legend.legend.toFixed(2)}px — below the 6.5px legibility floor for this drawing`,
+        );
+      if (legend.sub !== null && legend.sub < 5)
+        problems.push(
+          `${tag}: shifted keycap legends render at ${legend.sub.toFixed(2)}px — below the 5px floor`,
+        );
+      // 13px is the page's mono label rank; a figure's own type stays beneath it.
+      if (legend.legend > 13)
+        problems.push(
+          `${tag}: keycap legends render at ${legend.legend.toFixed(2)}px — above the page's 13px mono label rank, so the drawing's type outranks the section labels`,
+        );
+    }
+  }
+
+  // TEXT-ONLY ZOOM (WCAG 1.4.4): 200% text with no loss of content. This scales the
+  // ROOT font-size only — not the page zoom, which scales everything and is a
+  // different criterion — and asserts the document never scrolls sideways.
+  // It was failing on every page: 48px of document overflow at a 24px root and 158px
+  // at 32px on three of four pages, and /experience/ failed as early as an 18px root.
+  // Five separate causes, all of them "this text cannot break":
+  //   the email address (no space, so one unbreakable token, in TWO places)
+  //   the contact grid's fixed 300px floor
+  //   "Qiskit/DisCoPy/pytket" (slashes are not break opportunities by default)
+  //   `1fr` grid tracks, which mean `minmax(auto, 1fr)` and floor at min-content
+  //   `p`, `a` and `li`, which never inherited the h1/h2/h3 break rule
+  // Checked at the narrow viewport only: it is the worst case, and running four
+  // roots x four pages at every viewport would triple the suite's runtime for no new
+  // information.
+  if (viewport.name === "narrow") {
+    for (const root of [20, 24, 32]) {
+      await page.evaluate((r) => {
+        document.documentElement.style.fontSize = `${r}px`;
+      }, root);
+      await page.waitForTimeout(200);
+      const over = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      if (over > 1)
+        problems.push(
+          `${tag}: ${over}px of horizontal document overflow at a ${root}px root font-size (text-only zoom, WCAG 1.4.4) — text must break before the page does`,
+        );
+    }
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = "";
+    });
+    await page.waitForTimeout(150);
+  }
+
   // EVERY MEASURED SAMPLE MUST BE REACHABLE BY POINTER OR FINGER. The plot has a
   // 580px floor width (below it the axis labels stop being legible), so at phone
   // widths the plate pans a ~254px window over it — and `nearest()` maps only pixels

@@ -91,6 +91,42 @@ p {
   margin: 0 0 var(--space-4);
   max-width: var(--measure-prose);
   text-wrap: pretty;
+  /* Same contract the h1/h2/h3 rule above already states, extended to running text
+     and to links: a word breaks before the PAGE does. The heading rule was written
+     after role titles painted document scroll under text zoom; paragraphs and
+     anchors were left out, so at a 32px root on a 320px viewport a project title,
+     its licence line, its summary and its limits note all pushed the document 68px
+     wide — WCAG 1.4.4 again, on the copy a reader is actually reading.
+     `break-word`, not `anywhere`: it breaks a word only when there is no other
+     option, so nothing that already fits moves (measured identical at 16-22px
+     roots). Anchors are included because a repo name like "accretion-db" is one
+     token with a hyphen the engine will not break on its own. */
+  overflow-wrap: break-word;
+}
+
+/* ANCHORS BREAK, but with `anywhere` rather than `break-word` — and the difference
+   is a regression I caused and measured. A bare `a { overflow-wrap: break-word }`
+   made /projects/ WORSE at the base 16px root: 76px of document overflow from
+   "benchmarks/raw/bench_50k_128d.txt", because `break-word` breaks the rendered
+   line but does NOT reduce an element's min-content contribution, so the link still
+   floored its grid track and now did it while wrapping. `anywhere` is the one value
+   that shrinks min-content too, which is why the email spans use it as well.
+   Scoped to the links that carry path- and identifier-shaped text — the artifact
+   deep links and repo names, which have slashes and hyphens no engine breaks on its
+   own. Left alone everywhere else: prose links read better unbroken, and this must
+   not become a licence to hyphenate the nav. */
+.cta-text-link,
+.project-links a,
+.sweep-source,
+.system-copy h3 a,
+.role-card h3 a,
+/* `.sheet-block h3 a` covers the eight project-card titles. Missed on the first
+   pass, and they were the last thing overflowing: at a 32px root on a 320px
+   viewport "Unsupervised Domain Adaptation for Sentiment" pushed the document 68px
+   wide on its own. The h1/h2/h3 rule's `break-word` does not reach it, because the
+   link is a CHILD of the heading and carries its own min-content contribution. */
+.sheet-block h3 a {
+  overflow-wrap: anywhere;
 }
 
 a {
@@ -344,6 +380,11 @@ img {
 span.chip,
 span.proof-chip {
   white-space: normal;
+  /* Wrapping is not enough on its own: "Qiskit/DisCoPy/pytket" has no SPACE, so
+     `white-space: normal` gives it nowhere to break and it overflowed the document
+     by 18px at an 18px root — the earliest zoom failure on the site — and 207px at
+     32px. A slash is a legal break opportunity only under `anywhere`. */
+  overflow-wrap: anywhere;
 }
 
 /* Narrow phones: tighten further so brand + 4 tabs never overflow. */
@@ -900,17 +941,34 @@ button.btn {
 
 .sheet-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* `minmax(0, 1fr)`, not `1fr` — the SINGLE-column case matters most, and it is
+     where this was actually failing. `1fr` means `minmax(auto, 1fr)`, so the track
+     is floored at its content's min-content width: measured at a 32px root on a
+     320px viewport, this one track resolved to 389px inside a correctly-288px grid
+     and the card overflowed the document by 85px. Zeroing the floor lets the
+     (now breakable) content reflow instead. Identical at every width where the
+     content fits. Same trap as the tablet-band overflow this file records above. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 
+/* `minmax(0, 1fr)`, NOT `1fr`, and this is the same trap twice.
+   `1fr` is shorthand for `minmax(auto, 1fr)`, so every track is FLOORED at its
+   content's min-content width and a grid of them cannot shrink below the sum of
+   those floors. That is exactly what put 112px of document overflow on this page
+   across the 768-876px band (one 276px nowrap chip), and it reappeared under text
+   zoom: at a 32px root on a 320px viewport the cards overflowed by 68px even after
+   every wrap fix, because the TRACKS were the floor, not the text.
+   `minmax(0, 1fr)` sets the floor to zero and lets the now-breakable content
+   reflow. Measured: /projects/ goes 85px -> 0 at a 32px root, and nothing moves at
+   any normal width (the tracks are identical whenever the content fits). */
 @media (min-width: 768px) {
   .sheet-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sheet-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1948,6 +2006,14 @@ button.btn {
 .role-bullets li {
   margin-bottom: var(--space-2);
   max-width: var(--measure-prose);
+  /* An `li` is running text and needs the same break policy as `p`, which it does
+     not inherit. It was the LAST thing painting document scroll under text zoom:
+     measured 91px of internal overflow at a 32px root on a 320px viewport, which the
+     leaf-most element scan could not see because the list itself is
+     `overflow-x: visible` — the bullets grew the document without any single element
+     exceeding the viewport. Same `break-word` as prose: a word breaks before the
+     page does, and only when it has no other option. */
+  overflow-wrap: break-word;
 }
 
 /* ------------------------------------------------------- off the clock */
@@ -2333,7 +2399,12 @@ button.btn {
 
 .contact-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  /* min() on the floor, not a bare 300px: the fixed floor could not shrink, so at
+     a 24px root on a 320px viewport the two-column band forced the whole document
+     26px wide ("Get in touch", its paragraph, and the address all overflowed
+     together). `min(300px, 100%)` keeps the intended 300px wherever there is room
+     and collapses gracefully where there is not. */
+  grid-template-columns: minmax(0, 1.2fr) minmax(min(300px, 100%), 0.8fr);
   gap: var(--space-8);
   /* start, not center: the two columns are unequal in height (measured 127.7px
      of copy against an 81.8px action stack), so centering pushed the Email
@@ -2364,6 +2435,19 @@ button.btn {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+/* THE ADDRESS MUST BE ABLE TO BREAK. An email address contains no space, so
+   `overflow-wrap: normal` makes it one unbreakable token — at a 24px root on a
+   320px viewport it pushed the DOCUMENT 26px wide here and 48px in the footer,
+   and 158px at a 32px root. That is a WCAG 1.4.4 failure: text-only zoom to 200%
+   must not cost content. `anywhere` rather than `break-word` because only
+   `anywhere` lets the break shrink the element's min-content contribution, which
+   is what stops it forcing its GRID TRACK wider (break-word alone still overflowed
+   by 26px, measured). Applies to both copies of the address. */
+.contact-email,
+.footer-email {
+  overflow-wrap: anywhere;
 }
 
 .contact-email {
