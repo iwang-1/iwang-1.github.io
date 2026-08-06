@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-06T14:54:14.709010Z",
+  "generatedAt": "2026-08-06T16:41:56.023252Z",
   "title": "Design System: Double-Shot",
   "extensions": {
     "colorMeta": {
@@ -10,8 +10,13 @@
         "canonical": "#EDE7DA",
         "note": "The alpha keycap: the page surface. The world is light-first by owner choice after the dark instrument-panel look was called machine-made.",
         "tonalRamp": [
-          "#EDE7DA"
-        ]
+          "#EDE7DA",
+          "#FFFFFF"
+        ],
+        "printVariant": {
+          "value": "#FFFFFF",
+          "why": "flattens to true white on paper so a figure does not print as a grey slab"
+        }
       },
       "case-grey": {
         "role": "neutral",
@@ -19,8 +24,13 @@
         "canonical": "#D9D2C2",
         "note": "The case: every figure fill.",
         "tonalRamp": [
-          "#D9D2C2"
-        ]
+          "#D9D2C2",
+          "#FFFFFF"
+        ],
+        "printVariant": {
+          "value": "#FFFFFF",
+          "why": "same: every figure surface prints white"
+        }
       },
       "case-shade": {
         "role": "neutral",
@@ -28,8 +38,13 @@
         "canonical": "#D2CBBB",
         "note": "Case in shadow: table stripes and insets.",
         "tonalRamp": [
-          "#D2CBBB"
-        ]
+          "#D2CBBB",
+          "#F4F2EC"
+        ],
+        "printVariant": {
+          "value": "#F4F2EC",
+          "why": "the one tinted paper surface that survives"
+        }
       },
       "charcoal": {
         "role": "neutral",
@@ -37,8 +52,13 @@
         "canonical": "#26241F",
         "note": "Legend ink: all text and rules.",
         "tonalRamp": [
-          "#26241F"
-        ]
+          "#26241F",
+          "#1A1815"
+        ],
+        "printVariant": {
+          "value": "#1A1815",
+          "why": "legend ink on paper, measured 17.72:1 on white"
+        }
       },
       "rust": {
         "role": "neutral",
@@ -46,8 +66,13 @@
         "canonical": "#7A2E12",
         "note": "The modifier accent. One accent, and it is a keycap colorway role rather than a mood.",
         "tonalRamp": [
-          "#7A2E12"
-        ]
+          "#7A2E12",
+          "#6B2810"
+        ],
+        "printVariant": {
+          "value": "#6B2810",
+          "why": "darkened to clear AA in ink, 10.85:1"
+        }
       },
       "slate": {
         "role": "neutral",
@@ -55,8 +80,13 @@
         "canonical": "#33566E",
         "note": "Data traces and links.",
         "tonalRamp": [
-          "#33566E"
-        ]
+          "#33566E",
+          "#24405A"
+        ],
+        "printVariant": {
+          "value": "#24405A",
+          "why": "darkened, 10.74:1 — links and button ink"
+        }
       },
       "sublegend": {
         "role": "neutral",
@@ -64,8 +94,13 @@
         "canonical": "#5A554B",
         "note": "The sublegend: units and secondary text.",
         "tonalRamp": [
-          "#5A554B"
-        ]
+          "#5A554B",
+          "#4A463E"
+        ],
+        "printVariant": {
+          "value": "#4A463E",
+          "why": "body on paper, 9.39:1"
+        }
       },
       "rule": {
         "role": "neutral",
@@ -73,8 +108,13 @@
         "canonical": "#7A766E",
         "note": "Structural hairline, derived from charcoal.",
         "tonalRamp": [
-          "#7A766E"
-        ]
+          "#7A766E",
+          "#8A857C"
+        ],
+        "printVariant": {
+          "value": "#8A857C",
+          "why": "control boundaries, 3.67:1 — clears the 3:1 non-text floor"
+        }
       },
       "rule-soft": {
         "role": "neutral",
@@ -82,8 +122,18 @@
         "canonical": "#C1BCB1",
         "note": "The quiet divider inside a figure.",
         "tonalRamp": [
-          "#C1BCB1"
-        ]
+          "#C1BCB1",
+          "#D5D1C8"
+        ],
+        "printVariant": {
+          "value": "#D5D1C8",
+          "why": "sheet hairlines, 1.52:1 — structure, not information"
+        }
+      },
+      "_paperNote": {
+        "role": "documentation",
+        "displayName": "Why every ramp has a paper stop",
+        "note": "Each tonalRamp carries the screen value AND its print value, because @media print re-declares these same nine raw tokens to measured paper values (src/index.css). They live here as well as in DESIGN.md's frontmatter for a mechanical reason: the design detector reads exactly two sources — frontmatter.colors and extensions.colorMeta[*].canonical/tonalRamp — so a paper value documented anywhere else reads as unexplained drift on every audit. It was reported four times before this stop existed. The values must stay LITERAL in the CSS: tokenising them once regressed the printed primary button to a measured 1.59-1.86:1, because a later :root remap reaches into the print sheet."
       }
     },
     "typographyMeta": {
