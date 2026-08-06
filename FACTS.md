@@ -146,9 +146,24 @@ Current lists: `Hong Kong` (all pages), `74.2%` / `67.7%` / `64,000` (`/` and
 `/projects/`), `95%` (`/projects/`), `1,400` / `2,640` (`/` and `/projects/`),
 `star-catalog` / `star-spectral` / `sky map` (`/projects/`).
 
-`1,400` and `2,640` are the résumé's soak-run counts, and **this list is their
-only gate** — `check-facts.mjs` has no pattern for either. The site quotes the
-operation count instead.
+`1,400` and `2,640` are soak/crash-run counts, and **this list is their only
+gate** — `check-facts.mjs` has no pattern for either. The site quotes the operation
+count instead.
+
+**Both are TRUE and both are sourced — the ban is editorial, not factual, and that
+distinction matters.** `1,400` is parallax-kv's scenario-run count
+(`docs/BUG_LEDGER.md`: "2,914,245 client operations over 1,400 scenario runs") and
+`2,640` is accretion-db's total exhaustive crash executions
+(`benchmarks/RESULTS.md`: 330 crash points × 4 × 2, produced by the runnable test
+`exhaustive::reports_crash_point_count`, which passes). They are kept off the SITE
+because run counts are weaker evidence than the operation count and the crash-loss
+result they support — not because anything is wrong with them.
+
+Consequence to know before "fixing" it: **the profile README at
+`github.com/iwang-1` publishes 330 / 2,640 / 160 deliberately**, and that is not a
+contradiction of this ban. A reader comparing the two surfaces sees the same
+project described at two depths, which is normal. Do not delete them from the README
+on this file's authority, and do not add them to the site to "make it consistent".
 
 ---
 
