@@ -1,417 +1,442 @@
 {
- "schemaVersion": 2,
- "generatedAt": "2026-08-05T01:00:00.000Z",
- "title": "Design System: Double-Shot",
- "extensions": {
-  "colorMeta": {
-   "cap-beige": {
-    "role": "neutral",
-    "displayName": "Cap Beige",
-    "canonical": "#EDE7DA",
-    "note": "The alpha keycap: the page surface. The world is light-first by owner choice after the dark instrument-panel look was called machine-made.",
-    "tonalRamp": [
-     "#EDE7DA"
-    ]
-   },
-   "case-grey": {
-    "role": "neutral",
-    "displayName": "Case Grey",
-    "canonical": "#D9D2C2",
-    "note": "The case: every figure fill.",
-    "tonalRamp": [
-     "#D9D2C2"
-    ]
-   },
-   "case-shade": {
-    "role": "neutral",
-    "displayName": "Case Shade",
-    "canonical": "#D2CBBB",
-    "note": "Case in shadow: table stripes and insets.",
-    "tonalRamp": [
-     "#D2CBBB"
-    ]
-   },
-   "charcoal": {
-    "role": "neutral",
-    "displayName": "Charcoal",
-    "canonical": "#26241F",
-    "note": "Legend ink: all text and rules.",
-    "tonalRamp": [
-     "#26241F"
-    ]
-   },
-   "rust": {
-    "role": "neutral",
-    "displayName": "Rust",
-    "canonical": "#7A2E12",
-    "note": "The modifier accent. One accent, and it is a keycap colorway role rather than a mood.",
-    "tonalRamp": [
-     "#7A2E12"
-    ]
-   },
-   "slate": {
-    "role": "neutral",
-    "displayName": "Slate",
-    "canonical": "#33566E",
-    "note": "Data traces and links.",
-    "tonalRamp": [
-     "#33566E"
-    ]
-   },
-   "sublegend": {
-    "role": "neutral",
-    "displayName": "Sublegend",
-    "canonical": "#5A554B",
-    "note": "The sublegend: units and secondary text.",
-    "tonalRamp": [
-     "#5A554B"
-    ]
-   },
-   "rule": {
-    "role": "neutral",
-    "displayName": "Rule",
-    "canonical": "#7A766E",
-    "note": "Structural hairline, derived from charcoal.",
-    "tonalRamp": [
-     "#7A766E"
-    ]
-   },
-   "rule-soft": {
-    "role": "neutral",
-    "displayName": "Rule Soft",
-    "canonical": "#C1BCB1",
-    "note": "The quiet divider inside a figure.",
-    "tonalRamp": [
-     "#C1BCB1"
-    ]
-   }
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-06T00:30:41.163409Z",
+  "title": "Design System: Double-Shot",
+  "extensions": {
+    "colorMeta": {
+      "cap-beige": {
+        "role": "neutral",
+        "displayName": "Cap Beige",
+        "canonical": "#EDE7DA",
+        "note": "The alpha keycap: the page surface. The world is light-first by owner choice after the dark instrument-panel look was called machine-made.",
+        "tonalRamp": [
+          "#EDE7DA"
+        ]
+      },
+      "case-grey": {
+        "role": "neutral",
+        "displayName": "Case Grey",
+        "canonical": "#D9D2C2",
+        "note": "The case: every figure fill.",
+        "tonalRamp": [
+          "#D9D2C2"
+        ]
+      },
+      "case-shade": {
+        "role": "neutral",
+        "displayName": "Case Shade",
+        "canonical": "#D2CBBB",
+        "note": "Case in shadow: table stripes and insets.",
+        "tonalRamp": [
+          "#D2CBBB"
+        ]
+      },
+      "charcoal": {
+        "role": "neutral",
+        "displayName": "Charcoal",
+        "canonical": "#26241F",
+        "note": "Legend ink: all text and rules.",
+        "tonalRamp": [
+          "#26241F"
+        ]
+      },
+      "rust": {
+        "role": "neutral",
+        "displayName": "Rust",
+        "canonical": "#7A2E12",
+        "note": "The modifier accent. One accent, and it is a keycap colorway role rather than a mood.",
+        "tonalRamp": [
+          "#7A2E12"
+        ]
+      },
+      "slate": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "#33566E",
+        "note": "Data traces and links.",
+        "tonalRamp": [
+          "#33566E"
+        ]
+      },
+      "sublegend": {
+        "role": "neutral",
+        "displayName": "Sublegend",
+        "canonical": "#5A554B",
+        "note": "The sublegend: units and secondary text.",
+        "tonalRamp": [
+          "#5A554B"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#7A766E",
+        "note": "Structural hairline, derived from charcoal.",
+        "tonalRamp": [
+          "#7A766E"
+        ]
+      },
+      "rule-soft": {
+        "role": "neutral",
+        "displayName": "Rule Soft",
+        "canonical": "#C1BCB1",
+        "note": "The quiet divider inside a figure.",
+        "tonalRamp": [
+          "#C1BCB1"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The page h1 only. A clamp, so the name uses the width available at 1920/2560; held to 22ch so it breaks where it should."
+      },
+      "headline": {
+        "displayName": "Headline (rank-1)",
+        "purpose": "A page's lead section heading. Mobile floor sits above the rank-2 size so the two ranks never collapse on a phone, and never exceed the h1 above."
+      },
+      "title": {
+        "displayName": "Title (rank-2)",
+        "purpose": "Supporting section headings and the contact band's heading."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Prose at 66ch; hero subhead and page deks at 56ch; the h1 at 22ch. Mono reading blocks take their own 68ch step (--measure-mono), because ch is the element's own zero and one number cannot serve both families."
+      },
+      "label": {
+        "displayName": "Label / Mono",
+        "purpose": "Kickers, provenance lines, chips, skills rails, callouts, plate labels. The 13px mono step is the same rank as an axis label."
+      },
+      "footnote": {
+        "displayName": "Footnote",
+        "purpose": "Plate footnote strips and the coursework line. 14px is a floor, not a default — ink-3 earns AA only at or above it. Leading is 1.6, not 1.5: light ink-3 on a near-black plate wants compensating leading, on the longest-measure prose on the site."
+      }
+    },
+    "shadows": [
+      {
+        "name": "current-tick",
+        "value": "inset 0 calc(-1 * var(--hairline)) 0 var(--series-2)",
+        "where": "src/index.css:448",
+        "purpose": "The accent tick under the current nav tab, set like an active tick under an axis."
+      },
+      {
+        "name": "marker-halo",
+        "value": "0 0 0 var(--hairline) var(--plate)",
+        "where": "src/index.css:2610",
+        "purpose": "The plate-coloured halo around the scroll-progress marker, so a 7px dot reads as a dot against whatever it crosses."
+      },
+      {
+        "name": "(SUPERSEDED — do not restore)",
+        "value": "hairline-halo `0 0 0 1px var(--grid)` and finish-ring `0 0 0 1px var(--grid), 0 0 0 3px var(--plate-2), 0 0 0 4px var(--series-2)`",
+        "purpose": "These described the retired boulder TOPO's route holds and its ringed finish hold, plus a `.sample-point` atom whose CSS has since been deleted as dead. The drawn boulder gets its depth from three real SHAPES per hold (shadow, body, bolt), not from a box-shadow — that is the DOUBLE-SHOT rule that a drawing must not wear the plots' hairline grammar. Only the two shadows above are live; the system is otherwise flat and uses tonal layering."
+      }
+    ],
+    "motion": [
+      {
+        "name": "t-tap",
+        "value": "120ms",
+        "purpose": "Button lift, border colour, crosshair transition, link colour."
+      },
+      {
+        "name": "t-hover",
+        "value": "180ms",
+        "purpose": "Card lift, timeline node scale, modal panel."
+      },
+      {
+        "name": "t-reveal",
+        "value": "300ms",
+        "purpose": "The scroll-reveal fade — the only load-time motion, gated on the .js root class AND prefers-reduced-motion: no-preference."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "purpose": "Default easing. No overshoot easing anywhere: this system highlights samples, it does not squash toys."
+      },
+      {
+        "name": "keyframes",
+        "value": "none",
+        "purpose": "The stylesheet declares no keyframes at all. One animated moment on the site (the user-driven crosshair); everything else is a transition on an interaction."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tiny",
+        "value": "359px",
+        "note": "Nav brand hides; the tab row's left edge becomes the page's alignment anchor."
+      },
+      {
+        "name": "xs",
+        "value": "379px",
+        "note": "Tab padding/gap tighten again to hold a >=12px right gutter."
+      },
+      {
+        "name": "sm",
+        "value": "479px",
+        "note": "Nav gap and tab padding tighten again. The off-ladder 20px system-plate padding that used to sit here was deleted 2026-08-02; the single mobile plate pad is the 16px step at 639px. Container gutter drops to 16px at 480px."
+      },
+      {
+        "name": "mobile",
+        "value": "639px",
+        "note": "--section-gap drops to 48px; plate padding 16px; wordmark and box diagrams hide."
+      },
+      {
+        "name": "md",
+        "value": "767px",
+        "note": "--section-gap 64px; card grids go two-column at 768px; 44px title tap padding below."
+      },
+      {
+        "name": "lg",
+        "value": "1023px",
+        "note": "System plates and the About layout go two-column at 1024px."
+      },
+      {
+        "name": "xl",
+        "value": "1200px",
+        "note": "Hero splits 46/54 identity-to-figure."
+      }
+    ],
+    "figureNumbering": {
+      "rule": "Figure numbers belong to objects that genuinely are figures. Five FIG. labels are a system; nine are a costume.",
+      "shipped": [
+        "FIG. 01 · parallax-kv",
+        "FIG. 02 · accretion-db",
+        "FIG. 03 · lodestone",
+        "FIG. 03 DETAIL · lodestone · recall vs throughput (the benchmark plot — a DETAIL of lodestone's plate, not a number of its own)",
+        "FIG. 404 · the not-found empty plate"
+      ],
+      "excluded": [
+        "Outside of work (the hobby drawings)",
+        "Background",
+        "Education",
+        "Skills",
+        "the contact band"
+      ],
+      "notes": [
+        "SUPERSEDED, recorded so it is not restored: this listed 'FIG. 00 · boulder topo', 'FIG. 01 · lodestone recall vs throughput' and 'FIG. 02-04 · the three system plates'. That scheme gave lodestone TWO numbers on one page (the plot was FIG. 01 while its own plate was FIG. 04), and three cold reviewers read it as a numbering bug.",
+        "The hobby drawings carry PLAIN labels ('Bouldering', '60% layout…'), never FIG. numbers, so a reader never has to decode a hobby. Only the measured work is numbered.",
+        "FIG. 00 no longer exists: the boulder topo it named was replaced by the drawn boulder (one wall, three equal-weight sequences)."
+      ]
+    },
+    "print": {
+      "strategy": "Raw-token rebase to paper, then a short list of overrides. Print no longer INVERTS anything — the shipped world is already light (DOUBLE-SHOT), so what paper needs is only: tinted surfaces become true white so a figure does not print as a grey slab, and the saturated roles darken enough to clear AA in ink.",
+      "rebase": {
+        "--raw-cap-beige": "#ffffff",
+        "--raw-case-grey": "#ffffff",
+        "--raw-case-shade": "#f4f2ec",
+        "--raw-charcoal": "#1a1815",
+        "--raw-rust": "#6b2810",
+        "--raw-slate": "#24405a",
+        "--raw-sublegend": "#4a463e",
+        "--raw-rule": "#8a857c",
+        "--raw-rule-soft": "#d5d1c8"
+      },
+      "measured": {
+        "charcoal #1a1815 on white": "17.72:1",
+        "slate #24405a on white": "10.74:1",
+        "rust #6b2810 on white": "10.85:1",
+        "body #4a463e on white": "9.39:1",
+        "hairline #8a857c on white": "3.67:1 (non-text; clears the 3:1 floor for a control boundary)"
+      },
+      "notes": [
+        "SUPERSEDED, recorded so it is not restored: this section used to describe a remap of the SEMANTIC tokens (--ground/--plate/--ink/--series-*) with cool values (#c4ccd4 grid, #6b7885 axis, #0b3a6b series-1, #2f7d4f series-3). That was the retired dark world's print sheet. The live block rebases the NINE RAW tokens instead.",
+        "The three literals #c4ccd4, #6b7885 and #0b3a6b were cool blue-greys at hue 210-211deg surviving on a page whose every paper value is warm (rebased --raw-rule 39deg, --raw-rule-soft 42deg). Every printed sheet border wore the old world's colour. Now #d5d1c8 / #8a857c / #24405a, the values the rebase itself declares.",
+        "Button and link overrides stay FIXED VALUES, not tokens, and that is deliberate: tokenising them once regressed the printed primary button to a measured 1.59-1.86:1, because a later :root remap reached into the print sheet. The wrong VALUES were the bug, never the literals.",
+        "#24405a is NOT drift even though it is blue: --raw-slate is a genuine blue in the shipped palette (#33566e on screen, 'data traces and links'), so its darkened paper value is correct. Hue alone does not identify drift here.",
+        "GATED: verify.mjs emulates print media, reads the legal paper palette out of this rebase in the built CSS, and fails any printed value outside it. Proven by restoring #c4ccd4 (fails naming the value and listing the eight legal ones). Before this gate nothing in the suite had ever emulated print, which is how the cool leftovers survived a full rebuild.",
+        "The hero collapses to one column so the vacated figure column does not print blank.",
+        "Every revealable block is forced visible, because IntersectionObserver never fires when printing from a fresh load.",
+        "Injected chrome (progress rail, legend swatch, modal) and the drawn figures (.boulder, .system-diagram) are hidden — decoration carries no meaning on paper."
+      ]
+    },
+    "gates": {
+      "note": "The gates are part of the design system: a visual rule that cannot survive them is not shipped. Every gate has been PROVEN to fail by reintroducing the exact defect it names — an unproven gate is not a gate.",
+      "items": [
+        "scripts/check-facts.mjs — required/forbidden string gate, runs as prebuild and in CI. Now also carries a DERIVED NUMBER LOCK that recomputes lodestone's claims arithmetically from benchmarks/lodestone/bench_50k_128d.txt (a ratio must fall inside the measured >=0.90-recall band; recall and QPS must match a real row), and a RENDERED-VALUE lock checked against src/content.ts ALONE, because a mention in any comment would otherwise satisfy it.",
+        "verify.mjs — LIGHT-surface luminance band 0.62-0.93 (cap beige measures 0.8022). Note this REPLACED a dark-surface ceiling of 0.05: the shipped world is light, so the old assertion was inverted.",
+        "verify.mjs — no synthesised italics anywhere (no italic cut ships, so an italic would be a UA-synthesised slant of a display mono).",
+        "verify.mjs — PRINT palette: emulates print media, reads the legal paper values out of the print block's own :root rebase in the built CSS, and fails any printed value outside it. Nothing had ever emulated print before, which is how three cool leftovers from the retired palette survived a full rebuild.",
+        "verify.mjs — the drawn keyboard's a11y budget: at most 2 real tab stops inside the figure (it was 61 of the page's 90), every hit target must overlap the cap it names (they had drifted up to 48.6px), and no two caps may share an accessible name.",
+        "verify.mjs — the boulder's honesty contract: exactly 3 sequences, all identical in computed stroke/width/opacity, and the aria-label's hold count must equal the painted count. If one sequence were heavier the drawing would assert a single correct route, contradicting the paragraph beside it.",
+        "verify.mjs — cross-page: / and /projects/ may share at most 3 identical text blocks. They shared 13 (the same three project sheets rendered twice).",
+        "verify.mjs — caption/figure non-overlap at all three viewports, primary-CTA contrast >=4.5:1 at rest AND hovered, both prefers-reduced-motion queries present in the built CSS, frozen nav height and progress-rail geometry, no résumé file in dist/ and no rendered link offering one (read accent- and case-blind).",
+        "scripts/generate-figures.mjs --check — wired into CI: the committed generated figure must be exactly what the generator emits from the benchmark, so the file's 'DO NOT EDIT BY HAND' header is a rule rather than a request.",
+        "A separate private confidentiality scan runs before anything is pushed."
+      ]
+    }
   },
-  "typographyMeta": {
-   "display": {
-    "displayName": "Display",
-    "purpose": "The page h1 only. A clamp, so the name uses the width available at 1920/2560; held to 22ch so it breaks where it should."
-   },
-   "headline": {
-    "displayName": "Headline (rank-1)",
-    "purpose": "A page's lead section heading. Mobile floor sits above the rank-2 size so the two ranks never collapse on a phone, and never exceed the h1 above."
-   },
-   "title": {
-    "displayName": "Title (rank-2)",
-    "purpose": "Supporting section headings and the contact band's heading."
-   },
-   "body": {
-    "displayName": "Body",
-    "purpose": "Prose at 66ch; hero subhead and page deks at 56ch; the h1 at 22ch. Mono reading blocks take their own 68ch step (--measure-mono), because ch is the element's own zero and one number cannot serve both families."
-   },
-   "label": {
-    "displayName": "Label / Mono",
-    "purpose": "Kickers, provenance lines, chips, skills rails, callouts, plate labels. The 13px mono step is the same rank as an axis label."
-   },
-   "footnote": {
-    "displayName": "Footnote",
-    "purpose": "Plate footnote strips and the coursework line. 14px is a floor, not a default \u2014 ink-3 earns AA only at or above it. Leading is 1.6, not 1.5: light ink-3 on a near-black plate wants compensating leading, on the longest-measure prose on the site."
-   }
-  },
-  "shadows": [
-   {
-    "name": "hairline-halo",
-    "value": "0 0 0 1px var(--grid)",
-    "purpose": "The halo around a sample point and a route hold. The only 'shadow' shape in the system."
-   },
-   {
-    "name": "current-tick",
-    "value": "inset 0 calc(-1 * var(--hairline)) 0 var(--series-2)",
-    "purpose": "The amber tick under the current nav tab, set like an active tick under an axis."
-   },
-   {
-    "name": "finish-ring",
-    "value": "0 0 0 1px var(--grid), 0 0 0 3px var(--plate-2), 0 0 0 4px var(--series-2)",
-    "purpose": "The concentric ring on the topo's finish hold, the way a plot rings its annotated point."
-   }
+  "components": [
+    {
+      "name": "Label Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "The figure world's one interactive primitive: a flat plate with a hairline border and a set label. Nav tabs, CTA buttons, footer links.",
+      "html": "<a class=\"ds-btn\" href=\"#\">GitHub</a>",
+      "css": ".ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms cubic-bezier(0.215,0.61,0.355,1), border-color 120ms ease, background-color 120ms ease; } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); color: var(--btn-label); transform: translateY(var(--btn-lift)); } .ds-btn:active { transform: none; } .ds-btn:focus-visible { outline: 2px solid var(--series-2, #E9A13B); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Label Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single amber-filled button per page. Its label is --ground, never --ink (ink on amber is 1.98:1).",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Email me</a>",
+      "css": ".ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms cubic-bezier(0.215,0.61,0.355,1), border-color 120ms ease, background-color 120ms ease; } .ds-btn-primary { --btn-label: var(--ground, #080C13); background: var(--series-2, #E9A13B); border-color: var(--series-2, #E9A13B); color: var(--btn-label); } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); color: var(--btn-label); transform: translateY(var(--btn-lift)); } .ds-btn:active { transform: none; }"
+    },
+    {
+      "name": "Current Tab Button",
+      "kind": "nav",
+      "refersTo": "button-current",
+      "description": "The current page's nav tab. Three signals, none of them colour alone: brighter fill, ink-3 boundary, and an inset amber hairline under the label like an active axis tick. Never lifts.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Primary\"><a class=\"ds-btn\" href=\"/\">Home</a><a class=\"ds-btn ds-btn-current\" href=\"/projects/\" aria-current=\"page\">Projects</a><a class=\"ds-btn\" href=\"/#contact\">Contact</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--grid, #1B293D); } .ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms ease, border-color 120ms ease; } .ds-btn-current { --btn-lift: 0px; background: var(--plate-2, #101B2A); border-color: var(--ink-3, #8295A5); box-shadow: inset 0 -1px 0 var(--series-2, #E9A13B); } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); transform: translateY(var(--btn-lift)); }"
+    },
+    {
+      "name": "Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "The figure frame and the site's primary container: a mono label naming the figure, the body, and a footnote strip under a hairline carrying provenance and the scope note.",
+      "html": "<div class=\"ds-plate\"><p class=\"ds-plate-label\">FIG. 02 · lodestone</p><p class=\"ds-plate-body\">Approximate nearest-neighbour search over 50,000 embeddings, with an HNSW graph and an IVF-PQ index behind AVX-512 distance kernels.</p><p class=\"ds-plate-footnote\">50,000 x 128-d · k=10 · single core · Xeon 8488C<br>† Not built: distributed sharding or on-disk index persistence.</p></div>",
+      "css": ".ds-plate { display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid var(--grid, #1B293D); border-radius: 2px; background: var(--plate, #0B1220); transition: transform 180ms cubic-bezier(0.215,0.61,0.355,1), border-color 180ms ease; } .ds-plate:hover { border-color: var(--ink-3, #8295A5); } .ds-plate-label { margin: 0; font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2, #9FB3C8); } .ds-plate-body { margin: 0; color: var(--ink, #EEF5F7); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1.0625rem; line-height: 1.65; max-width: 66ch; } .ds-plate-footnote { margin: 0; padding-top: 12px; border-top: 1px solid var(--grid, #1B293D); color: var(--ink-3, #8295A5); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.875rem; line-height: 1.5; overflow-wrap: anywhere; }"
+    },
+    {
+      "name": "Readout",
+      "kind": "custom",
+      "refersTo": "readout-value",
+      "description": "Measured values as value / unit / label on one left-aligned baseline, tabular figures, with as many rows as the project actually measured. Deliberately not a fixed-column grid.",
+      "html": "<div class=\"ds-readout\"><div class=\"ds-readout-row\"><span class=\"ds-readout-value\">0.976</span><span class=\"ds-readout-unit\">recall@10</span><span class=\"ds-readout-label\">HNSW, ef=32</span></div><div class=\"ds-readout-row\"><span class=\"ds-readout-value\">878</span><span class=\"ds-readout-unit\">µs</span><span class=\"ds-readout-label\">fdatasync p50</span></div></div>",
+      "css": ".ds-readout { display: flex; flex-direction: column; gap: 8px; font-variant-numeric: tabular-nums; } .ds-readout-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; } .ds-readout-value { color: var(--ink, #EEF5F7); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 1.25rem; font-weight: 600; line-height: 1.2; } .ds-readout-unit { color: var(--ink-2, #9FB3C8); font-family: ui-monospace, Menlo, monospace; font-size: 0.875rem; line-height: 1.4; } .ds-readout-label { color: var(--ink-3, #8295A5); font-family: ui-monospace, Menlo, monospace; font-size: 0.875rem; line-height: 1.4; }"
+    },
+    {
+      "name": "Axis Rule",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "A 1px rule carrying four 5px ticks — the only decorative line on the site. Opens every section the way an axis opens a plot; aria-hidden, never a heading's substitute.",
+      "html": "<div class=\"ds-axis-rule\" aria-hidden=\"true\"></div><h2 class=\"ds-axis-heading\">Featured engineering work</h2>",
+      "css": ".ds-axis-rule { position: relative; height: 5px; margin-bottom: 16px; border-top: 1px solid var(--grid, #1B293D); background-image: linear-gradient(90deg, var(--axis, #24354A) 0 1px, transparent 1px); background-repeat: repeat-x; background-size: 25% 5px; } .ds-axis-heading { margin: 0; font-family: 'Iowan Old Style', Palatino, Georgia, serif; font-size: clamp(1.75rem, 4.4vw, 2.6rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink, #EEF5F7); }"
+    },
+    {
+      "name": "Sample Point",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "One 7px atom with a hairline halo, serving chart points, timeline nodes, list bullets, route holds and the scroll scrub marker — which is what makes four pages read as one document. Blue by default, amber when annotated, ink-3 when off-route.",
+      "html": "<span class=\"ds-sample-point\"></span><span class=\"ds-sample-point ds-sample-point-annotated\"></span><span class=\"ds-sample-point ds-sample-point-off\"></span>",
+      "css": ".ds-sample-point { display: inline-block; width: 7px; height: 7px; margin-right: 12px; flex: none; border-radius: 50%; background: var(--series-1, #38BDF8); box-shadow: 0 0 0 1px var(--grid, #1B293D); } .ds-sample-point-annotated { background: var(--series-2, #E9A13B); } .ds-sample-point-off { background: var(--ink-3, #8295A5); }"
+    },
+    {
+      "name": "Callout",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Leader line plus label, exactly as the source plots annotate a knee. The site's only annotation style and the mechanism of the signature figure.",
+      "html": "<span class=\"ds-callout\">knee: ef=32 · recall 0.976 · ~31.8K q/s</span>",
+      "css": ".ds-callout { position: relative; display: inline-flex; align-items: center; gap: 8px; color: var(--series-2, #E9A13B); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.8125rem; line-height: 1.4; } .ds-callout::before { content: \"\"; width: 18px; height: 1px; flex: none; background: var(--series-2, #E9A13B); }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A label tag: quiet ink on a hairline, pill radius, no fill. Non-interactive on purpose — the hover is a barely-warmer border, because a tag that answers the pointer and does nothing on click is a false affordance. The proof variant adds a mandatory teal status dot.",
+      "html": "<span class=\"ds-chip\">Rust</span><span class=\"ds-chip ds-proof-chip\"><span class=\"ds-dot\" aria-hidden=\"true\"></span>0.976 recall@10</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--grid, #1B293D); background: var(--plate, #0B1220); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.8125rem; color: var(--ink, #EEF5F7); white-space: nowrap; transition: border-color 150ms ease, background-color 150ms ease; } .ds-chip:hover { border-color: color-mix(in srgb, var(--series-2, #E9A13B) 25%, var(--grid, #1B293D)); background: color-mix(in srgb, var(--series-2, #E9A13B) 4%, var(--plate, #0B1220)); } .ds-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--series-3, #2DD4BF); flex: none; }"
+    },
+    {
+      "name": "Data Table",
+      "kind": "custom",
+      "refersTo": "data-table-header",
+      "description": "A figure-world native for tabular or demoted content: hairline row rules, plate-2 stripes on even rows, mono uppercase headers, tabular figures, no vertical borders.",
+      "html": "<table class=\"ds-data-table\"><thead><tr><th>param</th><th>recall@10</th><th>q/s</th></tr></thead><tbody><tr><td>ef=64</td><td class=\"ds-num\">0.9964</td><td class=\"ds-num\">20,946</td></tr><tr><td>ef=32</td><td class=\"ds-num\">0.9759</td><td class=\"ds-num\">31,845</td></tr><tr><td>ef=16</td><td class=\"ds-num\">0.8996</td><td class=\"ds-num\">47,335</td></tr></tbody></table>",
+      "css": ".ds-data-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.875rem; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-data-table th, .ds-data-table td { padding: 8px 12px; border-bottom: 1px solid var(--grid, #1B293D); text-align: left; vertical-align: baseline; } .ds-data-table th { color: var(--ink-2, #9FB3C8); font-family: ui-monospace, Menlo, monospace; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; } .ds-data-table td { color: var(--ink, #EEF5F7); } .ds-data-table tbody tr:nth-child(even) { background: var(--plate-2, #101B2A); } .ds-num { font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }"
+    },
+    {
+      "name": "Hero Readout Rail",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The fold-level proof: three repos, one measured cell each, on hairline rows. It must read and click with the figure ignored entirely — the repo name is the amber link, the value is ink, the unit is quiet.",
+      "html": "<div class=\"ds-hero-readout\" role=\"list\"><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">parallax-kv</a><span class=\"ds-hero-value\">2.9M</span><span class=\"ds-hero-unit\">client operations checked</span></div><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">accretion-db</a><span class=\"ds-hero-value\">878 µs</span><span class=\"ds-hero-unit\">fdatasync p50</span></div><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">lodestone</a><span class=\"ds-hero-value\">0.976</span><span class=\"ds-hero-unit\">recall@10</span></div></div>",
+      "css": ".ds-hero-readout { display: flex; flex-direction: column; max-width: 520px; font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; } .ds-hero-row { display: grid; grid-template-columns: minmax(112px, auto) minmax(64px, auto) minmax(0, 1fr); align-items: baseline; column-gap: 16px; padding: 8px 0; border-top: 1px solid var(--grid, #1B293D); } .ds-hero-row:last-child { border-bottom: 1px solid var(--grid, #1B293D); } .ds-hero-repo { font-size: 0.875rem; color: var(--series-2, #E9A13B); text-decoration-thickness: 1px; text-underline-offset: 2px; transition: text-decoration-thickness 120ms ease; } .ds-hero-repo:hover, .ds-hero-repo:focus-visible { text-decoration-thickness: 2px; text-underline-offset: 3px; } .ds-hero-value { color: var(--ink, #EEF5F7); font-size: 1rem; font-weight: 600; text-align: right; } .ds-hero-unit { color: var(--ink-3, #8295A5); font-size: 0.8125rem; }"
+    }
   ],
-  "motion": [
-   {
-    "name": "t-tap",
-    "value": "120ms",
-    "purpose": "Button lift, border colour, crosshair transition, link colour."
-   },
-   {
-    "name": "t-hover",
-    "value": "180ms",
-    "purpose": "Card lift, timeline node scale, modal panel."
-   },
-   {
-    "name": "t-reveal",
-    "value": "300ms",
-    "purpose": "The scroll-reveal fade \u2014 the only load-time motion, gated on the .js root class AND prefers-reduced-motion: no-preference."
-   },
-   {
-    "name": "ease-out",
-    "value": "cubic-bezier(0.215, 0.61, 0.355, 1)",
-    "purpose": "Default easing. No overshoot easing anywhere: this system highlights samples, it does not squash toys."
-   },
-   {
-    "name": "keyframes",
-    "value": "none",
-    "purpose": "The stylesheet declares no keyframes at all. One animated moment on the site (the user-driven crosshair); everything else is a transition on an interaction."
-   }
-  ],
-  "breakpoints": [
-   {
-    "name": "tiny",
-    "value": "359px",
-    "note": "Nav brand hides; the tab row's left edge becomes the page's alignment anchor."
-   },
-   {
-    "name": "xs",
-    "value": "379px",
-    "note": "Tab padding/gap tighten again to hold a >=12px right gutter."
-   },
-   {
-    "name": "sm",
-    "value": "479px",
-    "note": "Nav gap and tab padding tighten again. The off-ladder 20px system-plate padding that used to sit here was deleted 2026-08-02; the single mobile plate pad is the 16px step at 639px. Container gutter drops to 16px at 480px."
-   },
-   {
-    "name": "mobile",
-    "value": "639px",
-    "note": "--section-gap drops to 48px; plate padding 16px; wordmark and box diagrams hide."
-   },
-   {
-    "name": "md",
-    "value": "767px",
-    "note": "--section-gap 64px; card grids go two-column at 768px; 44px title tap padding below."
-   },
-   {
-    "name": "lg",
-    "value": "1023px",
-    "note": "System plates and the About layout go two-column at 1024px."
-   },
-   {
-    "name": "xl",
-    "value": "1200px",
-    "note": "Hero splits 46/54 identity-to-figure."
-   }
-  ],
-  "figureNumbering": {
-   "rule": "Figure numbers belong to objects that genuinely are figures. Five FIG. labels are a system; nine are a costume.",
-   "shipped": [
-    "FIG. 00 \u00b7 boulder topo",
-    "FIG. 01 \u00b7 lodestone recall vs throughput",
-    "FIG. 02\u201304 \u00b7 the three system plates",
-    "FIG. 404 \u00b7 the not-found empty plate"
-   ],
-   "excluded": [
-    "About",
-    "Education",
-    "Skills",
-    "the contact band"
-   ]
-  },
-  "print": {
-   "strategy": "Full token remap to paper, not a hidden stylesheet.",
-   "remap": {
-    "--ground": "#ffffff",
-    "--plate": "#ffffff",
-    "--plate-2": "#f2f4f7",
-    "--grid": "#c4ccd4",
-    "--axis": "#6b7885",
-    "--ink": "#10161d",
-    "--ink-2": "#414d59",
-    "--ink-3": "#55606b",
-    "--series-1": "#0b3a6b",
-    "--series-2": "#8a5a00",
-    "--series-3": "#2f7d4f"
-   },
-   "notes": [
-    "Button print overrides use fixed values (#ffffff / #0b3a6b / #6b7885), not tokens, so no later :root remap can re-introduce the measured 1.59\u20131.86:1 cold-load collision.",
-    "The hero collapses to one column so the vacated figure column does not print blank.",
-    "Every revealable block is forced visible, because IntersectionObserver never fires when printing from a fresh load.",
-    "Injected chrome (progress rail, legend swatch, modal, drawn figures, box diagrams) is hidden."
-   ]
-  },
-  "gates": {
-   "note": "The gates are part of the design system: a visual rule that cannot survive them is not shipped.",
-   "items": [
-    "scripts/check-facts.mjs \u2014 required/forbidden string gate, runs on every build. Axis labels are decimals and curve coordinates are literal d=\"\u2026\" attributes because of it.",
-    "verify.mjs \u2014 dark-surface luminance ceiling (0.05), caption/figure non-overlap at all three viewports, primary-CTA contrast >=4.5:1 at rest AND hovered, both prefers-reduced-motion queries present in the built CSS, frozen nav height and progress-rail geometry.",
-    "A separate private confidentiality scan runs before anything is pushed."
-   ]
+  "narrative": {
+    "northStar": "The Measurement Report",
+    "overview": "The site is set like a figure in a benchmark report, not like a portfolio. Every claim appears inside a plate that names itself, states its measurement conditions, and carries its limits as a footnote under a hairline. The palette was sampled from the benchmark plots committed in the featured repositories (amber darkened for contrast), so the world is not a theme applied to the work — it is the work's own drawing conventions promoted to page furniture. Density is high but never crowded: content sits on hairlines rather than in boxes-within-boxes, and separation is always a 1px rule.\n\nThe register is austere and instrumental. Surfaces are three near-black tones apart by a few points of luminance; type carries the hierarchy; saturated colour is rationed to two jobs and nothing else. Restraint here is a load-bearing claim — a page that spends its loudest colour on an intro course list is asserting that the course list is the evidence. The named failure mode of this world is reading unfinished rather than restrained: any gap, orphan, or unaligned edge is a bug in the spacing or type system, not a taste debate.\n\nThe confirmed rejection is the decorated-résumé default: a hero of name plus mono eyebrow plus serif aphorism plus four buttons over a decorative canvas, with the proof pushed below the fold. There is no aphorism slot, no decorative wallpaper, and no symmetric stat grid — metric counts vary (3 / 2 / 2) because a fixed count reads as a schema filled in rather than a measurement taken.",
+    "keyCharacteristics": [
+      "Three near-black surfaces (ground / plate / plate-2), two hairline greys, a three-step ink ramp, three series colours.",
+      "Blue is data and lives only inside figures; amber is every interaction and every human annotation.",
+      "Seven primitives borrowed wholesale from plots: plate, axis rule, readout, sample point, callout, data table, label button.",
+      "One shadow in the system, and it is a hairline.",
+      "One animated moment, and it is user-driven.",
+      "Figure numbers only on objects that are genuinely figures."
+    ],
+    "rules": [
+      {
+        "name": "The Blue-Is-Data, Amber-Is-Interaction Rule",
+        "body": "--series-1 may appear only inside a figure, where the source plots already put it. Everything a reader can click, focus, or scrub is --series-2. No third meaning for either colour, ever.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ground-On-Amber Rule",
+        "body": "An amber fill takes a --ground label. There is no exception and no lighter amber that changes this; the 1.98:1 alternative is a measured invisible-CTA defect that the build carries a gate against.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Jobs Rule",
+        "body": "Saturated colour is spent on evidence and on affordances. Content that is metadata — coursework, skills, tech tags — is set in --ink-2 / --ink-3 on a hairline, never coloured to look important.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fourteen-Pixel Floor Rule",
+        "body": "Nothing set in --ink-3 goes below 14px. Tick labels at 11px and plate labels at 12px are set in --ink-2 or brighter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Rank Rule",
+        "body": "A section declares its rank and the heading size moves with the gap above it. Five identically-sized headings over five identical pads is the generated-page fingerprint; rank-1 opens a page, everything supporting it is rank-2.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Any element that shows a measured number carries the mono family and font-variant-numeric: tabular-nums. Numbers in this world line up.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline-Only Rule",
+        "body": "The only shadow in this system is a hairline. If a box-shadow has a blur radius or an alpha, it does not belong here.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Border-Not-Blur Rule",
+        "body": "State is signalled by the boundary going amber plus a 1px translate, at most. Cards move 2px, buttons 1px, and pressing removes the lift entirely.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep --series-1 inside figures and make every clickable, focusable, or scrubbable thing --series-2.",
+      "Do put a --ground label on any amber fill.",
+      "Do wrap a measured claim in a plate, with its conditions and its limits in the footnote strip.",
+      "Do number a figure only when the object genuinely is one. The build ships five: FIG. 00 (boulder topo), FIG. 01 (the Sweep), FIG. 02–04 (the three system plates), plus FIG. 404 on the not-found page. About, Education, and Skills get typographic rank instead — five FIG. labels are a system, nine are a costume.",
+      "Do vary the number of readout rows with the evidence (3 / 2 / 2 as shipped).",
+      "Do state a section's rank so the heading size and the gap above it move together.",
+      "Do use --section-gap for section separation and the 4→96px ladder for everything else.",
+      "Do set every measured number in mono with tabular figures, and keep footnotes at 14px or larger.",
+      "Do write a hover state once, at one specificity, with the label colour restated from the variant's own custom property.",
+      "Do keep proof in the markup. If it only exists after a pointermove, a hover, a scroll, or a bundle load, it is not proof.",
+      "Do remap the palette to paper under @media print, with fixed-value overrides on the button primitive so no later :root remap can re-introduce a low-contrast collision.",
+      "Do let a figure pan on narrow screens rather than shrinking its labels below legibility, and start the pan at the annotated end.",
+      "Do treat the build gates as part of the design system: the fact gate, and verify.mjs's dark-surface luminance ceiling, caption/figure non-overlap assertion, and primary-CTA contrast assertion at rest and hovered."
+    ],
+    "donts": [
+      "Don't give --series-1 an interactive role, or give amber a data role.",
+      "Don't put --ink on an amber fill (1.98:1).",
+      "Don't set --ink-3 below 14px.",
+      "Don't add a blurred or alpha box-shadow. The only shadow is a hairline; the three existing box-shadow uses are hairline halos, rings, and the active-tab tick.",
+      "Don't use a gradient to fill a surface. Gradients here generate evenly spaced hairline ticks and nothing else.",
+      "Don't introduce a second radius. 2px for everything rectangular, the pill only for non-interactive chips and the timeline group label.",
+      "Don't add a second :hover rule for the label button, and don't qualify one with :not() — that is the exact shape of the invisible-CTA defect this system was rebuilt around.",
+      "Don't add an entrance animation or a keyframe. The stylesheet declares no keyframes at all; the site is entitled to one animated moment and the crosshair has it.",
+      "Don't let anything revealable start hidden under prefers-reduced-motion: reduce, and don't place a revealable element inside a display:none container.",
+      "Don't put a figure number on About, Education, Skills, or the contact band.",
+      "Don't build a fixed-column metric grid to hold varying evidence.",
+      "Don't colour metadata — coursework, skills, tech tags — to compete with evidence.",
+      "Don't set padding shorthand on .hero, .page-head, or .not-found: they share their element with .container, and a shorthand zeroes the page's horizontal gutter.",
+      "Don't change the nav's 64px height or the progress rail's box, and don't un-hide the brand below 360px — the tab row's left edge is an alignment anchor there."
+    ]
   }
- },
- "components": [
-  {
-   "name": "Label Button",
-   "kind": "button",
-   "refersTo": "button",
-   "description": "The figure world's one interactive primitive: a flat plate with a hairline border and a set label. Nav tabs, CTA buttons, footer links.",
-   "html": "<a class=\"ds-btn\" href=\"#\">GitHub</a>",
-   "css": ".ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms cubic-bezier(0.215,0.61,0.355,1), border-color 120ms ease, background-color 120ms ease; } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); color: var(--btn-label); transform: translateY(var(--btn-lift)); } .ds-btn:active { transform: none; } .ds-btn:focus-visible { outline: 2px solid var(--series-2, #E9A13B); outline-offset: 2px; }"
-  },
-  {
-   "name": "Primary Label Button",
-   "kind": "button",
-   "refersTo": "button-primary",
-   "description": "The single amber-filled button per page. Its label is --ground, never --ink (ink on amber is 1.98:1).",
-   "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Email me</a>",
-   "css": ".ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms cubic-bezier(0.215,0.61,0.355,1), border-color 120ms ease, background-color 120ms ease; } .ds-btn-primary { --btn-label: var(--ground, #080C13); background: var(--series-2, #E9A13B); border-color: var(--series-2, #E9A13B); color: var(--btn-label); } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); color: var(--btn-label); transform: translateY(var(--btn-lift)); } .ds-btn:active { transform: none; }"
-  },
-  {
-   "name": "Current Tab Button",
-   "kind": "nav",
-   "refersTo": "button-current",
-   "description": "The current page's nav tab. Three signals, none of them colour alone: brighter fill, ink-3 boundary, and an inset amber hairline under the label like an active axis tick. Never lifts.",
-   "html": "<nav class=\"ds-nav\" aria-label=\"Primary\"><a class=\"ds-btn\" href=\"/\">Home</a><a class=\"ds-btn ds-btn-current\" href=\"/projects/\" aria-current=\"page\">Projects</a><a class=\"ds-btn\" href=\"/#contact\">Contact</a></nav>",
-   "css": ".ds-nav { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--grid, #1B293D); } .ds-btn { --btn-lift: -1px; --btn-label: var(--ink, #EEF5F7); display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 10px 16px; border-radius: 2px; background: var(--plate, #0B1220); color: var(--btn-label); border: 1px solid var(--grid, #1B293D); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none; transition: transform 120ms ease, border-color 120ms ease; } .ds-btn-current { --btn-lift: 0px; background: var(--plate-2, #101B2A); border-color: var(--ink-3, #8295A5); box-shadow: inset 0 -1px 0 var(--series-2, #E9A13B); } .ds-btn:hover, .ds-btn:focus-visible { border-color: var(--series-2, #E9A13B); transform: translateY(var(--btn-lift)); }"
-  },
-  {
-   "name": "Plate",
-   "kind": "card",
-   "refersTo": "plate",
-   "description": "The figure frame and the site's primary container: a mono label naming the figure, the body, and a footnote strip under a hairline carrying provenance and the scope note.",
-   "html": "<div class=\"ds-plate\"><p class=\"ds-plate-label\">FIG. 02 \u00b7 lodestone</p><p class=\"ds-plate-body\">Approximate nearest-neighbour search over 50,000 embeddings, with an HNSW graph and an IVF-PQ index behind AVX-512 distance kernels.</p><p class=\"ds-plate-footnote\">50,000 x 128-d \u00b7 k=10 \u00b7 single core \u00b7 Xeon 8488C<br>\u2020 Not built: distributed sharding or on-disk index persistence.</p></div>",
-   "css": ".ds-plate { display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid var(--grid, #1B293D); border-radius: 2px; background: var(--plate, #0B1220); transition: transform 180ms cubic-bezier(0.215,0.61,0.355,1), border-color 180ms ease; } .ds-plate:hover { border-color: var(--ink-3, #8295A5); } .ds-plate-label { margin: 0; font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2, #9FB3C8); } .ds-plate-body { margin: 0; color: var(--ink, #EEF5F7); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 1.0625rem; line-height: 1.65; max-width: 66ch; } .ds-plate-footnote { margin: 0; padding-top: 12px; border-top: 1px solid var(--grid, #1B293D); color: var(--ink-3, #8295A5); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.875rem; line-height: 1.5; overflow-wrap: anywhere; }"
-  },
-  {
-   "name": "Readout",
-   "kind": "custom",
-   "refersTo": "readout-value",
-   "description": "Measured values as value / unit / label on one left-aligned baseline, tabular figures, with as many rows as the project actually measured. Deliberately not a fixed-column grid.",
-   "html": "<div class=\"ds-readout\"><div class=\"ds-readout-row\"><span class=\"ds-readout-value\">0.976</span><span class=\"ds-readout-unit\">recall@10</span><span class=\"ds-readout-label\">HNSW, ef=32</span></div><div class=\"ds-readout-row\"><span class=\"ds-readout-value\">878</span><span class=\"ds-readout-unit\">\u00b5s</span><span class=\"ds-readout-label\">fdatasync p50</span></div></div>",
-   "css": ".ds-readout { display: flex; flex-direction: column; gap: 8px; font-variant-numeric: tabular-nums; } .ds-readout-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; } .ds-readout-value { color: var(--ink, #EEF5F7); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 1.25rem; font-weight: 600; line-height: 1.2; } .ds-readout-unit { color: var(--ink-2, #9FB3C8); font-family: ui-monospace, Menlo, monospace; font-size: 0.875rem; line-height: 1.4; } .ds-readout-label { color: var(--ink-3, #8295A5); font-family: ui-monospace, Menlo, monospace; font-size: 0.875rem; line-height: 1.4; }"
-  },
-  {
-   "name": "Axis Rule",
-   "kind": "custom",
-   "refersTo": null,
-   "description": "A 1px rule carrying four 5px ticks \u2014 the only decorative line on the site. Opens every section the way an axis opens a plot; aria-hidden, never a heading's substitute.",
-   "html": "<div class=\"ds-axis-rule\" aria-hidden=\"true\"></div><h2 class=\"ds-axis-heading\">Featured engineering work</h2>",
-   "css": ".ds-axis-rule { position: relative; height: 5px; margin-bottom: 16px; border-top: 1px solid var(--grid, #1B293D); background-image: linear-gradient(90deg, var(--axis, #24354A) 0 1px, transparent 1px); background-repeat: repeat-x; background-size: 25% 5px; } .ds-axis-heading { margin: 0; font-family: 'Iowan Old Style', Palatino, Georgia, serif; font-size: clamp(1.75rem, 4.4vw, 2.6rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink, #EEF5F7); }"
-  },
-  {
-   "name": "Sample Point",
-   "kind": "custom",
-   "refersTo": null,
-   "description": "One 7px atom with a hairline halo, serving chart points, timeline nodes, list bullets, route holds and the scroll scrub marker \u2014 which is what makes four pages read as one document. Blue by default, amber when annotated, ink-3 when off-route.",
-   "html": "<span class=\"ds-sample-point\"></span><span class=\"ds-sample-point ds-sample-point-annotated\"></span><span class=\"ds-sample-point ds-sample-point-off\"></span>",
-   "css": ".ds-sample-point { display: inline-block; width: 7px; height: 7px; margin-right: 12px; flex: none; border-radius: 50%; background: var(--series-1, #38BDF8); box-shadow: 0 0 0 1px var(--grid, #1B293D); } .ds-sample-point-annotated { background: var(--series-2, #E9A13B); } .ds-sample-point-off { background: var(--ink-3, #8295A5); }"
-  },
-  {
-   "name": "Callout",
-   "kind": "custom",
-   "refersTo": null,
-   "description": "Leader line plus label, exactly as the source plots annotate a knee. The site's only annotation style and the mechanism of the signature figure.",
-   "html": "<span class=\"ds-callout\">knee: ef=32 \u00b7 recall 0.976 \u00b7 ~31.8K q/s</span>",
-   "css": ".ds-callout { position: relative; display: inline-flex; align-items: center; gap: 8px; color: var(--series-2, #E9A13B); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.8125rem; line-height: 1.4; } .ds-callout::before { content: \"\"; width: 18px; height: 1px; flex: none; background: var(--series-2, #E9A13B); }"
-  },
-  {
-   "name": "Chip",
-   "kind": "chip",
-   "refersTo": "chip",
-   "description": "A label tag: quiet ink on a hairline, pill radius, no fill. Non-interactive on purpose \u2014 the hover is a barely-warmer border, because a tag that answers the pointer and does nothing on click is a false affordance. The proof variant adds a mandatory teal status dot.",
-   "html": "<span class=\"ds-chip\">Rust</span><span class=\"ds-chip ds-proof-chip\"><span class=\"ds-dot\" aria-hidden=\"true\"></span>0.976 recall@10</span>",
-   "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--grid, #1B293D); background: var(--plate, #0B1220); font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 0.8125rem; color: var(--ink, #EEF5F7); white-space: nowrap; transition: border-color 150ms ease, background-color 150ms ease; } .ds-chip:hover { border-color: color-mix(in srgb, var(--series-2, #E9A13B) 25%, var(--grid, #1B293D)); background: color-mix(in srgb, var(--series-2, #E9A13B) 4%, var(--plate, #0B1220)); } .ds-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--series-3, #2DD4BF); flex: none; }"
-  },
-  {
-   "name": "Data Table",
-   "kind": "custom",
-   "refersTo": "data-table-header",
-   "description": "A figure-world native for tabular or demoted content: hairline row rules, plate-2 stripes on even rows, mono uppercase headers, tabular figures, no vertical borders.",
-   "html": "<table class=\"ds-data-table\"><thead><tr><th>param</th><th>recall@10</th><th>q/s</th></tr></thead><tbody><tr><td>ef=64</td><td class=\"ds-num\">0.9964</td><td class=\"ds-num\">20,946</td></tr><tr><td>ef=32</td><td class=\"ds-num\">0.9759</td><td class=\"ds-num\">31,845</td></tr><tr><td>ef=16</td><td class=\"ds-num\">0.8996</td><td class=\"ds-num\">47,335</td></tr></tbody></table>",
-   "css": ".ds-data-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.875rem; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-data-table th, .ds-data-table td { padding: 8px 12px; border-bottom: 1px solid var(--grid, #1B293D); text-align: left; vertical-align: baseline; } .ds-data-table th { color: var(--ink-2, #9FB3C8); font-family: ui-monospace, Menlo, monospace; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; } .ds-data-table td { color: var(--ink, #EEF5F7); } .ds-data-table tbody tr:nth-child(even) { background: var(--plate-2, #101B2A); } .ds-num { font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }"
-  },
-  {
-   "name": "Hero Readout Rail",
-   "kind": "custom",
-   "refersTo": null,
-   "description": "The fold-level proof: three repos, one measured cell each, on hairline rows. It must read and click with the figure ignored entirely \u2014 the repo name is the amber link, the value is ink, the unit is quiet.",
-   "html": "<div class=\"ds-hero-readout\" role=\"list\"><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">parallax-kv</a><span class=\"ds-hero-value\">2.9M</span><span class=\"ds-hero-unit\">client operations checked</span></div><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">accretion-db</a><span class=\"ds-hero-value\">878 \u00b5s</span><span class=\"ds-hero-unit\">fdatasync p50</span></div><div class=\"ds-hero-row\" role=\"listitem\"><a class=\"ds-hero-repo\" href=\"#\">lodestone</a><span class=\"ds-hero-value\">0.976</span><span class=\"ds-hero-unit\">recall@10</span></div></div>",
-   "css": ".ds-hero-readout { display: flex; flex-direction: column; max-width: 520px; font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; } .ds-hero-row { display: grid; grid-template-columns: minmax(112px, auto) minmax(64px, auto) minmax(0, 1fr); align-items: baseline; column-gap: 16px; padding: 8px 0; border-top: 1px solid var(--grid, #1B293D); } .ds-hero-row:last-child { border-bottom: 1px solid var(--grid, #1B293D); } .ds-hero-repo { font-size: 0.875rem; color: var(--series-2, #E9A13B); text-decoration-thickness: 1px; text-underline-offset: 2px; transition: text-decoration-thickness 120ms ease; } .ds-hero-repo:hover, .ds-hero-repo:focus-visible { text-decoration-thickness: 2px; text-underline-offset: 3px; } .ds-hero-value { color: var(--ink, #EEF5F7); font-size: 1rem; font-weight: 600; text-align: right; } .ds-hero-unit { color: var(--ink-3, #8295A5); font-size: 0.8125rem; }"
-  }
- ],
- "narrative": {
-  "northStar": "The Measurement Report",
-  "overview": "The site is set like a figure in a benchmark report, not like a portfolio. Every claim appears inside a plate that names itself, states its measurement conditions, and carries its limits as a footnote under a hairline. The palette was sampled from the benchmark plots committed in the featured repositories (amber darkened for contrast), so the world is not a theme applied to the work \u2014 it is the work's own drawing conventions promoted to page furniture. Density is high but never crowded: content sits on hairlines rather than in boxes-within-boxes, and separation is always a 1px rule.\n\nThe register is austere and instrumental. Surfaces are three near-black tones apart by a few points of luminance; type carries the hierarchy; saturated colour is rationed to two jobs and nothing else. Restraint here is a load-bearing claim \u2014 a page that spends its loudest colour on an intro course list is asserting that the course list is the evidence. The named failure mode of this world is reading unfinished rather than restrained: any gap, orphan, or unaligned edge is a bug in the spacing or type system, not a taste debate.\n\nThe confirmed rejection is the decorated-r\u00e9sum\u00e9 default: a hero of name plus mono eyebrow plus serif aphorism plus four buttons over a decorative canvas, with the proof pushed below the fold. There is no aphorism slot, no decorative wallpaper, and no symmetric stat grid \u2014 metric counts vary (3 / 2 / 2) because a fixed count reads as a schema filled in rather than a measurement taken.",
-  "keyCharacteristics": [
-   "Three near-black surfaces (ground / plate / plate-2), two hairline greys, a three-step ink ramp, three series colours.",
-   "Blue is data and lives only inside figures; amber is every interaction and every human annotation.",
-   "Seven primitives borrowed wholesale from plots: plate, axis rule, readout, sample point, callout, data table, label button.",
-   "One shadow in the system, and it is a hairline.",
-   "One animated moment, and it is user-driven.",
-   "Figure numbers only on objects that are genuinely figures."
-  ],
-  "rules": [
-   {
-    "name": "The Blue-Is-Data, Amber-Is-Interaction Rule",
-    "body": "--series-1 may appear only inside a figure, where the source plots already put it. Everything a reader can click, focus, or scrub is --series-2. No third meaning for either colour, ever.",
-    "section": "colors"
-   },
-   {
-    "name": "The Ground-On-Amber Rule",
-    "body": "An amber fill takes a --ground label. There is no exception and no lighter amber that changes this; the 1.98:1 alternative is a measured invisible-CTA defect that the build carries a gate against.",
-    "section": "colors"
-   },
-   {
-    "name": "The Two-Jobs Rule",
-    "body": "Saturated colour is spent on evidence and on affordances. Content that is metadata \u2014 coursework, skills, tech tags \u2014 is set in --ink-2 / --ink-3 on a hairline, never coloured to look important.",
-    "section": "colors"
-   },
-   {
-    "name": "The Fourteen-Pixel Floor Rule",
-    "body": "Nothing set in --ink-3 goes below 14px. Tick labels at 11px and plate labels at 12px are set in --ink-2 or brighter.",
-    "section": "typography"
-   },
-   {
-    "name": "The Rank Rule",
-    "body": "A section declares its rank and the heading size moves with the gap above it. Five identically-sized headings over five identical pads is the generated-page fingerprint; rank-1 opens a page, everything supporting it is rank-2.",
-    "section": "typography"
-   },
-   {
-    "name": "The Tabular Rule",
-    "body": "Any element that shows a measured number carries the mono family and font-variant-numeric: tabular-nums. Numbers in this world line up.",
-    "section": "typography"
-   },
-   {
-    "name": "The Hairline-Only Rule",
-    "body": "The only shadow in this system is a hairline. If a box-shadow has a blur radius or an alpha, it does not belong here.",
-    "section": "elevation"
-   },
-   {
-    "name": "The Border-Not-Blur Rule",
-    "body": "State is signalled by the boundary going amber plus a 1px translate, at most. Cards move 2px, buttons 1px, and pressing removes the lift entirely.",
-    "section": "elevation"
-   }
-  ],
-  "dos": [
-   "Do keep --series-1 inside figures and make every clickable, focusable, or scrubbable thing --series-2.",
-   "Do put a --ground label on any amber fill.",
-   "Do wrap a measured claim in a plate, with its conditions and its limits in the footnote strip.",
-   "Do number a figure only when the object genuinely is one. The build ships five: FIG. 00 (boulder topo), FIG. 01 (the Sweep), FIG. 02\u201304 (the three system plates), plus FIG. 404 on the not-found page. About, Education, and Skills get typographic rank instead \u2014 five FIG. labels are a system, nine are a costume.",
-   "Do vary the number of readout rows with the evidence (3 / 2 / 2 as shipped).",
-   "Do state a section's rank so the heading size and the gap above it move together.",
-   "Do use --section-gap for section separation and the 4\u219296px ladder for everything else.",
-   "Do set every measured number in mono with tabular figures, and keep footnotes at 14px or larger.",
-   "Do write a hover state once, at one specificity, with the label colour restated from the variant's own custom property.",
-   "Do keep proof in the markup. If it only exists after a pointermove, a hover, a scroll, or a bundle load, it is not proof.",
-   "Do remap the palette to paper under @media print, with fixed-value overrides on the button primitive so no later :root remap can re-introduce a low-contrast collision.",
-   "Do let a figure pan on narrow screens rather than shrinking its labels below legibility, and start the pan at the annotated end.",
-   "Do treat the build gates as part of the design system: the fact gate, and verify.mjs's dark-surface luminance ceiling, caption/figure non-overlap assertion, and primary-CTA contrast assertion at rest and hovered."
-  ],
-  "donts": [
-   "Don't give --series-1 an interactive role, or give amber a data role.",
-   "Don't put --ink on an amber fill (1.98:1).",
-   "Don't set --ink-3 below 14px.",
-   "Don't add a blurred or alpha box-shadow. The only shadow is a hairline; the three existing box-shadow uses are hairline halos, rings, and the active-tab tick.",
-   "Don't use a gradient to fill a surface. Gradients here generate evenly spaced hairline ticks and nothing else.",
-   "Don't introduce a second radius. 2px for everything rectangular, the pill only for non-interactive chips and the timeline group label.",
-   "Don't add a second :hover rule for the label button, and don't qualify one with :not() \u2014 that is the exact shape of the invisible-CTA defect this system was rebuilt around.",
-   "Don't add an entrance animation or a keyframe. The stylesheet declares no keyframes at all; the site is entitled to one animated moment and the crosshair has it.",
-   "Don't let anything revealable start hidden under prefers-reduced-motion: reduce, and don't place a revealable element inside a display:none container.",
-   "Don't put a figure number on About, Education, Skills, or the contact band.",
-   "Don't build a fixed-column metric grid to hold varying evidence.",
-   "Don't colour metadata \u2014 coursework, skills, tech tags \u2014 to compete with evidence.",
-   "Don't set padding shorthand on .hero, .page-head, or .not-found: they share their element with .container, and a shorthand zeroes the page's horizontal gutter.",
-   "Don't change the nav's 64px height or the progress rail's box, and don't un-hide the brand below 360px \u2014 the tab row's left edge is an alignment anchor there."
-  ]
- }
 }
