@@ -55,7 +55,7 @@ export const SWEEP_SAMPLES: readonly SweepSample[] = [
 export const SWEEP_KNEE: SweepSample = SWEEP_SAMPLES[8];
 
 /** The exact brute-force baseline, and its own disclosure. It runs across all
- *  48 cores while every sample above runs on one, so the two sides of any ratio
+ *  48 vCPU while every sample above runs on one, so the two sides of any ratio
  *  between them are not core-for-core. */
 export const SWEEP_ORACLE = {
   qps: "971",
@@ -262,7 +262,7 @@ export const SWEEP_SVG = `<svg class="sweep-plot" viewBox="0 0 680 360" role="im
   <!-- the oracle: the thing the index is being compared against -->
   <g class="sweep-oracle">
     <path d="M 121.6 69.2 L 133.6 69.2 M 127.6 63.2 L 127.6 75.2" />
-    <text x="138.6" y="64">oracle · 971 q/s exact · 48 cores</text>
+    <text x="138.6" y="64">oracle · 971 q/s exact · 48 vCPU</text>
   </g>
 
   <!-- the two strokes: solid is HNSW sweeping ef, dashed is IVF-PQ sweeping
@@ -309,7 +309,7 @@ export const SWEEP_SVG = `<svg class="sweep-plot" viewBox="0 0 680 360" role="im
     </g>
     <g class="sweep-sample sweep-sample-hnsw" data-sweep-x="414" data-sweep-y="69.2" data-sweep-readout="ef=128 · recall 1.0000 · 13,514 q/s · single core">
       <circle cx="414" cy="69.2" r="4" />
-      <text class="sweep-label-start" x="422" y="60.7">ef=128</text>
+      <text x="414" y="59.1">ef=128</text>
     </g>
     <g class="sweep-sample sweep-sample-hnsw" data-sweep-x="461.7" data-sweep-y="70.7" data-sweep-readout="ef=64 · recall 0.9964 · 20,946 q/s · single core">
       <circle cx="461.7" cy="70.7" r="4" />

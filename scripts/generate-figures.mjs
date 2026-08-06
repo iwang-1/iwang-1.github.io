@@ -501,11 +501,11 @@ const refY = py(REFERENCE_RECALL);
 // a second list would be a second thing to keep true.
 const LEGEND_X = FIELD.x0 + 6;
 const LEGEND_LABEL_X = FIELD.x0 + 26;
-// The legend's three rows. The oracle row does NOT carry the "all 48 cores"
+// The legend's three rows. The oracle row does NOT carry the "all 48 vCPU"
 // disclosure, and that is not a quiet drop: at this face's width that string ran
 // into the title block, and the collision assertion below refused to generate
 // rather than print them on top of each other. The disclosure moved to the marker
-// it describes — the in-plot oracle annotation reads "· 48 cores" beside the
+// it describes — the in-plot oracle annotation reads "· 48 vCPU" beside the
 // number itself, which is where it belongs anyway. It is also in the plate's
 // footnote and in the project's provenance line. Nothing was lost.
 const LEGEND_ROWS = [
@@ -538,7 +538,13 @@ const BLOCK = {
   y1: FIELD.y1 - 1,
 };
 const REF_LABEL_X = FIELD.x0 + 8;
-const ORACLE_LABEL = `oracle · ${group(oracleQps)} q/s exact · 48 cores`;
+// "48 vCPU", not "48 cores": the benchmark header this file parses reads
+// "Intel(R) Xeon(R) Platinum 8488C, 48 vCPU", and the generated module already
+// carries that exact string as `host`. Writing "cores" beside it made one file
+// state the host two ways, and the distinction is not pedantic here — the whole
+// point of this label is the core-parity caveat, so the unit in it should be the
+// one the machine actually reported.
+const ORACLE_LABEL = `oracle · ${group(oracleQps)} q/s exact · 48 vCPU`;
 
 // THE ANNOTATION's two lines. Split as two explicit strings rather than by
 // breaking the template mid-sentence: the first render read "recall 0.9759 ·31,845
@@ -1100,7 +1106,7 @@ export const SWEEP_KNEE: SweepSample = SWEEP_SAMPLES[${samples.findIndex(
 )}];
 
 /** The exact brute-force baseline, and its own disclosure. It runs across all
- *  48 cores while every sample above runs on one, so the two sides of any ratio
+ *  48 vCPU while every sample above runs on one, so the two sides of any ratio
  *  between them are not core-for-core. */
 export const SWEEP_ORACLE = {
   qps: ${tsLiteral(oracleQps)},

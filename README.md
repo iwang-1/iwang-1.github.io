@@ -39,7 +39,7 @@ Two rules make it cohere, and they pull in opposite directions on purpose:
 | --- | --- | --- |
 | `/` | `index.html` | `src/pages/home/main.tsx` — hero (readout rail), Outside of work (`#off-hours`: the drawn keyboard, the boulder, a follow list), Featured engineering work (`#systems`: three spec sheets + the recall-curve figure), Background (`#background` / `#education` / `#skills`) |
 | `/experience/` | `experience/index.html` | `src/pages/experience/main.tsx` — center-spine alternating timeline: 4 engineering + 3 community & teaching roles |
-| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — three system spec sheets (parallax-kv, accretion-db, lodestone), then the selected projects |
+| `/projects/` | `projects/index.html` | `src/pages/projects/main.tsx` — three system spec sheets under "Built from scratch" (parallax-kv, accretion-db, lodestone), then "More projects" |
 | `/404.html` | `404.html` | `src/pages/not-found/main.tsx` — branded not-found (GitHub Pages serves it natively; `noindex`) |
 
 The hobbies come before the work by owner call: personality first, then proof.

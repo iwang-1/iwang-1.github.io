@@ -193,7 +193,14 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
     proof:
-      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety or linearizability violations.",
+      // "zero Porcupine Illegal verdicts", NOT "zero linearizability violations".
+      // CONSISTENCY_REPORT.md:139-146 exists to forbid the stronger phrasing: "The
+      // exact result this artifact supports is therefore zero Porcupine `Illegal`
+      // verdicts, not '1,400 histories formally proved linearizable'". A bounded
+      // search that times out returns `Unknown`, and calling that a proven absence
+      // of violations is the mislabel the report names. The repo was more careful
+      // than the site about the site's own project — the wrong way round.
+      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker.",
     limits:
       // "election-safety check", NOT "linearizability checker" — those are two
       // different components, and the repo's own ledger names the first one.
@@ -214,8 +221,17 @@ export const featuredSystems: FeaturedSystem[] = [
     // `limits` IS a titled column at body size, so the aside was the same
     // sentence twice in one block, 200px apart. The fact keeps its stronger
     // position; the duplicate goes.
+    // TWO RUNS, NAMED SEPARATELY. This strip used to read "3 nodes · localhost ·
+    // c=8 · 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13" — the conditions of the
+    // THROUGHPUT bench alone, while the plate's headline 2.9M cell comes from the
+    // soak: a different run, with six simulated clients in virtual time
+    // (CONSISTENCY_REPORT.md:68-73), not c=8 on real localhost. The c=8 bench itself
+    // measured 8,140 operations, not 2.9 million. One provenance line was standing
+    // behind three cells from two campaigns, which is the kind of thing an
+    // interviewer catches by opening one linked file. The profile README already
+    // said this correctly ("6 simulated clients, virtual time").
     provenance:
-      "3 nodes · localhost · c=8 · 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
+      "3 nodes · soak: 6 simulated clients, virtual time · throughput: localhost, c=8, 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     artifactLinks: [
       {
@@ -244,7 +260,14 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
     proof:
-      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Results are benchmarked against sled, including the cases where sled wins.",
+      // "sled wins every matched comparison", not "including the cases where sled
+      // wins" — the old phrasing implied some were won. accretion-db's own
+      // RESULTS.md:192 states it plainly and in bold: "sled wins every matched
+      // comparison on this host", framed as "context, not a contest" against a
+      // mature engine with a different architecture. The repo was blunter about
+      // this than the site was, which is the wrong way round for the surface a
+      // recruiter reads first.
+      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Benchmarked against sled, which wins every matched comparison on this host — reported rather than omitted.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
     provenance:
@@ -275,7 +298,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 cores while the search runs on one, so the two sides of that ratio are not core-for-core.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance:
