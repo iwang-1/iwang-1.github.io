@@ -80,8 +80,16 @@ export function ExternalLink({
  *  bundle lands. Gating it on mount was tried and does nothing — the prerenderer
  *  runs the effect too — and the honest mitigation is the one already in place:
  *  the mailto button and the address itself sit beside it, so the channel never
- *  depends on this control. Removing the affordance without JS needs a
- *  `.js`-scoped display rule in the stylesheet. */
+ *  depends on this control.
+ *
+ *  RESOLVED 2026-08-06, the way that note prescribed. Measured first: TWO of these
+ *  render on every page (the contact band and the footer), both visible and both
+ *  inert with JavaScript off — so a no-JS reader met two dead controls, not one.
+ *  `.btn-copy-email` is now hidden unless the `.js` class is present, which
+ *  src/js-flag.ts sets only when the bundle actually executes. The class is
+ *  deliberately NOT baked into the prerendered HTML (verify.mjs asserts that), so
+ *  this hides on the static page and appears the moment the button can work.
+ *  Nothing is lost: the mailto button and the plain-text address are beside it. */
 export function CopyEmailButton({ email }: { email: string }) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
 
@@ -112,7 +120,7 @@ export function CopyEmailButton({ email }: { email: string }) {
       {/* The pointer cursor lives on `button.btn` in index.css — the primitive is
           shared with anchors, which are pointer-cursor by UA default, and a
           <button> is not. It is a style, so it belongs in the stylesheet. */}
-      <button type="button" className="btn" onClick={copy}>
+      <button type="button" className="btn btn-copy-email" onClick={copy}>
         {state === "copied" ? "Copied" : state === "failed" ? "Copy blocked" : "Copy email"}
       </button>
       {/* Live region, always present in the DOM so the announcement is an

@@ -2157,6 +2157,26 @@ button.btn {
   }
 }
 
+/* THE COPY-EMAIL BUTTON HIDES UNTIL IT CAN WORK.
+   Two of these render on every page (contact band + footer). The pages are
+   prerendered by a real browser, so both sit in the static HTML and both are inert
+   until the bundle lands — measured with JavaScript disabled: 2 visible buttons on
+   /experience/ and /projects/, and a click on either did nothing. A control that
+   cannot act is worse than an absent one, because the reader spends a click finding
+   out.
+   `.js` is set by src/js-flag.ts only when the bundle executes, and verify.mjs
+   asserts it is NOT baked into the prerendered HTML — so this rule hides the button
+   on the static page and reveals it exactly when it becomes real. The channel never
+   depended on it anyway: the mailto button and the plain-text address are beside it.
+   Display, not visibility: the button must not hold layout it cannot use. */
+.btn-copy-email {
+  display: none;
+}
+
+.js .btn-copy-email {
+  display: inline-flex;
+}
+
 /* ------------------------------------------------------------- education */
 /* Single entry, no grid: a fuller measure lets the coursework chips flow in
    2 rows instead of 4–5. Reintroduce card-grid when a second entry exists. */

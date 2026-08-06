@@ -77,9 +77,15 @@ function SweepTable() {
   return (
     <div className="visually-hidden">
       <table className="sweep-table">
+        {/* "FIG. 03 DETAIL", not "Figure 1" — the visible plate label. A screen
+            reader heard this figure call itself "Figure 1" while every sighted
+            reader saw "FIG. 03 DETAIL", so the two audiences could not talk about
+            the same object. That is the exact defect the numbering scheme was
+            rebuilt to remove (lodestone used to hold two numbers on one page); it
+            survived here because an accessible name is invisible to the eye. */}
         <caption>
-          Figure 1, as measured values: ten samples, ordered by throughput, at the source file's own
-          precision.
+          FIG. 03 DETAIL, as measured values: ten samples, ordered by throughput, at the source
+          file's own precision.
         </caption>
         <thead>
           <tr>
@@ -122,7 +128,9 @@ export function Sweep() {
       className="plate sweep"
       tabIndex={0}
       role="group"
-      aria-label="Figure 1: lodestone recall against throughput, ten measured samples. Move the pointer across the plot, or use the arrow keys, to read each sample."
+      /* Same string a sighted reader sees in the figcaption below — see the note
+         on SweepTable's caption. */
+      aria-label="FIG. 03 DETAIL, lodestone recall against throughput: ten measured samples. Move the pointer across the plot, or use the arrow keys, to read each sample."
     >
       <figcaption className="plate-label">
         FIG. 03 DETAIL · lodestone · recall vs throughput

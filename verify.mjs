@@ -881,6 +881,63 @@ async function checkPage(spec, viewport) {
     for (const d of drift) problems.push(`${tag}: mobile rhythm lost the cascade — ${d}`);
   }
 
+  // NO INERT CONTROLS WITHOUT JAVASCRIPT. The pages are prerendered by a real
+  // browser, so every button is in the static HTML — and TWO "Copy email" buttons
+  // (contact band + footer) rendered visible and dead on every page with the bundle
+  // blocked. A control that cannot act is worse than an absent one, because the
+  // reader spends a click finding out. They are now `.js`-gated. This checks the
+  // real no-JS DOM rather than the source, because the defect only exists in the
+  // rendered page.
+  if (viewport.name === "desktop") {
+    const nojs = await browser.newPage({
+      viewport: { width: viewport.width, height: viewport.height },
+      javaScriptEnabled: false,
+    });
+    await nojs.goto(ORIGIN + spec.path, { waitUntil: "load" });
+    const dead = await nojs.evaluate(() =>
+      [...document.querySelectorAll("button")]
+        .filter((b) => b.offsetParent !== null && !b.closest(".kb"))
+        .map((b) => (b.textContent || "").trim() || b.getAttribute("aria-label") || "?"),
+    );
+    await nojs.close();
+    // The drawn keyboard's caps are excluded above and that is deliberate: they are
+    // a toy whose drawing is the point, they carry no promise of action, and the
+    // figure states its own contract. Any OTHER visible button without JS is a
+    // control offering something the page cannot do.
+    if (dead.length)
+      problems.push(
+        `${tag}: ${dead.length} button(s) render visible but inert without JavaScript (${[...new Set(dead)].join(", ")}) — gate them on the .js class or remove them`,
+      );
+  }
+
+  // FIGURE-NAME AGREEMENT GATE. A figure's accessible name must contain the same
+  // figure identifier its visible label shows. The benchmark plot called itself
+  // "Figure 1" in its aria-label AND its hidden data table's caption while every
+  // sighted reader saw "FIG. 03 DETAIL" — two audiences unable to refer to one
+  // object, and the very defect the numbering scheme was rebuilt to remove
+  // (lodestone previously held two numbers on one page, which three cold reviewers
+  // read as a bug). It survived the rebuild because an accessible name is invisible
+  // to the eye, so it needs a machine to look.
+  if (spec.path === "/" && viewport.name === "desktop") {
+    const figNames = await page.evaluate(() => {
+      const out = [];
+      for (const fig of document.querySelectorAll("figure[aria-label], [role='group'][aria-label]")) {
+        const label = fig.getAttribute("aria-label") ?? "";
+        const visible = fig.querySelector(".plate-label, figcaption")?.textContent ?? "";
+        // Only figures whose VISIBLE label carries a FIG. number are in scope.
+        const m = visible.match(/FIG\.\s*[\w]+(\s+DETAIL)?/i);
+        if (!m) continue;
+        out.push({ id: m[0].trim(), label, agrees: label.toUpperCase().includes(m[0].trim().toUpperCase()) });
+      }
+      return out;
+    });
+    for (const f of figNames)
+      if (!f.agrees)
+        problems.push(
+          `${tag}: figure labelled "${f.id}" for sighted readers announces itself as ${JSON.stringify(f.label.slice(0, 60))} — the accessible name must carry the same figure identifier`,
+        );
+  }
+
   // KEYBOARD TAB-BUDGET + HIT-ALIGNMENT GATE.
   //
   // Two defects, neither of which any existing check could see.
