@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-06T00:30:41.163409Z",
+  "generatedAt": "2026-08-06T14:54:14.709010Z",
   "title": "Design System: Double-Shot",
   "extensions": {
     "colorMeta": {
@@ -246,7 +246,8 @@
         "The hero collapses to one column so the vacated figure column does not print blank.",
         "Every revealable block is forced visible, because IntersectionObserver never fires when printing from a fresh load.",
         "Injected chrome (progress rail, legend swatch, modal) and the drawn figures (.boulder, .system-diagram) are hidden — decoration carries no meaning on paper."
-      ]
+      ],
+      "normativeSource": "The nine paper values are declared in DESIGN.md's frontmatter as `paperColors` (the machine-readable layer), because a paper value documented only in prose reads as unexplained colour on every audit — it was reported three times before that block existed. This sidecar section carries the REASONING and the superseded history; the frontmatter carries the values. Do not duplicate the values here: one source of truth per layer."
     },
     "gates": {
       "note": "The gates are part of the design system: a visual rule that cannot survive them is not shipped. Every gate has been PROVEN to fail by reintroducing the exact defect it names — an unproven gate is not a gate.",

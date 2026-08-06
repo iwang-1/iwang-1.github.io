@@ -17,6 +17,31 @@ colors:
   sublegend: "#5A554B"
   rule: "#7A766E"
   rule-soft: "#C1BCB1"
+# THE PAPER PALETTE. These nine are the SAME TOKENS re-declared inside
+# `@media print` (src/index.css), and they belong in the frontmatter for a
+# concrete reason: the machine-readable layer is what tooling validates, so a
+# paper value documented only in prose reads as drift on every audit. It was
+# reported as unexplained colour three separate times before this block existed.
+#
+# They are LITERAL and must stay literal. Tokenising them once regressed the
+# printed primary button to a measured 1.59-1.86:1, because any later :root remap
+# reaches into the print sheet; fixed values cannot be reached. See "## Print".
+#
+# Every one is WARM except paper-slate, and that exception is real rather than
+# sloppy: `slate` is a genuine blue in the screen palette too ("data traces and
+# links"), so its darkened paper form is correct. Hue alone does not identify
+# drift here — verify.mjs instead asserts that every printed value is one of
+# exactly these nine, read out of the print block's own :root at build time.
+paperColors:
+  paper-white: "#FFFFFF"      # cap-beige and case-grey both flatten to true white
+  paper-inset: "#F4F2EC"      # case-shade, the only tinted paper surface
+  paper-charcoal: "#1A1815"   # 17.72:1 on white
+  paper-rust: "#6B2810"       # 10.85:1
+  paper-slate: "#24405A"      # 10.74:1 — links and button ink
+  paper-sublegend: "#4A463E"  # 9.39:1 — body
+  paper-rule: "#8A857C"       # 3.67:1 — control boundaries, clears the 3:1 non-text floor
+  paper-rule-soft: "#D5D1C8"  # 1.52:1 — sheet hairlines, structure not information
+
 semanticColors:
   surface-page: "{colors.cap-beige}"
   surface-figure: "{colors.case-grey}"
