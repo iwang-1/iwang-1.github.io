@@ -72,6 +72,25 @@ const REQUIRED_IN_CONTENT = [
   "878 µs",
   "~29x",
   "not core-for-core",
+  // THE THREE OTHER CLAIMS A PRE-SHIP REVIEW FOUND OVERSTATED, locked the same way.
+  // Each was corrected DOWNWARD toward what the linked repo already said, and each
+  // was ungated — so nothing stopped the stronger wording coming back. The pattern
+  // is what makes them worth locking together: on all four, the site claimed more
+  // than the repository it cites, which is backwards, because the repo is what an
+  // interviewer opens to check.
+  //   Illegal verdicts   <- parallax-kv CONSISTENCY_REPORT.md:139-146 forbids "zero
+  //                         linearizability violations": a bounded search that times
+  //                         out returns Unknown, so absence of Illegal is not proof.
+  //   sled wins every    <- accretion-db RESULTS.md:192, in bold. The old phrasing
+  //                         ("including the cases where sled wins") implied some
+  //                         were won.
+  //   6 simulated clients, virtual time
+  //                      <- the soak's real conditions. One provenance strip used to
+  //                         stand behind three cells from TWO campaigns; the c=8
+  //                         bench measured 8,140 ops, not 2.9 million.
+  "Illegal verdicts from the linearizability checker",
+  "sled, which wins every matched comparison",
+  "6 simulated clients, virtual time",
 ];
 
 // ---------------------------------------------------------------------------
