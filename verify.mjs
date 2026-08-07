@@ -126,8 +126,20 @@ const VIEWPORTS = [
 mkdirSync("docs", { recursive: true });
 
 // --- serve dist/ -------------------------------------------------------------
+/* `ignore`, NOT `pipe`, on the child's stdout/stderr.
+   This spawned `vite preview` with both piped and then never read either stream. An
+   OS pipe has a fixed buffer (~64 KB on Linux); once it fills, the child BLOCKS on
+   write and the parent waits forever on a server that has stopped serving. Locally
+   the preview prints a few lines and never reaches the limit, so the suite ran
+   4:11 for months — the deadlock only shows where the child is chattier or the
+   buffer smaller. On the first CI run of this pipeline `npm run verify` sat for 44
+   minutes on that step, against 4:11 locally.
+   Nothing read those pipes, so nothing is lost by dropping them: failures surface
+   through the fetch loop below ("vite preview never came up") and through the page
+   assertions, not through the child's log. If its output is ever wanted, it must be
+   consumed — `server.stdout.resume()` at minimum — never merely piped. */
 const server = spawn("npx", ["vite", "preview", "--port", String(PORT), "--strictPort"], {
-  stdio: ["ignore", "pipe", "pipe"],
+  stdio: ["ignore", "ignore", "ignore"],
 });
 const kill = () => server.kill("SIGTERM");
 process.on("exit", kill);
@@ -147,6 +159,31 @@ if (!up) {
 }
 
 const browser = await chromium.launch();
+/* NOTHING IN THIS FILE MAY HANG FOREVER. There was no timeout anywhere — not in the
+   script, not on the workflow step — so the first CI run of this suite sat in
+   `npm run verify` for 37 minutes against 4:11 locally and would have burned the
+   full 6-hour runner limit. Two independent caps now:
+     - per-action, below: Playwright's default is 30s PER call, and this suite makes
+       28 clicks in one gate, so a single un-actionable element could stall 14
+       minutes on one viewport and still look like "slow CI".
+     - whole-run, here: a hard ceiling that fails loudly instead of hanging quietly.
+   A verification step that can hang is worse than a slow one: nobody can tell the
+   difference between working and stuck, which is exactly what happened. */
+const HARD_LIMIT_MS = 12 * 60 * 1000;
+const hardLimit = setTimeout(() => {
+  console.error(
+    `\nVERIFY FAILED: exceeded the ${HARD_LIMIT_MS / 60000}-minute hard limit — something is hanging, not merely slow.`,
+  );
+  /* Kill the preview child explicitly: `--strictPort` means an orphan holding 4173
+     makes every subsequent run fail on startup instead of on the real problem. */
+  try {
+    server.kill("SIGKILL");
+  } catch {
+    /* already gone */
+  }
+  process.exit(1);
+}, HARD_LIMIT_MS);
+hardLimit.unref?.();
 const problems = [];
 const checkedLinks = new Map(); // href -> ok
 
@@ -1016,16 +1053,28 @@ async function checkPage(spec, viewport) {
         (await page.locator(".sweep-readout-value").first().innerText()).split("·")[0].trim();
       await page.locator("figure.sweep").scrollIntoViewIfNeeded();
       const seen = new Set([await readNow()]);
-      // 14 clicks each way covers a 10-sample run from any starting index.
-      for (let i = 0; i < 14; i++) {
-        await prev.click();
-        await page.waitForTimeout(45);
-        seen.add(await readNow());
-      }
-      for (let i = 0; i < 14; i++) {
-        await next.click();
-        await page.waitForTimeout(45);
-        seen.add(await readNow());
+      /* 12 clicks each way covers a 10-sample run from any starting index, and each
+         one carries an EXPLICIT 5s timeout. Playwright's default is 30s per action:
+         with 28 unbounded clicks, one un-actionable button (a sticky nav overlapping
+         it on a slow runner, say) stalls this gate for 14 minutes and reads as "CI
+         is slow" rather than "CI is stuck". That is what happened on the first CI run
+         of this suite. `{ timeout: 5000 }` makes the same failure loud and fast. */
+      for (const [btn, label] of [
+        [prev, "previous"],
+        [next, "next"],
+      ]) {
+        for (let i = 0; i < 12; i++) {
+          try {
+            await btn.click({ timeout: 5000 });
+          } catch {
+            problems.push(
+              `${tag}: sweep "${label}" stepper was not clickable within 5s on press ${i + 1} — the control is obstructed or not interactive`,
+            );
+            break;
+          }
+          await page.waitForTimeout(35);
+          seen.add(await readNow());
+        }
       }
       const total = await page.locator(".sweep-table tbody tr").count();
       if (seen.size < total)
@@ -1630,4 +1679,5 @@ if (problems.length) {
   console.error("\nVERIFY FAILED:\n - " + problems.join("\n - "));
   process.exit(1);
 }
+clearTimeout(hardLimit);
 console.log("\nVERIFY OK — screenshots refreshed in docs/");

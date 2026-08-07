@@ -13,6 +13,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A CEILING, because there was none and the first run of this pipeline proved why:
+    # `npm run verify` sat for 44 minutes on a step that takes 4:11 locally, with no
+    # timeout in the script or on the step, so it was on course to burn the full
+    # 6-hour runner limit while looking indistinguishable from slow CI. 20 minutes is
+    # ~4x the local wall-clock for the whole job, which is generous for a 2-core
+    # runner and still fails loudly instead of hanging quietly.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
