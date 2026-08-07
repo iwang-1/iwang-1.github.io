@@ -2956,24 +2956,33 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
      any later :root remap silently reached into the print sheet. Fixed values
      cannot be reached. Do not "fix" this by re-tokenising it.
 
-     Measured on paper: charcoal on white 15.9:1; rust darkened to #6B2810 gives
-     white-on-fill 8.2:1; slate darkened to #24405A gives 9.1:1. */
+     RE-DERIVED 2026-08-07 for the warm-paper/ink-blue colorway. The token NAMES
+     changed with it — this block rebases whatever Layer 1 declares, so leaving the
+     old names here would have made every rule below match nothing and the sheet
+     would have printed in screen colours with a green build. A print rebase is
+     coupled to the raw layer by name; renaming one without the other is silent.
+
+     Measured on paper: ink #141310 18.58:1; blue #1A4269 10.36:1 with white-on-fill
+     10.36:1; terracotta #933A19 7.34:1; sublegend #4A4845 9.11:1; rule #8A8884
+     3.54:1 (above the 3:1 non-text floor). The two accents needed only a modest
+     darkening because both already clear AA on white at their screen values
+     (8.96 and 6.10) — a lighter touch than the old rust needed. */
   :root {
-    --raw-cap-beige: #ffffff;
-    --raw-case-grey: #ffffff;
-    --raw-case-shade: #f4f2ec;
-    --raw-charcoal: #1a1815;
-    --raw-rust: #6b2810;
-    --raw-slate: #24405a;
-    --raw-sublegend: #4a463e;
-    --raw-rule: #8a857c;
-    --raw-rule-soft: #d5d1c8;
+    --raw-paper: #ffffff;
+    --raw-stone: #ffffff;
+    --raw-stone-shade: #f4f2ec;
+    --raw-ink: #141310;
+    --raw-ink-blue: #1a4269;
+    --raw-terracotta: #933a19;
+    --raw-sublegend: #4a4845;
+    --raw-rule: #8a8884;
+    --raw-rule-soft: #d8d6d0;
   }
 
   html,
   body {
     background: #ffffff !important;
-    color: #1a1815 !important;
+    color: #141310 !important;
   }
 
   /* Reveal-hidden content never fires its IntersectionObserver when printing
@@ -3002,17 +3011,22 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .role-card,
   .edu-card {
     background: #ffffff !important;
-    /* #d5d1c8, not #c4ccd4. Both are near-white hairlines, but #c4ccd4 sits at
+    /* #d8d6d0, the value the rebase block above assigns --raw-rule-soft. (History:
+       this was once #c4ccd4, a COOL blue-grey at hue 210deg inherited from a retired
+       dark palette, printed on a page whose every other value was warm — every sheet
+       border wore the old world's colour. Kept as a note because the failure mode
+       recurs: a print block's literals are invisible until someone prints.)
+       Formerly documented as: #c4ccd4 sits at
        hue 210deg — a COOL blue-grey inherited from the retired dark palette,
        printed on a page whose every other paper value is warm (the rebased
        --raw-rule is 39deg, --raw-rule-soft 42deg). So every sheet border on
        paper was the one element still wearing the old world's colour.
-       #d5d1c8 is the same value the rebase block above assigns --raw-rule-soft,
+       The value is the rebase block's own --raw-rule-soft,
        written literally here for the reason that block states: a token would let
        a later :root remap reach into the print sheet. Contrast against paper is
        1.52:1 vs 1.62:1 — both far below any text threshold, which is correct for
        a hairline that is structure rather than information. */
-    border: 1px solid #d5d1c8 !important;
+    border: 1px solid #d8d6d0 !important;
     box-shadow: none !important;
     break-inside: avoid;
   }
@@ -3022,7 +3036,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
        --raw-slate, measured at 10.74:1 on paper (the old cool #0b3a6b was
        11.46:1, so this costs nothing a reader can see and stops the printed
        sheet carrying two different blues). Literal, per the rebase note. */
-    color: #24405a !important;
+    color: #1a4269 !important;
     text-decoration: underline;
   }
 
@@ -3046,8 +3060,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .btn-primary,
   .btn-current {
     background: #ffffff !important;
-    color: #24405a !important;
-    border-color: #8a857c !important;
+    color: #1a4269 !important;
+    border-color: #8a8884 !important;
     box-shadow: none !important;
     transform: none !important;
   }

@@ -16,7 +16,7 @@
 //   host        Intel(R) Xeon(R) Platinum 8488C, 48 vCPU
 //   run         n=50000 dim=128 queries=1000 k=10 backend=avx512
 //   parsed      10 samples (HNSW ef 16/32/64/128/256, IVF-PQ nprobe 1/4/8/16/32) + oracle 971 q/s
-//   palette     --ink-data=#33566e · --ink-accent=#7a2e12 · --ink-secondary=#5a554b · --rule=#7a766e · --rule-soft=#c1bcb1 · --surface-figure=#d9d2c2
+//   palette     --ink-data=#a6431e · --ink-accent=#1e4b7a · --ink-secondary=#64625e · --rule=#807e7a · --rule-soft=#c5c3bd · --surface-figure=#e7e3da
 //               (read from src/styles/tokens.css; the markup emits var() refs,
 //                so no hex is duplicated anywhere in the source tree)
 

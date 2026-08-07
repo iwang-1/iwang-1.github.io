@@ -1,133 +1,133 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-06T16:41:56.023252Z",
+  "generatedAt": "2026-08-07T01:52:56.638463Z",
   "title": "Design System: Double-Shot",
   "extensions": {
     "colorMeta": {
-      "cap-beige": {
+      "paper": {
         "role": "neutral",
-        "displayName": "Cap Beige",
-        "canonical": "#EDE7DA",
-        "note": "The alpha keycap: the page surface. The world is light-first by owner choice after the dark instrument-panel look was called machine-made.",
+        "displayName": "Paper",
+        "canonical": "#F5F2EC",
+        "note": "The sheet: the page surface. Luminance 0.8897, inside the gate band.",
         "tonalRamp": [
-          "#EDE7DA",
+          "#F5F2EC",
           "#FFFFFF"
         ],
         "printVariant": {
           "value": "#FFFFFF",
-          "why": "flattens to true white on paper so a figure does not print as a grey slab"
+          "why": "flattens to true white on paper"
         }
       },
-      "case-grey": {
+      "stone": {
         "role": "neutral",
-        "displayName": "Case Grey",
-        "canonical": "#D9D2C2",
-        "note": "The case: every figure fill.",
+        "displayName": "Stone",
+        "canonical": "#E7E3DA",
+        "note": "The figure surface — every plate and figure fill.",
         "tonalRamp": [
-          "#D9D2C2",
+          "#E7E3DA",
           "#FFFFFF"
         ],
         "printVariant": {
           "value": "#FFFFFF",
-          "why": "same: every figure surface prints white"
+          "why": "same: figure surfaces print white"
         }
       },
-      "case-shade": {
+      "stone-shade": {
         "role": "neutral",
-        "displayName": "Case Shade",
-        "canonical": "#D2CBBB",
-        "note": "Case in shadow: table stripes and insets.",
+        "displayName": "Stone Shade",
+        "canonical": "#E3DFD6",
+        "note": "Derived: 2% ink into stone, the largest step keeping sublegend legal on it (4.58).",
         "tonalRamp": [
-          "#D2CBBB",
+          "#E3DFD6",
           "#F4F2EC"
         ],
         "printVariant": {
           "value": "#F4F2EC",
-          "why": "the one tinted paper surface that survives"
+          "why": "the one tinted paper surface"
         }
       },
-      "charcoal": {
+      "ink": {
         "role": "neutral",
-        "displayName": "Charcoal",
-        "canonical": "#26241F",
-        "note": "Legend ink: all text and rules.",
+        "displayName": "Ink",
+        "canonical": "#1C1B18",
+        "note": "Body and heading ink, and every structural rule. 15.41:1 on paper.",
         "tonalRamp": [
-          "#26241F",
-          "#1A1815"
+          "#1C1B18",
+          "#141310"
         ],
         "printVariant": {
-          "value": "#1A1815",
-          "why": "legend ink on paper, measured 17.72:1 on white"
+          "value": "#141310",
+          "why": "18.58:1 on white"
         }
       },
-      "rust": {
-        "role": "neutral",
-        "displayName": "Rust",
-        "canonical": "#7A2E12",
-        "note": "The modifier accent. One accent, and it is a keycap colorway role rather than a mood.",
+      "ink-blue": {
+        "role": "primary",
+        "displayName": "Ink Blue",
+        "canonical": "#1E4B7A",
+        "note": "THE ACCENT, and it leads: links, buttons, every interaction. 8.02:1 on paper; paper-on-blue 8.02.",
         "tonalRamp": [
-          "#7A2E12",
-          "#6B2810"
+          "#1E4B7A",
+          "#1A4269"
         ],
         "printVariant": {
-          "value": "#6B2810",
-          "why": "darkened to clear AA in ink, 10.85:1"
+          "value": "#1A4269",
+          "why": "10.36:1, white-on-fill 10.36"
         }
       },
-      "slate": {
-        "role": "neutral",
-        "displayName": "Slate",
-        "canonical": "#33566E",
-        "note": "Data traces and links.",
+      "terracotta": {
+        "role": "secondary",
+        "displayName": "Terracotta",
+        "canonical": "#A6431E",
+        "note": "The supporting warm accent — data traces and the second series. 5.46:1 on paper.",
         "tonalRamp": [
-          "#33566E",
-          "#24405A"
+          "#A6431E",
+          "#933A19"
         ],
         "printVariant": {
-          "value": "#24405A",
-          "why": "darkened, 10.74:1 — links and button ink"
+          "value": "#933A19",
+          "why": "7.34:1 on white"
         }
       },
       "sublegend": {
         "role": "neutral",
         "displayName": "Sublegend",
-        "canonical": "#5A554B",
-        "note": "The sublegend: units and secondary text.",
+        "canonical": "#64625E",
+        "note": "Derived: 67% ink into paper, the smallest fraction legal on BOTH surfaces (5.45 / 4.75).",
         "tonalRamp": [
-          "#5A554B",
-          "#4A463E"
+          "#64625E",
+          "#4A4845"
         ],
         "printVariant": {
-          "value": "#4A463E",
-          "why": "body on paper, 9.39:1"
+          "value": "#4A4845",
+          "why": "9.11:1"
         }
       },
       "rule": {
         "role": "neutral",
         "displayName": "Rule",
-        "canonical": "#7A766E",
-        "note": "Structural hairline, derived from charcoal.",
+        "canonical": "#807E7A",
+        "note": "Derived: 54% ink into paper, smallest fraction reaching 3:1 on both (3.63 / 3.16).",
         "tonalRamp": [
-          "#7A766E",
-          "#8A857C"
+          "#807E7A",
+          "#8A8884"
         ],
         "printVariant": {
-          "value": "#8A857C",
-          "why": "control boundaries, 3.67:1 — clears the 3:1 non-text floor"
+          "value": "#8A8884",
+          "why": "3.54:1, above the non-text floor"
         }
       },
       "rule-soft": {
         "role": "neutral",
         "displayName": "Rule Soft",
-        "canonical": "#C1BCB1",
-        "note": "The quiet divider inside a figure.",
+        "canonical": "#C5C3BD",
+        "note": "22% ink into paper, 1.58 / 1.38 — deliberately below 3:1, carries nothing a reader could miss.",
         "tonalRamp": [
-          "#C1BCB1",
-          "#D5D1C8"
+          "#C5C3BD",
+          "#D8D6D0"
         ],
         "printVariant": {
-          "value": "#D5D1C8",
-          "why": "sheet hairlines, 1.52:1 — structure, not information"
+          "value": "#D8D6D0",
+          "why": "1.45:1"
         }
       },
       "_paperNote": {
@@ -270,15 +270,15 @@
     "print": {
       "strategy": "Raw-token rebase to paper, then a short list of overrides. Print no longer INVERTS anything — the shipped world is already light (DOUBLE-SHOT), so what paper needs is only: tinted surfaces become true white so a figure does not print as a grey slab, and the saturated roles darken enough to clear AA in ink.",
       "rebase": {
-        "--raw-cap-beige": "#ffffff",
-        "--raw-case-grey": "#ffffff",
-        "--raw-case-shade": "#f4f2ec",
-        "--raw-charcoal": "#1a1815",
-        "--raw-rust": "#6b2810",
-        "--raw-slate": "#24405a",
-        "--raw-sublegend": "#4a463e",
-        "--raw-rule": "#8a857c",
-        "--raw-rule-soft": "#d5d1c8"
+        "--raw-paper": "#ffffff",
+        "--raw-stone": "#ffffff",
+        "--raw-stone-shade": "#f4f2ec",
+        "--raw-ink": "#141310",
+        "--raw-ink-blue": "#1a4269",
+        "--raw-terracotta": "#933a19",
+        "--raw-sublegend": "#4a4845",
+        "--raw-rule": "#8a8884",
+        "--raw-rule-soft": "#d8d6d0"
       },
       "measured": {
         "charcoal #1a1815 on white": "17.72:1",
@@ -288,6 +288,7 @@
         "hairline #8a857c on white": "3.67:1 (non-text; clears the 3:1 floor for a control boundary)"
       },
       "notes": [
+        "RE-DERIVED 2026-08-07 for the warm-paper/ink-blue colorway. The token NAMES changed with the palette, and a print rebase is coupled to the raw layer BY NAME — renaming one without the other makes every print rule match nothing and the sheet prints in screen colours with a green build.",
         "SUPERSEDED, recorded so it is not restored: this section used to describe a remap of the SEMANTIC tokens (--ground/--plate/--ink/--series-*) with cool values (#c4ccd4 grid, #6b7885 axis, #0b3a6b series-1, #2f7d4f series-3). That was the retired dark world's print sheet. The live block rebases the NINE RAW tokens instead.",
         "The three literals #c4ccd4, #6b7885 and #0b3a6b were cool blue-greys at hue 210-211deg surviving on a page whose every paper value is warm (rebased --raw-rule 39deg, --raw-rule-soft 42deg). Every printed sheet border wore the old world's colour. Now #d5d1c8 / #8a857c / #24405a, the values the rebase itself declares.",
         "Button and link overrides stay FIXED VALUES, not tokens, and that is deliberate: tokenising them once regressed the printed primary button to a measured 1.59-1.86:1, because a later :root remap reached into the print sheet. The wrong VALUES were the bug, never the literals.",

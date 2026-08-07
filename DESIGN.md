@@ -1,6 +1,6 @@
 ---
-name: Double-Shot
-description: A recruiting site set like a mechanical-keyboard spec sheet — a force curve beside a spec column, which is what a benchmark sweep already is.
+name: Warm Paper
+description: A recruiting site set like a well-printed measurement report — warm paper, ink blue leading, one warm accent carrying the data.
 status: AS BUILT. This file describes what is in the repository, derived from
   src/styles/tokens.css, src/index.css and the components, and re-derived on
   2026-08-05 against the shipped tree. Where a rule was paid for with a measured
@@ -8,58 +8,44 @@ status: AS BUILT. This file describes what is in the repository, derived from
   retained purely as history is marked "(history)" and is not the spec for new
   work.
 colors:
-  cap-beige: "#EDE7DA"
-  case-grey: "#D9D2C2"
-  case-shade: "#D2CBBB"
-  charcoal: "#26241F"
-  rust: "#7A2E12"
-  slate: "#33566E"
-  sublegend: "#5A554B"
-  rule: "#7A766E"
-  rule-soft: "#C1BCB1"
-# THE PAPER PALETTE. These nine are the SAME TOKENS re-declared inside
-# `@media print` (src/index.css). They are documented in TWO places on purpose,
-# and the duplication is load-bearing rather than sloppy: the design detector
-# reads exactly two sources — `frontmatter.colors` and, in
-# `.impeccable/design.json`, `extensions.colorMeta[*].canonical` and
-# `tonalRamp`. So each paper value is ALSO the second stop of its token's
-# tonalRamp in the sidecar, and THAT is what actually clears it; this block is
-# for humans reading the spec. Verified against the detector's own API: 17
-# colours known, all nine paper values allowed, the three retired cool values
-# (#c4ccd4, #0b3a6b, #6b7885) still flagged, and 0 findings across all five
-# stylesheets. A paper value documented in prose alone was reported as
-# unexplained colour four separate times.
-#
-# They are LITERAL and must stay literal. Tokenising them once regressed the
-# printed primary button to a measured 1.59-1.86:1, because any later :root remap
-# reaches into the print sheet; fixed values cannot be reached. See "## Print".
-#
-# Every one is WARM except paper-slate, and that exception is real rather than
-# sloppy: `slate` is a genuine blue in the screen palette too ("data traces and
-# links"), so its darkened paper form is correct. Hue alone does not identify
-# drift here — verify.mjs instead asserts that every printed value is one of
-# exactly these nine, read out of the print block's own :root at build time.
+  paper: "#F5F2EC"
+  stone: "#E7E3DA"
+  stone-shade: "#E3DFD6"
+  ink: "#1C1B18"
+  ink-blue: "#1E4B7A"
+  terracotta: "#A6431E"
+  sublegend: "#64625E"
+  rule: "#807E7A"
+  rule-soft: "#C5C3BD"
+# THE PAPER PALETTE — the same nine tokens re-declared inside `@media print`
+# (src/index.css). Documented in TWO places on purpose: the design detector reads
+# `frontmatter.colors` and the sidecar's `colorMeta[*].canonical`/`tonalRamp`, so
+# each value below is ALSO the second stop of its token's ramp in
+# `.impeccable/design.json` — that is what clears it; this block is for humans.
+# A print rebase is coupled to the raw layer BY NAME: when the palette was renamed
+# 2026-08-07, leaving the old names in the print block would have made every print
+# rule match nothing and the sheet would print in screen colours with a green build.
 paperColors:
-  paper-white: "#FFFFFF"      # cap-beige and case-grey both flatten to true white
-  paper-inset: "#F4F2EC"      # case-shade, the only tinted paper surface
-  paper-charcoal: "#1A1815"   # 17.72:1 on white
-  paper-rust: "#6B2810"       # 10.85:1
-  paper-slate: "#24405A"      # 10.74:1 — links and button ink
-  paper-sublegend: "#4A463E"  # 9.39:1 — body
-  paper-rule: "#8A857C"       # 3.67:1 — control boundaries, clears the 3:1 non-text floor
-  paper-rule-soft: "#D5D1C8"  # 1.52:1 — sheet hairlines, structure not information
+  paper-white: "#FFFFFF"      # paper and stone both flatten to true white
+  paper-inset: "#F4F2EC"      # the one tinted paper surface
+  paper-ink: "#141310"        # 18.58:1 on white
+  paper-blue: "#1A4269"       # 10.36:1, and white-on-fill 10.36:1
+  paper-terracotta: "#933A19" # 7.34:1
+  paper-sublegend: "#4A4845"  # 9.11:1
+  paper-rule: "#8A8884"       # 3.54:1 — above the 3:1 non-text floor
+  paper-rule-soft: "#D8D6D0"  # 1.45:1 — structure, not information
 
 semanticColors:
-  surface-page: "{colors.cap-beige}"
-  surface-figure: "{colors.case-grey}"
-  surface-inset: "{colors.case-shade}"
-  ink: "{colors.charcoal}"
-  ink-accent: "{colors.rust}"
-  ink-data: "{colors.slate}"
+  surface-page: "{colors.paper}"
+  surface-figure: "{colors.stone}"
+  surface-inset: "{colors.stone-shade}"
+  ink: "{colors.ink}"
+  ink-accent: "{colors.ink-blue}"
+  ink-data: "{colors.terracotta}"
   ink-secondary: "{colors.sublegend}"
   rule: "{colors.rule}"
   rule-soft: "{colors.rule-soft}"
-  on-accent: "{colors.cap-beige}"
+  on-accent: "{colors.paper}"
 typography:
   display:
     fontFamily: "'Martian Mono Subset', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace"
@@ -81,7 +67,7 @@ geometry:
   hairline: "1px"
 ---
 
-# Design System: Double-Shot — as built
+# Design System: Warm Paper — as built
 
 ## The complaint this answers
 
@@ -148,30 +134,37 @@ makes a dark counterpart ~10 re-pointed roles instead of a stylesheet re-audit,
 which is the standing mitigation for the fact that this world **reverses the
 earlier light-primary rejection** (PRODUCT.md records the reversal).
 
-The world is **light**: keycap-beige page, case-grey figures, charcoal ink, ONE
-rust accent, slate for data traces. No blue as an affordance, no teal, no third
-series colour, and no dark theme — `color-scheme: light` is declared, and
-`verify.mjs` asserts the page surface sits in a light luminance band.
+The world is **light**: warm-paper page, stone figures, near-black ink, ink BLUE
+as the one accent, terracotta for data traces. No teal, no third series colour, no
+dark theme — `color-scheme: light` is declared, and `verify.mjs` asserts the page
+surface sits in a light luminance band.
+
+**Blue leads and the warm tone supports** — chosen by the owner 2026-08-07, and it
+is the inversion of the previous set, where rust led and slate supported. One
+consequence worth stating because it is easy to undo by tidying: the two accents
+must stay one cool and one warm. Two cool accents collapse into each other inside a
+figure, which is the whole reason the data series is terracotta rather than a second
+blue.
 
 **Every ratio was re-measured, not copied.** `node scripts/measure.mjs` re-reads
 these from the LIVE computed styles of the built pages, so the table cannot
 drift from the tokens above it (re-run 2026-08-05; all values below reproduced
 to the digit):
 
-| token | on cap beige | on case grey | on inset |
+| token | on paper | on stone | on inset |
 |---|---|---|---|
-| charcoal ink | 12.58 | 10.30 | 9.60 |
-| modifier rust | 7.65 | 6.26 | 5.84 |
-| slate | 6.32 | 5.17 | 4.82 |
-| sublegend grey | 6.01 | 4.92 | 4.58 |
+| ink | 15.41 | 13.45 | 12.95 |
+| ink blue (accent) | 8.02 | 7.00 | 6.74 |
+| terracotta (data) | 5.46 | 4.76 | 4.59 |
+| sublegend | 5.45 | 4.75 | 4.58 |
 
-Surface luminance: page 0.8022, figure 0.6474, inset 0.6000.
+Surface luminance: page 0.8897, figure 0.7699, inset 0.7396.
 
 Three values are DERIVED rather than given, and each derivation is a constraint,
 not a preference:
-- `--raw-case-shade` `#D2CBBB` is 4% charcoal into case grey — the largest step
-  that keeps sublegend grey, the palette's weakest ink, above the 4.5 body floor
-  on it (4.58; 5% gives 4.49 and fails). A third surface earns its place only if
+- `--raw-stone-shade` `#E3DFD6` is 2% ink into stone — the largest step
+  that keeps sublegend, the palette's weakest ink, above the 4.5 body floor
+  on it (4.58). A third surface earns its place only if
   every ink legal on the second is still legal on it.
 - `--raw-rule` `#7A766E` is 58% charcoal into cap beige — the **smallest**
   fraction reaching the 3:1 non-text floor on *both* reading surfaces (3.67 /

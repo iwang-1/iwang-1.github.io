@@ -41,31 +41,47 @@
 
 /* ==========================================================================
    LAYER 1 — RAW. The colorway. No meaning attached; do not use directly.
-   Named for the parts of a double-shot keycap set, which is where the logic
-   comes from: an alpha, a modifier, and one accent.
+
+   WARM PAPER + INK BLUE, chosen by the owner 2026-08-07 over the previous
+   keycap-beige set. Same structure, one inversion that matters: BLUE now LEADS
+   (links, buttons, the primary accent) and the warm tone SUPPORTS it (data
+   traces, the second series). Before, rust led and slate supported.
+
+   Only three values were picked; the other six are DERIVED by the rules stated
+   on each, exactly as the old set was — a palette whose greys are chosen by eye
+   drifts the moment anything moves. Every ratio below is measured, not
+   estimated:
+     ink   #1C1B18 on paper 15.41 : 1
+     blue  #1E4B7A on paper  8.02 : 1   white on blue 8.96 : 1
+     warm  #A6431E on paper  5.46 : 1   (4.76 on the figure surface)
+   Page luminance is 0.8897, inside the 0.62-0.93 band verify.mjs asserts.
    ========================================================================== */
 :root {
-  --raw-cap-beige: #ede7da; /* the alpha keycap — the page */
-  --raw-case-grey: #d9d2c2; /* the case — every figure fill */
-  --raw-case-shade: #d2cbbb; /* case in shadow — table stripes, insets.
-      Derived: 4% charcoal into case grey. That percentage is not a taste
-      choice — it is the largest step that keeps SUBLEGENT GREY, the palette's
-      lowest-contrast ink, above the 4.5 body floor on it (4.58; it is 4.49 at
-      5%, which fails). A third surface is worth having only if every ink that
-      is allowed on the second one is still legal on it. */
-  --raw-charcoal: #26241f; /* legend ink — text and rules */
-  --raw-rust: #7a2e12; /* the modifier accent. One accent, and it is a
-      FILL as often as a text colour. */
-  --raw-slate: #33566e; /* data traces and links */
-  --raw-sublegend: #5a554b; /* the sublegend — units, secondary */
-  --raw-rule: #7a766e; /* structural hairline. Derived: 58% charcoal into
-      cap beige, which is the SMALLEST fraction reaching 3:1 on BOTH reading
-      surfaces (3.67 on cap, 3.00 on case) — the non-text contrast floor, so a
-      drawn rule is a rule and not a suggestion. */
-  --raw-rule-soft: #c1bcb1; /* the quiet divider inside a figure: 22%
-      charcoal into cap beige, 1.54 on cap / 1.26 on case. Deliberately below
-      3:1 — it separates rows of a spec column and carries no information a
-      reader could miss, so a structural rule must never be swapped for it. */
+  --raw-paper: #f5f2ec; /* the sheet — the page */
+  --raw-stone: #e7e3da; /* the figure surface — every plate and figure fill */
+  --raw-stone-shade: #e3dfd6; /* stone in shadow — table stripes, insets.
+      Derived: 2% ink into stone. Not a taste choice — it is the LARGEST step
+      that keeps SUBLEGEND, the palette's weakest legal body ink, above the 4.5
+      floor on it (4.58). A third surface is worth having only if every ink
+      allowed on the second one is still legal on it. */
+  --raw-ink: #1c1b18; /* body and heading ink, and every structural rule */
+  --raw-ink-blue: #1e4b7a; /* THE ACCENT, and it leads: links, buttons, the
+      primary interaction colour. A fill as often as a text colour, which is why
+      white-on-blue was measured too (8.96). */
+  --raw-terracotta: #a6431e; /* the supporting warm accent — data traces and the
+      second series. Kept warm on purpose: it is the one colour that ties this
+      set to the keycap world it replaced, and two accents that are both cool
+      would collapse into each other in a figure. */
+  --raw-sublegend: #64625e; /* units, secondary text. Derived: 67% ink into
+      paper — the SMALLEST fraction legal on BOTH reading surfaces (5.45 on
+      paper, 4.75 on stone). One step lighter fails the figure surface. */
+  --raw-rule: #807e7a; /* structural hairline. Derived: 54% ink into paper, the
+      smallest fraction reaching 3:1 on BOTH surfaces (3.63 paper, 3.16 stone) —
+      the non-text floor, so a drawn rule is a rule and not a suggestion. */
+  --raw-rule-soft: #c5c3bd; /* the quiet divider inside a figure: 22% ink into
+      paper, 1.58 / 1.38. Deliberately BELOW 3:1 — it separates rows of a spec
+      column and carries nothing a reader could miss, so a structural rule must
+      never be swapped for it. */
 }
 
 /* ==========================================================================
@@ -75,25 +91,31 @@
   color-scheme: light;
 
   /* --- surfaces ------------------------------------------------------------ */
-  --surface-page: var(--raw-cap-beige);
-  --surface-figure: var(--raw-case-grey);
-  --surface-inset: var(--raw-case-shade);
+  --surface-page: var(--raw-paper);
+  --surface-figure: var(--raw-stone);
+  --surface-inset: var(--raw-stone-shade);
 
   /* --- ink ---------------------------------------------------------------- */
-  --ink: var(--raw-charcoal); /* text, rules, the case border */
-  --ink-accent: var(--raw-rust); /* the one accent: interaction + fills */
-  --ink-data: var(--raw-slate); /* data traces, links */
+  --ink: var(--raw-ink); /* text, rules, the figure border */
+  /* THE ACCENT IS NOW THE BLUE. This is the one role that swapped when the
+     palette changed: blue leads (links, buttons, every interaction) and the warm
+     tone supports (data traces, second series). Components read these semantic
+     names and nothing else, which is why a whole colorway change is this file
+     and not 3,000 lines of CSS — the point of the two layers. */
+  --ink-accent: var(--raw-ink-blue); /* the accent: interaction + fills */
+  --ink-data: var(--raw-terracotta); /* data traces, the second series */
   --ink-secondary: var(--raw-sublegend); /* units, sublegends, secondary */
 
   /* --- structure ---------------------------------------------------------- */
   --rule: var(--raw-rule); /* a drawn rule: axes, the case border */
   --rule-soft: var(--raw-rule-soft); /* a divider between spec rows */
 
-  /* THE LABEL-ON-ACCENT RULE. A rust fill takes CAP BEIGE as its label
-     (7.65:1). Charcoal on rust measures 1.64:1 — it is the invisible-CTA
-     defect in this palette, and verify.mjs gates the primary control's label
-     contrast at rest, hovered and focused precisely so it cannot come back. */
-  --on-accent: var(--raw-cap-beige);
+  /* THE LABEL-ON-ACCENT RULE. A blue fill takes PAPER as its label (8.02:1;
+     pure white measures 8.96 and is not used, so the sheet colour stays the one
+     light in the system). Ink on blue measures 1.92:1 — the invisible-CTA defect
+     in this palette — and verify.mjs gates the primary control's label contrast
+     at rest, hovered and focused precisely so it cannot come back. */
+  --on-accent: var(--raw-paper);
 
   /* ----------------------------------------------------------------- legacy
      The OUTGOING world's token names, re-pointed at the new roles so the
