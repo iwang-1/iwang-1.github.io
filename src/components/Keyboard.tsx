@@ -60,6 +60,7 @@ const ROWS: readonly (readonly Key[])[] = [
     { id: "minus", legend: "-", sub: "_" },
     { id: "equal", legend: "=", sub: "+" },
     { id: "bksp", legend: "delete", u: 2, type: "mod" },
+    { id: "del", legend: "del", type: "mod" },
   ],
   [
     { id: "tab", legend: "tab", u: 1.5, type: "mod" },
@@ -76,6 +77,7 @@ const ROWS: readonly (readonly Key[])[] = [
     { id: "lbracket", legend: "[", sub: "{" },
     { id: "rbracket", legend: "]", sub: "}" },
     { id: "backslash", legend: "\\", u: 1.5, sub: "|", type: "mod" },
+    { id: "pgup", legend: "pg\u2191", type: "mod" },
   ],
   [
     { id: "caps", legend: "caps", u: 1.75, type: "mod" },
@@ -91,6 +93,7 @@ const ROWS: readonly (readonly Key[])[] = [
     { id: "semicolon", legend: ";", sub: ":" },
     { id: "quote", legend: "'", sub: '"' },
     { id: "enter", legend: "return", u: 2.25, type: "mod" },
+    { id: "pgdn", legend: "pg\u2193", type: "mod" },
   ],
   [
     { id: "lshift", legend: "shift", u: 2.25, type: "mod" },
@@ -104,7 +107,9 @@ const ROWS: readonly (readonly Key[])[] = [
     { id: "comma", legend: ",", sub: "<" },
     { id: "period", legend: ".", sub: ">" },
     { id: "slash", legend: "/", sub: "?" },
-    { id: "rshift", legend: "shift", u: 2.75, type: "mod" },
+    { id: "rshift", legend: "shift", u: 1.75, type: "mod" },
+    { id: "up", legend: "\u2191", type: "mod" },
+    { id: "end", legend: "end", type: "mod" },
   ],
   [
     { id: "lctrl", legend: "ctrl", u: 1.25, type: "mod" },
@@ -112,37 +117,23 @@ const ROWS: readonly (readonly Key[])[] = [
     { id: "lalt", legend: "alt", u: 1.25, type: "mod" },
     { id: "space", legend: "", u: 6.25 },
     { id: "ralt", legend: "alt", u: 1.25, type: "mod" },
-    { id: "rmeta", legend: "cmd", u: 1.25, type: "mod" },
-    { id: "fn", legend: "fn", u: 1.25, type: "mod" },
-    { id: "rctrl", legend: "ctrl", u: 1.25, type: "mod" },
+    { id: "fn", legend: "fn", u: 1.75, type: "mod" },
+    { id: "left", legend: "\u2190", type: "mod" },
+    { id: "down", legend: "\u2193", type: "mod" },
+    { id: "right", legend: "\u2192", type: "mod" },
   ],
 ];
-
-/* Drawing geometry, in SVG user units. These are DRAWING dimensions — the same
-   class of value as a stroke width — not page type sizes. */
-const U = 34; /* one key unit */
-const GAP = 3; /* the gap a real board leaves between caps */
-const PAD = 14; /* the case bezel */
-const ROW_H = U;
-
-const ROW_WIDTH = 15 * U;
-const SVG_W = ROW_WIDTH + PAD * 2;
-const SVG_H = ROWS.length * ROW_H + PAD * 2;
 
 /** Which physical keys map to which drawn cap, so typing presses the right one.
  *
  *  EVERY cap that prints a typeable character is mapped, not just the alphanumerics.
  *  It used to test `/[A-Z0-9]/i`, which left twelve drawn caps dead to the keyboard
- *  while CLICKING them worked (the button path calls tap() directly) — so the two
- *  affordances the figure advertises behaved differently, and the SVG's own label
- *  promised "type … to press that key" without qualification. Typing `-`, `[`, `;`
- *  or `,` lit nothing.
- *
+ *  while CLICKING them worked — two advertised affordances behaving differently.
  *  Both the base legend AND the shifted sub-legend map to the cap, because that is
- *  what a real cap does: pressing `?` presses the `/` key. The modifier caps
- *  (tab/caps/shift/ctrl/cmd/alt/fn/return/delete) are deliberately NOT mapped —
- *  they are chords and browser-owned keys, and hijacking Tab in particular would
- *  trap a keyboard user inside a toy. */
+ *  what a real cap does: pressing `?` presses the `/` key. Modifier caps
+ *  (tab/caps/shift/ctrl/cmd/alt/fn/return/delete, and the 65%'s del/pgup/pgdn/end
+ *  and arrows) are deliberately NOT mapped — they are chords and browser-owned keys,
+ *  and hijacking Tab or an arrow would trap a reader inside a toy. */
 const BY_KEY = new Map<string, string>();
 for (const row of ROWS)
   for (const k of row) {
@@ -154,6 +145,23 @@ for (const row of ROWS)
     if (k.sub && k.sub.length === 1) BY_KEY.set(k.sub, k.id);
   }
 BY_KEY.set(" ", "space");
+
+const TAP_MS = 190;
+
+/* Drawing geometry, in SVG user units. These are DRAWING dimensions — the same
+   class of value as a stroke width — not page type sizes. */
+const U = 34; /* one key unit */
+const GAP = 3; /* the gap a real board leaves between caps */
+const PAD = 14; /* the case bezel */
+const ROW_H = U;
+
+/* 16u, because this is a 65%: the 60% grid plus a right-hand column (del, pgup,
+   pgdn, end) and an inverted-T arrow cluster in the bottom two rows. Every row sums
+   to exactly 16u, which is what lets the right edge line up without fudging a key —
+   verified per row after the layout change. */
+const ROW_WIDTH = 16 * U;
+const SVG_W = ROW_WIDTH + PAD * 2;
+const SVG_H = ROWS.length * ROW_H + PAD * 2;
 
 /** The caps flattened into one indexed list, with their pixel geometry resolved
  *  once. The hit targets used to recompute `x` inside the render, duplicating the
@@ -219,8 +227,6 @@ const FLAT: FlatKey[] = (() => {
   }
   return out;
 })();
-
-const TAP_MS = 190;
 
 function isTyping(t: EventTarget | null): boolean {
   const el = t as HTMLElement | null;
@@ -508,7 +514,8 @@ export function Keyboard() {
       </div>
 
       <figcaption className="kb-caption">
-        60% layout, drawn to unit width — 1u alphas, 1.75u caps, 6.25u space.
+        65% layout, drawn to unit width: 1u alphas, 1.75u caps, 6.25u space, and the
+        right-hand column an arrow cluster needs.
         {BOARD_NOTE ? ` ${BOARD_NOTE}` : ""}
       </figcaption>
     </figure>

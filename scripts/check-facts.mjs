@@ -235,6 +235,34 @@ for (const s of REQUIRED_IN_CONTENT)
       `RENDERED-VALUE missing from src/content.ts: ${JSON.stringify(s)} — this is checked against content.ts alone, because a mention in any comment would otherwise satisfy it`,
     );
 
+// NO EM-DASHES IN RENDERED COPY (owner request, 2026-08-07). Checked against
+// src/content.ts and the four HTML entries — the surfaces that produce visible text.
+// NOT a blanket ban on the character: this codebase's comments use it heavily and
+// they do not render, which is why this is scoped to the rendered strings rather
+// than added to FORBIDDEN (that scans whole files, comments included).
+{
+  const rendered = [
+    ["src/content.ts", /"((?:[^"\\]|\\.)*)"/g],
+  ];
+  for (const [file, re] of rendered) {
+    const text = readFileSync(join(root, file), "utf8");
+    for (const m of text.matchAll(re))
+      if (m[1].includes("\u2014"))
+        problems.push(
+          `${file}: em-dash in a rendered string (owner asked for none): ${JSON.stringify(m[1].slice(0, 70))}`,
+        );
+  }
+  for (const f of ["index.html", "experience/index.html", "projects/index.html", "404.html"]) {
+    const text = readFileSync(join(root, f), "utf8");
+    // <title>, og:title and <noscript> are the rendered text in these shells.
+    for (const m of text.matchAll(/<title>([^<]*)<\/title>|<noscript>([\s\S]*?)<\/noscript>|og:title" content="([^"]*)"/g)) {
+      const seg = m[1] ?? m[2] ?? m[3] ?? "";
+      if (seg.includes("\u2014"))
+        problems.push(`${f}: em-dash in rendered page text: ${JSON.stringify(seg.slice(0, 70))}`);
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 5. DERIVED NUMBER LOCK — the rendered lodestone prose must agree with the
 //    committed benchmark, arithmetically.

@@ -63,7 +63,7 @@ const PAGES = [
   {
     path: "/",
     shot: "home",
-    title: "Ivan Wang — Software Engineer · UMD CS · AWS SDE Intern",
+    title: "Ivan Wang · Software Engineer · UMD CS · AWS SDE Intern",
     canonical: "https://iwang-1.github.io/",
     noindex: false,
     activeTab: "/",
@@ -75,13 +75,17 @@ const PAGES = [
     // sentence is on /projects/, which locks it there). The readout still carries
     // the figure, so the fact is still gated on this page — in the form this page
     // prints. Both spellings trace to the same content.ts record.
-    facts: ["May 2027", "mechanical keyboards", "rock climbing", "Departmental Honors", "2.9M"],
+    /* "bouldering", not "rock climbing": the hero bio was reworded 2026-08-07 at the
+       owner's request and the drawing is a boulder problem, so this tracks the words
+       that actually render. The point of the entry is unchanged — the hobby section
+       must stay on the page, and this is what proves it. */
+    facts: ["May 2027", "mechanical keyboards", "bouldering", "Departmental Honors", "2.9M"],
     absent: ["Hong Kong", "74.2%", "67.7%", "64,000", "1,400", "2,640"],
   },
   {
     path: "/experience/",
     shot: "experience",
-    title: "Experience — Ivan Wang",
+    title: "Experience · Ivan Wang",
     canonical: "https://iwang-1.github.io/experience/",
     noindex: false,
     activeTab: "/experience/",
@@ -91,7 +95,7 @@ const PAGES = [
   {
     path: "/projects/",
     shot: "projects",
-    title: "Projects — Ivan Wang",
+    title: "Projects · Ivan Wang",
     canonical: "https://iwang-1.github.io/projects/",
     noindex: false,
     activeTab: "/projects/",
@@ -101,7 +105,7 @@ const PAGES = [
   {
     path: "/404.html",
     shot: "404",
-    title: "Page not found — Ivan Wang",
+    title: "Page not found · Ivan Wang",
     canonical: null,
     noindex: true,
     activeTab: null,
@@ -574,7 +578,10 @@ async function checkPage(spec, viewport) {
       problems.push(`${tag}: boulder must show exactly 3 sequences, got ${await paths.count()}`);
     const onHolds = await page.locator(".boulder-hold-on").count();
     const offHolds = await page.locator(".boulder-hold-off").count();
-    if (onHolds < 12 || offHolds < 4)
+    /* 14 on-route (start + 4 left + 3 centre + 4 right + rest + finish) and 6 off.
+       Raised from 12/4 when the wall was redrawn as three real LINES that share a
+       start and a rest, rather than three sequences over a scatter of holds. */
+    if (onHolds < 14 || offHolds < 6)
       problems.push(`${tag}: boulder wall is not a wall (${onHolds} on / ${offHolds} off route)`);
     // Equal weight is the honesty rule, not a style preference: if one sequence
     // is heavier or a different colour, the drawing is asserting a correct beta.

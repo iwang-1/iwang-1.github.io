@@ -126,7 +126,7 @@ export const SWEEP_SVG = `<svg class="sweep-plot" viewBox="0 0 680 360" role="im
 
     /* THE WALK. A measurement cursor stepping the five HNSW samples on one
        10s linear pass, forever, in CSS, inside the SVG: no script and no SMIL,
-       so it runs with JavaScript fully disabled. It is enhancement only — every
+       so it runs with JavaScript fully disabled. It is enhancement only, and every
        number it visits is already in the static markup and in the transcription
        table below the drawing, so nothing it does constitutes proof. */
     .sweep-plot .sweep-walk {

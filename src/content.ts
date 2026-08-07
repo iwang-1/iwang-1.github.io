@@ -36,7 +36,7 @@ export const hero = {
   kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN, SUMMER 2026",
   headline: "Ivan Wang",
   // The second sentence is gate-locked verbatim — verify.mjs asserts the
-  // lowercase literals "mechanical keyboards" and "rock climbing" on "/", and
+  // lowercase literals "mechanical keyboards" and "bouldering" on "/", and
   // they exist nowhere else in the rendered DOM (the hobby headings are
   // capitalized). Edit the first sentence only.
   // NO language or specialty in the first sentence — naming a stack narrows the
@@ -50,7 +50,7 @@ export const hero = {
   // no-lane call stands) and is exactly what the three repos in the rail below
   // demonstrate — it introduces no fact the page did not already carry.
   subhead:
-    "I like taking things apart to understand how they work, then building my own. Outside of work I'm into mechanical keyboards, rock climbing, and keeping up with tech.",
+    "I mostly build things to find out how they work. Outside of work I'm into mechanical keyboards, bouldering, and keeping up with tech.",
   // Both tracks, because he is eligible for both (confirmed 2026-07-31: the
   // combined B.S./M.S. can extend past May 2027). Addressing only one would make
   // the other kind of recruiter rule him out. Relocation stated, no metro named.
@@ -130,17 +130,17 @@ export const hobbies = {
   // restated the heading above them, or the plate rows below them, came out.
   keyboards: {
     blurb: "Building keyboards",
-    lead: "You can customize every part, so you can tailor a board to exactly what you or someone else needs — and picking the right part for the job is the fun of it.",
+    lead: "You can customize every part, so you can tailor a board to exactly what you or someone else needs, and picking the right part for the job is the fun of it.",
   },
   climb: {
-    blurb: "Rock climbing",
-    lead: "I climb for the community and the problem solving. A boulder can usually be done a lot of different ways, and which one costs you the least depends on your body — working that out is my favorite part.",
+    blurb: "Bouldering",
+    lead: "I climb for the community and the problem solving. A boulder can usually be done a lot of different ways, and which one costs you the least depends on your body, and working that out is my favorite part.",
   },
   tech: {
     blurb: "Following the industry",
     // One clause, no enumeration: the four rows below name the specifics, and
     // the paragraph used to say all four of them 30px above the plate.
-    lead: "I keep up with tech pretty closely — from new hardware to how governments are handling AI. I'm interested in where the industry is heading.",
+    lead: "I keep up with tech pretty closely, from new hardware to how governments are handling AI. I'm interested in where the industry is heading.",
     // Short by design: this renders in a third-width column, so each note has
     // to fit on one or two lines.
     feed: [
@@ -267,7 +267,7 @@ export const featuredSystems: FeaturedSystem[] = [
       // mature engine with a different architecture. The repo was blunter about
       // this than the site was, which is the wrong way round for the surface a
       // recruiter reads first.
-      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Benchmarked against sled, which wins every matched comparison on this host — reported rather than omitted.",
+      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Benchmarked against sled, which wins every matched comparison on this host. Reported rather than omitted.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
     provenance:
@@ -298,7 +298,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second — about 33x the exact brute-force search at that recall, and 9–33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second, about 33x the exact brute-force search at that recall, and 9 to 33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance:
@@ -340,7 +340,7 @@ export const education: Education[] = [
     // M.S.-new-grad are different reqs with different bands, and routing a
     // candidate is literally the recruiter's job. FACTS.md:14 already recorded
     // the answer ("M.S. expected May 2027"); this states it.
-    degree: "B.S./M.S. in Computer Science, M.S. expected May 2027 — Departmental Honors (research track)",
+    degree: "B.S./M.S. in Computer Science, M.S. expected May 2027. Departmental Honors (research track)",
     dates: "Aug 2023 – May 2027",
     detailLines: [
       "On the faculty-mentored research track; minors in Data Science and Philosophy",
@@ -449,7 +449,7 @@ export type RoleLogo = {
 export const engineeringRoles: Role[] = [
   {
     role: "Software Development Engineer Intern",
-    org: "Amazon Web Services (AWS) — EC2 Networking (Amazon VPC)",
+    org: "Amazon Web Services (AWS), EC2 Networking (Amazon VPC)",
     dates: "May 2026 – Aug 2026",
     location: "Herndon, VA",
     logo: { kind: "img", src: "/logos/aws.png", alt: "Amazon Web Services logo", w: 200, h: 200 },

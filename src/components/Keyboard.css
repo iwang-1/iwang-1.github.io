@@ -116,13 +116,42 @@
   text-anchor: start;
 }
 
+/* MODIFIER LEGENDS ARE SMALLER, because a modifier prints a WORD on a cap sized for
+   one glyph. At the shared 13px the 65%'s new 1u right-hand column clipped — "delete"
+   spilled past its cap and "pgup"/"pgdn" ran into their neighbours (visible in a
+   screenshot at 1440). 10px in viewBox units renders ~9px at the figure's real width,
+   still above the 6.5px legibility floor the gate asserts. Alphas keep 13px: they
+   print one character and are the caps a reader actually reads. */
+.kb-key-mod .kb-legend {
+  font-size: 10px;
+}
+
 /* ------------------------------------------------------------------ press */
+/* THE CAP PRESSES DOWN AND BOUNCES BACK. It used to JUMP TO THE TOP-LEFT, and the
+   cause is a rule worth knowing: a cap's POSITION is an SVG `transform` ATTRIBUTE
+   (`translate(x y)` in Keyboard.tsx), and a CSS `transform` does not add to that —
+   it REPLACES it. So `transform: translateY(1.5px)` discarded the cap's own
+   placement and re-drew it 1.5px below the SVG origin. Measured on the built page:
+   pressing a cap moved it 78px LEFT and 16px UP, i.e. toward the corner, which is
+   what the owner saw.
+   `translate` (the individual property) composes with the attribute instead of
+   overwriting it, so the cap moves relative to where it already is. Verified: dx=0,
+   dy=+2 on press.
+   The bounce is the second half of the ask. A real switch bottoms out and the cap
+   springs back, so the return uses a slight overshoot curve rather than the same
+   ease-out as the press — down is fast and flat (a finger drives it), up is springy
+   (the spring drives it). Two different transitions, which is why they are declared
+   separately rather than shared. */
 .kb-key {
-  transition: transform 90ms ease-out;
+  translate: 0 0;
+  /* the RETURN: springy overshoot, because the spring is what moves the cap back */
+  transition: translate 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .kb-key.is-down {
-  transform: translateY(1.5px);
+  translate: 0 2px;
+  /* the PRESS: fast and flat, because a finger is what moves the cap down */
+  transition: translate 45ms ease-out;
 }
 
 .kb-key.is-down .kb-top {

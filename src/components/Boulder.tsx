@@ -48,30 +48,49 @@ type Hold = { x: number; y: number; type: HoldType; r: number };
  *  hand-wrote its route as `d="M 30 88 L 39 84 …"`, a second copy of all eight
  *  hold positions, so moving a hold silently slid the line off the dots. */
 const HOLDS: Record<string, Hold> = {
-  s1: { x: 70, y: 258, type: "jug", r: -14 },
-  s2: { x: 126, y: 264, type: "jug", r: 9 },
-  a: { x: 58, y: 214, type: "crimp", r: 16 },
-  b: { x: 112, y: 208, type: "pinch", r: -8 },
-  c: { x: 168, y: 222, type: "sloper", r: 12 },
-  d: { x: 86, y: 168, type: "jug", r: -19 },
-  e: { x: 146, y: 160, type: "crimp", r: 7 },
-  f: { x: 206, y: 176, type: "pinch", r: -13 },
-  g: { x: 66, y: 128, type: "sloper", r: 21 },
-  h: { x: 128, y: 112, type: "crimp", r: -6 },
-  i: { x: 192, y: 124, type: "jug", r: 15 },
-  j: { x: 104, y: 68, type: "pinch", r: -11 },
-  k: { x: 166, y: 62, type: "crimp", r: 18 },
-  top: { x: 136, y: 26, type: "jug", r: -4 },
+  /* THE START. Two hands on one big hold, feet low — where every line begins. */
+  start: { x: 96, y: 268, type: "jug", r: -8 },
+
+  /* THE LEFT LINE, the crimp ladder: small positive holds close together. Most
+     moves, no long spans, nothing to rest on. Suits reach and patience. */
+  l1: { x: 66, y: 226, type: "crimp", r: 14 },
+  l2: { x: 78, y: 188, type: "crimp", r: -9 },
+  l3: { x: 54, y: 150, type: "crimp", r: 18 },
+  l4: { x: 82, y: 112, type: "pinch", r: -12 },
+
+  /* THE CENTRE LINE, the powerful one: fewer moves, each one long. THE CRUX is
+     c2 -> c3, the biggest span on the wall and off a sloper — which is the reason
+     the other two lines are worth trying. */
+  c1: { x: 120, y: 214, type: "pinch", r: 10 },
+  c2: { x: 132, y: 162, type: "sloper", r: -6 },
+  c3: { x: 116, y: 92, type: "jug", r: 16 },
+
+  /* THE RIGHT LINE, the technical one: it travels sideways before it goes up, so it
+     climbs further for the same height and depends on body position. */
+  r1: { x: 150, y: 232, type: "crimp", r: -16 },
+  r2: { x: 196, y: 200, type: "jug", r: 8 },
+  r3: { x: 214, y: 156, type: "pinch", r: -14 },
+  r4: { x: 182, y: 116, type: "crimp", r: 12 },
+
+  /* THE SHARED REST, where all three converge. A real problem usually has one good
+     hold before the finish, and every line takes it. */
+  rest: { x: 140, y: 66, type: "jug", r: -5 },
+
+  /* THE TOP. Match hands and the problem is over. */
+  finish: { x: 132, y: 28, type: "jug", r: 6 },
 };
 
-/** Holds nobody in these three sequences uses. A wall is not a route: most of
- *  what is bolted to it is not on the problem you are trying. */
+/** Holds none of the three lines uses. A wall is not a route: most of what is
+ *  bolted to it belongs to some other problem. Placed clear of the three lines on
+ *  purpose — an off-route hold sitting between two on-route ones would read as part
+ *  of the sequence and make the drawing ambiguous. */
 const OFF_ROUTE: Hold[] = [
-  { x: 222, y: 258, type: "sloper", r: 24 },
-  { x: 36, y: 168, type: "pinch", r: -21 },
-  { x: 238, y: 86, type: "crimp", r: 11 },
-  { x: 62, y: 96, type: "jug", r: 17 },
-  { x: 250, y: 196, type: "crimp", r: -16 },
+  { x: 244, y: 262, type: "sloper", r: 24 },
+  { x: 30, y: 274, type: "pinch", r: -21 },
+  { x: 246, y: 96, type: "crimp", r: 11 },
+  { x: 34, y: 62, type: "jug", r: 17 },
+  { x: 252, y: 210, type: "crimp", r: -16 },
+  { x: 40, y: 200, type: "sloper", r: -8 },
 ];
 
 /** Every hold the SVG paints, counted from the two collections that paint them.
@@ -100,10 +119,14 @@ const HOLD_COUNT = Object.keys(HOLDS).length + OFF_ROUTE.length;
  *  one of them is heavier or brighter, the drawing is asserting a correct beta
  *  and has started arguing with the paragraph above it. */
 const ROUTES: readonly (readonly string[])[] = [
-  ["s1", "a", "d", "g", "j", "top"],
-  ["s2", "b", "e", "h", "k", "top"],
-  ["s2", "c", "f", "i", "top"],
+  /* Left: the crimp ladder — most moves, smallest holds. */
+  ["start", "l1", "l2", "l3", "l4", "rest", "finish"],
+  /* Centre: the power line — fewest moves, and it carries the crux. */
+  ["start", "c1", "c2", "c3", "rest", "finish"],
+  /* Right: the technical line — sideways first, so longer for the same height. */
+  ["start", "r1", "r2", "r3", "r4", "rest", "finish"],
 ];
+
 
 /** Hold silhouettes, drawn once each in local coordinates and placed by
  *  transform. Four shapes because a hold you can wrap a hand around, a quarter-

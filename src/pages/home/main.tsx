@@ -177,7 +177,7 @@ function Home() {
               this is surfacing, not a new claim. */}
           <p className="section-exit">
             <a className="mono" href="/projects/#selected">
-              Eight more — ML, NLP, statistics, and this site{" "}
+              Eight more: ML, NLP, statistics, and this site{" "}
               <span className="arrow" aria-hidden="true">→</span>
             </a>
           </p>

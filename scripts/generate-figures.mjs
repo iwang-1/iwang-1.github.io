@@ -810,7 +810,7 @@ const style = `    .sweep-plot { font-family: var(--font-mono); }
 
     /* THE WALK. A measurement cursor stepping the five HNSW samples on one
        ${WALK_SECONDS}s linear pass, forever, in CSS, inside the SVG: no script and no SMIL,
-       so it runs with JavaScript fully disabled. It is enhancement only — every
+       so it runs with JavaScript fully disabled. It is enhancement only, and every
        number it visits is already in the static markup and in the transcription
        table below the drawing, so nothing it does constitutes proof. */
     .sweep-plot .sweep-walk {
