@@ -1,21 +1,4 @@
-/** Progressive-enhancement layer. Everything here is injected or bound by the
- *  bundle at runtime; without JS the prerendered static HTML is complete and
- *  fully usable, and nothing that constitutes evidence lives behind a pointer.
- *  With JS the site gains two things:
- *
- *    1. THE SWEEP's crosshair — the figure's readout follows the pointer or the
- *       arrow keys, snapping to real measured samples. The figure already ships
- *       annotated at its knee, so this sharpens an existing state rather than
- *       revealing a hidden one.
- *    2. a keyboard command palette (g-chords + `?` legend overlay) behind a
- *       discoverable legend swatch.
- *
- *  The crosshair is the site's one animated moment and it is user-driven. Under
- *  prefers-reduced-motion it still tracks — the transition just drops to 0ms in
- *  Sweep.css. Imported by every page entry; guarded so it runs once per
- *  document. Note it runs BEFORE the root `.js` class is set (js-flag's
- *  `enableJs()` is called after render), so a throw here leaves the prerendered
- *  HTML fully visible instead of hiding it. */
+/** Progressive-enhancement layer. */
 const prefersReduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -34,9 +17,7 @@ const SHORTCUTS: Shortcut[] = [
 
 // ----------------------------------------------------------- command palette
 function legendGlyph(): string {
-  // A legend swatch: two series keys and a sample point, which is what the
-  // overlay it opens actually is — the page's legend. Decorative; the button's
-  // aria-label carries the meaning.
+  // A legend swatch: two series keys and a sample point, which is what the overlay it opens actually is.
   return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h6M4 16h6"/><circle cx="16.5" cy="8" r="2" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16" r="2"/></svg>`;
 }
 
@@ -51,11 +32,8 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   overlay.className = "kbd-help";
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
-  // aria-labelledby, not aria-label: the dialog's name is the heading it already
-  // renders, so the two can never drift, and the panel now has a real heading in
-  // the document outline instead of a <p> styled to look like one. The title is
-  // an <h2> because the dialog is a sibling of the page's content, one rank under
-  // its <h1> — every id and class here is asserted by verify.mjs.
+  // Aria-labelledby, not aria-label: the dialog's name is the heading it already renders, so the two can
+  // never drift, and the panel now has a real heading in the document outline instead of a <p> styled to look like one.
   overlay.setAttribute("aria-labelledby", "kbd-help-title");
   overlay.hidden = true;
   overlay.innerHTML =
@@ -73,10 +51,8 @@ function buildOverlay(): { fab: HTMLButtonElement; overlay: HTMLElement } {
   fab.className = "kbd-fab";
   fab.setAttribute("aria-haspopup", "dialog");
   fab.setAttribute("aria-label", "Legend and shortcuts");
-  // A native tooltip, because an unlabelled glyph floating over every page is
-  // the same defect as an uncaptioned chart: readers guessed "settings",
-  // "filter", "download" and clicked hoping for a resume. The meaning existed
-  // only in the aria-label, which a sighted mouse user never hears.
+  // A native tooltip, because an unlabelled glyph floating over every page is the same defect as an
+  // uncaptioned chart: readers guessed "settings", "filter", "download" and clicked hoping for a resume.
   fab.title = "Legend & shortcuts";
   fab.innerHTML = legendGlyph();
 
@@ -132,9 +108,8 @@ function mountCommandPalette(): void {
       root?.removeAttribute("inert");
       fab.removeAttribute("inert");
       document.body.classList.remove("modal-open");
-      // Restore focus per the WAI-ARIA dialog pattern: back to where the user
-      // was, falling back to the launcher when the palette was opened with no
-      // meaningful focus (activeElement === body) or the element is gone.
+      // Restore focus per the wai-aria dialog pattern: back to where the user was, falling back to the
+      // launcher when the palette was opened with no meaningful focus (activeElement === body) or the element is gone.
       const target =
         lastFocused && lastFocused !== document.body && lastFocused.isConnected
           ? lastFocused
@@ -161,22 +136,9 @@ function mountCommandPalette(): void {
     gTimer = 0;
   };
 
-  /** True while the hobby key tester is armed — i.e. exactly when it is
-   *  listening for letters itself. Same two conditions the figure arms on
-   *  (src/components/Keyboard.tsx): the pointer is over it, or focus is inside
-   *  it. Queried per event rather than cached, because the figure is a React
-   *  node that boot may not have seen yet. */
+  /** True while the hobby key tester is armed. */
   const armedKeyTester = (): boolean => {
-    /* `.kb`, NOT `.keyboard-fig`. The drawn keyboard renamed its root class and
-       this selector was not updated with it, so this guard queried a class that
-       exists nowhere, returned false unconditionally, and the g-chord fired over
-       the armed key tester again — the exact defect the block below documents as
-       fixed. Measured on the built site: hovering the keyboard and typing g then
-       e navigated / -> /experience/ and reset scrollY from 773 to 0. A figure
-       that invites "type while the pointer is over it" threw the reader off the
-       page on the second keystroke.
-       verify.mjs now presses this sequence over the keyboard and fails on
-       navigation, because a class rename cannot otherwise fail a build. */
+    /* `.kb`, not `.keyboard-fig`. */
     const fig = document.querySelector<HTMLElement>(".kb");
     if (!fig) return false;
     return fig.matches(":hover") || fig.contains(document.activeElement);
@@ -227,27 +189,15 @@ function mountCommandPalette(): void {
 
     if (typingTarget(e.target)) return;
 
-    // THE KEY-TESTER TRUCE. The hobby figure invites "type while hovering" and
-    // draws the home row — which contains both halves of the g→h "Go to Home"
-    // chord. Typing a s d f g h over that figure lit five caps and then
-    // NAVIGATED on the sixth keystroke: scroll position gone, log reset, the
-    // reader thrown back to the fold by the one control the page opens with.
-    // g→e and g→p left for /experience/ and /projects/ the same way.
-    // While the tester is armed (pointer over it, or focus inside it) the chord
-    // does not arm and does not resolve. The shortcuts stay live everywhere else
-    // on the page, and this stays out of Keyboard.tsx, which correctly commits
-    // to never intercepting a key.
+    // The key-tester truce. The hobby figure invites "type while hovering" and draws the home row — which
+    // contains both halves of the g→h "Go to Home" chord.
     if (armedKeyTester()) {
       resetChord();
       return;
     }
 
-    // `?` LIVES BELOW THE TRUCE, and that placement is the fix for a real defect:
-    // it used to be handled ABOVE it, so the truce covered only the g-chords the
-    // comment describes. `/` and `?` are both printed on the drawn keyboard's slash
-    // cap, so `?` is a key the figure explicitly invites you to type — and typing it
-    // opened the shortcut overlay, made #root inert and threw focus into a modal.
-    // Same class of defect as the g-chord, one guard too early.
+    // `?` lives below the truce, and that placement is the fix for a real defect: it used to be handled
+    // above it, so the truce covered only the g-chords the comment describes.
     if (e.key === "?") {
       e.preventDefault();
       toggle();
@@ -272,32 +222,7 @@ function mountCommandPalette(): void {
 }
 
 // ------------------------------------------------------- the Sweep crosshair
-/** Binds the figure's crosshair. The figure (src/components/Sweep.tsx) already
- *  renders every sample, every label and the amber knee callout, and the
- *  crosshair already sits on the knee via the CSS fallbacks — so this adds
- *  inspection, never evidence.
- *
- *  Mechanism, deliberately small: each `.sweep-sample` group carries its own
- *  plot coordinate and its own readout string as data attributes, so the only
- *  arithmetic here is "which sample is nearest". A pointermove (passive,
- *  coalesced into one rAF) or an arrow key sets two custom properties on the
- *  <figure>, swaps one textContent, and mirrors the same string into a polite
- *  live region. No canvas, no loop, no library, and the single
- *  getBoundingClientRect is the pointer-to-user-unit conversion — there is no
- *  other layout read.
- *
- *  DELEGATED ON PURPOSE. The listeners live on `document` and re-resolve the
- *  figure per event instead of closing over the node found at boot. Binding the
- *  node directly shipped a dead figure: this module evaluates before the page
- *  entry's createRoot().render(), and one requestAnimationFrame was not enough
- *  to outrun it — React replaced #root AFTER the bind, orphaning the element
- *  (isConnected false), so the readout stayed frozen on its default at every
- *  pointer position and both arrow keys, while the figure's aria-label went on
- *  promising an interaction that did not exist. The command palette survived the
- *  same boot because it appends to document.body, which React never replaces —
- *  which is exactly the property this now borrows. A cached view is reused while
- *  its figure stays connected, so the steady-state cost is one closest() call
- *  per event. */
+/** Binds the figure's crosshair. */
 interface SweepView {
   figure: HTMLElement;
   svg: SVGSVGElement;
@@ -324,9 +249,7 @@ function readSweep(figure: HTMLElement): SweepView | null {
     .sort((a, b) => a.x - b.x);
   if (samples.length === 0) return null;
 
-  // The knee is the server-rendered default, so start the keyboard cursor there
-  // instead of at index 0 — the first Arrow press should step off what the
-  // reader is already looking at.
+  // The knee is the server-rendered default, so start the keyboard cursor there instead of at index 0.
   const knee = figure.querySelector<SVGGElement>(".sweep-sample-knee");
   const index = Math.max(
     0,
@@ -356,15 +279,7 @@ function mountSweep(): void {
     return view;
   };
 
-  /** Pan the pannable window so the selected sample is actually on screen.
-   *  Below ~500px the plot is wider than the plate and the arrow keys were
-   *  reporting samples whose dot sat outside the window with no way to reach
-   *  them — the keydown handler preventDefault()s the same key the scroller
-   *  would have used to scroll, so the reader could neither see the sample nor
-   *  pan to it. This is the exact inverse of `nearest()`'s conversion.
-   *  KEYBOARD SELECTS ONLY (see the `announce` guard at the call site): a
-   *  programmatic scroll during a pointer scrub would yank the plot out from
-   *  under the finger that is driving it. */
+  /** Pan the pannable window so the selected sample is actually on screen. */
   const revealSample = (v: SweepView, x: number): void => {
     const scroller = v.svg.parentElement;
     if (!scroller) return;
@@ -419,17 +334,10 @@ function mountSweep(): void {
       select(pointerView, nearest(pointerView, pointerX), false);
   };
 
-  /** One entry point for every pointing gesture. `apply()` is idempotent and
-   *  rAF-coalesced, so a hybrid device firing both a pointer and a touch event
-   *  for the same frame costs one redundant select at worst. */
+  /** One entry point for every pointing gesture. `apply()` is idempotent and rAF-coalesced, so a hybrid device
+   * firing both a pointer and a touch event for the same frame costs one redundant select at worst. */
   const track = (target: EventTarget | null, clientX: number): void => {
-    /* THE STEPPER BUTTONS ARE INSIDE THE FIGURE, AND POINTER TRACKING MUST IGNORE
-       THEM. Without this guard, tapping a stepper fired both the click handler
-       (step to the next sample) and `pointerdown` -> `track()` -> `nearest()`,
-       which mapped the BUTTON's own x-position to whatever sample sits nearest that
-       column and overwrote the step immediately. Measured: the readout got stuck at
-       one end and would not come back, 1 of 10 samples reachable — a control that
-       cancels itself. The plot is what a scrub reads; a button is not part of it. */
+    /* The stepper buttons are inside the figure, and pointer tracking must ignore them. */
     if ((target as Element | null)?.closest?.("[data-sweep-step]")) return;
     const v = resolve(target);
     if (!v) return;
@@ -446,13 +354,8 @@ function mountSweep(): void {
     { passive: true },
   );
 
-  // TOUCH. pointermove alone made the figure lie on a phone: the pannable
-  // .sweep-scroll claims the gesture, so the browser fires exactly ONE
-  // pointermove and then pointercancel, while the following ~14 touchmoves were
-  // heard by nobody. A drag from the left edge to the right edge left the readout
-  // frozen on the leftmost sample — the figure stating a measurement that was not
-  // the one under the finger. Passive, so the pan still works; the rect read in
-  // nearest() already resolves a panned plot correctly.
+  // Touch. pointermove alone made the figure lie on a phone: the pannable .sweep-scroll claims the gesture,
+  // so the browser fires exactly one pointermove and then pointercancel, while the following ~14 touchmoves.
   document.addEventListener(
     "touchmove",
     (event: TouchEvent) => {
@@ -462,19 +365,16 @@ function mountSweep(): void {
     { passive: true },
   );
 
-  // A TAP is the first thing anyone tries on a curve, and it did nothing: the
-  // touch sequence is pointerdown/touchstart/pointerup/touchend with no
-  // pointermove at all, so the readout never moved anywhere on the plot.
+  // A tap is the first thing anyone tries on a curve, and it did nothing: the touch sequence is
+  // pointerdown/touchstart/pointerup/touchend with no pointermove at all, so the readout never moved anywhere on the plot.
   document.addEventListener(
     "pointerdown",
     (event: PointerEvent) => track(event.target, event.clientX),
     { passive: true },
   );
 
-  /* The stepper buttons. Same `select()` path as the arrow keys — including
-     `announce: true`, which is what pans the window so the chosen dot is visible.
-     Delegated from the document so a re-rendered figure needs no rebinding, exactly
-     like the pointer and keydown handlers above. */
+  /* The stepper buttons. Same `select()` path as the arrow keys — including `announce: true`, which is what
+     pans the window so the chosen dot is visible. */
   document.addEventListener("click", (event: MouseEvent) => {
     const btn = (event.target as Element | null)?.closest?.<HTMLElement>("[data-sweep-step]");
     if (!btn) return;
@@ -488,14 +388,7 @@ function mountSweep(): void {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     const v = resolve(event.target);
     if (!v) return;
-    /* THE FIGURE OWNS THESE KEYS; ITS DESCENDANTS DO NOT.
-       `resolve()` matches `closest("figure.sweep")`, so this fired for the WHOLE
-       SUBTREE — including the ordinary external link inside the plate
-       (`a.sweep-source`, the benchmark file). Measured: with that link focused,
-       Home and End both left scrollY pinned at 2078 against a document max of
-       4175, i.e. two document-level jump keys silently dead, while the same keys
-       on a link outside the figure scrolled normally. A composite widget may claim
-       arrow/Home/End only while focus is ON the widget itself. */
+    /* The figure owns these keys; its descendants DO not. */
     if (event.target !== v.figure) return;
     let next = v.index;
     if (event.key === "ArrowRight") next = v.index + 1;
@@ -508,14 +401,8 @@ function mountSweep(): void {
   });
 }
 
-// ------------------------------------------------------- hash / contact nav
-// The nav "Contact" link is /#contact. On the Home page that target exists, so
-// a same-document click should smooth-scroll to it. From another page the link
-// navigates to "/" and the fragment must scroll AFTER React has rendered the
-// real #root (the prerendered nodes are replaced, and lazy images/reveals
-// shift layout), which the browser's own on-load scroll misses. This wires
-// both: intercept same-doc fragment links, and re-run the fragment scroll once
-// the page has settled.
+// Hash / contact nav The nav "Contact" link is /#contact. On the Home page that target exists, so a
+// same-document click should smooth-scroll to it.
 function scrollToHash(hash: string, smooth: boolean): boolean {
   if (!hash || hash === "#") return false;
   let target: HTMLElement | null = null;
@@ -579,10 +466,7 @@ function init(): void {
   mountHashNav();
 }
 
-// ES imports are hoisted, so this module evaluates BEFORE the page entry's
-// createRoot(...).render(...). Defer init one frame past a settled DOM so the
-// crosshair binds React's rendered figure, not the prerendered nodes React is
-// about to replace.
+// ES imports are hoisted, so this module evaluates before the page entry's createRoot(...).render(...).
 function boot(): void {
   requestAnimationFrame(init);
 }

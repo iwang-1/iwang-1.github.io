@@ -1,19 +1,4 @@
-// Font subsetter — OFFLINE tool, deliberately NOT part of `npm run build`.
-//
-// Why offline: CI runs the fact gate and `npm run build` only, and pyftsubset is
-// a Python tool that is not (and should not become) a dependency of this repo.
-// So the subsets are generated here, on a machine that has fontTools, and the
-// resulting .woff2 files are COMMITTED to public/fonts/. CI ships bytes; it
-// never regenerates them.
-//
-// Re-run after changing the rendered repertoire or bumping @fontsource-variable/*:
-//   npm run build && node scripts/subset-fonts.mjs
-// It prints the real before/after byte cost and FAILS if a character the built
-// pages actually render was dropped by the CUT — so "subsetted" stays a measured
-// claim rather than an assumption.
-//
-// Requires: fontTools >= 4.14 with brotli (`pip3 install --user fonttools brotli`).
-// Measured with fontTools 4.38.0 / brotli 1.2.0.
+// Font subsetter.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -22,12 +7,7 @@ import { TextDecoder } from "node:util";
 const OUT = "public/fonts";
 mkdirSync(OUT, { recursive: true });
 
-// ---------------------------------------------------------------- repertoire
-// The site is English prose plus measured numbers. This is the union of
-// printable ASCII and every non-ASCII character the four BUILT pages render
-// (measured, not guessed), plus a small documented margin (degree, times,
-// double quotes, ellipsis) so an ordinary copy edit does not need a font
-// rebuild. The check at the bottom of this file is what keeps the list honest.
+// Repertoire The site is English prose plus measured numbers.
 const CORE = [
   "U+0020-007E", // printable ASCII
   "U+00A0", // nbsp
@@ -44,27 +24,19 @@ const CORE = [
   "U+2212", // − true minus
 ].join(",");
 
-// U+2020 † (the footnote dagger, which this site's whole footnote convention
-// rests on) is NOT in either family's `latin` file — upstream ships it in the
-// `latin-ext` file. Measured: 780 B for Martian, 840 B for Familjen as a
-// one-glyph supplementary face. Two @font-face rules per family with a
-// `unicode-range` split is the standard mechanism and costs one extra request
-// only for pages that actually paint a dagger.
+// U+2020 † (the footnote dagger, which this site's whole footnote convention rests on) is not in either
+// family's `latin` file — upstream ships it in the `latin-ext` file.
 const SUPPLEMENT = "U+2020";
 
-// Layout features kept. Deliberately narrow: kerning, plus the contextual and
-// composition machinery the variable fonts need to render correctly. Martian
-// Mono ships NO `tnum` at all — it is fixed-advance (measured 0.750 em for
-// every glyph), so numeric columns align natively and NOTHING in the stylesheet
-// may depend on font-variant-numeric.
+// Layout features kept. Deliberately narrow: kerning, plus the contextual and composition machinery the
+// variable fonts need to render correctly.
 const FEATURES = "kern,liga,calt,ccmp,locl,rvrn";
 
 const FAMILIES = [
   {
     id: "martian-mono",
-    // The wdth-axis build. Its fvar default IS 112.5 (min 75, max 112.5) — the
-    // width the contract names — so pinning wdth=112.5 drops an axis we never
-    // vary while keeping the drawing we chose. Measured cap height 0.800 em.
+    // The wdth-axis build. Its fvar default is 112.5 (min 75, max 112.5) — the width the contract names —
+    // so pinning wdth=112.5 drops an axis we never vary while keeping the drawing we chose.
     axes: ["wght=400:700", "wdth=112.5"],
     latin: "node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-wdth-normal.woff2",
     ext: "node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-ext-wdth-normal.woff2",
@@ -73,10 +45,7 @@ const FAMILIES = [
   },
   {
     id: "familjen-grotesk",
-    // The wght-normal build only. The italic file is deliberately NOT shipped:
-    // this site has no italic anywhere (the derived rule), so an italic face
-    // would be bytes bought for a style the stylesheet bans and verify.mjs
-    // asserts against.
+    // The wght-normal build only.
     axes: ["wght=400:700"],
     latin: "node_modules/@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-wght-normal.woff2",
     ext: "node_modules/@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-ext-wght-normal.woff2",
@@ -88,13 +57,8 @@ const FAMILIES = [
 const py = (mod, args) =>
   execFileSync("python3", ["-m", mod, ...args], {
     stdio: ["ignore", "pipe", "pipe"],
-    // REPRODUCIBILITY. woff2 writes head.modified from the clock, so without
-    // this every regeneration produced four different files with identical
-    // content — measured: all four md5s changed across two back-to-back runs
-    // with no input change. Since these binaries are COMMITTED, that turns any
-    // font rebuild into an unreviewable diff and hides a real change inside
-    // the noise. fontTools honours SOURCE_DATE_EPOCH, so the cut is pinned and
-    // byte-identical runs produce byte-identical output.
+    // Reproducibility. woff2 writes head.modified from the clock, so without this every regeneration
+    // produced four different files with identical content — measured: all four md5s changed across two back-to-back.
     env: { ...process.env, SOURCE_DATE_EPOCH: "1754265600" }, // 2025-08-04T00:00:00Z
   });
 
@@ -109,11 +73,7 @@ function cut({ src, axes, unicodes, dest }) {
     "--flavor=woff2",
     "--no-hinting",
     "--desubroutinize",
-    // Name IDs kept, and 0/13/14 are a LICENCE OBLIGATION, not tidiness. Both
-    // families are OFL-1.1, which requires the copyright notice and licence to
-    // travel with the font. pyftsubset's default drops them: measured, the
-    // first cut of these files shipped with name[0] (copyright) and name[14]
-    // (licence URL) GONE. 1-6 are the family/style names the CSS matches on.
+    // Name IDs kept, and 0/13/14 are a licence obligation, not tidiness.
     "--name-IDs=0,1,2,3,4,5,6,13,14",
     `--output-file=${dest}`,
   ]);
@@ -156,13 +116,8 @@ for (const f of FAMILIES) {
 }
 console.log(`\nshipped font total: ${total} B (${(total / 1024).toFixed(1)} KiB) across ${FAMILIES.length * 2} files`);
 
-// --------------------------------------------------- honesty check on the cut
-// Two distinct failure modes, and they must not be confused:
-//   (a) a character the site renders that upstream HAS but this cut dropped
-//       -> a bug in this script. Hard failure.
-//   (b) a character upstream does not have in ANY of its files
-//       -> nothing a subset can fix. Reported, and the stylesheet must name an
-//          explicit fallback family so the substitution is CHOSEN, not silent.
+// Honesty check on the cut Two distinct failure modes, and they must not be confused: (a) a character the
+// site renders that upstream has but this cut dropped -> a bug in this script.
 if (!existsSync("dist/index.html")) {
   console.log("\nrepertoire check SKIPPED (no dist/ — run `npm run build` first).");
   process.exit(0);

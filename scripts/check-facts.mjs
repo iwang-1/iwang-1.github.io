@@ -1,19 +1,4 @@
-// Fact/framing gate — runs as `prebuild` and in CI before deploy.
-//
-// Scans src/**/*.{ts,tsx,css}, every HTML entry (index.html, experience/,
-// projects/, 404.html), text files in public/, and README.md.
-//   1. REQUIRED exact strings — the locked numbers/claims must appear
-//      somewhere in the scanned corpus (they live in src/content.ts).
-//   2. FORBIDDEN patterns — per-file, reported with line numbers.
-//   3. PROXIMITY locks — "merged" may never appear within 200 characters of
-//      "lambeq" (checked per file, and on dist/projects/index.html if built).
-//   4. "contributed to" is allowed ONLY inside the one CCD-data-archive
-//      sentence (exact-string allowlist).
-//
-// Human companion checklist: FACTS.md (maps every rendered number to its
-// source). FACTS.md is deliberately OUTSIDE the scan set so it can describe
-// the rules it enforces. A separate, private pre-push confidentiality scan
-// (deliberately NOT part of this repo) runs before anything is pushed.
+// Fact/framing gate.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,63 +16,16 @@ const REQUIRED = [
   "ivanwang8989@gmail.com",
   "Departmental Honors (research track)",
   "faculty-mentored research track",
-  // MEASURED VALUES, locked as exact strings — the cheap half of the fix an
-  // independent mutation test forced. It changed each of these to an inflated
-  // value (2.9M -> 9.9M ops, 878 µs -> 78 µs, ~29x -> ~299x) and check-facts
-  // passed every time: the gate policed GPA, phone numbers and team size but not
-  // one number the site rests its credibility on. The lodestone figures are
-  // locked ARITHMETICALLY below (derived from the committed benchmark, which is
-  // strictly better); these three live in sibling repos this gate cannot read,
-  // so they are pinned to the exact strings their sources support:
-  //   2.9 million  <- parallax-kv docs/BUG_LEDGER.md: "2,914,245 client operations"
-  //   878 µs       <- accretion-db benchmarks/RESULTS.md: "sync_data (fdatasync, 4 KiB) | 878 µs"
-  //   ~29x         <- accretion-db benchmarks/RESULTS.md: "8,082 / 276 ≈ 29× at c=64"
-  // Changing a value now means changing this list, which is a decision rather
-  // than a typo.
+  // Measured values are locked as exact strings.
 ];
 
-// ---------------------------------------------------------------------------
-// 1b. RENDERED-VALUE LOCK — required in src/content.ts SPECIFICALLY.
-//
-// These four were first added to REQUIRED above, and that was WRONG in a way
-// worth recording: REQUIRED is satisfied by the string appearing ANYWHERE in the
-// scanned corpus, which includes every comment in every file it reads. Deleting
-// "878 µs" from content.ts still passed because a CSS comment in src/index.css
-// mentions it, and the parallelism disclosure passed because the generated
-// figure quotes it. A gate a comment can satisfy is not a gate on the site.
-//
-// So these are checked against ONE file: the module that actually renders. Each
-// is a measured value whose source lives in a sibling repo this script cannot
-// read (the lodestone numbers are locked arithmetically further down, which is
-// strictly better), plus the honesty sentence that makes the headline ratio fair
-// to quote:
-//   2.9 million        <- parallax-kv docs/BUG_LEDGER.md: "2,914,245 client operations"
-//   878 µs             <- accretion-db benchmarks/RESULTS.md: "sync_data (fdatasync, 4 KiB) | 878 µs"
-//   ~29x               <- accretion-db benchmarks/RESULTS.md: "8,082 / 276 ≈ 29× at c=64"
-//   not core-for-core  <- the 1-core-vs-48-core caveat on the 33x ratio. The most
-//                         deletable sentence on the site: removing it strengthens
-//                         the claim and breaks nothing, which is why it is gated.
+// 1b. rendered-value lock — required in src/content.ts specifically.
 const REQUIRED_IN_CONTENT = [
   "2.9 million client operations",
   "878 µs",
   "~29x",
   "not core-for-core",
-  // THE THREE OTHER CLAIMS A PRE-SHIP REVIEW FOUND OVERSTATED, locked the same way.
-  // Each was corrected DOWNWARD toward what the linked repo already said, and each
-  // was ungated — so nothing stopped the stronger wording coming back. The pattern
-  // is what makes them worth locking together: on all four, the site claimed more
-  // than the repository it cites, which is backwards, because the repo is what an
-  // interviewer opens to check.
-  //   Illegal verdicts   <- parallax-kv CONSISTENCY_REPORT.md:139-146 forbids "zero
-  //                         linearizability violations": a bounded search that times
-  //                         out returns Unknown, so absence of Illegal is not proof.
-  //   sled wins every    <- accretion-db RESULTS.md:192, in bold. The old phrasing
-  //                         ("including the cases where sled wins") implied some
-  //                         were won.
-  //   6 simulated clients, virtual time
-  //                      <- the soak's real conditions. One provenance strip used to
-  //                         stand behind three cells from TWO campaigns; the c=8
-  //                         bench measured 8,140 ops, not 2.9 million.
+  // The three other claims A pre-ship review found overstated, locked the same way.
   "Illegal verdicts from the linearizability checker",
   "sled, which wins every matched comparison",
   "6 simulated clients, virtual time",
@@ -109,11 +47,8 @@ const FORBIDDEN = [
     why: "phone-number-shaped string (no phone number anywhere in site text)",
   },
   {
-    // Widened 2026-08-03: the original /30[–-]48x/ caught only the hyphen and
-    // en-dash spellings it happened to ship in. An independent verifier probed
-    // it and it missed "30—48x", "30 - 48x", "30 to 48x", "48× the oracle",
-    // bare "48x faster", and the stale "~31,700" — which is exactly how a
-    // retracted number creeps back in a slightly different skin.
+    // Widened 2026-08-03: the original /30[–-]48x/ caught only the hyphen and en-dash spellings it happened
+    // to ship in.
     re: /3\s*0\s*[-–—]\s*4\s*8\s*[x×]|30\s*to\s*48\s*[x×]|(?<![\d.])48\s*[x×]\s*(?:the\s+)?(?:oracle|exact|brute|faster|speedup)|31,?700/i,
     why: "retired lodestone claim — 48.7x occurs at 0.8996 recall, below the asserted 90%; true ≥0.90 HNSW band is 9.2x–32.8x, and the QPS figure is ~31,800 not ~31,700",
   },
@@ -163,25 +98,13 @@ const files = [
   join(root, "README.md"),
 ]
   .filter((p) => TEXT_EXT.test(p) && existsSync(p))
-  // Third-party font LICENCE texts are excluded, and the exclusion is narrow on
-  // purpose. This gate polices IVAN'S CLAIMS: its tripwires are tuned to the
-  // site's own voice (e.g. "contributed to" is allowed in exactly one
-  // CCD-data-archive sentence). The SIL Open Font License contains that phrase
-  // in its own legal boilerplate, which is not a claim about Ivan, is not
-  // rendered anywhere on the site, and may not be edited — the OFL requires the
-  // text to travel verbatim with the fonts. Scoped to this exact filename shape
-  // rather than to all of public/fonts/, so a future .txt dropped in that
-  // directory is still scanned.
+  // Third-party font licence texts are excluded, and the exclusion is narrow on purpose.
   .filter((p) => !/public\/fonts\/LICENSE-[\w-]+\.txt$/.test(p.replace(/\\/g, "/")));
 
 const problems = [];
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
-// Decorative SVG path data (the `d="…"` coordinate runs in brand logos) is not
-// site copy — its number soup can coincidentally look like a phone number or a
-// banned figure. Blank those values out (same length, so offsets/line numbers
-// stay exact) before the number/voice tripwires run. Every other check still
-// sees the real text.
+// Decorative SVG path data (the `d="…"` coordinate runs in brand logos) is not site copy.
 function maskSvgPathData(text) {
   return text.replace(/(\sd=")([^"]*)(")/g, (_, open, data, close) =>
     open + " ".repeat(data.length) + close,
@@ -235,11 +158,8 @@ for (const s of REQUIRED_IN_CONTENT)
       `RENDERED-VALUE missing from src/content.ts: ${JSON.stringify(s)} — this is checked against content.ts alone, because a mention in any comment would otherwise satisfy it`,
     );
 
-// NO EM-DASHES IN RENDERED COPY (owner request, 2026-08-07). Checked against
-// src/content.ts and the four HTML entries — the surfaces that produce visible text.
-// NOT a blanket ban on the character: this codebase's comments use it heavily and
-// they do not render, which is why this is scoped to the rendered strings rather
-// than added to FORBIDDEN (that scans whole files, comments included).
+// NO em-dashes IN rendered copy (owner request, 2026-08-07). Checked against src/content.ts and the four
+// HTML entries — the surfaces that produce visible text.
 {
   const rendered = [
     ["src/content.ts", /"((?:[^"\\]|\\.)*)"/g],
@@ -263,27 +183,8 @@ for (const s of REQUIRED_IN_CONTENT)
   }
 }
 
-// ---------------------------------------------------------------------------
-// 5. DERIVED NUMBER LOCK — the rendered lodestone prose must agree with the
-//    committed benchmark, arithmetically.
-//
-// WHY THIS EXISTS. Everything above is a DENYLIST: it catches retired claims in
-// the spellings someone thought to enumerate. An independent reviewer
-// mutation-tested that approach against 14 single-number falsifications of
-// content.ts and NINE SURVIVED — recall 0.976 -> 0.999, QPS 31,800 -> 91,800,
-// 2.9M ops -> 9.9M, 878 µs -> 78 µs, ~29x -> ~299x, 33x -> 49x, and the retired
-// "48.7x" itself (the `(?<![\d.])` lookbehind written to stop "148x" matching
-// also rejects the ".7", so the tripwire could not match the exact number its
-// own error message names). The gate caught GPA, phone numbers and team size —
-// the categories already imagined — and no measured value on the page.
-//
-// The generator already asserts that the FIGURE's numbers are byte-exact
-// substrings of the benchmark. That says nothing about the PROSE beside it: a
-// doctored benchmark row regenerated the plot to 41,845 q/s while the plate kept
-// saying ~31,800, and both gates passed.
-//
-// So this reads the benchmark and recomputes what the prose is allowed to say.
-// An inflated number now has to survive arithmetic, not just avoid a spelling.
+// 5. derived number lock — the rendered lodestone prose must agree with the committed benchmark,
+// arithmetically.
 const BENCH = join(root, "benchmarks", "lodestone", "bench_50k_128d.txt");
 if (existsSync(BENCH)) {
   const bench = readFileSync(BENCH, "utf8");
@@ -305,9 +206,7 @@ if (existsSync(BENCH)) {
       `derived-number lock: could not parse the benchmark (oracle=${oracle}, ${rows.length} HNSW rows) — the lock must never silently pass`,
     );
   } else {
-    // The band the site is allowed to quote: rows at or above the 0.90 recall
-    // floor the page itself draws. 48.7x lives at 0.8996, which is why it is
-    // retired — that exclusion is now arithmetic rather than a banned string.
+    // The band the site is allowed to quote: rows at or above the 0.90 recall floor the page itself draws.
     const band = rows.filter((r) => r.recall >= 0.9);
     const ratios = band.map((r) => r.qps / oracle);
     const maxRatio = Math.max(...ratios);
@@ -347,11 +246,8 @@ if (existsSync(BENCH)) {
     for (const m of corpus.matchAll(/~?\s*(\d{1,3}(?:,\d{3})?|\d{1,3}\.\d)\s*(K\s*)?(?:queries per second|q\/s|queries\/sec)/gi)) {
       const raw = Number(m[1].replace(/,/g, "")) * (m[2] ? 1000 : 1);
       if (raw < 500) continue; // the IVF-PQ rows and the oracle are quoted too
-      // EVERY measured QPS in the file is legal to quote, not just the HNSW
-      // rows: the IVF-PQ table and the generated figure's own transcription both
-      // legitimately carry theirs. Scoping this to the HNSW rows flagged 4,110 /
-      // 6,128 / 9,797 q/s — real numbers, correctly rendered, from the file's
-      // second table.
+      // Every measured QPS in the file is legal to quote, not just the HNSW rows: the ivf-pq table and the
+      // generated figure's own transcription both legitimately carry theirs.
       const allQps = [...bench.matchAll(/^\|\s*\d+\s*\|\s*[\d.]+\s*\|\s*(\d+)\s*\|/gm)].map((x) =>
         Number(x[1]),
       );
@@ -365,9 +261,8 @@ if (existsSync(BENCH)) {
 }
 
 
-// Rendered-text lock on the built projects page, if a build exists. The built
-// entry is a client-rendered shell, so this mostly guards inlined head/meta
-// text; verify.mjs re-checks the same lock on the fully rendered DOM.
+// Rendered-text lock on the built projects page, if a build exists. The built entry is a client-rendered
+// shell, so this mostly guards inlined head/meta text; verify.mjs re-checks the same lock on the fully rendered DOM.
 const distProjects = join(root, "dist", "projects", "index.html");
 if (existsSync(distProjects)) {
   const html = readFileSync(distProjects, "utf8");

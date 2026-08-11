@@ -1,19 +1,4 @@
 // Generates public/og.png — the 1200x630 summary_large_image card.
-//
-// The card is a PLATE, the site's primary primitive: hairline border, plate
-// fill, no shadow and no gradient; a mono label top-left, the name and one
-// provenance line, a miniature of the homepage figure, and a footnote strip
-// carrying the measurement conditions. Nothing here is decorative.
-//
-// Colours and font stacks are READ FROM src/styles/tokens.css at generate
-// time, so this card can never drift from the live palette the way the
-// previous hardcoded one did.
-//
-// The miniature plots the same committed measurements as the homepage figure
-// (lodestone's recall@10 against queries/sec, both index families, with the
-// 0.90 reference line and the annotated knee).
-//
-//   node scripts/generate-og.mjs
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,19 +7,8 @@ import { chromium } from "playwright";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public", "og.png");
 
-// --- live tokens -------------------------------------------------------------
-// tokens.css became TWO-LAYERED with DOUBLE-SHOT (2026-08-04): the semantic
-// roles point at raw values through `var()`, and the outgoing world's names are
-// a migration shim pointing at the semantic roles. So a single regex lookup now
-// returns the STRING "var(--surface-page)" rather than a colour — and this file
-// interpolates its results straight into SVG paint attributes, where `var()`
-// does not resolve (there is no CSS cascade in a standalone SVG document). That
-// would have produced a social card painted in invalid colours, silently, with
-// the build green.
-//
-// So `token()` FOLLOWS the var() chain to a literal, and throws if it cannot
-// reach one. A cycle or a dangling reference is a build failure here, not a
-// broken image discovered on Twitter.
+// Live tokens tokens.css became two-layered with double-shot (2026-08-04): the semantic roles point at raw
+// values through `var()`, and the outgoing world's names are a migration shim pointing at the semantic roles.
 const tokensCss = readFileSync(join(root, "src", "styles", "tokens.css"), "utf8");
 function rawToken(name) {
   const m = tokensCss.match(new RegExp(`--${name}:\\s*([^;]+);`));
@@ -49,9 +23,8 @@ function token(name, seen = new Set()) {
   return ref ? token(ref[1], seen) : value;
 }
 const T = {
-  // Named against the SEMANTIC roles, which is what this world calls them. The
-  // legacy aliases still resolve, but nothing new should be written against
-  // them (see the migration-shim note in tokens.css).
+  // Named against the semantic roles, which is what this world calls them. The legacy aliases still
+  // resolve, but nothing new should be written against them (see the migration-shim note in tokens.css).
   ground: token("surface-page"),
   plate: token("surface-figure"),
   grid: token("rule-soft"),
@@ -71,9 +44,8 @@ for (const [name, value] of Object.entries(T)) {
   if (/\bvar\(/.test(value)) throw new Error(`token ${name} still holds an unresolved var(): ${value}`);
 }
 
-// --- the miniature figure ----------------------------------------------------
-// Committed measurements (lodestone/benchmarks/raw/bench_50k_128d.txt), the
-// same series the homepage figure draws.
+// The miniature figure Committed measurements (lodestone/benchmarks/raw/bench_50k_128d.txt), the same
+// series the homepage figure draws.
 const HNSW = [
   { qps: 47335, recall: 0.8996 },
   { qps: 31845, recall: 0.9759 },

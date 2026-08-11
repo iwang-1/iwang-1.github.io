@@ -1,14 +1,5 @@
-// SINGLE SOURCE OF TRUTH for everything the site renders, consumed by all
-// four page entries. Numbers come from public artifacts and the verified
-// portfolio facts sheet; re-verify against FACTS.md before every deploy.
-// Report-only DANN metrics are intentionally excluded because the committed
-// artifacts do not reproduce them. scripts/check-facts.mjs enforces the
-// mechanical parts (it runs as `prebuild`).
-//
-// Confidentiality: the AWS bullets below use only PUBLIC AWS product terms
-// (EC2, VPC, canary, CloudWatch, CDK, SDK) exactly as they appear on Ivan's
-// own resume — no internal system names, ever. A private pre-push gate
-// (check-confidentiality.mjs, outside this repo) blocks the specifics.
+// Single source of truth for everything the site renders, consumed by all four page entries. Numbers come
+// from public artifacts and the verified portfolio facts sheet; re-verify against facts.md before every deploy.
 
 export const person = {
   name: "Ivan Wang",
@@ -20,44 +11,21 @@ export const person = {
 // ---------------------------------------------------------------------------
 // Home — hero, About.
 
-// The readout rail is the fold-level proof: three repos, one measured cell
-// each, every value already carried by featuredSystems.metrics. It has to read
-// and click with the figure ignored entirely.
-//
-// `what` and `plain` exist because the repo names are invented words and two of
-// the three units are jargon: a reader who has never seen "lodestone" or
-// "recall@10" learns nothing from a rail that only prints them. Both fields are
-// SURFACING, never new claims — every `what` is the opening noun phrase of that
-// project's own summary below, and every `plain` names what the metric IS
-// rather than asserting a second measurement.
+// The readout rail is the fold-level proof: three repos, one measured cell each, every value already
+// carried by featuredSystems.metrics.
 export const hero = {
   // Date-anchored: a bare "AWS SDE INTERN" silently goes stale when the
   // internship ends.
   kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN, SUMMER 2026",
   headline: "Ivan Wang",
-  // The second sentence is gate-locked verbatim — verify.mjs asserts the
-  // lowercase literals "mechanical keyboards" and "bouldering" on "/", and
-  // they exist nowhere else in the rendered DOM (the hobby headings are
-  // capitalized). Edit the first sentence only.
-  // NO language or specialty in the first sentence — naming a stack narrows the
-  // roles a screener will consider him for (owner call, 2026-07-31). The site
-  // shows the range; it doesn't announce a lane.
-  //
-  // The first sentence states an ACTION, not a category: "I'm a software
-  // engineer" on a page already titled "Software Engineer" described the set
-  // every candidate belongs to rather than anything he does, so the whole
-  // self-description fell to the hobby list. This names zero technologies (the
-  // no-lane call stands) and is exactly what the three repos in the rail below
-  // demonstrate — it introduces no fact the page did not already carry.
+  // The second sentence is gate-locked verbatim.
   subhead:
     "I mostly build things to find out how they work. Outside of work I'm into mechanical keyboards, bouldering, and keeping up with tech.",
-  // Both tracks, because he is eligible for both (confirmed 2026-07-31: the
-  // combined B.S./M.S. can extend past May 2027). Addressing only one would make
-  // the other kind of recruiter rule him out. Relocation stated, no metro named.
+  // Both tracks, because he is eligible for both (confirmed 2026-07-31: the combined B.S./M.S. can extend
+  // past May 2027).
   availability: "Open to Summer 2027 internships and new-grad roles · relocating anywhere in the US",
-  // "Three OF the things": eleven public repos exist, and a rail that reads as
-  // the complete portfolio is what makes a broad body of work look like one
-  // track. Two words, no count asserted.
+  // "Three OF the things": eleven public repos exist, and a rail that reads as the complete portfolio is
+  // what makes a broad body of work look like one track.
   readoutLead: "Three of the things I've built, with one measured result each. The names link to the code.",
   readout: [
     {
@@ -66,9 +34,8 @@ export const hero = {
       href: "https://github.com/iwang-1/parallax-kv",
       value: "2.9M",
       unit: "client operations checked",
-      // The one hero metric that shipped without a gloss, and the exact row both
-      // non-engineer reviewers named as the one they could not judge. Names what
-      // the number IS; asserts no second measurement.
+      // The one hero metric that shipped without a gloss, and the exact row both non-engineer reviewers
+      // named as the one they could not judge.
       plain: "reads and writes replayed under failure",
     },
     {
@@ -88,24 +55,10 @@ export const hero = {
       plain: "top-10 search accuracy",
     },
   ],
-  // The line under the CTA row. It used to be the bare address, a second copy of
-  // the "Email me" button directly above it; now the same line carries the ONE
-  // affordance a screener could otherwise only find 5,000px down in the contact
-  // band. Not a new claim — contact.body has published "I can send a full resume
-  // on request" all along, and verify.mjs still blocks any published résumé file
-  // (and any link offering one), so the sentence IS the artifact.
-  //
-  // The spelling is free. This used to read "Unaccented 'Resume': the accented
-  // literal is on the gate's absent list" — i.e. the copy was shaped to dodge a
-  // gate, which meant the gate was satisfied by construction and checked nothing.
-  // That entry is gone (2026-08-05); the gate now reads both spellings
-  // accent-blind and asserts what actually matters, that no file is offered.
-  // Write the word however it should read.
+  // The line under the cta row.
   emailLine: "Resume on request",
-  // The paid production work, in the hero in body type. It is the highest-signal
-  // thing a new grad has and the one thing GitHub can't show, and it used to
-  // render only as a mono aside two screens down. Every fact here is already in
-  // engineeringRoles[0] — org, dates, and the first bullet's own numbers.
+  // The paid production work, in the hero in body type. It is the highest-signal thing a new grad has and
+  // the one thing GitHub can't show, and it used to render only as a mono aside two screens down.
   awsLine: {
     text: "This summer I'm an SDE intern on EC2 Networking at AWS, where I built an agent that migrated seven production canaries from Scala to Java, cutting each one from about a week of work to about a day.",
     linkText: "Full timeline",
@@ -113,21 +66,12 @@ export const hero = {
   },
 };
 
-// Off the clock — the hobby section. Quick and warm by design (owner call,
-// 2026-07-27): no leadership claims, no metrics, just the three things he is
-// actually into, each with its own drawn figure. The old About paragraphs and
-// the club-officer line were retired at the same time.
-// Outside of work — the hobby section. The blurbs are Ivan's own words, lightly
-// edited for grammar only: his reasons for liking each thing, not a description
-// of the thing. Do not "improve" these into cleverness; the whole point is that
-// they sound like him.
+// Off the clock.
 export const hobbies = {
   title: "Outside of work",
   intro: "A few things I spend my free time on.",
-  // Trimmed 2026-07-31, subtractively: personality only works if it reads in a
-  // few seconds, and this section now stands between a screener and the proof.
-  // 208 words -> ~76. Nothing is rephrased into cleverness — clauses that
-  // restated the heading above them, or the plate rows below them, came out.
+  // Trimmed 2026-07-31, subtractively: personality only works if it reads in a few seconds, and this
+  // section now stands between a screener and the proof.
   keyboards: {
     blurb: "Building keyboards",
     lead: "You can customize every part, so you can tailor a board to exactly what you or someone else needs, and picking the right part for the job is the fun of it.",
@@ -161,9 +105,7 @@ export interface FeaturedSystem {
   /** Footnote-register scope note. Renders in the plate's footnote strip under
    *  a hairline with a † marker, never as the card's closing sentence. */
   limits?: string;
-  /** One first-person aside, in body register, on ONE plate only — the
-   *  deliberate break in an otherwise identical three-plate anatomy. Restates a
-   *  fact the plate already carries; never introduces a number. */
+  /** One first-person aside, in body register, on one plate only. */
   aside?: string;
   /** The plate footnote's measurement conditions — what the numbers were
    *  measured on, in the same shape as the axis labels in the repo's own plot. */
@@ -174,14 +116,7 @@ export interface FeaturedSystem {
   artifactLinks: { label: string; href: string }[];
   chips: string[];
   diagram: "raft" | "lsm" | "ann";
-  /** `plain` is the metric said in words, on the labels that are axis labels
-   *  rather than English. Identical contract to the hero rail's own `plain`
-   *  field: it NAMES WHAT THE LABEL IS and may not assert a second measurement
-   *  or introduce any number. Two of the three reuse the rail's already-approved
-   *  wording verbatim, so the same jargon is never translated two ways.
-   *  Omitted wherever the label already reads as English — "client operations
-   *  checked" and "queries/sec · 1 core" need no gloss, and writing one anyway
-   *  would fill in a schema. */
+  /** `plain` is the metric said in words, on the labels that are axis labels rather than English. */
   metrics: { value: string; label: string; plain?: string }[];
 }
 
@@ -193,43 +128,13 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
     proof:
-      // "zero Porcupine Illegal verdicts", NOT "zero linearizability violations".
-      // CONSISTENCY_REPORT.md:139-146 exists to forbid the stronger phrasing: "The
-      // exact result this artifact supports is therefore zero Porcupine `Illegal`
-      // verdicts, not '1,400 histories formally proved linearizable'". A bounded
-      // search that times out returns `Unknown`, and calling that a proven absence
-      // of violations is the mislabel the report names. The repo was more careful
-      // than the site about the site's own project — the wrong way round.
+      // "zero Porcupine Illegal verdicts", not "zero linearizability violations".
       "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker.",
     limits:
-      // "election-safety check", NOT "linearizability checker" — those are two
-      // different components, and the repo's own ledger names the first one.
-      // docs/BUG_LEDGER.md: "During S2c bring-up the election-safety check fired
-      // on every fault-injecting scenario ... the fault was in the *checker*, not
-      // the core: it keyed election safety on a stale proxy for the leader's
-      // term." The profile README already said this correctly; only the site
-      // said "linearizability checker", so one surface named the wrong component
-      // of the candidate's own project — the kind of detail an interviewer who
-      // opens the ledger will find.
+      // "election-safety check", not "linearizability checker"
       "† The first bug the harness caught was in my own election-safety check, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
-    // One plate carries an aside so the three do not read as one filled-in
-    // template. It restates the footnote's checker-bug fact in plain prose;
-    // no second copy of any number.
-    // The aside is GONE, not moved. It existed to break the three-plate
-    // sameness back when `limits` was a 14px dagger footnote nobody read — so it
-    // restated the checker-bug fact in body register where it would land. Now
-    // `limits` IS a titled column at body size, so the aside was the same
-    // sentence twice in one block, 200px apart. The fact keeps its stronger
-    // position; the duplicate goes.
-    // TWO RUNS, NAMED SEPARATELY. This strip used to read "3 nodes · localhost ·
-    // c=8 · 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13" — the conditions of the
-    // THROUGHPUT bench alone, while the plate's headline 2.9M cell comes from the
-    // soak: a different run, with six simulated clients in virtual time
-    // (CONSISTENCY_REPORT.md:68-73), not c=8 on real localhost. The c=8 bench itself
-    // measured 8,140 operations, not 2.9 million. One provenance line was standing
-    // behind three cells from two campaigns, which is the kind of thing an
-    // interviewer catches by opening one linked file. The profile README already
-    // said this correctly ("6 simulated clients, virtual time").
+    // One plate carries an aside so the three do not read as one filled-in template. It restates the
+    // footnote's checker-bug fact in plain prose; no second copy of any number.
     provenance:
       "3 nodes · soak: 6 simulated clients, virtual time · throughput: localhost, c=8, 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
     repoHref: "https://github.com/iwang-1/parallax-kv",
@@ -241,10 +146,7 @@ export const featuredSystems: FeaturedSystem[] = [
     ],
     chips: ["Go", "Raft", "gRPC", "Porcupine", "deterministic simulation"],
     diagram: "raft",
-    // Two of the three labels are already English — "durable writes" and
-    // "client operations checked" — so only the percentile one is glossed. A
-    // gloss on every row would be the filled-in schema the readout exists to
-    // avoid.
+    // Two of the three labels are already English.
     metrics: [
       { value: "272 w/s", label: "durable writes · c=8" },
       // p99 = the 99th percentile, i.e. all but the slowest hundredth. Names
@@ -260,13 +162,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
     proof:
-      // "sled wins every matched comparison", not "including the cases where sled
-      // wins" — the old phrasing implied some were won. accretion-db's own
-      // RESULTS.md:192 states it plainly and in bold: "sled wins every matched
-      // comparison on this host", framed as "context, not a contest" against a
-      // mature engine with a different architecture. The repo was blunter about
-      // this than the site was, which is the wrong way round for the surface a
-      // recruiter reads first.
+      // "sled wins every matched comparison", not "including the cases where sled wins"
       "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Benchmarked against sled, which wins every matched comparison on this host. Reported rather than omitted.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
@@ -282,9 +178,8 @@ export const featuredSystems: FeaturedSystem[] = [
     chips: ["Rust", "LSM tree", "group commit", "crash consistency", "proptest"],
     diagram: "lsm",
     metrics: [
-      // "WAL-bound" and "group commit" are both jargon; the gloss says what the
-      // batching IS. No number, and no claim about the rest of the engine — the
-      // footnote's † already states the compaction limit.
+      // "wal-bound" and "group commit" are both jargon; the gloss says what the batching is. No number, and
+      // no claim about the rest of the engine — the footnote's † already states the compaction limit.
       { value: "~29x", label: "WAL-bound group commit", plain: "gain from batching log writes" },
       // Verbatim from the hero rail's approved gloss for the same label, so
       // "fdatasync p50" is never translated two different ways on one page.
@@ -336,10 +231,8 @@ export interface Education {
 export const education: Education[] = [
   {
     school: "University of Maryland, College Park",
-    // Which degree lands in May 2027 was unresolved: B.S.-new-grad and
-    // M.S.-new-grad are different reqs with different bands, and routing a
-    // candidate is literally the recruiter's job. FACTS.md:14 already recorded
-    // the answer ("M.S. expected May 2027"); this states it.
+    // Which degree lands in May 2027 was unresolved: B.S.-new-grad and M.S.-new-grad are different reqs
+    // with different bands, and routing a candidate is literally the recruiter's job.
     degree: "B.S./M.S. in Computer Science, M.S. expected May 2027. Departmental Honors (research track)",
     dates: "Aug 2023 – May 2027",
     detailLines: [
@@ -363,11 +256,8 @@ export const education: Education[] = [
 // ---------------------------------------------------------------------------
 // Skills — focused on tools backed by experience or public work.
 
-// Four rows, not two: the same items in the same mono/interpunct grammar, but
-// the 22-item "Tools & frameworks" run was a 276-character grey wall in which a
-// fast reader keyword-matching against a req found nothing. Grouping is the
-// whole change — nothing added, nothing removed, and the strongest items lead
-// each row.
+// Four rows, not two: the same items in the same mono/interpunct grammar, but the 22-item "Tools &
+// frameworks" run was a 276-character grey wall in which a fast reader keyword-matching against a req found nothing.
 export const skills: { label: string; items: string[] }[] = [
   {
     label: "Languages",
@@ -378,9 +268,8 @@ export const skills: { label: string; items: string[] }[] = [
     items: ["Raft", "gRPC/Protobuf", "LSM trees", "PostgreSQL/SQLite"],
   },
   {
-    // The row label names what all four items are, testing tools included:
-    // "Backend & web" was the only label on the page that a JUnit 5 and a
-    // Playwright entry did not belong under.
+    // The row label names what all four items are, testing tools included: "Backend & web" was the only
+    // label on the page that a JUnit 5 and a Playwright entry did not belong under.
     label: "Backend, web & testing",
     items: ["Flask/FastAPI", "Node.js", "JUnit 5", "Playwright"],
   },
@@ -401,10 +290,7 @@ export const skills: { label: string; items: string[] }[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Experience — all 7 roles. Bullets lightly copyedited from the sheet only;
-// every number/tool/claim verbatim. AWS phrasing stays date-anchored
-// ("Summer 2026"), never "currently".
+// Experience.
 
 export interface Role {
   role: string;
@@ -418,24 +304,8 @@ export interface Role {
   proofLink?: { label: string; href: string }; // optional "see the code" link
 }
 
-// Each role shows its employer's real logo, served from /logos (bundled in
-// public/, never hotlinked from a CDN). Every one of the seven is a real
-// vendor mark, so nothing on a recruiting page is ever the WRONG company's
-// logo.
-//
-// `w`/`h` are the asset's INTRINSIC pixel dimensions, read out of each file's own
-// header rather than assumed — and the headers are the reason to read them: five of
-// these seven are named `.png` and are actually JPEG (progressive, SOF2), so the
-// extension is not a source of truth about the file and neither is the eye. Three
-// distinct sizes across the seven (200², 240², 100²).
-//
-// They render as the `width`/`height` attributes and change nothing about the drawn
-// box — the chip is a fixed 48px and `.role-logo-img` is `100%`/`100%`, measured
-// 46x46 for all seven before and after. What they buy is the aspect ratio being
-// known before a byte of image arrives, which is what keeps the `.role-logo-wide`
-// variant (`height: auto`) honest and what stops a future layout that sizes on one
-// axis from re-introducing a shift. Measured CLS is 0 before and after, at 9Mbps
-// and at 400Kbps: this is a guard, not a fix for a live defect.
+// Each role shows its employer's real logo, served from /logos (bundled in public/, never hotlinked from a
+// cdn).
 export type RoleLogo = {
   kind: "img";
   src: string;
@@ -636,20 +506,7 @@ export const projects: Project[] = [
     title: "This site",
     repoHref: "https://github.com/iwang-1/iwang-1.github.io",
     license: "MIT",
-    // "won't DEPLOY", not "won't build" — this is the one claim on the page a
-    // reader can falsify from the repo in under a minute, so it has to name the
-    // right gate. Both halves are now true, but of different steps:
-    //   fact check          -> `prebuild` (package.json) runs check-facts.mjs, so
-    //                          this genuinely fails `npm run build`;
-    //   Playwright assertion -> verify.mjs drives the BUILT dist/, so it cannot
-    //                          fail a build that already finished. In
-    //                          .github/workflows/deploy.yml it runs as the last
-    //                          step of the `build` job, before
-    //                          upload-pages-artifact and before the `deploy`
-    //                          job that needs it — so a failed assertion stops
-    //                          the DEPLOY, which is the accurate word for both.
-    // Do not "restore" the stronger verb: it overstates one half to tidy the
-    // sentence, and the sentence is the site's rigour claim about itself.
+    // "won't deploy", not "won't build"
     description: [
       "The page you're reading: a multi-page React + TypeScript + Vite site on GitHub Pages. It prerenders to static HTML, works without JavaScript, and won't deploy if a fact check or Playwright assertion fails.",
     ],
@@ -662,17 +519,7 @@ export const projects: Project[] = [
 
 export const contact = {
   heading: "Get in touch",
-  // "Full resume on request" removes the screener's dead end without shipping a
-  // PDF — verify.mjs blocks any published résumé file and any link that offers
-  // one, so the sentence IS the affordance. The spelling is free: the old
-  // accented-literal entry on the gate's absent list is gone (2026-08-05), since
-  // choosing "resume" over "résumé" satisfied it without proving anything.
-  //
-  // BOTH tracks named, matching the hero chip's already-approved phrasing
-  // (hero.availability). This band is the peak-end position on all three content
-  // pages; opening it with new-grad only told an intern recruiter who scrolled to
-  // the bottom that this candidate wants something else. Introduces no new fact —
-  // the dual-track eligibility already ships above the fold.
+  // "Full resume on request" removes the screener's dead end without shipping a pdf.
   body:
     "I'm looking for Summer 2027 software engineering internships and new-grad roles. Email is the fastest way to reach me, and I can send a full resume on request.",
 };
@@ -682,15 +529,8 @@ export const footer = {
   copyright: "© 2026 Ivan Wang",
 };
 
-// The page-root ErrorBoundary's last resort, and it renders on ONE path only: a
-// mount that failed on a page carrying no prerendered markup to restore, which in
-// practice means `npm run dev`. Every built page is asserted to have that markup
-// (scripts/prerender.mjs fails the build otherwise), so on the deployed site the
-// boundary shows the complete static page instead and none of this renders.
-//
-// It names the problem and the recovery and stops — no apology, no explanation of
-// a layer the reader cannot see, and no joke. The routes are the recovery, which
-// is why they are the bulk of it.
+// The page-root ErrorBoundary's last resort, and it renders on one path only: a mount that failed on a page
+// carrying no prerendered markup to restore, which in practice means `npm run dev`.
 export const errorFallback = {
   heading: "This page didn't finish loading.",
   body: "Reloading usually fixes it. These pages work either way:",

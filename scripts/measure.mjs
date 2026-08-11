@@ -1,8 +1,4 @@
-// Measurement harness (not a gate). Serves dist/ over an in-process node:http
-// server and reports real numbers: LCP, transferred bytes by type, font bytes,
-// and the computed contrast of every semantic token pair against every surface.
-//
-//   node scripts/measure.mjs
+// Measurement harness (not a gate).
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";

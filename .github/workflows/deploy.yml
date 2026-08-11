@@ -13,12 +13,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # A CEILING, because there was none and the first run of this pipeline proved why:
-    # `npm run verify` sat for 44 minutes on a step that takes 4:11 locally, with no
-    # timeout in the script or on the step, so it was on course to burn the full
-    # 6-hour runner limit while looking indistinguishable from slow CI. 20 minutes is
-    # ~4x the local wall-clock for the whole job, which is generous for a 2-core
-    # runner and still fails loudly instead of hanging quietly.
+    # Cap this step so a stalled verification cannot use the full runner limit: `npm run verify` sat for 44
+    # minutes on a step that takes 4:11 locally, with no timeout in the script or on the step, so it was on.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
@@ -32,22 +28,13 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # fact/framing gate (also runs as the build's prestep)
       - run: node scripts/check-facts.mjs
-      # The generated figure must MATCH its committed benchmark, not just be
-      # regenerable from it. `npm run build` regenerates in write mode, which
-      # would silently overwrite a hand-edited src/generated/sweep-figure.ts and
-      # deploy the corrected file with no complaint — so a bad committed artifact
-      # was undetectable. --check exists precisely to make the file's own "DO NOT
-      # EDIT BY HAND" header a rule rather than a request; it was never wired up.
+      # The generated figure must match its committed benchmark, not just be regenerable from it.
       - run: node scripts/generate-figures.mjs --check
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
-      # THE SITE CLAIMS THIS RUNS. /projects/ says of itself that it "won't build
-      # if a fact check or Playwright assertion fails" — and until now CI ran the
-      # fact check and no Playwright assertion at all, making the one claim on the
-      # page a reader could falsify from the repo in 30 seconds false. Rather than
-      # softening the sentence, the pipeline now earns it: every assertion in
-      # verify.mjs runs here, against the built dist/, before anything deploys.
+      # The site claims this runs. /projects/ says of itself that it "won't build if a fact check or
+      # Playwright assertion fails" — and until now CI ran the fact check and no Playwright assertion at all, making the one.
       - run: npm run verify
       # verify.mjs rewrites docs/*.png as a side effect; those are documentation
       # screenshots, not build output, so a CI-only diff must not fail the deploy.

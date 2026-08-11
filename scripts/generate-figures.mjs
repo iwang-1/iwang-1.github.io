@@ -1,45 +1,4 @@
-// BUILD-TIME FIGURE GENERATOR — runs as the first half of `prebuild`, before
-// `check-facts.mjs` (so the fact gate scans what this emits) and before
-// `tsc -b && vite build` (so the emitted module is on disk when TypeScript
-// resolves it).
-//
-//   node scripts/generate-figures.mjs        # emit src/generated/sweep-figure.ts
-//   npm run generate:figures                 # same, named
-//
-// WHAT IT IS FOR. The site's signature figure used to be a hand-authored inline
-// SVG: ten measured samples typed into JSX beside a comment naming the file they
-// came from. That is a transcription, and a transcription can drift from its
-// source silently — the figure and the file it cites are two objects that only
-// agree because someone kept them agreeing. This script makes them one object:
-// the numbers are PARSED from the committed benchmark file and the figure is
-// derived, so the figure cannot say anything the file does not.
-//
-// WHAT IT REFUSES TO DO. It never falls back. If the source file is missing,
-// unreadable, or does not parse to EXACTLY the ten data rows and the one oracle
-// line this figure is built on, it exits non-zero and the build fails. A figure
-// quietly rendering last week's numbers is worse than no figure, because the
-// whole argument of this site is that the numbers are checkable.
-//
-// THE SELF-CHECK, which is the part worth reading. After the markup is built,
-// every number the figure presents AS DATA (each recall, each throughput, the
-// oracle) is asserted to appear VERBATIM in the source text. Plot coordinates
-// are excluded because they are geometry, not data — they are solved from the
-// axis mappings below. So the invariant is: no data number reaches the page that
-// is not a byte-exact substring of the file the page cites.
-//
-// ROUNDING. There is none, anywhere in this file. The samples render at the
-// source file's own precision (0.9759, not 0.976; 31,845, not ~31.8K). Thousands
-// separators are inserted for reading and change no value. The site's approved
-// "~31,800" style survives only where it already exists in src/content.ts, which
-// this script does not touch — see the cross-check note in the report.
-//
-// SOURCE OF THE SOURCE. benchmarks/lodestone/bench_50k_128d.txt is a byte-exact
-// vendored copy of benchmarks/raw/bench_50k_128d.txt in the public lodestone
-// repo (sha256 recorded in the emitted module). It is vendored because GitHub
-// Actions checks out THIS repo only, so a build step reaching into a sibling
-// working copy would deploy fine locally and fail in CI. When the sibling
-// checkout IS present, this script asserts the two files are identical and fails
-// on any difference — so the copy cannot drift from the original either.
+// Build-time figure generator.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -95,14 +54,7 @@ if (existsSync(UPSTREAM)) {
     );
 }
 
-// ---------------------------------------------------------------------------
-// 2. PARSE, with the expected shape asserted rather than assumed.
-//
-// The parse is deliberately narrow. Every regex below names one line of the
-// file, and the counts are checked against the exact numbers this figure is
-// built on — five HNSW rows, five IVF-PQ rows, one oracle line. A file that
-// gained a sixth ef, lost a column, or renamed a section fails the build
-// instead of producing a figure with a hole in it.
+// 2. parse, with the expected shape asserted rather than assumed.
 
 const ORACLE_RE = /^#\s*exact brute-force oracle:\s*(\d+)\s*QPS\s*\(([^)]+)\)\s*$/m;
 const RUN_RE =
@@ -162,9 +114,8 @@ if (hnswM === null) problems.push("no '## HNSW (m=…)' section heading");
 if (ivfParams === null)
   problems.push("no '## IVF-PQ (nlist=…, m=…, …x compression)' section heading");
 
-// The exact shape this figure is built on. Both the count AND the knob values
-// are asserted: a sweep that kept five rows but changed which five is a
-// different figure, and it should not inherit this one's geometry.
+// The exact shape this figure is built on. Both the count and the knob values are asserted: a sweep that
+// kept five rows but changed which five is a different figure, and it should not inherit this one's geometry.
 const EXPECT_EF = ["16", "32", "64", "128", "256"];
 const EXPECT_NPROBE = ["1", "4", "8", "16", "32"];
 
@@ -215,13 +166,7 @@ const run = {
 };
 const host = hostMatch[1];
 
-// ---------------------------------------------------------------------------
-// 3. THE PALETTE, read from src/styles/tokens.css — never a second copy of a hex.
-//
-// The figure paints in `var(--…)` so it stays live with the token layer (and so
-// a dark counterpart costs nothing here). tokens.css is still parsed, for one
-// reason: to FAIL if a role this figure depends on has been renamed or deleted.
-// A `var(--ink-data)` pointing at nothing renders black and passes every gate.
+// 3. the palette, read from src/styles/tokens.css — never a second copy of a hex.
 
 if (!existsSync(TOKENS)) die(`token file not found: ${relative(root, TOKENS)}`);
 const tokensCss = readFileSync(TOKENS, "utf8");
@@ -240,10 +185,7 @@ const resolve = (name, depth = 0) => {
   return via ? resolve(via[1], depth + 1) : value;
 };
 
-// Every role the figure paints with, and what it is for here. The datasheet
-// grammar needs exactly these: one ink, one data colour, one accent, two rules,
-// a secondary, and the figure fill (which backs the title block and haloes the
-// sample dots).
+// Every role the figure paints with, and what it is for here.
 const PALETTE = {
   "--ink-data": "the data traces and every measured sample",
   "--ink-accent": "the one annotation: the walking cursor and the knee callout",
@@ -267,16 +209,7 @@ if (missing.length)
     "The figure emits var(--…) references; a role that resolves to nothing renders black and passes every gate.",
   );
 
-// ---------------------------------------------------------------------------
-// 4. GEOMETRY. Solved, not typed.
-//
-// viewBox 680x360 user units; plot field x 92..596, y 44..296. x is log10 over
-// 700..72,000 q/s and y is linear recall over 0.46..1.06 — the two mappings the
-// outgoing hand-authored figure was solved against, kept byte-for-byte so the
-// plate's width caps, the pannable window's floor, the crosshair's 1:1
-// user-unit-to-px mapping and the caption/figure non-overlap gate all still hold
-// against a figure whose geometry has not moved. Reproduced against all ten
-// hand-solved coordinates at one decimal place before this script replaced them.
+// 4. geometry.
 const VIEW = { w: 680, h: 360 };
 const FIELD = { x0: 92, x1: 596, y0: 44, y1: 296 };
 const XDOMAIN = { min: 700, max: 72000 };
@@ -292,34 +225,7 @@ const px = (qps) => FIELD.x0 + ((Math.log10(qps) - lgMin) / lgSpan) * (FIELD.x1 
 const py = (recall) =>
   FIELD.y0 + ((YDOMAIN.max - recall) / (YDOMAIN.max - YDOMAIN.min)) * (FIELD.y1 - FIELD.y0);
 
-// ---------------------------------------------------------------------------
-// LABEL PLACEMENT — SOLVED AND ASSERTED, NOT HAND-NUDGED.
-//
-// This replaced a table of ten hand-solved offsets, and the reason is worth
-// recording because it is the argument for generating figures at all. Those
-// offsets were solved against the OUTGOING typeface. This world sets every label
-// in Martian Mono, which is a display mono with a fixed 0.750 em advance — a
-// materially wider face — and at 10px the ten setting labels need 531 user units
-// of horizontal room inside a field that is 504 wide. The first render of this
-// generator therefore printed "nprobe=32nprobe=16nprobe=8" and "ef=256ef=128" as
-// run-together strings. Ten offsets re-nudged by eye would have fixed that render
-// and quietly broken the next one, because a benchmark with a sixth ef row, or
-// one point moved, re-crowds a different part of the field.
-//
-// So placement is solved here, and the solution is CHECKED: each label takes the
-// first candidate position that collides with nothing, and if any label has no
-// clear position the build FAILS rather than shipping an overlap. The collision
-// set is everything a reader could confuse a label with — the other labels, both
-// traces, every sample dot, the field edges, and the fixed furniture (the
-// reference level's label, the oracle marker's annotation, the legend, the title
-// block, the annotation ring).
-//
-// TEXT METRICS. Martian Mono's advance is FIXED at 0.750 em (measured from the
-// binary and recorded in src/styles/tokens.css), and these labels carry
-// letter-spacing 0.02em, so one character occupies exactly 0.770 em. That is why
-// a width can be computed here from a character count instead of measured in a
-// browser — it is a property of the face, and the site already depends on it for
-// column alignment. Verified against the rendered DOM after generation.
+// Label placement.
 const ADVANCE_EM = 0.75; // Martian Mono, fixed advance
 const TRACKING_EM = 0.02; // the labels' letter-spacing
 const LABEL_FS = 10;
@@ -385,23 +291,7 @@ const segmentHitsRect = (p, q, rect, pad = 1) => {
   return true; // degenerate: treat as a hit rather than risk a silent overlap
 };
 
-/** CANDIDATE POSITIONS, generated rather than tabulated, and searched nearest
- *  first. A fixed ladder of ten offsets is what this replaced, and it could not
- *  solve the figure once the gridlines became obstacles: the recall axis is dense
- *  at the top (1.00, 0.95 and 0.90 are 21 units apart, and a 10px label is 10
- *  units tall), so a legible position is often a 4-unit nudge away from an
- *  illegible one and a coarse ladder steps straight over it.
- *
- *  Ordering is what makes the output good rather than merely valid: candidates are
- *  sorted by how far the label sits from its own dot, so every label takes the
- *  CLOSEST clear position and a reader is never asked which dot a distant string
- *  belongs to. Below is preferred over above at equal distance, because the data
- *  crowds the top of this field.
- *
- *  Distance is capped. A label further than this from its point is not labelling
- *  it any more — the first solve, uncapped, pushed "ef=256" 225 units from its
- *  own dot, which reads as a label for whatever happens to be nearby. If nothing
- *  inside the cap is clear the generator FAILS instead of drawing a lie. */
+/** Candidate positions, generated rather than tabulated, and searched nearest first. */
 const LABEL_REACH = 46;
 const CANDIDATES = (() => {
   const out = [];
@@ -423,14 +313,7 @@ const REFERENCE_RECALL = 0.9;
 
 const group = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-// ---------------------------------------------------------------------------
-// 5. THE SAMPLES, in ONE array, ordered by throughput ascending.
-//
-// That order is load-bearing and stated to the reader: it is left-to-right on
-// the log x-axis, it is the order the arrow keys walk (src/enhance.ts sorts on
-// data-sweep-x), and it is the order the transcription table's caption claims.
-// Grouping by series is the obvious tidy-up and it would silently falsify the
-// caption — the tell is that ef=256 sits BETWEEN nprobe=4 and nprobe=1.
+// 5. the samples, in one array, ordered by throughput ascending.
 const samples = [
   ...parsed.HNSW.map((r) => ({
     series: "HNSW",
@@ -464,16 +347,13 @@ for (const s of samples) {
     );
 }
 
-// One readout string shape, resolved once, so the crosshair's live text, each
-// sample's data attribute and the transcription table can never disagree about a
-// sample. src/enhance.ts joins the annotated sample to its row by EXACT string
-// equality on this value, so it has exactly one definition.
+// One readout string shape, resolved once, so the crosshair's live text, each sample's data attribute and
+// the transcription table can never disagree about a sample. src/enhance.ts joins the annotated sample to.
 const readoutOf = (s) =>
   `${s.setting} · recall ${s.recall} · ${s.qpsDisplay} q/s · single core`;
 
-// THE ANNOTATED SAMPLE: the knee, and the figure's server-rendered default
-// state. Chosen by measurement, not by taste — the highest-throughput HNSW
-// sample that still clears the 0.90 reference line the figure draws.
+// The annotated sample: the knee, and the figure's server-rendered default state. Chosen by measurement,
+// not by taste — the highest-throughput HNSW sample that still clears the 0.90 reference line the figure draws.
 const knee = [...samples]
   .filter((s) => s.series === "HNSW" && Number(s.recall) >= REFERENCE_RECALL)
   .sort((a, b) => Number(b.qps) - Number(a.qps))[0];
@@ -495,34 +375,17 @@ const oracleX = px(Number(oracleQps));
 const oracleY = py(1);
 const refY = py(REFERENCE_RECALL);
 
-// THE FIXED FURNITURE. Everything already committed to a position: the boxes a
-// sample label must dodge, and the segments of the two traces it must not sit on
-// top of. Declared here so the solver and the final assertion share one list —
-// a second list would be a second thing to keep true.
+// The fixed furniture. Everything already committed to a position: the boxes a sample label must dodge, and
+// the segments of the two traces it must not sit on top of.
 const LEGEND_X = FIELD.x0 + 6;
 const LEGEND_LABEL_X = FIELD.x0 + 26;
-// The legend's three rows. The oracle row does NOT carry the "all 48 vCPU"
-// disclosure, and that is not a quiet drop: at this face's width that string ran
-// into the title block, and the collision assertion below refused to generate
-// rather than print them on top of each other. The disclosure moved to the marker
-// it describes — the in-plot oracle annotation reads "· 48 vCPU" beside the
-// number itself, which is where it belongs anyway. It is also in the plate's
-// footnote and in the project's provenance line. Nothing was lost.
+// The legend's three rows.
 const LEGEND_ROWS = [
   { y: 200, text: `HNSW m=${hnswM}` },
   { y: 222, text: `IVF-PQ nlist=${ivfParams.nlist} m=${ivfParams.m}` },
   { y: 244, text: "oracle · exact brute force" },
 ];
-// THE TITLE BLOCK's rows, and its box SIZED FROM THEM rather than from a typed
-// width. Two things this caught, both worth recording because they are the kind
-// of defect a hand-drawn figure ships and a generated one cannot:
-//   - the first version hardcoded a 176-unit width while the widest row needed
-//     183 in this face, so the text ran out of its own backing panel; and
-//   - with the conditions on two long lines the panel reached x=363 and the
-//     collision assertion below REFUSED TO GENERATE, because it covered the
-//     nprobe=1 label. Four short rows instead of three long ones keeps the panel
-//     clear of the data, which is why the rows break where they do.
-// It stays bottom-right, where a datasheet puts its title block.
+// The title block's rows, and its box sized from them rather than from a typed width.
 const BLOCK_ROWS = [
   "TEST CONDITIONS",
   `n=${group(run.n)} · d=${run.dim}`,
@@ -538,20 +401,11 @@ const BLOCK = {
   y1: FIELD.y1 - 1,
 };
 const REF_LABEL_X = FIELD.x0 + 8;
-// "48 vCPU", not "48 cores": the benchmark header this file parses reads
-// "Intel(R) Xeon(R) Platinum 8488C, 48 vCPU", and the generated module already
-// carries that exact string as `host`. Writing "cores" beside it made one file
-// state the host two ways, and the distinction is not pedantic here — the whole
-// point of this label is the core-parity caveat, so the unit in it should be the
-// one the machine actually reported.
+// "48 vCPU", not "48 cores": the benchmark header this file parses reads "Intel(R) Xeon(R) Platinum 8488C,
+// 48 vCPU", and the generated module already carries that exact string as `host`.
 const ORACLE_LABEL = `oracle · ${group(oracleQps)} q/s exact · 48 vCPU`;
 
-// THE ANNOTATION's two lines. Split as two explicit strings rather than by
-// breaking the template mid-sentence: the first render read "recall 0.9759 ·31,845
-// q/s" with no space after the separator, because a line break inside a JSX/text
-// node next to a <tspan> collapses to nothing in SVG. Each line now ends and
-// begins where it means to, and the trailing separator sits at the end of line
-// one where a reader expects a continuation.
+// The annotation's two lines.
 const CALLOUT_LINES = [
   `${knee.setting} · recall ${knee.recall} ·`,
   `${knee.qpsDisplay} q/s`,
@@ -599,22 +453,7 @@ const furniture = [
   },
 ];
 
-// THE ONE RULE A LABEL MAY NOT CROSS: the dashed reference level. A string set
-// across it reads as a strikethrough, and this is the line the figure draws in
-// order to admit that its fast end falls UNDER it — so muddying it costs the
-// figure its most honest mark. At the first solve both "nprobe=8" and "ef=256"
-// landed on it.
-//
-// THE SOFT GRIDLINES ARE DELIBERATELY NOT IN THIS LIST, and the token layer is
-// the authority for that: src/styles/tokens.css declares --rule-soft as the
-// divider that "carries no information a reader could miss", pitched below the
-// 3:1 non-text floor on purpose, against --rule for anything structural. A label
-// crossing a soft gridline is what every real datasheet does. Treating them as
-// hard obstacles was tried and it made the figure UNSOLVABLE — the recall axis is
-// dense at the top (1.00 / 0.95 / 0.90 are 21 units apart and a label is 10 units
-// tall), so forbidding those bands left the three clustered IVF-PQ labels nowhere
-// legal to go, and the generator correctly refused to draw. The fix was to stop
-// asserting something the design system does not claim.
+// The one rule A label may not cross: the dashed reference level.
 const rules = [
   { what: "the recall-floor reference line", p: [FIELD.x0, refY], q: [FIELD.x1, refY] },
 ];
@@ -669,9 +508,8 @@ for (const s of samples) {
   placed.push({ what: `the ${s.setting} label`, rect: chosen.rect });
 }
 
-// THE ASSERTION, run over the solved result rather than trusted from the loop:
-// every pair of labels, and every label against every piece of furniture, dot and
-// trace. The solver could be wrong; this says whether it was.
+// The assertion, run over the solved result rather than trusted from the loop: every pair of labels, and
+// every label against every piece of furniture, dot and trace.
 const collisions = [];
 for (let i = 0; i < placed.length; i++) {
   for (let j = i + 1; j < placed.length; j++)
@@ -700,26 +538,7 @@ if (collisions.length)
     "A figure that prints two strings on top of each other is not evidence.",
   );
 
-// ---------------------------------------------------------------------------
-// 6. THE MARKUP. Datasheet grammar.
-//
-// A switch force-travel datasheet is the drawing convention this site is set in,
-// and the conventions borrowed here are the load-bearing ones, not decorative:
-//   - the field is a closed FRAME, not two open axes, with ticks pointing INWARD
-//   - axis titles are set as a datasheet sets them: uppercase, spaced, with the
-//     quantity and its unit, the unit in parentheses
-//   - reference levels are dashed and NAMED (a switch sheet names actuation and
-//     bottom-out; this one names the recall floor the fast end breaks)
-//   - a title block sits in the bottom-right corner carrying the test conditions
-//   - and the two strokes of the measurement are told apart by DASH, not hue.
-//     That last one is the whole reason this figure had to be redrawn: the
-//     palette carries ONE accent, so a two-hue legend is unreadable in it. A
-//     force-travel sheet has the same problem with its press and release strokes
-//     and solves it the same way. HNSW is the solid trace with filled marks;
-//     IVF-PQ is dashed with hollow marks; the legend says which is which.
-//
-// COLOURS are `var(--…)` references, resolved above against tokens.css. No hex
-// appears in the emitted markup — the palette has exactly one home.
+// 6. the markup.
 
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -731,28 +550,7 @@ const trace = (series) => {
   return `M ${pts.join(" L ")}`;
 };
 
-// THE WALK's keyframes. Two decisions worth reading.
-//
-// EACH STOP IS HELD, not glided across: the same transform is declared at both
-// ends of a stop's span, so the cursor sits ON a measured sample and never rests
-// at a position that corresponds to no measurement. The 0.1% left between one
-// stop and the next is 10ms at this duration, so the hop reads as a step.
-//
-// THE LOOP HAS SIX STOPS FOR FIVE SAMPLES: the five HNSW settings left to right,
-// then a RETURN to the annotated default, where it rests until the pass repeats.
-// That is not padding. It means the end of every pass agrees with the static
-// figure and with the reduced-motion render — all three park on the same sample —
-// so the animation resolves to the page's default state instead of stranding the
-// cursor at whichever end it ran out of time on.
-//
-// It also happens to keep every emitted percentage clear of the repo's numeric
-// tripwires. An even five-way split spells 80% and 99.9%, and check-facts.mjs
-// reads both as claims (80% is a rounded classifier accuracy here, 99.x a
-// rounded coverage) — it failed this generator's first two outputs on exactly
-// that, correctly, since a gate cannot know a keyframe stop is not a claim. Six
-// stops spell 16.67 / 33.33 / 50 / 66.67 / 83.33 and collide with nothing. The
-// fact gate remains the authority; this comment exists so the spelling is not
-// "tidied" back into round numbers.
+// The walk's keyframes. Two decisions worth reading.
 const stops = [...walk, knee];
 const pct = (n) => String(Number(n.toFixed(2)));
 const walkStops = stops
@@ -764,15 +562,7 @@ const walkStops = stops
   })
   .join("\n");
 
-// EVERY selector below is prefixed `.sweep-plot`. Two reasons, both measured:
-// an inline <style> inside an inline SVG is DOCUMENT-scoped, not shadow-scoped,
-// so an unqualified selector here would restyle the page (and could break the
-// site's page-surface luminance gate and its no-italic gate from inside a
-// figure); and the prefix raises specificity above src/components/Sweep.css so
-// the outgoing world's two-hue series fills lose cleanly. The forced-colours
-// block is mirrored at the same prefix for the same reason — without it these
-// rules would out-specify Sweep.css's High Contrast Mode overrides and leave the
-// figure painting its own colours over a user's chosen scheme.
+// Every selector below is prefixed `.sweep-plot`.
 const style = `    .sweep-plot { font-family: var(--font-mono); }
     .sweep-plot .sweep-frame { fill: none; stroke: var(--rule); stroke-width: 1; }
     .sweep-plot .sweep-grid line { stroke: var(--rule-soft); stroke-width: 1; }
@@ -1039,9 +829,7 @@ for (const [pattern, why] of [
 ])
   if (pattern.test(svg)) die(`generated markup is unsafe to emit: ${why}`);
 
-// ---------------------------------------------------------------------------
-// 8. EMIT. Deterministic: no timestamp, no absolute path, so a rebuild with an
-// unchanged source produces a byte-identical file and `git status` stays clean.
+// 8. emit.
 
 const tsLiteral = (s) => JSON.stringify(s);
 
@@ -1146,12 +934,7 @@ export const SWEEP_SVG = \`${svg}\`;
 mkdirSync(dirname(OUT), { recursive: true });
 const previous = existsSync(OUT) ? readFileSync(OUT, "utf8") : null;
 
-// `--check` writes nothing and fails if the committed output is not what this
-// script would emit. It is what makes the "DO NOT EDIT BY HAND" header a rule
-// rather than a request: a hand edit, or a source change someone forgot to
-// regenerate for, fails CI instead of surviving until the next build silently
-// reverts it. The emitted module is deterministic (no timestamp, no absolute
-// path) precisely so this comparison is meaningful.
+// `--check` writes nothing and fails if the committed output is not what this script would emit.
 if (process.argv.includes("--check")) {
   if (previous === null)
     die(

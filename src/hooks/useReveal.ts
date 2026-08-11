@@ -11,15 +11,7 @@ function observer() {
         }
       }
     },
-    // TWO thresholds, and the 0 is load-bearing. With 0.15 alone and a root
-    // shrunk to 90% of the viewport, a block taller than ~6.7x the 15% slice
-    // can sit FULLY on screen at a ratio below 0.15 — the one-shot handler
-    // never fires and `.js .reveal { opacity: 0 }` never lifts. Measured dead:
-    // /projects/ at 390x844 scrolled straight to y=2000 (FIG. 04 lodestone,
-    // 1041px tall) and /experience/ at y=800 (869px timeline item), both still
-    // opacity 0 after 3s stationary. The 0 entry guarantees a callback the
-    // instant any pixel crosses the root; 0.15 stays so a slow scroll still
-    // notifies where the fade was authored to start.
+    // Two thresholds, and the 0 is load-bearing.
     { threshold: [0, 0.15], rootMargin: "0px 0px -10% 0px" },
   ));
 }
@@ -31,10 +23,7 @@ export function useReveal<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Every branch here fails OPEN. The `.js` root class has already switched
-    // on `.js .reveal { opacity: 0 }`, so a throw in this effect would leave
-    // intact prerendered content permanently invisible — the one failure that
-    // reads as a deliberately empty page rather than a broken one.
+    // Every branch here fails open.
     try {
       if (
         typeof window.IntersectionObserver !== "function" ||

@@ -1,41 +1,14 @@
-/* THE SWEEP — the figure's own stylesheet.
-   Imported by src/components/Sweep.tsx, so it ships only where the figure
-   ships, and src/index.css never has to carry a chart's worth of selectors.
+/* Sweep styles. */
 
-   Everything here is drawn from the figure palette in src/styles/tokens.css:
-   --series-1 (blue) is data, --series-3 (teal) is the second series, and
-   --series-2 (amber) is the human annotation — the crosshair, the knee ring,
-   the leader line and the readout. That is the site's one colour rule and this
-   is the object it was written for.
-
-   The crosshair is two custom properties and nothing else. --sweep-x and
-   --sweep-y are plot coordinates in SVG user units, set on the <figure> by
-   src/enhance.ts; the fallbacks below are the knee, so the server-rendered
-   figure already carries the annotated default and no state appears when the
-   bundle lands. CSS transforms on SVG children take px that map 1:1 to user
-   units, which is why no JS ever touches an attribute. */
-
-/* A <figure> carries a UA margin of `1em 40px`. Unreset, that ate 80px of the
-   plot's width at 320w and pushed the knee annotation out of the pan — a
-   default margin quietly deciding what a reader can see. */
+/* A <figure> carries a UA margin of `1em 40px`. Unreset, that ate 80px of the plot's width at 320w and pushed
+   the knee annotation out of the pan — a default margin quietly deciding what a reader can see. */
 .sweep {
   margin: 0;
   gap: var(--space-4);
 }
 
-/* The Sweep is a `.plate`, so it takes the primitive's mobile gap step (16 ->
-   8px, index.css's 639px block) like every other plate — but it did NOT, and
-   this file is why: it ships in its own stylesheet, which Vite emits AFTER
-   index.css, so this unmediated `gap: var(--space-4)` out-ordered the mobile
-   rule at equal (0,1,0) specificity and won. Measured at 320/360/390/414w: 16px
-   on the Sweep against 8px on the keyboard, topo and feed plates — one
-   primitive rendering two gaps on one page, the same class of defect the
-   `.plate, .card` padding comment in index.css records. Six children, so it cost
-   40px of phone height at every width.
-   Declared HERE, not by raising specificity in index.css: the loss is caused by
-   this file's own rule, and a `.plate.sweep` qualifier in index.css would be the
-   duplicate-with-a-qualifier that DESIGN.md forbids. If the primitive's mobile
-   step ever changes, this rule has to follow it. */
+/* The Sweep is a `.plate`, so it takes the primitive's mobile gap step (16 -> 8px, index.css's 639px block)
+   like every other plate — but it did not, and this file is why: it ships in its own stylesheet, which. */
 @media (max-width: 639px) {
   .sweep {
     gap: var(--space-2);
@@ -49,33 +22,19 @@
   outline-offset: 2px;
 }
 
-/* Ten labelled samples in a 310px phone column would render this plot's 10px
-   axis text at about 4px — a figure nobody can read, pretending to be one they
-   can. So the plot keeps a floor width (labels stay above ~8px) and the plate
-   pans it horizontally, the way a wide data table pans.
-   The evidence does not ride on that gesture: the readout line and the footnote
-   strip below are static body-size text and carry the same numbers, which is
-   why the figure can afford to be dense. */
+/* Ten labelled samples in a 310px phone column would render this plot's 10px axis text at about 4px. */
 .sweep-scroll {
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--grid) transparent;
-  /* When the plot is wider than the plate, the pan must START at the annotated
-     end — the amber knee callout is the figure's default state and evidence may
-     never sit behind a gesture. `direction: rtl` on the scroller puts the
-     initial scroll position at the right edge with no script; the child restores
-     LTR so nothing about the plot's own layout changes. */
+  /* When the plot is wider than the plate, the pan must start at the annotated end. */
   direction: rtl;
-  /* The plot is scrubbable, so it says so. This was the only affordance the
-     figure lacked once the crosshair worked: no cursor change, no hint, so the
-     plate read as a static PNG. */
+  /* The plot is scrubbable, so it says so. This was the only affordance the figure lacked once the crosshair
+     worked: no cursor change, no hint, so the plate read as a static png. */
   cursor: col-resize;
-  /* The caption invites a drag, so a drag must not select text instead. Four of
-     six cold reviewers dragged the plot and all four got the whole figure
-     highlighted blue. Scoped to the scroller and the drawing ONLY — the readout
-     line, the key and the footnote below stay selectable, because those are the
-     numbers a reader may legitimately want to copy. */
+  /* The caption invites a drag, so a drag must not select text instead. Four of six cold reviewers dragged the
+     plot and all four got the whole figure highlighted blue. */
   user-select: none;
   -webkit-user-select: none;
 }
@@ -84,54 +43,14 @@
   direction: ltr;
 }
 
-/* Below the plate's floor width, exactly ONE legend renders — the HTML
-   `.sweep-key` below, which lives outside the pannable window — so the in-plot
-   SVG legend goes away. Both used to render simultaneously at 320-640, and the
-   SVG one named a blue "HNSW m=16" series that was off-window at every phone
-   width, keying a curve the reader could not see.
-   The left-start override that used to live here is GONE, deliberately: it broke
-   DESIGN.md's own Sweep rule that the pan must start at the annotated end. With
-   `direction: ltr` the window opened on the IVF-PQ (teal) end — 3 of 12 plotted
-   marks at 320w, 5 at 390w — while the amber knee callout carrying "ef=32 ·
-   recall 0.976 · ~31.8K q/s" sat at x 398-538 against a window of 33-287, fully
-   outside up to 480w, and `.sweep-readout` quoted that off-screen HNSW sample as
-   the current reading. Restoring the inherited rtl start puts the annotated end
-   on screen with no gesture; the y-axis, axis titles and legend the override was
-   protecting are covered here by `.sweep-key`, which is what it exists for. */
+/* Below the plate's floor width, exactly one legend renders. */
 @media (max-width: 640px) {
   .sweep-legend {
     display: none;
   }
 }
 
-/* The plot is PINNED LEFT, and capped only in the range where its plate is not.
-
-   The cap exists for type rank: at a full 1072px plate the 680-unit viewBox
-   scales 1.503x, which renders this plot's own 10px axis type at 15px — above the
-   page's 13px mono label rank, so the chart's tick labels would outrank the
-   section's plate labels. At ~900px the scale is 1.324x and ticks render 13.2px,
-   back at rank.
-
-   From 998px up that cap moves UP one level, onto `.systems-sweep` (index.css),
-   because a cap on the drawing inside an uncapped plate left the plot ending 147px
-   short of the plate's inner right edge at 1440 while the footnote hairline still
-   ruled the full width — the same empty-ruled-line defect the .systems-sweep
-   comment names. Below 998 the container is narrower than the plate cap, so this
-   rule is what holds the axis type at rank; from 998 up the plate holds it and
-   this cap lifts. Exactly one is active at any width.
-
-   998, not 1120 (2026-08-01): 998px is the viewport where the plate's own 950px
-   cap first binds, which is also where the plate's interior first reaches this
-   900px. Handing over at 1120 opened a 120px band (1000-1119) where the plate grew
-   on the full container measure while this cap held the drawing at 900px — the
-   footnote hairline ruled a measured 26px past the last gridline at 1024 and 121px
-   at 1119, which is the defect both comments were written to have removed.
-
-   The pin is not optional: .sweep-scroll is `direction: rtl` (that is how the pan
-   starts at the annotated end), so a bare max-width aligns the plot to the RIGHT
-   of its plate — measured plot x 209 -> 331, a 147px interior gutter off the
-   plate's own left edge and the y-axis ticks moved from x=284.6 to x=406.6.
-   `margin-inline-end: auto` puts it back on the plate's padding edge. */
+/* The plot is pinned left, and capped only in the range where its plate is not. */
 .sweep-plot {
   display: block;
   width: 100%;
@@ -160,9 +79,8 @@
   stroke-width: 1;
 }
 
-/* The 0.90 threshold. Dashed because it is a line someone chose, not a line
-   the benchmark measured — and the fast end of the HNSW curve crosses under
-   it, which is the point of drawing it at all. */
+/* The 0.90 threshold. Dashed because it is a line someone chose, not a line the benchmark measured — and the
+   fast end of the HNSW curve crosses under it, which is the point of drawing it at all. */
 .sweep-reference {
   stroke: var(--ink-3);
   stroke-width: 1;
@@ -174,9 +92,8 @@
 .sweep-legend text,
 .sweep-oracle text,
 .sweep-samples text {
-  /* viewBox-space drawing dimension, not a type-ramp step: the plot is 680
-     user units wide, so this renders at ~9px — tuned so ten per-point labels
-     never collide. Deliberately off the CSS ramp, like a tick length. */
+  /* ViewBox-space drawing dimension, not a type-ramp step: the plot is 680 user units wide, so this renders at
+     ~9px — tuned so ten per-point labels never collide. */
   font-size: 10px;
   letter-spacing: 0.02em;
   fill: var(--ink-3);
@@ -246,9 +163,7 @@
   stroke: var(--series-3);
 }
 
-/* SAMPLE POINT, the site's shared atom, in its original habitat: a filled dot
-   with a hairline halo. The halo is the plate colour, so a point reads as a
-   point where two curves nearly touch. */
+/* Sample point, the site's shared atom, in its original habitat: a filled dot with a hairline halo. */
 .sweep-sample circle {
   stroke: var(--plate);
   stroke-width: 1.5;
@@ -325,11 +240,8 @@
 }
 
 /* ------------------------------------------------------------------- gloss */
-/* The figure's plain-English lead-in. Sans, body size, --ink-2: deliberately
-   the ONE non-mono text leaf inside the plate, because it is the one line
-   addressed to a reader who does not already know what this is. It sits between
-   the mono FIG. label and the plot, so the plate grammar is unchanged — a
-   figure that introduces itself before it starts measuring. */
+/* The figure's plain-English lead-in. Sans, body size, --ink-2: deliberately the one non-mono text leaf inside
+   the plate, because it is the one line addressed to a reader who does not already know what this is. */
 .sweep-gloss {
   margin: 0;
   max-width: 56ch;
@@ -339,10 +251,7 @@
 }
 
 /* --------------------------------------------------------------- series key */
-/* The legend, in HTML, outside the pannable window — see the note in
-   Sweep.tsx. Each item carries its series colour as a leading rule, the same
-   swatch grammar as the in-plot legend. Hidden on wide screens, where the SVG
-   legend is on-window and a second copy would be noise. */
+/* The legend, in HTML, outside the pannable window. */
 .sweep-key {
   display: none;
   margin: 0;
@@ -415,24 +324,7 @@
   color: var(--series-2);
 }
 
-/* The drag invitation. Hidden until the bundle proves it can honour it — see
-   the note in Sweep.tsx. Quiet register: it is an instruction, not evidence, so
-   it must never compete with the amber value beside it.
-
-   SHRINKABLE, for the same measured reason .keyboard-hint is (see the note in
-   Keyboard.css, which fixed this on the sibling figure and left this copy at
-   `flex: none`). `flex: none` pins a flex item at its max-content width, and this
-   string is ~30 mono characters: under text-only zoom at 320px it measured 336.4px
-   at a 18px root, 353.2 at 19px and 370.1 at 20px against a 320px viewport, and
-   because a pinned item cannot shrink it dragged the whole DOCUMENT into 16 / 33 /
-   50px of horizontal scroll. Letting it shrink lets it wrap instead — the row is
-   already `flex-wrap: wrap`, so nothing changes at 1366 / 640 / 480 / 390 (row
-   height 48.4 / 48.4 / 77.2 / 96.8px, identical either way).
-   The one measured cost, stated rather than buried: at 320px the hint now takes
-   two lines instead of one, so the row grows 96.8 -> 113.6px and the page 10,499
-   -> 10,516px (+17px, +0.16% of the phone budget). A wrapped instruction line is
-   worth 17px; a navigation-and-figure column the reader has to scroll sideways to
-   read is not. Keyboard.css already made this exact trade on the sibling figure. */
+/* The drag invitation. Hidden until the bundle proves it can honour it — see the note in Sweep.tsx. */
 .sweep-readout-hint {
   display: none;
   flex: 0 1 auto;
@@ -441,10 +333,8 @@
   letter-spacing: 0.04em;
 }
 
-/* One hint per input register, never both: the desktop string names a
-   hover-drag and the arrow keys, and a phone has neither. The touch variant
-   names what a finger can actually do here — tap a sample, drag to pan the
-   window. */
+/* One hint per input register, never both: the desktop string names a hover-drag and the arrow keys, and a
+   phone has neither. */
 @media (hover: hover) and (pointer: fine) {
   .js .sweep-readout-hint-fine {
     display: inline;
@@ -457,14 +347,8 @@
   }
 }
 
-/* THE STEPPERS. Hidden until JavaScript can drive them — a stepper that cannot
-   step is a dead control, the same rule the copy-email button follows. The static
-   readout and the footnote carry the numbers without JS, so nothing is lost.
-   Only shown where they are NEEDED: from 560px up a pointer scrub already reaches
-   all ten samples (measured), so above that width these would be a second control
-   for something the plot already does. Below it, two samples were unreachable by
-   pointer or finger at every width — 5 of 10 reachable at 320, 8 of 10 even after
-   panning and scrubbing again. */
+/* The steppers. Hidden until JavaScript can drive them — a stepper that cannot step is a dead control, the
+   same rule the copy-email button follows. */
 .sweep-step {
   display: none;
   margin: 0;
@@ -515,10 +399,8 @@
 }
 
 /* --------------------------------------------------------- reduced motion */
-/* The crosshair is the site's one animated moment and it is user-driven, so
-   under `reduce` it still moves — it just stops easing. Stated here rather
-   than relying on the global block so the figure's contract is readable in
-   the figure's own file. */
+/* The crosshair is the site's one animated moment and it is user-driven, so under `reduce` it still moves — it
+   just stops easing. */
 @media (prefers-reduced-motion: reduce) {
   .sweep-crosshair-v,
   .sweep-crosshair-h,
@@ -528,18 +410,8 @@
 }
 
 /* ----------------------------------------------------- forced colours (HCM) */
-/* Windows High Contrast Mode forces the page background to white but does NOT
-   override SVG `fill`, so this figure kept its dark-theme fills on paper-white:
-   measured tick labels, the in-plot legend and the oracle label at ~2.15:1, the
-   amber knee callout carrying the figure's headline numbers at ~2.18:1, and the
-   sample labels, the 0.90 reference label and both axis titles at ~3.09:1 — all
-   below AA, the first group below even the 3:1 large-text floor.
-   Additive and query-scoped, so the dark-first default cannot be touched. The
-   system keywords are the whole point: CanvasText and LinkText are whatever the
-   user's own scheme says they are, which is the contract HCM exists for. The two
-   series also take distinct dashes, because forced colours collapse blue and
-   teal to the same stroke and a two-series plot has to stay readable without
-   colour. */
+/* Windows High Contrast Mode forces the page background to white but does not override SVG `fill`, so this
+   figure kept its dark-theme fills on paper-white: measured tick labels, the in-plot legend and the oracle. */
 @media (forced-colors: active) {
   .sweep-tick text,
   .sweep-legend text,
@@ -571,11 +443,8 @@
 }
 
 /* ------------------------------------------------------------------ print */
-/* The figure's colours all resolve through the series/ink tokens, and the
-   global print block already remaps those tokens to their paper values — so
-   the only print-specific rules here are the ones with no screen equivalent:
-   the pointer-driven crosshair drops, and the sample dots gain a paper halo
-   (--plate is white under the print remap). */
+/* The figure's colours all resolve through the series/ink tokens, and the global print block already remaps
+   those tokens to their paper values — so the only print-specific rules here are the ones with no screen. */
 @media print {
   .sweep-crosshair,
   .sweep-callout-ring {

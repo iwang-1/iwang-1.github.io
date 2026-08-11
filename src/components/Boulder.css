@@ -1,22 +1,4 @@
-/* THE DRAWN BOULDER — the figure's own stylesheet.
- *
- * The rules this replaces described themselves: holds were "sample points with a
- * shape … the same treatment as .sample-point", START and TOP were "axis tick
- * labels on the topo", the route was "the human annotation on the measurement".
- * Every one of those sentences is a chart's sentence. The drawing that came out
- * of them looked like the benchmark plot two screens below it, which is how one
- * template ends up appearing to have made the whole page.
- *
- * A hold is not a sample point. It is a lump of textured resin bolted to
- * plywood, and drawing it as one is the same repair the keyboard got: the plots
- * keep the hairline grammar, the drawings look drawn.
- *
- * Colour carries ONE meaning here and it is not "which route is correct": on
- * route vs off route. The three sequences are deliberately identical in weight
- * and colour — see the note at ROUTES in Boulder.tsx. The moment one of them is
- * brighter, the drawing is asserting a correct beta and contradicting Ivan's own
- * sentence above it.
- */
+/* The boulder drawing. */
 
 .boulder {
   margin: 0;
@@ -37,9 +19,8 @@
 }
 
 /* ----------------------------------------------------------------- plywood */
-/* Two panels at two angles. The upper one is lighter because it kicks back away
-   from the viewer and catches more light — the single cue that says "this wall
-   changes angle" without drawing a diagram of the change. */
+/* Two panels at two angles. The upper one is lighter because it kicks back away from the viewer and catches
+   more light — the single cue that says "this wall changes angle" without drawing a diagram of the change. */
 .boulder-face {
   fill: var(--surface-inset);
   stroke: var(--rule);
@@ -65,9 +46,7 @@
 }
 
 /* ----------------------------------------------------------------- routes */
-/* Three sequences, EQUAL weight, ONE colour, distinguished only by dash pattern
-   — the accessible way to separate series, and here also the honest one: dash is
-   a difference without a hierarchy, where colour or width would rank them. */
+/* Three sequences, equal weight, one colour, distinguished only by dash pattern. */
 .boulder-path {
   fill: none;
   stroke: var(--ink-accent);
@@ -90,9 +69,8 @@
 }
 
 /* ------------------------------------------------------------------ holds */
-/* Three shapes per hold: shadow, body, bolt. The offset shadow is the whole
-   reason a hold reads as bolted ON the wall rather than printed on it — the same
-   role the sculpted inset plays on a keycap. */
+/* Three shapes per hold: shadow, body, bolt. The offset shadow is the whole reason a hold reads as bolted ON
+   the wall rather than printed on it — the same role the sculpted inset plays on a keycap. */
 .boulder-hold-shadow {
   fill: var(--ink);
   opacity: 0.22;
@@ -107,9 +85,8 @@
   fill: var(--ink-accent);
 }
 
-/* Off-route holds are the wall's furniture: same drawing, no accent. They are
-   what makes the three sequences read as CHOSEN out of a wall rather than as the
-   only holds on it. */
+/* Off-route holds are the wall's furniture: same drawing, no accent. They are what makes the three sequences
+   read as chosen out of a wall rather than as the only holds on it. */
 .boulder-hold-off .boulder-hold-body {
   fill: color-mix(in srgb, var(--surface-figure) 72%, var(--ink));
 }
@@ -140,10 +117,8 @@
 }
 
 /* ----------------------------------------------- forced colours (HCM) */
-/* Windows High Contrast Mode forces the page background but does NOT override
-   SVG `fill`, so without this the wall keeps its own palette on the user's
-   scheme. The three dash patterns already carry the route distinction, which is
-   why collapsing all three to one forced colour loses nothing. */
+/* Windows High Contrast Mode forces the page background but does not override SVG `fill`, so without this the
+   wall keeps its own palette on the user's scheme. */
 @media (forced-colors: active) {
   .boulder-face,
   .boulder-face-upper {

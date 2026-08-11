@@ -21,28 +21,11 @@ function Home() {
     <>
       <Nav active="home" />
       <main id="main" className="main-with-contact">
-        {/* The hero band IS the report's first figure: identity and one
-            sentence on the left, the three-repo readout rail on the right, both
-            hanging off the container's left spine and closed by a hairline at
-            the band's bottom edge. Measured 713px tall at 1440 and ~1,012px at
-            1023, where the rail stacks under the copy. */}
+        {/* The hero band is the report's first figure: identity and one sentence on the left, the three-repo
+           readout rail on the right, both hanging off the container's left spine and closed by a hairline at the band's bottom edge. */}
         <section className="hero-band">
           <div className="hero container">
-            {/* THREE blocks in DOM order — identity, the rail, then the AWS
-                sentence and the CTAs — and at ≥1024 the grid puts identity over
-                AWS/CTAs in the left column with the rail spanning both on the
-                right, so the desktop picture is unchanged from the two-column
-                split it replaces.
-                The split is what gets the evidence above a PHONE fold. In one
-                copy block the rail came last, and its first row did not close
-                until y=1070 on a 390px screen — 226px below the 844 fold — so a
-                phone screener saw the bio, the AWS paragraph, two buttons, and no
-                evidence at all. Reordered, the first row closes at ~715.
-                It also fixes the desktop tab order for free: focus used to run
-                down the copy to y=595 and then jump 407px back UP to the rail at
-                the hero's top right. DOM order is now the reading order at both
-                widths, so no `order` property is needed anywhere — the WCAG 2.4.3
-                mismatch is removed rather than relocated. */}
+            {/* Three blocks in DOM order. */}
             <div className="hero-layout">
               <div className="hero-lead">
                 <p className="kicker">{hero.kicker}</p>
@@ -52,9 +35,8 @@ function Home() {
                   <ProofChip label={hero.availability} />
                 </p>
               </div>
-              {/* The rail: three repos, what each IS, one measured number each.
-                  It belongs on the first screen — it is the evidence the
-                  headline is claiming. */}
+              {/* The rail: three repos, what each is, one measured number each. It belongs on the first screen
+                 — it is the evidence the headline is claiming. */}
               <div className="hero-side">
                 <p className="hero-readout-lead">{hero.readoutLead}</p>
                 <div className="hero-readout" role="list">
@@ -91,13 +73,7 @@ function Home() {
                     GitHub
                   </LabelButton>
                 </div>
-                {/* Was the bare address — a second copy of the "Email me"
-                    button one line above it. The same line now carries the one
-                    artifact an ATS asks for, which otherwise appeared only in
-                    the contact band 5,000px down. Plain text, not a file:
-                    verify.mjs blocks any public PDF link, so the sentence IS
-                    the affordance. The address still renders in the contact
-                    band and the footer, so the required-string gate holds. */}
+                {/* Was the bare address. */}
                 <p className="hero-email-plain">
                   {hero.emailLine} · {person.email}
                 </p>
@@ -106,19 +82,8 @@ function Home() {
           </div>
         </section>
 
-        {/* Personality first, by owner call (2026-07-31): the hobbies lead the
-            page, each drawn as its own small figure — the key tester you can
-            type on, the boulder route, the feed. The engineering evidence
-            follows directly, and the hero's readout rail already puts three
-            measured results above the fold, so a screener never has to scroll
-            past the personality to find proof.
-
-            rank={2}, deliberately, and it does NOT walk back the ordering call:
-            ORDER carries the personality, SIZE carries the rank. At rank-1 this
-            heading and "Featured engineering work" both computed to 41.6px, so
-            the page had two leads and the louder one was the preamble — the
-            identically-sized-headings failure DESIGN.md's Rank Rule names. The
-            hobbies still come first; the work keeps the page's biggest type. */}
+        {/* Personality first, by owner call (2026-07-31): the hobbies lead the page, each drawn as its own
+           small figure — the key tester you can type on, the boulder route, the feed. */}
         <Section id="off-hours" title={hobbies.title} rank={2}>
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
@@ -153,28 +118,17 @@ function Home() {
         </Section>
 
         <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The section opens with ONE figure at the full container measure —
-              the rail that used to sit beside it now lives in the hero, above
-              the fold, where the numbers are the first screen's evidence. */}
+          {/* The section opens with one figure at the full container measure. */}
           <div className="systems-sweep">
             <Sweep />
           </div>
           <div className="system-list">
-            {/* PREVIEW, not the full sheet. These three used to render byte-for-
-                byte identically to /projects/ — 13 identical text blocks across
-                the two pages, measured on the built output — so a reader met the
-                same three projects twice and the home page ran 6,400px to do it.
-                See the `variant` note in SystemFeature.tsx. */}
+            {/* Preview, not the full sheet. */}
             {featuredSystems.map((project, i) => (
               <SystemFeature key={project.id} project={project} index={i} variant="preview" />
             ))}
           </div>
-          {/* An exit that points at what the reader has NOT seen — and NAMES it.
-              A bare "Eight more projects" sits exactly where a reader who has
-              just read three Raft/LSM/HNSW plates decides whether this is a
-              one-track portfolio, and it named nothing behind the link. All four
-              categories are already the titles or chips of those eight cards, so
-              this is surfacing, not a new claim. */}
+          {/* An exit that points at what the reader has not seen. */}
           <p className="section-exit">
             <a className="mono" href="/projects/#selected">
               Eight more: ML, NLP, statistics, and this site{" "}
@@ -183,9 +137,7 @@ function Home() {
           </p>
         </Section>
 
-        {/* Education and skills are one thing — where he studied and what he
-            works in — so they are one section instead of two identical
-            headings. The #education anchor is kept for the footer link. */}
+        {/* Education and skills are one thing. */}
         <Section id="background" title="Background" rank={2}>
           <div id="education">
             {education.map((e) => (
@@ -216,7 +168,6 @@ createRoot(document.getElementById("root")!).render(
     </ErrorBoundary>
   </StrictMode>,
 );
-// AFTER render, never before: `.js` is the receipt for a completed mount. See
-// src/js-flag.ts — as an import side effect it hid intact prerendered content
-// whenever anything above threw.
+// After render, never before: `.js` is the receipt for a completed mount. See src/js-flag.ts — as an import
+// side effect it hid intact prerendered content whenever anything above threw.
 enableJs();

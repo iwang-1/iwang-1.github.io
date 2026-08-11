@@ -1,10 +1,7 @@
 import { footer, person } from "../content";
 import { CopyEmailButton, LabelButton } from "./LabelButton";
 
-/** Shared footer: label buttons for the three channels plus the Education
- *  anchor, then the colophon. Nothing here reveals on scroll — the footer is
- *  always the last thing on screen and a fade would only ever be a fade-in of
- *  content the reader has already reached. No phone number, ever. */
+/** Shared footer: label buttons for the three channels plus the Education anchor, then the colophon. */
 export function Footer() {
   return (
     <footer className="footer">

@@ -11,9 +11,8 @@ import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
 import { Timeline, type TimelineEntry } from "../../components/Timeline";
 
-// One center-spine timeline: 4 engineering roles reverse-chron, then a spine
-// label, then the 3 community & teaching roles (teal tags). Most recent
-// (AWS) renders first — LEFT of the spine on desktop.
+// One center-spine timeline: 4 engineering roles reverse-chron, then a spine label, then the 3 community &
+// teaching roles (teal tags).
 const entries: TimelineEntry[] = [
   ...engineeringRoles.map((role): TimelineEntry => ({ kind: "role", role })),
   { kind: "label", text: "Community & Teaching" },

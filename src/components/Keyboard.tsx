@@ -2,40 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type React from "react";
 import "./Keyboard.css";
 
-/** A DRAWN KEYBOARD — 60% layout, and deliberately not a figure.
- *
- *  This replaces a key tester whose own header comment admitted the defect that
- *  got the last version of this site called machine-made: the hobbies were
- *  "drawn in the same grammar as the measured plates", where "a keycap here is a
- *  tick label that happens to be square". When the keyboard, the climbing wall
- *  and the benchmark all wore hairlines and mono tick labels, a reader concluded
- *  one template made all three.
- *
- *  So this one is a DRAWING. No plate label, no footnote strip, no hairline
- *  grammar. What it has instead is observation: the real unit widths of a 60%
- *  board (1u alphas, 1.5u tab, 1.75u caps, 2.25u shift, 2u backspace and enter,
- *  6.25u spacebar), the real row stagger, and a sculpted cap — each key is two
- *  shapes, an outline and an inset top, because that is what a keycap looks like
- *  from above and it is the single detail that separates a drawn board from
- *  squares in a grid.
- *
- *  WHAT THIS DRAWING DOES NOT CLAIM. It names no model, manufacturer, switch,
- *  keycap set, profile or colourway, because none of that is known and
- *  PRODUCT.md forbids inventing it. Every annotation on it is true OF THE
- *  DRAWING — "60%", "6.25u" — not of anyone's desk. If Ivan wants his actual
- *  board named, the slot is marked BOARD_NOTE below and it is his sentence to
- *  write, not mine to guess.
- *
- *  Interaction survives from the old component because it earned its place:
- *  click a cap, or type while the pointer is over the board, and the cap goes
- *  down. Listeners are armed only while hovered or focused, every timer is
- *  cleaned up, and the drawing is complete in the static HTML — the caps simply
- *  do nothing until the bundle lands, which is honest for a toy.
- */
+/** A drawn keyboard. */
 
-/** Ivan: replace this with your board if you want it named. Anything here is
- *  rendered verbatim under the drawing. Leave it null and nothing renders — the
- *  drawing does not need a caption to be worth looking at. */
+/** Ivan: replace this with your board if you want it named. Anything here is rendered verbatim under the
+ * drawing. */
 const BOARD_NOTE: string | null = null;
 
 /** One key. `u` is width in units (1u = one alpha key). `legend` is what is
@@ -124,16 +94,8 @@ const ROWS: readonly (readonly Key[])[] = [
   ],
 ];
 
-/** Which physical keys map to which drawn cap, so typing presses the right one.
- *
- *  EVERY cap that prints a typeable character is mapped, not just the alphanumerics.
- *  It used to test `/[A-Z0-9]/i`, which left twelve drawn caps dead to the keyboard
- *  while CLICKING them worked — two advertised affordances behaving differently.
- *  Both the base legend AND the shifted sub-legend map to the cap, because that is
- *  what a real cap does: pressing `?` presses the `/` key. Modifier caps
- *  (tab/caps/shift/ctrl/cmd/alt/fn/return/delete, and the 65%'s del/pgup/pgdn/end
- *  and arrows) are deliberately NOT mapped — they are chords and browser-owned keys,
- *  and hijacking Tab or an arrow would trap a reader inside a toy. */
+/** Which physical keys map to which drawn cap, so typing presses the right one. every cap that prints a
+ * typeable character is mapped, not just the alphanumerics. */
 const BY_KEY = new Map<string, string>();
 for (const row of ROWS)
   for (const k of row) {
@@ -155,26 +117,13 @@ const GAP = 3; /* the gap a real board leaves between caps */
 const PAD = 14; /* the case bezel */
 const ROW_H = U;
 
-/* 16u, because this is a 65%: the 60% grid plus a right-hand column (del, pgup,
-   pgdn, end) and an inverted-T arrow cluster in the bottom two rows. Every row sums
-   to exactly 16u, which is what lets the right edge line up without fudging a key —
-   verified per row after the layout change. */
+/* 16u, because this is a 65%: the 60% grid plus a right-hand column (del, pgup, pgdn, end) and an inverted-T
+   arrow cluster in the bottom two rows. */
 const ROW_WIDTH = 16 * U;
 const SVG_W = ROW_WIDTH + PAD * 2;
 const SVG_H = ROWS.length * ROW_H + PAD * 2;
 
-/** The caps flattened into one indexed list, with their pixel geometry resolved
- *  once. The hit targets used to recompute `x` inside the render, duplicating the
- *  same running-offset arithmetic the SVG does — two copies of one layout, which
- *  is how a hit target drifts off the cap it covers. This is the single copy, and
- *  it also carries what arrow-key navigation needs (row/col) and a unique
- *  accessible name per cap.
- *
- *  `a11yLabel` disambiguates the doubled modifiers. Four names appeared twice —
- *  shift, ctrl, cmd, alt — so a screen-reader user heard "shift, button… shift,
- *  button" with nothing to tell them apart. The side is a fact the layout already
- *  knows (a cap in the left half of its row is the left one), so it costs nothing
- *  to say. */
+/** The caps flattened into one indexed list, with their pixel geometry resolved once. */
 type FlatKey = {
   id: string;
   legend: string;
@@ -190,12 +139,7 @@ type FlatKey = {
 const FLAT: FlatKey[] = (() => {
   const out: FlatKey[] = [];
   ROWS.forEach((row, r) => {
-    /* `x` MUST advance per cap. A first version of this loop omitted the
-       `x += ...` step, which collapsed every cap in a row onto the first
-       position: all 61 hit targets stacked on the top-left key and every doubled
-       modifier resolved to the same side, so the a11y names read "left shift"
-       twice. Caught by reading back the rendered labels rather than by trusting
-       the arithmetic. */
+    /* `x` must advance per cap. */
     let x = PAD;
     row.forEach((k, c) => {
       const w = (k.u ?? 1) * U - GAP;
@@ -216,9 +160,7 @@ const FLAT: FlatKey[] = (() => {
       x += (k.u ?? 1) * U;
     });
   });
-  // Only the genuinely duplicated names take a side prefix — shift, ctrl, cmd and
-  // alt, which appear twice each. A unique cap keeps its plain legend, because
-  // "left Q" is noise in a screen reader.
+  // Only the genuinely duplicated names take a side prefix.
   const counts = new Map<string, number>();
   for (const k of out) counts.set(k.legend || "space", (counts.get(k.legend || "space") ?? 0) + 1);
   for (const k of out) {
@@ -281,15 +223,7 @@ export function Keyboard() {
     };
   }, []);
 
-  /** Move the roving focus, and press on Enter/Space. Left/Right walk the flat
-   *  order (so they cross row boundaries the way reading order does); Up/Down hold
-   *  the horizontal position and change row, landing on whichever cap sits nearest
-   *  the current one — a 1u alpha above a 6.25u spacebar has to go SOMEWHERE, and
-   *  "nearest by centre" is the only answer that feels like a keyboard.
-   *  Home/End go to the ends of the current row. Every handled key calls
-   *  preventDefault so the page does not also scroll; ARROW KEYS ONLY — Tab is
-   *  never intercepted, because trapping Tab inside a hobby toy is the exact
-   *  defect this change exists to remove. */
+  /** Move the roving focus, and press on Enter/Space. */
   const onGridKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const i = active ?? 0;
@@ -414,10 +348,8 @@ export function Keyboard() {
                     className={`kb-key${k.type === "mod" ? " kb-key-mod" : ""}${isDown ? " is-down" : ""}`}
                     transform={`translate(${x} ${y})`}
                   >
-                    {/* Cap outline, then the sculpted top inset within it. The
-                        inset is the whole reason this reads as a keycap rather
-                        than a rectangle: real caps are dished and you see the
-                        wall on three sides. */}
+                    {/* Cap outline, then the sculpted top inset within it. The inset is the whole reason this
+                       reads as a keycap rather than a rectangle: real caps are dished and you see the wall on three sides. */}
                     <rect className="kb-cap" width={w} height={h} rx="3.5" />
                     <rect
                       className="kb-top"
@@ -427,10 +359,8 @@ export function Keyboard() {
                       height={Math.max(h - 6, 2)}
                       rx="2.5"
                     />
-                    {/* A real dual-legend cap prints the shifted character
-                        upper-left and the base character lower-left, not centred
-                        on top of each other. Single-legend caps stay centred,
-                        which is also what a real cap does. */}
+                    {/* A real dual-legend cap prints the shifted character upper-left and the base character
+                       lower-left, not centred on top of each other. */}
                     {k.sub ? (
                       <>
                         <text className="kb-sub" x="6" y="12">
@@ -455,29 +385,8 @@ export function Keyboard() {
         })}
       </svg>
 
-      {/* ONE TAB STOP, not sixty-one.
-
-          Buttons live OUTSIDE the SVG so the drawing stays a drawing and the
-          interaction stays real: real hit targets, real focus ring, real labels.
-          That part was right. What was wrong was giving each of the 61 caps its
-          own tab stop. Measured on the built page: 90 focusable elements, 61 of
-          them keycaps, the first at index 12 — so a keyboard-only reader tabbing
-          from the skip link pressed Tab 61 times through single-character buttons
-          that each flash a cap for 190ms, BEFORE reaching the benchmark figure,
-          any repository link, or any other evidence. Four labels were duplicated
-          ("shift, button… shift, button"), because two shift caps announced
-          identically.
-
-          A grid of related controls is one widget, so this is the standard
-          composite pattern: the container is the single tab stop, arrow keys move
-          between caps inside it, Home/End jump to the row's ends, and Enter or
-          Space presses the focused cap. Roving tabindex, so only the active cap is
-          reachable by Tab and the rest stay operable by arrow. That is how a real
-          keyboard's own key navigation works, and it takes the figure from 61 tab
-          stops to 1 without removing a single affordance.
-
-          The caps keep `aria-hidden` off and keep their labels: a screen-reader
-          user in browse mode can still read the board cap by cap. */}
+      {/* One tab stop, not sixty-one. Buttons live outside the SVG so the drawing stays a drawing and the
+         interaction stays real: real hit targets, real focus ring, real labels. */}
       <div
         className="kb-hit"
         role="grid"
@@ -504,10 +413,8 @@ export function Keyboard() {
             ref={(el) => {
               capRefs.current[i] = el;
             }}
-            /* Two shift caps, two ctrls, two cmds and two alts announced with
-               identical names, so a screen-reader user could not tell which one
-               they were on. Position is the distinguishing fact, and it is in the
-               data already. */
+            /* Two shift caps, two ctrls, two cmds and two alts announced with identical names, so a
+               screen-reader user could not tell which one they were on. */
             aria-label={k.a11yLabel}
           />
         ))}

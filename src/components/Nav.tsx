@@ -9,13 +9,7 @@ const TABS: { key: Exclude<ActiveTab, null> | "contact"; label: string; href: st
   { key: "contact", label: "Contact", href: "/#contact" },
 ];
 
-/** FigureMark — the site's mark, and the same drawing as the favicon: a plate
- *  with drawn axes, a rising three-point sample line in --series-1, and one
- *  amber annotation dot on the middle sample. It is the whole thesis at 32px.
- *
- *  Paths are literal `d` attributes and the dot is a real sample point, so the
- *  mark is one object in the grammar rather than a lettermark that happens to sit
- *  in the corner. */
+/** FigureMark. */
 function FigureMark() {
   return (
     <svg
@@ -92,10 +86,8 @@ export function Nav({ active }: { active: ActiveTab }) {
       </a>
       <header className="nav">
         <div className="container nav-inner">
-          {/* aria-label keeps the accessible name breakpoint-independent: the
-              wordmark span is display:none under 640px and the SVG is
-              aria-hidden, so without it the link's name computes as EMPTY on
-              mobile (WCAG 4.1.2). */}
+          {/* Aria-label keeps the accessible name breakpoint-independent: the wordmark span is display:none
+             under 640px and the SVG is aria-hidden, so without it the link's name computes as empty on mobile (WCAG 4.1.2). */}
           <a className="nav-brand" href="/" aria-label="Ivan Wang — home">
             <FigureMark />
             <span className="nav-wordmark" aria-hidden="true">
@@ -106,9 +98,7 @@ export function Nav({ active }: { active: ActiveTab }) {
             {TABS.map((tab) => (
               <a
                 key={tab.label}
-                /* Contact points at THIS page's contact band — every page has
-                   one — so the tab scrolls instead of reloading the site. The
-                   404 has no band, so it keeps the absolute link home. */
+                /* Contact points at this page's contact band. */
                 href={tab.key === "contact" && active ? "#contact" : tab.href}
                 className={active === tab.key ? "btn btn-current" : "btn"}
                 {...(active === tab.key ? { "aria-current": "page" as const } : {})}

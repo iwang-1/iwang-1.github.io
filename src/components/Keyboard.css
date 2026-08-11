@@ -1,34 +1,10 @@
-/* THE DRAWN KEYBOARD.
- *
- * The file this replaces opened by declaring the defect that got the previous
- * version of this site called machine-made: "a keycap in this world is a tick
- * label that happens to be square — flat fill, 2px radius, no bevel, no
- * gradient, because a 3D keycap would be the first piece of decoration on the
- * site." Everything on the page wore that one grammar, so a reader concluded one
- * template made all of it.
- *
- * A keycap is not a tick label. It is a dished plastic object with a wall you can
- * see from above, and drawing it as one is not decoration — it is the difference
- * between a drawing and a chart. The plots keep the hairline grammar. The
- * drawings look drawn. That contrast is the point.
- *
- * Concretely: the case has a wall and a recessed well, every cap is two shapes
- * (outline + sculpted top), legends sit where a real cap prints them, modifiers
- * are the darker half of a two-tone set, and the only motion is a press that
- * travels — the distance a real switch moves before it actuates.
- */
+/* The keyboard drawing. */
 
 .kb {
   position: relative;
   margin: 0;
-  /* 484px, not 620px, and the number is derived rather than chosen: the viewBox is
-     538 units wide, so at 484px the scale is 0.9 and the 13px legend renders 11.7px
-     — just under the page's 13px mono label rank, which DESIGN.md requires a figure's
-     own type to stay beneath. At the old 620px cap the single-column band (768-1023w)
-     rendered the board at full width and its legends hit 15.0px, ABOVE that rank, so
-     the drawing's keycaps would have outranked the section labels around it.
-     This only binds in the single-column band; in the three-up hobby row the column
-     is ~336px and is the narrower constraint. */
+  /* 484px, not 620px, and the number is derived rather than chosen: the viewBox is 538 units wide, so at 484px
+     the scale is 0.9 and the 13px legend renders 11.7px — just under the page's 13px mono label rank. */
   max-width: 484px;
 }
 
@@ -52,9 +28,8 @@
 }
 
 /* -------------------------------------------------------------------- caps */
-/* Two shapes per key. The outline is the cap's wall, filled darker so the
-   sculpted top reads as raised out of it; the top is the surface a finger lands
-   on. One shape is a rectangle; two is a keycap. */
+/* Two shapes per key. The outline is the cap's wall, filled darker so the sculpted top reads as raised out of
+   it; the top is the surface a finger lands on. */
 .kb-cap {
   fill: color-mix(in srgb, var(--surface-figure) 82%, var(--ink));
   stroke: none;
@@ -84,17 +59,7 @@
 .kb-legend {
   fill: var(--ink);
   font-family: var(--font-mono);
-  /* Drawing dimensions, in viewBox units: a legend is sized to its cap, not to
-     the page's reading ramp. Same class of value as the stroke widths above.
-     13px, not 10px. The viewBox is 538 units wide and the figure renders 288-358px
-     in its hobby column, so the scale is 0.54-0.67 and a 10px legend rendered at
-     5.35px @320w, 6.65 @390 and 6.25 @1366 — with the shifted sub-legends at
-     4.28-5.0px, which a screenshot at 320 shows as illegible smudges. A 61-key board
-     needs ~484px of render width for a 9px legend and it never gets it.
-     Raising the drawing dimension is the honest correction: the legends are now
-     7.0-8.7px rendered, which is small-but-readable at the size the figure actually
-     occupies, and it costs nothing structural because these are viewBox units — the
-     caps do not move. The sub-legends scale with them below. */
+  /* Drawing dimensions, in viewBox units: a legend is sized to its cap, not to the page's reading ramp. */
   font-size: 13px;
   text-anchor: middle;
   pointer-events: none;
@@ -116,32 +81,13 @@
   text-anchor: start;
 }
 
-/* MODIFIER LEGENDS ARE SMALLER, because a modifier prints a WORD on a cap sized for
-   one glyph. At the shared 13px the 65%'s new 1u right-hand column clipped — "delete"
-   spilled past its cap and "pgup"/"pgdn" ran into their neighbours (visible in a
-   screenshot at 1440). 10px in viewBox units renders ~9px at the figure's real width,
-   still above the 6.5px legibility floor the gate asserts. Alphas keep 13px: they
-   print one character and are the caps a reader actually reads. */
+/* Modifier legends are smaller, because a modifier prints a word on a cap sized for one glyph. */
 .kb-key-mod .kb-legend {
   font-size: 10px;
 }
 
 /* ------------------------------------------------------------------ press */
-/* THE CAP PRESSES DOWN AND BOUNCES BACK. It used to JUMP TO THE TOP-LEFT, and the
-   cause is a rule worth knowing: a cap's POSITION is an SVG `transform` ATTRIBUTE
-   (`translate(x y)` in Keyboard.tsx), and a CSS `transform` does not add to that —
-   it REPLACES it. So `transform: translateY(1.5px)` discarded the cap's own
-   placement and re-drew it 1.5px below the SVG origin. Measured on the built page:
-   pressing a cap moved it 78px LEFT and 16px UP, i.e. toward the corner, which is
-   what the owner saw.
-   `translate` (the individual property) composes with the attribute instead of
-   overwriting it, so the cap moves relative to where it already is. Verified: dx=0,
-   dy=+2 on press.
-   The bounce is the second half of the ask. A real switch bottoms out and the cap
-   springs back, so the return uses a slight overshoot curve rather than the same
-   ease-out as the press — down is fast and flat (a finger drives it), up is springy
-   (the spring drives it). Two different transitions, which is why they are declared
-   separately rather than shared. */
+/* The cap presses down and bounces back. */
 .kb-key {
   translate: 0 0;
   /* the RETURN: springy overshoot, because the spring is what moves the cap back */
@@ -169,22 +115,7 @@
 }
 
 /* ------------------------------------------------------------- hit targets */
-/* Real buttons over the drawing, so the interaction is accessible without the
-   SVG becoming a control surface. Invisible until focused: a visible button grid
-   laid over a drawing would destroy the drawing.
-
-   THE HIT LAYER MUST BE EXACTLY THE DRAWING'S BOX. It used to be `inset: 0` on
-   the <figure>, which also contains the <figcaption> — so the layer measured 182px
-   tall against the SVG's 124px, and because every button is positioned in PERCENT,
-   each row's offset resolved against the wrong height and drifted about 10px
-   further down per row: measured -8.7 / -18.7 / -28.6 / -38.6 / -48.6px across the
-   five rows, with the bottom rows' buttons not overlapping the caps they name at
-   all. A hit target that misses its key is worse than no hit target, and nothing
-   caught it because both boxes START at the same y — the drift is invisible unless
-   you compare centres row by row.
-   `bottom: auto` + `aspect-ratio` matching the SVG's own viewBox ties the layer to
-   the drawing rather than to the figure, so the two boxes cannot diverge when the
-   caption wraps to a different number of lines. */
+/* Real buttons over the drawing, so the interaction is accessible without the SVG becoming a control surface. */
 .kb-hit {
   position: absolute;
   top: 0;
@@ -194,19 +125,7 @@
   aspect-ratio: var(--kb-aspect);
 }
 
-/* THE CAPS ARE 17-28px, AND THEY DO NOT MEET THE 44px TAP TARGET. Recorded as a
-   deliberate exception rather than left as an unexamined gap, because the site holds
-   44px everywhere it matters (`.btn`, the nav tabs, the sweep steppers).
-   Why it is not raised: 61 caps at 44px would need the board ~1,200px wide, which no
-   layout on this page has room for and which would make a hobby drawing the largest
-   object on a recruiting page — the exact defect the boulder's square aspect was
-   changed to fix. The caps are PARTS OF A DRAWING that happen to respond, not
-   controls carrying a task: nothing on the site depends on pressing one, each press
-   flashes a cap for 190ms, and the figure promises nothing else.
-   The affordance a keyboard user needs is met a different way: the board is ONE tab
-   stop with arrow-key navigation inside it, so no one has to hit a 17px target to
-   operate it. Both facts are gated — the tab budget in verify.mjs, and hit/cap
-   alignment to <4px so a tap that looks aimed at a cap presses that cap. */
+/* The caps are 17-28px, and they DO not meet the 44px tap target. */
 .kb-hit-btn {
   position: absolute;
   padding: 0;
@@ -216,19 +135,15 @@
   cursor: pointer;
 }
 
-/* The grid itself is the tab stop, so it needs a visible ring of its own — a
-   keyboard user has to see that they have landed on the board before they know to
-   press an arrow key. Inset, so it reads as "inside this object" rather than as a
-   box drawn around a figure. */
+/* The grid itself is the tab stop, so it needs a visible ring of its own. */
 .kb-hit:focus-visible {
   outline: 2px solid var(--ink-accent);
   outline-offset: 3px;
   border-radius: 8px;
 }
 
-/* And the individual cap ring stays, for the roving focus inside the grid. Both
-   are needed: the outer ring says which widget you are in, the inner one says
-   which key you are on. */
+/* And the individual cap ring stays, for the roving focus inside the grid. Both are needed: the outer ring
+   says which widget you are in, the inner one says which key you are on. */
 .kb-hit-btn:focus-visible,
 .kb-hit-btn:focus {
   outline: 2px solid var(--ink-accent);

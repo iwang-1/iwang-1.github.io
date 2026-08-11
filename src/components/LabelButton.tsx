@@ -6,13 +6,7 @@ function NewTabNote() {
   return <span className="visually-hidden"> (opens in new tab)</span>;
 }
 
-/** LabelButton — the figure world's one interactive primitive: a flat plate
- *  with a hairline border and a set label. Nav tabs, CTA buttons, footer
- *  links. `primary` renders the single amber-filled button per page, and its
- *  label is --ground, never --ink (--ink on amber is 1.98:1).
- *
- *  The API is deliberately identical to the primitive it replaces, so the old
- *  module can re-export this as a drop-in while the pages switch over. */
+/** LabelButton. */
 export function LabelButton({
   href,
   variant = "default",
@@ -66,40 +60,12 @@ export function ExternalLink({
   );
 }
 
-/** CopyEmailButton — one click puts the address on the clipboard, because the
- *  measured contact friction was a recruiter selecting 22 characters of mono
- *  text by hand.
- *
- *  No dependency: navigator.clipboard, one piece of state, one live region.
- *  The address itself always renders beside this button, so a blocked Clipboard
- *  API degrades to "read it and type it" rather than to a dead end — which is
- *  why the failure label points at the text instead of apologising.
- *
- *  Known limitation, stated rather than papered over: the pages are prerendered
- *  by a real browser, so this button is in the static HTML and is inert until the
- *  bundle lands. Gating it on mount was tried and does nothing — the prerenderer
- *  runs the effect too — and the honest mitigation is the one already in place:
- *  the mailto button and the address itself sit beside it, so the channel never
- *  depends on this control.
- *
- *  RESOLVED 2026-08-06, the way that note prescribed. Measured first: TWO of these
- *  render on every page (the contact band and the footer), both visible and both
- *  inert with JavaScript off — so a no-JS reader met two dead controls, not one.
- *  `.btn-copy-email` is now hidden unless the `.js` class is present, which
- *  src/js-flag.ts sets only when the bundle actually executes. The class is
- *  deliberately NOT baked into the prerendered HTML (verify.mjs asserts that), so
- *  this hides on the static page and appears the moment the button can work.
- *  Nothing is lost: the mailto button and the plain-text address are beside it. */
+/** CopyEmailButton. */
 export function CopyEmailButton({ email }: { email: string }) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
 
-  // BOTH outcomes are transient: each reads as a receipt, not as a new label.
-  // "Copy blocked" used to be terminal (the guard returned early on anything but
-  // "copied"), so one denied clipboard permission renamed the control for the rest
-  // of the session — a button whose label is a past event, pointing at a recovery
-  // the reader has already taken. It clears on the same timer as the success, so
-  // the button always returns to naming its action, and a second attempt after the
-  // reader grants permission is offered rather than hidden behind a stale failure.
+  // Both outcomes are transient: each reads as a receipt, not as a new label. "Copy blocked" used to be
+  // terminal (the guard returned early on anything but "copied"), so one denied clipboard permission renamed the.
   useEffect(() => {
     if (state === "idle") return;
     const t = window.setTimeout(() => setState("idle"), 2400);
@@ -117,9 +83,8 @@ export function CopyEmailButton({ email }: { email: string }) {
 
   return (
     <>
-      {/* The pointer cursor lives on `button.btn` in index.css — the primitive is
-          shared with anchors, which are pointer-cursor by UA default, and a
-          <button> is not. It is a style, so it belongs in the stylesheet. */}
+      {/* The pointer cursor lives on `button.btn` in index.css — the primitive is shared with anchors, which
+         are pointer-cursor by UA default, and a <button> is not. */}
       <button type="button" className="btn btn-copy-email" onClick={copy}>
         {state === "copied" ? "Copied" : state === "failed" ? "Copy blocked" : "Copy email"}
       </button>

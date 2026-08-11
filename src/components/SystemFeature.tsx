@@ -6,31 +6,16 @@ import { Plate } from "./Plate";
 import { Readout } from "./Readout";
 import { Reveal } from "./Reveal";
 
-/** Figure numbering across the site: the three system plates are FIG. 01-03 in
- *  page order, and the Sweep labels itself a DETAIL of lodestone's plate rather
- *  than taking a number of its own — it used to be FIG. 01 while lodestone's
- *  plate was FIG. 04, so one subject carried two numbers on one page and three
- *  cold reviewers read it as a numbering bug. The hobby plates carry plain
- *  labels, not figure numbers.
- *
- *  (historical note) FIG. 00 was the climbing topo, FIG. 01 was
- *  the recall curve on the homepage, and the three system plates follow. The
- *  offset lives here so both pages that render these cards number them
- *  identically. */
+/** Figure numbering across the site: the three system plates are fig. 01-03 in page order, and the Sweep labels
+ * itself a detail of lodestone's plate rather than taking a number of its own — it used to be fig. */
 const FIRST_SYSTEM_FIGURE = 1;
 
-/** The plate label format, zero-padded: "FIG. 02 · lodestone". Figure numbers
- *  belong to objects that genuinely are figures — the three systems, the curve,
- *  the topo, the 404's empty plate. About, Education and Skills get typographic
- *  rank instead: five FIG. labels are a system, nine are a costume. */
+/** The plate label format, zero-padded: "fig. 02 · lodestone". */
 function figureLabel(n: number, subject: string) {
   return `FIG. ${String(n).padStart(2, "0")} · ${subject}`;
 }
 
-/** The links row: the repo, then the committed artifact a reader can open to
- *  check the numbers themselves. Flex here rather than in the stylesheet because
- *  the row's own gap is the only thing this markup needs that `.project-links`
- *  does not already give it. */
+/** The links row: the repo, then the committed artifact a reader can open to check the numbers themselves. */
 const LINK_ROW: CSSProperties = {
   display: "flex",
   flexWrap: "wrap",
@@ -38,10 +23,8 @@ const LINK_ROW: CSSProperties = {
   rowGap: "var(--space-1)",
 };
 
-/** `.system-feature` is a grid from 1024px up, and the plate's label and
- *  footnote are siblings of the two body columns — so without this they would
- *  each take a single track and the footnote strip would run half width under the
- *  copy column only. */
+/** `.system-feature` is a grid from 1024px up, and the plate's label and footnote are siblings of the two body
+ * columns — so without this they would each take a single track and the footnote strip would run half. */
 const PLATE_STRIP: CSSProperties = { gridColumn: "1 / -1" };
 
 function SystemDiagram({ kind }: { kind: FeaturedSystem["diagram"] }) {
@@ -61,9 +44,8 @@ function SystemDiagram({ kind }: { kind: FeaturedSystem["diagram"] }) {
           <span className="diagram-node">N2</span>
           <span className="diagram-node">N3</span>
         </div>
-        {/* The caption is the figure's last child and claims a full flex line of
-            its own, so it is a real box in the flow. It used to be absolutely
-            positioned and measured 20–35px INTO the stage boxes on mobile. */}
+        {/* The caption is the figure's last child and claims a full flex line of its own, so it is a real box
+           in the flow. */}
         <div className="diagram-caption">gRPC · WAL · snapshots</div>
       </div>
     );
@@ -113,44 +95,7 @@ function SystemDiagram({ kind }: { kind: FeaturedSystem["diagram"] }) {
   );
 }
 
-/** SystemFeature — one flagship repo as a figure.
- *
- *  Plate anatomy: a label naming the figure, the two-column body (copy left,
- *  evidence right), and a footnote strip carrying the measurement conditions and
- *  the † scope note.
- *
- *  The ordering is the point. The card used to end on its own limitation, which
- *  is a closing argument against yourself; the limitation is unchanged word for
- *  word and now sits in the footnote strip, while the card closes on the proof,
- *  the measured numbers, and the links you can open to check them.
- *
- *  `index` staggers the reveal. It is the card's position in the rendered list,
- *  not its figure number.
- *
- *  ---
- *
- *  `variant` EXISTS BECAUSE THE HOME PAGE WAS THE PROJECTS PAGE. Measured on the
- *  built output: 13 blocks of rendered text were BYTE-IDENTICAL across `/` and
- *  `/projects/` — same summaries, same diagrams, same numbers, same NOTES &
- *  LIMITS, same footnotes. A cold recruiter reviewer put it first of five:
- *  "The home page is the projects page … ~6,400px tall to deliver three projects
- *  I'm about to see again. Nothing new is on the Projects page above 'More
- *  projects'." With the hero readout rail also quoting one metric per repo, each
- *  project was making its case three times on one site.
- *
- *  So the two pages now do different jobs with one component and one source of
- *  truth:
- *
- *  - `variant="preview"` (home) — label, title, eyebrow, summary, chips, the
- *    measured numbers, and a link INTO the full sheet. It is an index entry: it
- *    says what the thing is and what it measured, and stops.
- *  - `variant="full"` (default, /projects/) — everything: the proof paragraph,
- *    the diagram, NOTES & LIMITS, the artifact deep links, the provenance strip.
- *
- *  Nothing is duplicated and nothing is retyped: both variants read the same
- *  `content.ts` record, so a number can still only be wrong in one place. What
- *  the preview drops is only ever re-stated in full one click away, which is why
- *  dropping it costs the reader nothing.  */
+/** SystemFeature. */
 export function SystemFeature({
   project,
   index = 0,
@@ -187,9 +132,8 @@ export function SystemFeature({
             <Readout
               cells={project.metrics.map((m) => ({ value: m.value, label: m.label, plain: m.plain }))}
             />
-            {/* An internal link, NOT the repo: the preview's job is to hand the
-                reader the full sheet, and the repo link is already on the title
-                above and on the full sheet it points to. */}
+            {/* An internal link, not the repo: the preview's job is to hand the reader the full sheet, and the
+               repo link is already on the title above and on the full sheet it points to. */}
             <p className="project-links" style={LINK_ROW}>
               <a className="cta-text-link" href={`/projects/#${project.id}`}>
                 Full sheet and limits <span className="arrow" aria-hidden="true">→</span>
@@ -204,17 +148,12 @@ export function SystemFeature({
     <Reveal delay={index}>
       <Plate
         id={project.id}
-        /* `.sheet-block` carries the block's fill, hairline, radius and pad;
-           `.sheet-live` is the hover promise, because the title is a link.
-           A datasheet block does NOT lift on hover — only its rule warms. */
+        /* `.sheet-block` carries the block's fill, hairline, radius and pad; `.sheet-live` is the hover
+           promise, because the title is a link. */
         className="system-feature sheet-block sheet-live"
         label={figureLabel(figureNumber, project.title)}
         stripStyle={PLATE_STRIP}
-        /* The footnote is now provenance ONLY — the measurement conditions.
-           `limits` moved OUT of here into the NOTES column below, at body size.
-           A 14px dagger footnote is where a page puts something it hopes you
-           skim; on a datasheet the thing a part does NOT do is a titled column,
-           printed at the same size as everything it qualifies. */
+        /* The footnote is now provenance only. */
         footnote={project.provenance}
       >
         <div className="system-copy">
@@ -244,18 +183,15 @@ export function SystemFeature({
         <div className="system-evidence">
           <p className="spec-col-head">Specifications</p>
           <SystemDiagram kind={project.diagram} />
-          {/* As many rows as the repo actually measured — three, two, two. The
-              `plain` gloss rides along on the rows whose label is an axis label
-              rather than English; see the field's contract in content.ts. */}
+          {/* As many rows as the repo actually measured. */}
           <Readout
             cells={project.metrics.map((m) => ({ value: m.value, label: m.label, plain: m.plain }))}
           />
           {project.limits && (
             <div className="spec-notes">
               <p className="spec-col-head">Notes &amp; limits</p>
-              {/* Ivan's own limit text, verbatim. The leading dagger is dropped
-                  because the column is titled — a marker pointing at a footnote
-                  that no longer exists reads as a broken reference. */}
+              {/* Ivan's own limit text, verbatim. The leading dagger is dropped because the column is titled —
+                 a marker pointing at a footnote that no longer exists reads as a broken reference. */}
               <p>{project.limits.replace(/^†\s*/, "")}</p>
             </div>
           )}

@@ -1,18 +1,4 @@
-// Post-build prerender — runs as the last step of `npm run build`.
-//
-// Serves the freshly built dist/ from an IN-PROCESS static server (no child
-// processes: a spawned `vite preview` held pipes/undying children open on the
-// CI runner and hung the Pages deploy indefinitely), renders each of the four
-// pages in headless Chromium, and writes the rendered #root markup back into
-// the corresponding dist/*.html shell. Result: every page is fully readable
-// static HTML before (or without) the JS bundle — if the bundle is blocked or
-// fails, the site degrades to a complete static page instead of a blank
-// #root. Pairs with src/js-flag.ts: the `.js` class that hides .reveal content
-// is only added when the bundle actually executes, so the prerendered markup
-// is never hidden in that failure mode.
-//
-// At runtime React 18 `createRoot(...).render(...)` simply replaces the
-// prerendered children with identical markup — no hydration mismatch risk.
+// Post-build prerender.
 import { createServer } from "node:http";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, normalize } from "node:path";

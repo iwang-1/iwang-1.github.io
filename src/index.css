@@ -23,22 +23,16 @@ body {
   font-family: var(--font-body);
   font-size: var(--fs-600);
   line-height: var(--lh-body);
-  /* NO -webkit-font-smoothing: antialiased here (removed with the DOUBLE-SHOT
-     palette). That declaration thins stems, which is a correction for LIGHT
-     type on a DARK surface — the world it was written for. This world is dark
-     ink on cap beige, where the same declaration works against the reader by
-     lightening body text that is already at its intended weight. Default
-     (subpixel) smoothing is the right choice for dark-on-light. */
+  /* NO -webkit-font-smoothing: antialiased here (removed with the double-shot palette). That declaration thins
+     stems, which is a correction for light type on a dark surface — the world it was written for. */
 }
 
 body.modal-open {
   overflow: hidden;
 }
 
-/* The display serif runs h1 → h3, so the three flagship repo titles carry the
-   same authority as a section heading. Three weights only: 400 body, 600
-   headings, 700 display. (550/600/650 render identical pixels in the system
-   sans, so the extra steps were declared and never seen.) */
+/* The display serif runs h1 → h3, so the three flagship repo titles carry the same authority as a section
+   heading. */
 h1,
 h2,
 h3 {
@@ -70,61 +64,29 @@ h1,
 h2,
 h3 {
   text-wrap: balance; /* progressive enhancement; ignored by non-supporting engines */
-  /* A heading breaks before the page does. `text-wrap: balance` balances the
-     lines it is given; it cannot break a word that is wider than the column, and
-     the display serif at a raised root font size produces exactly that: under
-     text-only zoom at 320px, "Programming" measured 193.6px inside a 140px
-     timeline column and "Experience" 357.6px inside a 288px page-head, so the h1
-     and two h3s painted 10px (20px root) and 42px (24px root) of horizontal
-     DOCUMENT scroll — WCAG 1.4.4 failing on the role titles a recruiter is
-     reading. `break-word`, not `anywhere`: it only breaks a word with no other
-     option, so min-content sizing and the balanced result are unchanged at every
-     width where the heading already fits. Measured identical at a 16px root. */
+  /* A heading breaks before the page does. */
   overflow-wrap: break-word;
 }
 
-/* No mobile h1 override: --fs-display is a clamp, so the display size falls
-   out of the viewport width (2.4rem at 390w, 3.75rem at 1920/2560) instead of
-   stepping at one breakpoint. */
+/* No mobile h1 override: --fs-display is a clamp, so the display size falls out of the viewport width (2.4rem
+   at 390w, 3.75rem at 1920/2560) instead of stepping at one breakpoint. */
 
 p {
   margin: 0 0 var(--space-4);
   max-width: var(--measure-prose);
   text-wrap: pretty;
-  /* Same contract the h1/h2/h3 rule above already states, extended to running text
-     and to links: a word breaks before the PAGE does. The heading rule was written
-     after role titles painted document scroll under text zoom; paragraphs and
-     anchors were left out, so at a 32px root on a 320px viewport a project title,
-     its licence line, its summary and its limits note all pushed the document 68px
-     wide — WCAG 1.4.4 again, on the copy a reader is actually reading.
-     `break-word`, not `anywhere`: it breaks a word only when there is no other
-     option, so nothing that already fits moves (measured identical at 16-22px
-     roots). Anchors are included because a repo name like "accretion-db" is one
-     token with a hyphen the engine will not break on its own. */
+  /* Same contract the h1/h2/h3 rule above already states, extended to running text and to links: a word breaks
+     before the page does. */
   overflow-wrap: break-word;
 }
 
-/* ANCHORS BREAK, but with `anywhere` rather than `break-word` — and the difference
-   is a regression I caused and measured. A bare `a { overflow-wrap: break-word }`
-   made /projects/ WORSE at the base 16px root: 76px of document overflow from
-   "benchmarks/raw/bench_50k_128d.txt", because `break-word` breaks the rendered
-   line but does NOT reduce an element's min-content contribution, so the link still
-   floored its grid track and now did it while wrapping. `anywhere` is the one value
-   that shrinks min-content too, which is why the email spans use it as well.
-   Scoped to the links that carry path- and identifier-shaped text — the artifact
-   deep links and repo names, which have slashes and hyphens no engine breaks on its
-   own. Left alone everywhere else: prose links read better unbroken, and this must
-   not become a licence to hyphenate the nav. */
+/* Anchors break, but with `anywhere` rather than `break-word` */
 .cta-text-link,
 .project-links a,
 .sweep-source,
 .system-copy h3 a,
 .role-card h3 a,
-/* `.sheet-block h3 a` covers the eight project-card titles. Missed on the first
-   pass, and they were the last thing overflowing: at a 32px root on a 320px
-   viewport "Unsupervised Domain Adaptation for Sentiment" pushed the document 68px
-   wide on its own. The h1/h2/h3 rule's `break-word` does not reach it, because the
-   link is a CHILD of the heading and carries its own min-content contribution. */
+/* `.sheet-block h3 a` covers the eight project-card titles. */
 .sheet-block h3 a {
   overflow-wrap: anywhere;
 }
@@ -157,10 +119,8 @@ img {
   height: auto;
 }
 
-/* Footer pins to the viewport bottom on short pages (404): Nav/main/Footer
-   are direct children of #root on all four pages, and tall pages are
-   unaffected (main already exceeds the viewport). The skip link is
-   absolutely positioned, so it never becomes a flex item. */
+/* Footer pins to the viewport bottom on short pages (404): Nav/main/Footer are direct children of #root on all
+   four pages, and tall pages are unaffected (main already exceeds the viewport). */
 #root {
   display: flex;
   flex-direction: column;
@@ -172,13 +132,7 @@ img {
   flex: 1 0 auto;
 }
 
-/* The page-root ErrorBoundary's restored-static-page wrapper
-   (src/components/ErrorBoundary.tsx). `contents` because the wrapper exists only
-   to hold a snapshot: with a box of its own it becomes the single flex item of
-   #root, and Nav/main/Footer stop being flex items at all — the footer would
-   float mid-viewport on the 404. The paired `#root > .static-fallback > main`
-   selector above is required and not redundant: `display: contents` removes the
-   BOX, never the element, so `#root > main` still does not match through it. */
+/* The page-root ErrorBoundary's restored-static-page wrapper (src/components/ErrorBoundary.tsx). */
 .static-fallback {
   display: contents;
 }
@@ -195,15 +149,7 @@ img {
   }
 }
 
-/* The mono primitive. NOTE the missing declaration, because its absence is a
-   decision (DOUBLE-SHOT, 2026-08-04): this rule and sixteen others used to
-   carry `font-variant-numeric: tabular-nums`, and all seventeen are deleted.
-   Martian Mono ships NO `tnum` feature — verified against the font binary's
-   GSUB table, which lists only calt/ccmp/dnom/frac/locl/numr/rvrn. Every glyph
-   in it has the same 0.750 em advance, so columns of numbers align natively and
-   the property had nothing to switch on. Keeping it would have left seventeen
-   inert declarations reading as a guarantee the shipped font cannot make.
-   verify.mjs asserts the built CSS contains no tabular-nums for that reason. */
+/* The mono primitive. */
 .mono {
   font-family: var(--font-mono);
 }
@@ -248,10 +194,8 @@ img {
 }
 
 /* ------------------------------------------------------------------- nav */
-/* 64px, frozen. The rail below is measured against navBottom−3px with a ±2
-   tolerance and the delta is already exactly 2.0, so the nav height and the
-   rail's box move together or the gate fails. Restyle, do not resize.
-   The bottom edge is a --grid hairline, like every other boundary here. */
+/* 64px, frozen. The rail below is measured against navBottom−3px with a ±2 tolerance and the delta is already
+   exactly 2.0, so the nav height and the rail's box move together or the gate fails. */
 .nav {
   position: sticky;
   top: 0;
@@ -295,33 +239,7 @@ img {
 
 .nav-brand, .nav-wordmark { color: var(--ink); }
 
-/* The tab row PANS, it never pushes the page. Under text-only zoom (WCAG 1.4.4:
-   the reader raises the root font size and the viewport stays at 320px) the four
-   tabs grow past the nav's own measure, and as a flex item at its default
-   `min-width: auto` the row could not shrink — so it drove the whole DOCUMENT
-   into horizontal scroll: measured 30px of page overflow at 320w with the root
-   at 18px, 47px at 19px and 65px at 20px, with the Contact tab's right edge
-   1.7 / 15.5 / 29.3px outside the viewport. That is 1.4.10 (reflow) failing on
-   the primary navigation, i.e. the one component every page depends on.
-
-   `min-width: 0` lets the row shrink to its share and `overflow-x: auto` gives
-   the overflow somewhere local to go — the same answer .sweep-scroll gives a
-   plot too wide for its plate. The nav's frozen geometry is untouched: 64px
-   height, and the progress rail still measures navBottom−3px (delta 2.0,
-   unchanged at every root size tested up to 32px).
-
-   Two details are load-bearing, not decoration:
-   - `padding-block`/`margin-block` cancel out, so the box is the same size it
-     always was, but the 5px of padding puts a focused tab's 2px ring + 2px
-     offset INSIDE the scroll container's clip box. Without it the ring was
-     clipped 4px top and bottom on every tab; 5px rather than exactly 4 leaves
-     1px of slack so a sub-pixel layout can never shave the ring's last row.
-     The current tab's inset amber tick sits inside the clip box at every width
-     and root size measured (320–1920px, 16–24px).
-   - the scrollbar is hidden, because a classic horizontal scrollbar would be
-     drawn inside a 64px bar whose height is gate-asserted. What pans here is
-     6px at a 24px root and 19px at 32px, focusing a tab scrolls it into view,
-     and every tab is still a real link in the tab order. */
+/* The tab row pans, it never pushes the page. */
 .nav-tabs {
   display: flex;
   align-items: center;
@@ -338,9 +256,8 @@ img {
   display: none;
 }
 
-/* Mobile nav: these descendant selectors out-specify the base label-button
-   rule below, which is why a bare `.btn` override here would silently lose
-   the cascade. */
+/* Mobile nav: these descendant selectors out-specify the base label-button rule below, which is why a bare
+   `.btn` override here would silently lose the cascade. */
 @media (max-width: 639px) {
   .nav-wordmark {
     display: none;
@@ -363,27 +280,12 @@ img {
   }
 }
 
-/* THE SAME RULE, UNCONDITIONALLY — and this is a bug fix, not a tidy.
-   The relaxation above stated the right principle ("must wrap instead of forcing
-   page scroll") and then scoped it to `max-width: 639px`, which left the 640-876px
-   band holding an unbreakable pill. Measured on /projects/: the chip
-   "React + TypeScript + Vite" is 276px with `white-space: nowrap`, and at 768px the
-   `.sheet-grid-3` three-column rule resolves its tracks to 246/326/236px inside a
-   720px container — because `1fr` is `minmax(auto, 1fr)` and so is floored at each
-   track's min-content width, which that one chip sets. Result: 112px of DOCUMENT
-   overflow at 768, decaying 80 @800, 30 @850, 4 @876, 0 @880. The whole page,
-   sticky nav included, slid sideways, and two cards' headings were clipped.
-   It shipped because verify.mjs tested 1366 / 390 / 320 and 768 sits in the gap —
-   a tablet-width band nobody looked at. The viewport is now in the gate list.
-   Unconditional, because a chip must never set a grid track's floor at ANY width:
-   the phone-only scope was the whole defect. */
+/* The same rule, unconditionally. */
 span.chip,
 span.proof-chip {
   white-space: normal;
-  /* Wrapping is not enough on its own: "Qiskit/DisCoPy/pytket" has no SPACE, so
-     `white-space: normal` gives it nowhere to break and it overflowed the document
-     by 18px at an 18px root — the earliest zoom failure on the site — and 207px at
-     32px. A slash is a legal break opportunity only under `anywhere`. */
+  /* Wrapping is not enough on its own: "Qiskit/DisCoPy/pytket" has no space, so `white-space: normal` gives it
+     nowhere to break and it overflowed the document by 18px at an 18px root — the earliest zoom failure on. */
   overflow-wrap: anywhere;
 }
 
@@ -403,15 +305,8 @@ span.proof-chip {
   }
 }
 
-/* The last tab must clear the viewport's right edge by ≥12px, and the tightest
-   case is 360–379px, where the monogram still shows and eats 44px of the row.
-   Measured: the four labels need 240px of glyph width at 13px, which leaves the
-   Contact tab 0.5px from the edge at 360w. Dropping the label to the 12px
-   mono/tick step buys ~19px and lands the gutter at ~22px, with the 44px tap
-   height untouched (min-height on the primitive, not the font size).
-   The brand is NOT un-hidden to make room: verify switches its band-alignment
-   anchor to .nav-tabs at ≤359px precisely because the brand is display:none
-   there, and showing it moves the tabs 44px off the hero kicker's left edge. */
+/* The last tab must clear the viewport's right edge by ≥12px, and the tightest case is 360–379px, where the
+   monogram still shows and eats 44px of the row. */
 @media (max-width: 379px) {
   .nav-tabs {
     gap: 3px;
@@ -431,31 +326,16 @@ span.proof-chip {
   }
 }
 
-/* The label button's TEXT is UI, not data. Martian Mono's cap-I and lowercase-l
-   are near-identical at 16px, which rendered "GitHub" as "GItHub" in the fold —
-   a legibility failure in the one place a reader is deciding whether to click.
-   Legends and data stay in Martian; button labels take the body face. */
+/* The label button's text is UI, not data. */
 .btn {
   font-family: var(--font-body);
 }
 
 /* ---------------------------------------------------------- label button */
-/* The figure world's one interactive primitive: a flat plate with a hairline
-   border and a mono-adjacent label. Nav tabs, CTA buttons, footer links.
-   Non-interactive chips stay borderless-flat, so the hairline IS the
-   affordance.
-
-   Cascade contract: hover/focus-visible and :active are each written ONCE,
-   here, at equal specificity, in cascade order. There is exactly one :hover
-   rule for this primitive in the whole file — the previous stylesheet had a
-   second, later one whose `:not()` qualifier out-specified the primary
-   variant and rendered the primary label at 1.21:1. */
+/* The figure world's one interactive primitive: a flat plate with a hairline border and a mono-adjacent label. */
 .btn {
-  /* The hover lift and the label colour, as properties the variants and the
-     reduced-motion block can change WITHOUT adding a second :hover rule.
-     --btn-label must be restated by the hover rule: these are anchors, and
-     the global `a:hover` colour would otherwise repaint the label amber —
-     which on the amber-filled primary is 1.00:1, an invisible CTA. */
+  /* The hover lift and the label colour, as properties the variants and the reduced-motion block can change
+     without adding a second :hover rule. --btn-label must be restated by the hover rule: these are anchors. */
   --btn-lift: -1px;
   --btn-label: var(--ink);
   display: inline-flex;
@@ -477,12 +357,8 @@ span.proof-chip {
     border-color var(--t-tap) ease, background-color var(--t-tap) ease;
 }
 
-/* The primitive is shared between anchors and <button>s. An anchor is
-   pointer-cursor by UA default and a button is not, so the copy-email control
-   read `cursor: default` while looking identical to the links beside it. Stated
-   here, on the primitive, rather than inline on the one component that noticed:
-   a style belongs in the stylesheet, and the next <button class="btn"> inherits
-   it instead of re-discovering the bug. */
+/* The primitive is shared between anchors and <button>s. An anchor is pointer-cursor by UA default and a
+   button is not, so the copy-email control read `cursor: default` while looking identical to the links beside it. */
 button.btn {
   cursor: pointer;
 }
@@ -496,10 +372,8 @@ button.btn {
   color: var(--btn-label);
 }
 
-/* Current nav tab / current page. Three signals, none of them colour alone:
-   the brighter --plate-2 fill, the --ink-3 boundary, and an amber tick under
-   the label the way the active tick sits under an axis. The tick is a
-   hairline, because a hairline is the only shadow in this system. */
+/* Current nav tab / current page. Three signals, none of them colour alone: the brighter --plate-2 fill, the
+   --ink-3 boundary, and an amber tick under the label the way the active tick sits under an axis. */
 .btn-current {
   --btn-lift: 0px; /* held down: never lifts, hover or not */
   background: var(--plate-2);
@@ -508,10 +382,8 @@ button.btn {
   box-shadow: inset 0 calc(-1 * var(--hairline)) 0 var(--series-2);
 }
 
-/* Hover / focus-visible: the border becomes the amber annotation and the
-   plate lifts. Written ONCE, for every variant, at one specificity. The
-   label colour is restated from the variant's own property so no ancestor
-   link rule can repaint it. */
+/* Hover / focus-visible: the border becomes the amber annotation and the plate lifts. Written once, for every
+   variant, at one specificity. */
 .btn:hover,
 .btn:focus-visible {
   border-color: var(--series-2);
@@ -525,23 +397,16 @@ button.btn {
   transform: none;
 }
 
-/* The one control where the global amber focus ring is invisible: it draws
-   #E9A13B around a button FILLED #E9A13B, measured 1.00:1 — on the primary CTA,
-   the control a keyboard screener reaches first. --ink instead, pushed to a 3px
-   offset so the ring lands on plate/ground where --ink measures 17.76:1.
-   This does NOT touch the Ground-On-Amber Rule, which governs the LABEL colour
-   on an amber fill; the label is still --ground. Outline properties only — no
-   second :hover rule, no border or lift change. */
+/* The one control where the global amber focus ring is invisible: it draws #e9a13b around a button filled
+   #e9a13b, measured 1.00:1 — on the primary cta, the control a keyboard screener reaches first. --ink. */
 .btn-primary:focus-visible {
   outline-color: var(--ink);
   outline-offset: 3px;
 }
 
 /* ------------------------------------------------------------ primitives */
-/* The figure vocabulary. Seven objects, all borrowed from the plots: plate,
-   axis rule, readout, sample point, callout, data table, label button
-   (above). The only shadow anywhere in the system is a hairline — every
-   surface separation is a 1px --grid line, never a blur. */
+/* The figure vocabulary. Seven objects, all borrowed from the plots: plate, axis rule, readout, sample point,
+   callout, data table, label button (above). */
 
 /* PLATE — the figure frame. A named surface with a label above the content
    and a footnote strip below a hairline. No gradient, no blur, 2px radius. */
@@ -567,26 +432,8 @@ button.btn {
   margin: 0;
 }
 
-/* The footnote strip: provenance, measurement conditions, and the † limits
-   note. Under a hairline, at the 14px floor --ink-3 is legible against
-   (6.06:1 on --plate, 5.60:1 on --plate-2).
-   The strip is PROSE, not a caption — the † limits note is two sentences — so it
-   is bound by --measure-mono like any other reading block. It used to be
-   `max-width: none` and ran 121ch at 1440 and 2560 (a measured 101-character
-   line inside a 1022px box), and the coursework line ran 131ch; the craft floor's
-   band is 65-75.
-   The cap is spent on PADDING-RIGHT, not on max-width, and that is the whole
-   subtlety of this rule: this element's `border-top` IS the plate's internal
-   divider, so a narrowed box narrows the rule. Measured at 1440 with
-   `max-width: 68ch`: the box fell 1022px -> 607px, so the hairline stopped 415px
-   short of the plate's inner right edge, and on the Sweep it broke DESIGN.md's
-   stated contract that "the plot, the gloss and the footnote all end on one right
-   edge" (footnote right 1109 -> 816 against an unmoved plot). Padding leaves the
-   border box — and therefore the rule — on the plate's full measure and shortens
-   only the line box the text is laid into.
-   `max()` floors the padding at 0, so below the cap width nothing is subtracted
-   and the narrow-viewport renders are byte-identical: measured 0px of added
-   padding at 320, 390 and 480, and no document overflow at any width. */
+/* The footnote strip: provenance, measurement conditions, and the † limits note. Under a hairline, at the 14px
+   floor --ink-3 is legible against (6.06:1 on --plate, 5.60:1 on --plate-2). */
 .plate-footnote {
   margin: 0;
   padding-top: var(--space-3);
@@ -595,18 +442,13 @@ button.btn {
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: var(--fs-400); /* 14px floor — never smaller */
-  /* 1.6, not 1.5. Light --ink-3 text on a near-black plate needs compensating
-     leading (DESIGN.md sets the body face at 1.65 for the same reason), and 1.5
-     was the one explicit line-height on the page still set below the sans body's
-     — on the block with the LONGEST measure of any prose on the site. Costs
-     ~1.4px per line at 14px. */
+  /* 1.6, not 1.5. */
   line-height: 1.6;
   max-width: none;
 }
 
-/* Footnote artifact links are long unbroken filenames
-   (bench_50k_128d.txt at 40 chars) — allow them to break anywhere, or the
-   longest one escapes its plate by 11px at 320w. */
+/* Footnote artifact links are long unbroken filenames (bench_50k_128d.txt at 40 chars) — allow them to break
+   anywhere, or the longest one escapes its plate by 11px at 320w. */
 .plate-footnote a {
   overflow-wrap: anywhere;
 }
@@ -617,35 +459,14 @@ button.btn {
   margin-top: auto;
 }
 
-/* THE LAST-CHILD RULE, generalised (2026-08-03). The rule above states the
-   principle for one element — a block that closes its container owns that
-   container's bottom edge, so it may not carry a trailing margin — but three
-   other closing blocks still did, and a bottom margin inside a container whose
-   own padding-bottom already states the edge is two spacing mechanisms on one
-   boundary. Measured at every width: `.project-links` closes each of the three
-   system plates (16px x3), `.skills-row` closes the skills block (24px), and
-   `.hero-email-plain` closes the hero tail (16px) — 64px of doubled air, and it
-   is doubled at 1440 too, which is why this is NOT in a mobile block. It is not
-   collapsed away: all four parents are flex or grid containers, where adjoining
-   margins do not collapse, so the margin is painted in full.
-   `:last-child`, not a blanket zero: each of these elements ALSO appears
-   mid-container on other pages (`.project-links` above a chip rail on
-   /projects/), where the trailing margin is the correct separation. */
+/* The last-child rule, generalised (2026-08-03). */
 .system-copy > .project-links:last-child,
 .skills-block > .skills-row:last-child,
 .hero-tail > .hero-email-plain:last-child {
   margin-bottom: 0;
 }
 
-/* AXIS RULE — the only decorative line on the site: a 1px rule carrying four
-   5px ticks, opening a section the way an axis opens a plot.
-
-   The gradient runs 270deg and the tile is pinned RIGHT, exactly as the progress
-   rail's identical primitive does it (see .route-progress::before). Left-pinned
-   at 90deg the repeating tile put ticks at 0/25/50/75%: the first landed ON the
-   container's inner left edge and merged with the page's one alignment spine, and
-   none landed at 100%, so DESIGN.md's four ticks drew as three plus a smudge.
-   Mirrored, they land at 25/50/75/100 and all four read. */
+/* Axis rule. */
 .axis-rule {
   position: relative;
   height: 5px;
@@ -657,10 +478,7 @@ button.btn {
   background-position: right 0 top 0;
 }
 
-/* READOUT — value / label on one left-aligned baseline, tabular figures, as
-   many rows as the project actually measured. Deliberately NOT a 3-column grid:
-   a fixed column count is what makes varied evidence read as a filled-in
-   schema. */
+/* Readout. */
 .readout {
   display: flex;
   flex-direction: column;
@@ -685,12 +503,8 @@ button.btn {
   line-height: 1.2;
 }
 
-/* `.readout-unit` was DELETED here (2026-08-02) along with `ReadoutCell.unit`:
-   18 lines for a track that never rendered. Every caller is
-   SystemFeature.tsx, which maps only `{ value, label }`, so `cell.unit` was
-   always undefined and the span was never emitted — measured 0 occurrences on all
-   four rendered pages. The unit track that DOES ship is the hero rail's
-   `.hero-readout-unit`, a different component with its own fixed grid track. */
+/* `.readout-unit` was deleted here (2026-08-02) along with `ReadoutCell.unit`: 18 lines for a track that never
+   rendered. */
 .readout-label {
   color: var(--ink-3);
   font-family: var(--font-mono);
@@ -698,25 +512,14 @@ button.btn {
   line-height: 1.4;
 }
 
-/* The metric, said in words — the plate's copy of the treatment the hero rail
-   already ships (see `.hero-readout-plain`, whose register this deliberately
-   matches rather than inventing a second one). Same reasoning, same failure it
-   fixes: the hero proves the pattern 300px above, and then "878 µs fdatasync
-   p50" and "0.976 HNSW recall@10" shipped untranslated inside the plates.
-   --font-body, NOT the row's mono: a plain-English gloss set in the register of
-   the jargon it translates is invisible as a gloss. That exact bug was found and
-   fixed on the hero rail (an undeclared --font-sans silently inheriting mono),
-   so this states the family that actually exists. */
+/* The metric, said in words. */
 .readout-plain {
   display: block;
   margin-top: 2px;
   color: var(--ink-3);
   font-family: var(--font-body);
-  /* --fs-400 (14px), NOT the --fs-300 the hero rail's gloss uses: DESIGN.md's
-     Fourteen-Pixel Floor Rule is that nothing set in --ink-3 goes below 14px, and
-     13px --ink-3 would have introduced a second violation of it rather than
-     copying a treatment. The register still separates from the mono label beside
-     it, because the distinction here is FAMILY (sans against mono), not size. */
+  /* Fs-400 (14px), not the --fs-300 the hero rail's gloss uses: design.md's Fourteen-Pixel Floor Rule is that
+     nothing set in --ink-3 goes below 14px, and 13px --ink-3 would have introduced a second violation of it. */
   font-size: var(--fs-400);
   line-height: 1.4;
 }
@@ -724,9 +527,7 @@ button.btn {
 
 
 
-/* CALLOUT — leader line plus label, exactly as the source plots annotate a
-   knee. The site's only annotation style, and the mechanism of the
-   signature: amber marks the human note on the measurement. */
+/* Callout. */
 .callout {
   position: relative;
   display: inline-flex;
@@ -768,12 +569,8 @@ button.btn {
   white-space: nowrap;
 }
 
-/* There is no `.chip-teal` treatment any more. Coursework chips used to be
-   lime, which spent the loudest colour on the site's least load-bearing
-   content — an intro course list — while the measured numbers were grey. The
-   class may still be emitted; it now inherits the plain chip and that is the
-   intended render. Saturated colour is for evidence and for what you can
-   click, nowhere else. */
+/* There is no `.chip-teal` treatment any more. Coursework chips used to be lime, which spent the loudest
+   colour on the site's least load-bearing content — an intro course list — while the measured numbers were grey. */
 
 .proof-chip .dot {
   width: 6px;
@@ -783,28 +580,8 @@ button.btn {
   flex: none;
 }
 
-/* The dot rides the FIRST line of its label, not the centre of the chip.
-   `align-items: center` above is right while a chip is one line — all eleven
-   single-line proof chips measured 0.22px off their line's centre. But the hero
-   availability chip wraps: two lines at every width from 640 up, three at 390,
-   and centring on the 54.8px two-line box put the dot a measured 11.9px below
-   the first line's centre at 1440 and 23.1px below it at 390 — a status dot
-   floating in the gutter BETWEEN two lines of the string it qualifies, which on
-   this site is the difference between a checked number and a tech tag sitting in
-   the wrong place.
-
-   `flex-start` plus half the line's own leading is arithmetically identical to
-   `center` on a single-line chip (dot mid = line-box top + lh/2 = line-box
-   centre), so nothing that already reads correctly moves; a wrapping chip's dot
-   lands on line one. `1lh` is the element's OWN used line-height, so the 13px
-   chip and the 16px hero chip each derive their own offset and no literal is
-   hard-coded for either.
-
-   Behind @supports because `lh` is recent: without it the declaration would be
-   dropped while `flex-start` still applied, which would ride every dot up to the
-   line box's top edge. Guarded, a non-supporting engine renders exactly what
-   ships today — the same progressive-enhancement shape as the subgrid hobby row
-   and `text-wrap: balance`. Both properties must stay inside the block. */
+/* The dot rides the first line of its label, not the centre of the chip. `align-items: center` above is right
+   while a chip is one line — all eleven single-line proof chips measured 0.22px off their line's centre. */
 @supports (margin-top: 1lh) {
   .chip,
   .proof-chip {
@@ -824,39 +601,15 @@ button.btn {
 }
 
 /* -------------------------------------------------------------- sections */
-/* One vertical rhythm, one owner. Every section-level block carries the gap
-   ABOVE itself and nothing carries a gap below, so the four stacked verticals
-   (.section padding-top + main padding-bottom + .contact-band margin-top +
-   .footer margin-top) collapse to a single --section-gap and the
-   `.main-with-contact { padding-bottom: 0 }` patch is unnecessary. */
+/* One vertical rhythm, one owner. */
 .section {
   padding-top: var(--section-gap);
 }
 
-/* The phone rhythm block that used to sit here now lives AFTER `.hero-band`,
-   below — see the comment there. It was authored before three of the rules it
-   overrides and lost all three on source order at equal specificity. */
+/* The phone rhythm block that used to sit here now lives after `.hero-band`, below — see the comment there. */
 
-/* Hierarchy ranks. Five identically-sized h2s over five identical 96px pads is
-   the generated-page fingerprint, so a section declares its rank and the
-   heading size moves with the gap above it. Rank-1 is the page's lead section
-   (the systems work); rank-2 is everything that supports it.
-
-   Rank-1's size is a clamp, not a flat --fs-900: h1 is itself a clamp that
-   bottoms out at 2.4rem, and a fixed 2.6rem h2 would render LARGER than the h1
-   above it on a phone. The 1.75rem floor sits ABOVE rank-2's --fs-800, because
-   a floor equal to it renders the two ranks identical below 640px — the
-   flat-hierarchy defect, just relocated to mobile. So rank-1 measures 28px
-   against rank-2's 24px at 390w, reaches --fs-900 by ~960w, and never passes
-   the h1 above it (38.4px until 738w).
-
-   Rank by position is the fallback while the section components still emit no
-   modifier: the FIRST .section on a page is rank-1, every later one rank-2
-   (`.section ~ .section` cannot match a first child of its class). The explicit
-   `.section--rank-*` rules below are doubled up to `.section.section--rank-*`
-   so they match the sibling selectors' specificity exactly and win on source
-   order — a bare `.section--rank-2` would silently lose to `.section ~
-   .section`. */
+/* Hierarchy ranks. Five identically-sized h2s over five identical 96px pads is the generated-page fingerprint,
+   so a section declares its rank and the heading size moves with the gap above it. */
 .section h2 {
   font-size: clamp(var(--fs-850), 4.4vw, var(--fs-900));
 }
@@ -900,15 +653,8 @@ button.btn {
 }
 
 /* ----------------------------------------------------------------- cards */
-/* A card is a plate that has not been named yet: same fill, same hairline, same
-   2px radius, no shadow. The blur-shadow stack is gone from the whole file —
-   the hairline IS the separation, so a card that wants more presence gets a
-   brighter border, never a soft edge. */
-/* THE SHEET BLOCK — a datasheet's bounded region, not a web "card".
-   The rename is not cosmetic: a card is a floating object with a shadow and a
-   hover lift, and a page of equal cards is the single most template-shaped thing
-   a portfolio can do. A block sits ON the sheet: it shares the sheet's own fill,
-   it is separated by a rule rather than by elevation, and it never lifts. */
+/* A card is a plate that has not been named yet: same fill, same hairline, same 2px radius, no shadow. */
+/* The sheet block. */
 .sheet-block {
   background: var(--surface-figure);
   border: var(--hairline) solid var(--rule);
@@ -929,9 +675,8 @@ button.btn {
   border-bottom: var(--hairline) solid var(--rule);
 }
 
-/* The NOTES column carries what the measurement does NOT cover, at BODY size.
-   It used to be a 14px dagger footnote, which is where a site puts something it
-   hopes you skim. */
+/* The notes column carries what the measurement does not cover, at body size. It used to be a 14px dagger
+   footnote, which is where a site puts something it hopes you skim. */
 .spec-notes p {
   font-size: var(--fs-600);
   color: var(--ink);
@@ -941,27 +686,12 @@ button.btn {
 
 .sheet-grid {
   display: grid;
-  /* `minmax(0, 1fr)`, not `1fr` — the SINGLE-column case matters most, and it is
-     where this was actually failing. `1fr` means `minmax(auto, 1fr)`, so the track
-     is floored at its content's min-content width: measured at a 32px root on a
-     320px viewport, this one track resolved to 389px inside a correctly-288px grid
-     and the card overflowed the document by 85px. Zeroing the floor lets the
-     (now breakable) content reflow instead. Identical at every width where the
-     content fits. Same trap as the tablet-band overflow this file records above. */
+  /* `minmax(0, 1fr)`, not `1fr` */
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 
-/* `minmax(0, 1fr)`, NOT `1fr`, and this is the same trap twice.
-   `1fr` is shorthand for `minmax(auto, 1fr)`, so every track is FLOORED at its
-   content's min-content width and a grid of them cannot shrink below the sum of
-   those floors. That is exactly what put 112px of document overflow on this page
-   across the 768-876px band (one 276px nowrap chip), and it reappeared under text
-   zoom: at a 32px root on a 320px viewport the cards overflowed by 68px even after
-   every wrap fix, because the TRACKS were the floor, not the text.
-   `minmax(0, 1fr)` sets the floor to zero and lets the now-breakable content
-   reflow. Measured: /projects/ goes 85px -> 0 at a 32px root, and nothing moves at
-   any normal width (the tracks are identical whenever the content fits). */
+/* `minmax(0, 1fr)`, not `1fr`, and this is the same trap twice. */
 @media (min-width: 768px) {
   .sheet-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -976,21 +706,8 @@ button.btn {
   color: var(--ink);
 }
 
-/* Touch: a card's title is its primary link, and at 20px/1.2 the anchor's box
-   measured 24px tall — half the 44px minimum, on the only pointer that cannot
-   aim. The padding is what the finger hits; the equal negative margin keeps the
-   line box at its typographic height, so no card grows and the 390w page budget
-   is untouched. inline-block (not inline) so the padding is part of the box the
-   browser hit-tests, and not inline-flex, so a long title still wraps as text.
-
-   Two more links join the same treatment rather than getting a second one:
-   `.hero-readout-repo` (measured 23.1px tall at every width from 390 up — the
-   three fold-level routes into the evidence repos) and `.sweep-source`
-   (bench_50k_128d.txt, 16px — the link a senior engineer taps to falsify a
-   number). Same idiom, same reasoning, one rule. `.sweep-source` is styled in
-   Sweep.css; its touch box lives here so this stays the file's single 44px
-   lift. The 34px keycaps are deliberately NOT in this list — Keyboard.css
-   documents that trade and it is sound. */
+/* Touch: a card's title is its primary link, and at 20px/1.2 the anchor's box measured 24px tall — half the
+   44px minimum, on the only pointer that cannot aim. */
 @media (max-width: 767px) {
   .sheet-block h3 a,
   .system-copy h3 a,
@@ -1003,29 +720,19 @@ button.btn {
 }
 
 /* ------------------------------------------------------------------ hero */
-/* .hero/.page-head/.not-found sit on the SAME element as .container, so
-   they must only ever set padding LONGHANDS — a `padding: X 0 0` shorthand
-   here zeroes .container's 24px/16px horizontal padding (rendered flush to
-   the viewport edge on mobile). verify.mjs gates this. */
+/* .hero/.page-head/.not-found sit on the same element as .container, so they must only ever set padding
+   longhands — a `padding: X 0 0` shorthand here zeroes .container's 24px/16px horizontal padding. */
 .hero {
   padding-top: var(--space-7);
 }
 
-/* School and graduation date are the two facts a recruiter checks first, and
-   they were in the smallest, quietest type on the page — below the chart's own
-   axis labels in rank. One step up the ramp and full --ink contrast; the string
-   itself now says GRADUATING so the date cannot read as a start date. */
+/* School and graduation date are the two facts a recruiter checks first, and they were in the smallest,
+   quietest type on the page — below the chart's own axis labels in rank. */
 .hero .kicker {
   margin-bottom: var(--space-4);
   font-size: var(--fs-400);
-  /* The kicker is a two-line 56ch string carrying the two facts a recruiter
-     checks first, and unbalanced it broke 535 / 105px at 768, 1440, 1920 and
-     2560 — an 11-character "SUMMER 2026" hanging alone under a line five times
-     its length, on the page's first line of type. `balance` is the right
-     primitive rather than `pretty`: this is a heading-register label, not prose,
-     and `pretty` only protects the LAST line from a single-word orphan, which is
-     why a two-word orphan survived it at four widths. Progressive enhancement —
-     a non-supporting engine renders exactly what ships today. */
+  /* The kicker is a two-line 56ch string carrying the two facts a recruiter checks first, and unbalanced it
+     broke 535 / 105px at 768, 1440, 1920 and 2560 — an 11-character "summer 2026" hanging alone under a line. */
   text-wrap: balance;
 }
 
@@ -1041,33 +748,17 @@ button.btn {
      rather than running at it. */
   max-width: 46ch;
   margin-bottom: var(--space-4);
-  /* The same treatment .hero-aws already carries, applied for consistency across
-     the hero's two prose blocks. Measured honestly: at 390px it does NOT change
-     this sentence's break (six lines either way, last line "with tech."), because
-     `pretty` targets single-word orphans and that line is two words. It is here so
-     both hero paragraphs are set the same way, not as a fix. */
+  /* The same treatment .hero-aws already carries, applied for consistency across the hero's two prose blocks. */
   text-wrap: pretty;
 }
 
-/* No bottom margin: the chip is the LAST thing in .hero-lead, so the grid's own
-   row gap is the separation. Both together measured 64px of air between the ask
-   and the hairline that opens the AWS sentence. */
+/* No bottom margin: the chip is the last thing in .hero-lead, so the grid's own row gap is the separation. */
 .hero-availability {
   margin-bottom: 0;
 }
 
-/* THE ASK, promoted off the generic chip rank. "Open to Summer 2027 new-grad
-   software engineering roles" is the highest information-per-pixel string on the
-   site — it is the second thing a screener looks for after the graduation date —
-   and it was set at --fs-300, the SMALLEST step on the ramp: below the kicker
-   above it (14px) and below the prose either side of it (16-17px). A footnote
-   rank on the page's one statement of intent.
-   The chip's own grammar is untouched (border, status dot, mono, tabular): only
-   the step moves, to --fs-500, one above the kicker. `white-space: normal` is
-   load-bearing at every width, not just the ≤639px override further up: at 16px
-   the 55-character string is wider than the container between 640 and ~1023px,
-   where the hero is still one column, and a nowrap chip there would push the page
-   into horizontal overflow. */
+/* The ask, promoted off the generic chip rank. "Open to Summer 2027 new-grad software engineering roles" is
+   the highest information-per-pixel string on the site — it is the second thing a screener looks for. */
 .hero-availability .proof-chip {
   font-size: var(--fs-500);
   line-height: 1.4;
@@ -1088,20 +779,7 @@ button.btn {
   margin-top: var(--space-4);
 }
 
-/* THE HERO SPLIT — identity on the left, the measured rail on the right, both
-   on the container's inner left edge. This supersedes the 2026-07-27 centered
-   hero: centering a stack of differently-measured elements (h1 22ch, subhead
-   46ch, AWS line 62ch, chip auto, CTA auto) landed the hero's seven children on
-   seven different left edges (441.9 / 547.6 / 351 / 485.8 / 404.4 / 607.5 /
-   627.3 at 1440), none of them the 184 the nav brand, every section h2, the
-   hobby grid and the skills rows share. A ragged double-sided margin over
-   ~5,100px of left-aligned bands reads as broken, not symmetric. See the
-   one-left-spine Named Rule in DESIGN.md.
-
-   1024, not the 1200 the old split used and not the 1100 .evidence-head
-   invented: 1200 existed because the PLOT needed ~640px, and the right column
-   is now a text rail that needs ~360px. 1024 is a breakpoint this page already
-   declares for .system-feature, .hobby-grid and .edu-card. */
+/* The hero split. */
 .hero-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1109,13 +787,8 @@ button.btn {
   align-items: start;
 }
 
-/* THREE named areas, and the ONE reason they exist: on a phone the rail has to
-   come before the AWS paragraph and the CTAs, or its first row lands below the
-   844px fold and a phone screener meets the bio and no evidence. Single column
-   there, so DOM order IS the picture: lead → rail → tail.
-   At ≥1024 the areas restore the two-column split exactly — lead over tail on the
-   left, rail spanning both rows on the right — which is why no `order` property
-   appears anywhere here. Visual order and DOM order agree at both widths. */
+/* Three named areas, and the one reason they exist: on a phone the rail has to come before the AWS paragraph
+   and the CTAs, or its first row lands below the 844px fold and a phone screener meets the bio and no evidence. */
 .hero-layout {
   grid-template-areas: "lead" "rail" "tail";
 }
@@ -1126,9 +799,8 @@ button.btn {
 
 @media (min-width: 1024px) {
   .hero-layout {
-    /* 50/50, not 56/44: at 44% the readout's unit column wrapped to three lines
-       and "878 µs" broke across two — Martian Mono is wide (caps at 0.800 em), so
-       the rail needs more room in this world than the old narrow-mono one. */
+    /* 50/50, not 56/44: at 44% the readout's unit column wrapped to three lines and "878 µs" broke across two
+       — Martian Mono is wide (caps at 0.800 em), so the rail needs more room in this world than the old narrow-mono one. */
     grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
     grid-template-areas:
       "lead rail"
@@ -1136,31 +808,21 @@ button.btn {
     gap: var(--space-6) var(--space-8);
   }
 
-  /* The rail is in the other column here, so nothing draws an edge above this
-     paragraph and it gets its own — the hairline-bounded sentence the comment at
-     .hero-aws describes. See the note there for why the rule is off below 1024. */
+  /* The rail is in the other column here, so nothing draws an edge above this paragraph and it gets its own —
+     the hairline-bounded sentence the comment at .hero-aws describes. */
   .hero-aws {
     padding-top: var(--space-4);
     border-top: var(--hairline) solid var(--grid);
   }
 }
 
-/* The AWS line: body register, hairline-bounded, so the paid work reads as a
-   sentence rather than as another mono chip.
-   No top margin: it opens .hero-tail, and the grid's own row gap is the
-   separation. Its own 24px on top of that gap read as 56px of unexplained air
-   between the rail and the paragraph. */
+/* The AWS line: body register, hairline-bounded, so the paid work reads as a sentence rather than as another
+   mono chip. */
 .hero-aws {
   max-width: 62ch;
   margin: 0 0 var(--space-6);
   padding: 0 0 var(--space-4);
-  /* NO top rule below 1024. There the rail stacks directly above this
-     paragraph and its last row already draws a closing hairline, so a second
-     rule 32px under the first read as two parallel rules with an empty band
-     between them. The rail's own edge is the separation; the bottom rule below
-     still closes the sentence before the CTAs. The ≥1024 block restores the top
-     rule, where the rail is in the other column and this paragraph opens the
-     left column's second row with nothing above it. */
+  /* NO top rule below 1024. */
   border-bottom: var(--hairline) solid var(--grid);
   font-size: var(--fs-500);
   line-height: 1.6;
@@ -1168,15 +830,8 @@ button.btn {
   text-wrap: pretty;
 }
 
-/* "Full timeline →" is one action label and it split mid-phrase, leaving the
-   arrow alone at the end of one line and the words on the next, at 390, 480, 640
-   and 1440 — measured two client rects with the 27.4px arrow fragment stranded
-   above the 83.5px text fragment. It is the hero's only route to the experience
-   page, so half of it reading as a leftover glyph on the line above is a
-   navigation defect, not a typographic nicety. `nowrap` on the anchor keeps the
-   whole label on one line and pushes the break to the space before it, which the
-   paragraph has: the label is 116px inside a 594-631px measure, so it cannot
-   overflow, and the arrow's 4px hover translate has no effect on wrapping. */
+/* "Full timeline →" is one action label and it split mid-phrase, leaving the arrow alone at the end of one
+   line and the words on the next, at 390, 480, 640 and 1440 — measured two client rects with the 27.4px. */
 .hero-aws a {
   white-space: nowrap;
 }
@@ -1196,41 +851,8 @@ button.btn {
   border-top: var(--hairline) solid var(--grid);
 }
 
-/* The Sweep opens the evidence section on the spine, with no sibling: the
-   side-by-side arrangement that briefly lived here traded 576px of dead
-   horizontal field for a 335px vertical void under the rail, and below its own
-   1100px breakpoint it drew the rail's hairline rows across the whole 976px
-   measure with the last glyph at ~452px — 547px of empty ruled line, this
-   world's signature of "unfinished". It also stepped the plate from 1051px at
-   vw=1099 to 600px at vw=1100.
-
-   REVISED 2026-07-31 (DESIGN.md Layout updated in the same change): from the
-   width below up the CAP LIVES HERE, on the plate, not on the drawing. It used to
-   live only on .sweep-plot (max-width: 900px) inside a plate that was never
-   capped, so the plot ended 147px short of the plate's inner right edge at 1440 —
-   growing without bound past that — while the footnote strip's hairline still
-   ruled the plate's full width. That is the same empty-ruled-line defect
-   described above, reproduced one level in. With the cap on the plate, the plot,
-   the gloss and the footnote all end on one right edge.
-   950px, not 900: it preserves the reason the 900px cap existed. The plate's
-   interior is exactly 900px here (950 − 2px hairline − 48px padding), so the
-   680-unit viewBox scales 1.324x and the plot's own 10px axis type renders at
-   ~13.2px — the page's mono label rank, not the 15px it would reach at the full
-   1072px measure.
-
-   998px, not 1120px (2026-08-01): the handoff between the two caps has to happen
-   at the width where .sweep-plot's 900px starts binding, which is where the
-   plate's interior reaches 900px — container inner measure 950px, i.e. viewport
-   998px at the 24px gutter. Handing over at 1120 instead left a 120px-wide band
-   where NEITHER cap held the plate: the plate kept growing on the full container
-   measure while the drawing sat frozen at 900px, so the footnote hairline ruled
-   past the last gridline by a measured 2px at vw=1000, 26px at 1024, 82px at
-   1080 and 121px at 1119 — the empty-ruled-line signature again, in the exact
-   place two comments claimed it could not happen. Below 998px the container is
-   narrower than 950px, so the plate stays on the full measure and .sweep-plot's
-   own 900px cap is the one in force (Sweep.css). Exactly one cap is active at any
-   width, and the plot's right edge now meets the footnote's at every width from
-   320 to 2560. */
+/* The Sweep opens the evidence section on the spine, with no sibling: the side-by-side arrangement that
+   briefly lived here traded 576px of dead horizontal field for a 335px vertical void under the rail, and. */
 .systems-sweep {
   margin: 0 0 var(--space-7);
   min-width: 0;
@@ -1242,20 +864,13 @@ button.btn {
   }
 }
 
-/* THE READOUT RAIL — three repos, one measured cell each, on hairline rows.
-   This is the fold-level proof and must read and click with the figure
-   ignored entirely: repo name is the amber link, value is ink, unit is quiet. */
+/* The readout rail. */
 .hero-readout {
   display: flex;
   flex-direction: column;
 }
 
-/* FIXED number columns, not content-sized ones. With the value and unit tracks
-   auto-sized, the three figures each found their own edge: measured value right
-   edges 393.7 / 392.7 / 401 and unit left edges 409.7 / 408.7 / 417 at 1440 —
-   an 8.3px wobble in the one component whose whole job is that numbers line up,
-   and the only three numbers on the page that didn't. DESIGN.md's Tabular Rule:
-   numbers in this world line up. */
+/* Fixed number columns, not content-sized ones. */
 .hero-readout-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 68px minmax(120px, 168px);
@@ -1296,9 +911,7 @@ button.btn {
   font-size: var(--fs-500);
 }
 
-/* Repo name + what it IS, stacked in the rail's first column. The name stays
-   the amber link; the descriptor is the quiet second line, so the rail still
-   scans down its links but never leaves a reader guessing what parallax-kv is. */
+/* Repo name + what it is, stacked in the rail's first column. */
 .hero-readout-name {
   display: flex;
   flex-direction: column;
@@ -1310,12 +923,8 @@ button.btn {
   font-size: var(--fs-300);
 }
 
-/* Below 1024 the rail stacks under the hero copy, so it needs a measure of its
-   own: unbounded it filled the container (measured 1051px at 1099, 976 at 1024,
-   852 at 900, 720 at 768) with the hairline rows ruled the whole way and the ink
-   stopping around 452px. Bounded, it measures 544px and its rules end where its
-   content does. NOT an unconditional max-width — that would re-clamp the 44fr
-   desktop track and shrink the rail inside the hero's own column. */
+/* Below 1024 the rail stacks under the hero copy, so it needs a measure of its own: unbounded it filled the
+   container (measured 1051px at 1099, 976 at 1024, 852 at 900, 720 at 768) with the hairline rows ruled. */
 @media (max-width: 1023px) {
   .hero-readout,
   .hero-readout-lead {
@@ -1323,30 +932,8 @@ button.btn {
   }
 }
 
-/* Below 412 the three-track row cannot hold: the two fixed tracks plus two 16px
-   gaps claim 220px of a 288px content box, so the name track collapses to ~20px
-   while the mono anchor's min-content is 76-84px and the link paints straight
-   over its own value. Measured glyph overlap at 320w: parallax-kv 10.4px,
-   accretion-db 38.1px, lodestone 20.0px; 18.1px at 340w; 3.1px at 355w.
-   Stacked, name / value / unit fall in DOM order and the three values share the
-   container's left spine — which SATISFIES the Tabular Rule rather than breaking
-   it. The fixed tracks stay untouched above this width: they are what puts the
-   three figures on one right edge at >=1024.
-
-   CEILING RAISED 379 -> 411 (2026-08-01). Above the old ceiling the row stopped
-   overlapping but did not start FITTING: the name track computes to 80-111px at
-   380-411 while the mono repo anchors need 92.7 / 101.2 / 75.9px, so two of the
-   three names wrapped mid-token — "parallax-" / "kv" and "accretion-" / "db",
-   hyphen dangling — at 380, 385, 390 and 400 (accretion-db alone at 400-401),
-   clean from 402. A repo name broken across two lines is no longer a name a
-   reader can recognise or retype, and it is the fold's clickable route into the
-   evidence repo; 390px is both the most common phone width and one of the three
-   verify.mjs viewports, so this was the state most phone screeners actually saw.
-   411, not 402: 412 is the first width where all three names fit on one line
-   with the track still content-driven, so the handoff lands where the fixed
-   tracks genuinely hold rather than one glyph before it. The stacked band costs
-   140px of rail height at 390 (railBottom 890 -> 1030) and buys three unbroken
-   names — the same trade this rule already makes below 380. */
+/* Below 412 the three-track row cannot hold: the two fixed tracks plus two 16px gaps claim 220px of a 288px
+   content box, so the name track collapses to ~20px while the mono anchor's min-content is 76-84px and. */
 @media (max-width: 411px) {
   .hero-readout-row {
     grid-template-columns: minmax(0, 1fr);
@@ -1357,12 +944,7 @@ button.btn {
   }
 }
 
-/* The metric, said in words. Same quiet register as the unit it follows: it
-   defines the unit rather than adding a second measurement to the row.
-   --font-body, NOT --font-sans: the latter is declared nowhere (tokens.css
-   defines --font-body), so the declaration was invalid at computed-value time
-   and this gloss inherited the rail's mono — the plain-English translation of
-   recall@10 was set in the exact register of the jargon it translates. */
+/* The metric, said in words. */
 .hero-readout-plain {
   display: block;
   color: var(--ink-3);
@@ -1373,16 +955,7 @@ button.btn {
 
 
 
-/* Home hero band — the band wrapping the hero. The bottom hairline is the
-   band's stated edge: six points of luminance against ground is not enough for
-   a band to read as one, and without it the first screen ended in 112px of
-   unfilled plate and then 131px of ground before a hard-left h2 — the
-   background having a soft accident in it. Separation in this system is always
-   a 1px rule (DESIGN.md). Measured at 1440: band 729px -> 713px; the gap under
-   the hero's last box 112px -> 49px (48px pad + the 1px rule), and under its
-   last glyph 112px -> 65px, the extra 16px being .hero-email-plain's own
-   margin. Either way the gap now terminates in a stated edge instead of
-   fading. */
+/* Home hero band. */
 .hero-band {
   background: var(--plate);
   padding-bottom: var(--space-7);
@@ -1400,55 +973,22 @@ button.btn {
 .hero h1, .hero-subhead { color: var(--ink); }
 .hero-band .hero-email-plain { color: var(--ink-2); }
 
-/* Mobile rhythm: 96px verticals are a desktop measure. On a phone they read
-   as five dead half-screens, and the page budget (≤~6,000px at 390w) is spent
-   on evidence, not air. Plate padding narrows with the viewport for the same
-   reason: 24px frames on a 390px screen spend an eighth of the width on air.
-
-   MOVED here from just under `.section` (was ~line 630). Authored there, three
-   of its four rules sat BEFORE their unmediated twins — `.section-head`
-   (margin-bottom 32px), `.hero-band` (padding-bottom 48px) and the 767px
-   `--section-gap: 64px` — all at equal (0,1,0) specificity, so source order
-   decided and the plain rules won. Measured computed at 320w and 390w:
-   .section-head 32px where the file intends 16, .hero-band 48px where it intends
-   32 — roughly 64px of phone budget spent on air the file believed it had
-   already reclaimed. Fixed by ORDER, which is this file's stated convention, and
-   not by a qualified duplicate rule, which DESIGN.md forbids. Keep this block
-   last of the three; do not move it back above `.hero-band`. */
+/* Mobile rhythm: 96px verticals are a desktop measure. On a phone they read as five dead half-screens, and the
+   page budget (≤~6,000px at 390w) is spent on evidence, not air. */
 @media (max-width: 639px) {
-  /* 32px, not 48 (2026-08-03). The token steps 96 -> 64 -> 48 by width, and 48
-     was still a desktop measure wearing a phone's number: at 390w it is 12% of
-     the viewport's height spent, five times, on nothing, and the home page
-     measured 9,288px against the ~6,000px budget DESIGN.md states. 32px is the
-     next rung DOWN THE SAME LADDER (--space-6), not a new literal, and it is
-     still the largest single vertical on the phone page, so the sections stay
-     ranked. Section separation is the ONLY thing this changes: the token is
-     read by .section, .contact-band and .not-found alone, so one edit moves
-     every section boundary and no plate interior. Costs 27px per boundary
-     against the 48px it replaces (the rank-2 sections read it at 0.66). */
+  /* 32px, not 48 (2026-08-03). */
   :root {
     --section-gap: var(--space-6);
   }
 
-  /* ONE mobile padding step for the primitive under BOTH its names. `.sheet-block` is
-     the same object as `.plate` in this stylesheet — same fill, same hairline,
-     same radius, same pad — but only `.plate` carried the step, so at 390w the
-     page rendered three paddings for one primitive: 16px on a plate, 24px on
-     every `.sheet-block` / `.edu-card` / `.role-card` (no mobile step at all), and a raw
-     20px on `.system-feature` below 479px, which was both off the 4→96px ladder
-     and BACKWARDS — a narrower screen got a wider frame than the 480-639px one.
-     Now every plate-shaped surface is 24px down to 640 and 16px below it.
-     No qualified duplicate is needed: this block already sits after `.sheet-block`'s
-     own base rule, so source order at equal specificity decides, which is this
-     file's stated convention. Do not move it back above `.sheet-block`. */
+  /* One mobile padding step for the primitive under both its names. */
   .plate,
   .sheet-block {
     padding: var(--space-4);
   }
 
-  /* The gap does NOT travel with the padding: `.plate` is the flex column, and
-     `.sheet-grid .sheet-block` is a flex column too but authors its own child rhythm in
-     margins — an 8px gap there would add 8px between every child. */
+  /* The gap does not travel with the padding: `.plate` is the flex column, and `.sheet-grid .sheet-block` is a
+     flex column too but authors its own child rhythm in margins — an 8px gap there would add 8px between every child. */
   .plate {
     gap: var(--space-2);
   }
@@ -1461,21 +1001,8 @@ button.btn {
     padding-bottom: var(--space-6);
   }
 
-  /* ---- the phone rhythm, one rung down (2026-08-03) ----------------------
-     Every rule below steps an EXISTING vertical one rung down the 4→96px
-     ladder — 48→32 or 32→24 or 16→12 — for the reason the block's own opening
-     comment already gives: a 32px gap between a heading and its own paragraph
-     is a desktop measure, and at 390w the page was spending it 30-odd times.
-     Nothing here changes a horizontal, a type size, a colour, or any spacing
-     at ≥640px, and nothing is removed: these are the same boundaries, stated
-     at the phone's scale. The one drawn figure whose height these could
-     distort — the topo — is untouched; see its own comment for why its 320px
-     phone cap is a rendering constraint and not whitespace.
-
-     Attribution at 390w, measured: hero 20px, hobby row 40px, sweep margin
-     16px, section exit 8px, skills block 40px, contact 20px, footer 40px,
-     the three system plates 84px, the education card 20px, the six footnote
-     strips 24px, the four axis rules 12px. */
+  /* The phone rhythm, one rung down (2026-08-03) Every rule below steps an existing vertical one rung down the
+     4→96px ladder — 48→32 or 32→24 or 16→12 — for the reason the block's own opening comment already. */
   .hero {
     padding-top: var(--space-6);
   }
@@ -1521,19 +1048,8 @@ button.btn {
   }
 }
 
-/* The rest of the phone rhythm CANNOT live in the block above, and the reason is
-   this file's own cascade convention rather than a preference: `.system-feature`,
-   `.system-evidence`, `.system-proof`, `.skills-row`, `.contact-layout`,
-   `.contact-copy h2`, `.footer`, `.footer-colophon`, `.edu-coursework` and the
-   `.edu-card` rows are all authored BELOW line 1365, so a mobile override up
-   there sits before its own base rule and loses on source order at equal (0,1,0)
-   specificity. Written there first and measured: eight of the ten computed to the
-   desktop value on a 390px phone — .contact-layout 48px, .footer 48px,
-   .system-feature 16px, .skills-row 24px, .contact-copy h2 16px — exactly the
-   failure the block's opening comment records for `.section-head` and
-   `.hero-band`. Each override now sits immediately after the rule it overrides,
-   which is the fix that comment prescribes (ORDER, never a qualified duplicate).
-   Keep them there. */
+/* The rest of the phone rhythm cannot live in the block above, and the reason is this file's own cascade
+   convention rather than a preference: `.system-feature`, `.system-evidence`, `.system-proof`. */
 
 /* --------------------------------------------------------- system feature */
 .system-list {
@@ -1541,10 +1057,8 @@ button.btn {
   gap: var(--space-5);
 }
 
-/* Single column below 1024px. The 2-col layout was breaking at 900px, where
-   the evidence column is too narrow for its own figure: measured 1px gutters
-   at 900/1024/1200/1280/1440w and "top-k" wrapping mid-word at 900w. 900–1023w
-   now uses the stacked layout, which already renders correctly. */
+/* Single column below 1024px. The 2-col layout was breaking at 900px, where the evidence column is too narrow
+   for its own figure: measured 1px gutters at 900/1024/1200/1280/1440w and "top-k" wrapping mid-word at 900w. */
 .system-feature {
   display: grid;
   grid-template-columns: 1fr;
@@ -1562,29 +1076,23 @@ button.btn {
   font-size: var(--fs-600);
 }
 
-/* The margin is not optional: `.chip-rail` carries only margin-TOP and this
-   carried nothing, so the pill row butted the plate's loudest sentence at a
-   measured 0px gap on all three system plates at both 1440 and 390. 16px is the
-   figure exactly: every other sibling gap inside the plate is 16px
-   (kicker→h3, summary→chips via --space-3 plus the line box, proof→aside), so
-   the plate reads as one ladder instead of one collision. */
+/* The margin is not optional: `.chip-rail` carries only margin-top and this carried nothing, so the pill row
+   butted the plate's loudest sentence at a measured 0px gap on all three system plates at both 1440 and 390. */
 .system-proof {
   margin-top: var(--space-4);
   color: var(--ink);
   font-weight: 600;
 }
 
-/* The one first-person aside, on one plate only. Regular weight against the
-   bold proof above it, --ink-2 against the proof's --ink: it is the person
-   talking beside the evidence, not a second claim competing with it. */
+/* The one first-person aside, on one plate only. Regular weight against the bold proof above it, --ink-2
+   against the proof's --ink: it is the person talking beside the evidence, not a second claim competing with it. */
 .system-aside {
   color: var(--ink-2);
 }
 
 
-/* Evidence packs to the top instead of distributing. `space-between` left
-   188/160/297px of dead field between the figure and the metrics on the three
-   cards at 1440w, because the copy column is taller than its evidence. */
+/* Evidence packs to the top instead of distributing. `space-between` left 188/160/297px of dead field between
+   the figure and the metrics on the three cards at 1440w, because the copy column is taller than its evidence. */
 .system-evidence {
   display: flex;
   flex-direction: column;
@@ -1594,14 +1102,7 @@ button.btn {
   border-top: var(--hairline) solid var(--grid);
 }
 
-/* The phone step for this plate's own verticals — one rung down the ladder
-   (2026-08-03), continuing the block at ~line 1365. 12px, not 8, on the two
-   gaps: the copy/evidence boundary carries the plate's one hairline divider, so
-   it needs air either side to read as a rule and not a collision. The copy
-   ladder (kicker → title → summary → chips → proof → aside → links) ran at a
-   uniform 16px, three plates deep, which is 84px per plate of desktop rhythm on
-   a 390px screen. Nothing is removed and no type changes: same seven blocks,
-   same order, same sizes. */
+/* The phone step for this plate's own verticals. */
 @media (max-width: 639px) {
   .system-feature,
   .system-evidence {
@@ -1624,31 +1125,8 @@ button.btn {
   }
 }
 
-/* The figure. Two rows — the stage, then the caption — so the caption is a real
-   box in the flow instead of an absolutely-positioned overlay that measured
-   −20px into parallax's N3 and −35px into accretion's SST on mobile.
-
-   The rows come from `flex-wrap`, not from a grid: the caption below claims a
-   full-width flex basis, so it can never share a line with a stage box. A real
-   two-track grid was measured and rejected — grid columns cannot shrink below
-   min-content, which takes the connector arrows' `flex: 0 1 24px` away, and the
-   stage then overflows the narrow evidence column and squeezes the caption to
-   3–4 wrapped lines at 1024–1440w. Same static caption, one fewer new failure.
-
-   The right pad keeps the last stage box off the column edge, where four widths
-   measured a 1px gutter.
-
-   FLEX-START, not centre (2026-08-02). Below 1024 the evidence column is the
-   plate's full measure, and a centred drawing floated off the page's one
-   alignment spine by a measured 191.8 / 224.8 / 257.8 / 307.8 / 319.3px at
-   768 / 834 / 900 / 1000 / 1023w — the widest single left-edge miss on the site,
-   against a plate label, a readout and a footnote strip that all start on the
-   container's inner left edge. DESIGN.md's One-Left-Spine Rule permits a
-   drawing's INTERIOR to leave that edge but requires the drawing itself to be
-   pinned to the plate's padding edge, which is what this does; the same change
-   takes the ≥1024 column's split field (20.5-38.3px each side) onto one edge
-   too. The caption is left-set for the same reason — a centred caption under a
-   left-pinned drawing puts the figure's two halves on two different edges. */
+/* The figure. Two rows — the stage, then the caption — so the caption is a real box in the flow instead of an
+   absolutely-positioned overlay that measured −20px into parallax's N3 and −35px into accretion's sst on mobile. */
 .system-diagram {
   display: flex;
   flex-wrap: wrap;
@@ -1677,28 +1155,23 @@ button.btn {
   background: var(--ground);
 }
 
-/* Phones get the numbers, not the box diagram. The diagram is a supplementary
-   illustration — the proof is the readout and the artifact links, which stay.
-   Dropping it saves ~200px per plate on a page with three of them. (This rule
-   must sit AFTER the .system-diagram base rule: equal specificity, source
-   order decides.) */
+/* Phones get the numbers, not the box diagram. The diagram is a supplementary illustration — the proof is the
+   readout and the artifact links, which stay. */
 @media (max-width: 639px) {
   .system-diagram {
     display: none;
   }
 }
 
-/* Stage labels are single tokens ("top-k", "memtable", "AVX-512"). Wrapping one
-   mid-word — "top-k" broke at 900w — makes the figure read as a rendering bug,
-   so the box grows instead of the label breaking. */
+/* Stage labels are single tokens ("top-k", "memtable", "avx-512"). Wrapping one mid-word — "top-k" broke at
+   900w — makes the figure read as a rendering bug, so the box grows instead of the label breaking. */
 .diagram-stage {
   border-radius: var(--r-xs);
   white-space: nowrap;
 }
 
-/* The connectors are the figure's only shrinkable part: the stage boxes carry
-   nowrap labels, so when the column narrows, the arrows give up width and the
-   labels stay whole. */
+/* The connectors are the figure's only shrinkable part: the stage boxes carry nowrap labels, so when the
+   column narrows, the arrows give up width and the labels stay whole. */
 .diagram-flow {
   position: relative;
   width: 24px;
@@ -1742,11 +1215,8 @@ button.btn {
   border-radius: var(--r-xs);
 }
 
-/* The caption: its own full-width line under the stage, in static flow. It used
-   to be `position: absolute; align-self: flex-end`, which took it out of flow
-   and let it overlap the stage on any figure tall enough to matter.
-   `flex: 0 0 100%` is what forces the wrap, so no stage box can share its line
-   and it never needs to wrap its own text to fit beside one. */
+/* The caption: its own full-width line under the stage, in static flow. It used to be `position: absolute;
+   align-self: flex-end`, which took it out of flow and let it overlap the stage on any figure tall enough to matter. */
 .diagram-caption {
   flex: 0 0 100%;
   margin-top: var(--space-3);
@@ -1763,13 +1233,8 @@ button.btn {
   white-space: nowrap;
 }
 
-/* `.metric-grid` was DELETED here (2026-08-02): 31 lines and a breakpoint
-   override for a fixed three-column dl that nothing emitted — measured 0
-   occurrences on all four rendered pages, and no `metric-grid` string anywhere in
-   src/. It is also the exact object DESIGN.md forbids ("Don't build a fixed-column
-   metric grid to hold varying evidence"): the readout replaced it, with a row
-   count that varies 3/2/2 with the evidence. Kept as a note rather than silence
-   so a future pass reads the deletion as a decision. */
+/* `.metric-grid` was deleted here (2026-08-02): 31 lines and a breakpoint override for a fixed three-column dl
+   that nothing emitted — measured 0 occurrences on all four rendered pages, and no `metric-grid`. */
 
 /* Two columns only from 1024px up — below that, the evidence column cannot hold
    its own figure (see .system-feature). */
@@ -1786,21 +1251,7 @@ button.btn {
   }
 }
 
-/* `.system-feature { padding: 20px }` was DELETED from this block (2026-08-02).
-   It was the only off-ladder space value on the page — 20px is not a step on the
-   4→96px ladder — and it made the primitive render THREE paddings for one object
-   at 390w (16px plate / 20px system plate / 24px card). It also ran backwards:
-   ≤479px got 20px where 480-639px got 16px, so a narrower screen spent MORE of
-   its width on frame. The ≤639px `.plate, .sheet-block` step above is now the single
-   mobile pad for every plate-shaped surface.
-
-   Everything left in this block styles `.system-diagram` and its descendants,
-   which the ≤639px rule above sets to `display: none` — measured at 390w, all
-   three diagrams compute `display: none` and every descendant box is 0x0. So
-   these declarations cannot paint at any width they apply to. They are kept, not
-   deleted, because they are the geometry the diagram would need if the ≤639px
-   hide were ever lifted, and the hide is a mobile-budget decision (~200px per
-   plate) rather than a permanent one. */
+/* `.system-feature { padding: 20px }` was deleted from this block (2026-08-02). */
 @media (max-width: 479px) {
   .system-diagram {
     min-height: 150px;
@@ -1912,10 +1363,8 @@ button.btn {
   color: var(--ink-2);
 }
 @media (min-width: 900px) {       /* center spine + TRUE interleaving */
-  /* Grid row-packing: each card spans 2 auto rows and the next card starts
-     one row later (grid-row set inline by Timeline.tsx — inert in the mobile
-     flex layout), so a right card begins roughly at the vertical midpoint of
-     the left card instead of leaving the opposite half-column blank. */
+  /* Grid row-packing: each card spans 2 auto rows and the next card starts one row later (grid-row set inline
+     by Timeline.tsx — inert in the mobile flex layout), so a right card begins roughly at the vertical. */
   .alt-timeline {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1944,10 +1393,8 @@ button.btn {
   align-items: start;
 }
 
-/* Real employer logos ride in a white chip so transparent/dark marks read in
-   both themes; wordmarks (UMD) get the -wide variant that spans the chip. The
-   chip is a plate too: hairline, 2px radius, and the drop edge is gone — it was
-   the last object on the page casting a shadow onto its own card. */
+/* Real employer logos ride in a white chip so transparent/dark marks read in both themes; wordmarks (UMD) get
+   the -wide variant that spans the chip. */
 .role-logo {
   display: inline-flex;
   align-items: center;
@@ -1987,10 +1434,7 @@ button.btn {
   margin-top: var(--space-1);
 }
 
-/* A project's license is metadata about the CODE, not provenance about the
-   person — it must not share `.role-meta`, which is the slot that carries
-   "University of Maryland" and role dates. Set quieter and smaller than the
-   institution rank so "MIT" can never again read as a university. */
+/* A project's license is metadata about the code, not provenance about the person. */
 .project-license {
   font-family: var(--font-mono);
   font-size: var(--fs-300);
@@ -2006,36 +1450,23 @@ button.btn {
 .role-bullets li {
   margin-bottom: var(--space-2);
   max-width: var(--measure-prose);
-  /* An `li` is running text and needs the same break policy as `p`, which it does
-     not inherit. It was the LAST thing painting document scroll under text zoom:
-     measured 91px of internal overflow at a 32px root on a 320px viewport, which the
-     leaf-most element scan could not see because the list itself is
-     `overflow-x: visible` — the bullets grew the document without any single element
-     exceeding the viewport. Same `break-word` as prose: a word breaks before the
-     page does, and only when it has no other option. */
+  /* An `li` is running text and needs the same break policy as `p`, which it does not inherit. */
   overflow-wrap: break-word;
 }
 
 /* ------------------------------------------------------- off the clock */
 /* The hobby section: three drawn figures, one per hobby, each introduced by
    one plain sentence. Deliberately claim-free — it is warmth, not evidence. */
-/* --ink-2, like every other intro on the site (.page-dek, .hero-readout-lead):
-   the section's least informative sentence was set in full --ink, brighter than
-   the three paragraphs it introduces. Size stays at 17px — bumping it would put
-   it in competition with the h3s now that the heading is rank-2. */
+/* Ink-2, like every other intro on the site (.page-dek, .hero-readout-lead): the section's least informative
+   sentence was set in full --ink, brighter than the three paragraphs it introduces. */
 .hobby-intro {
   max-width: var(--measure-body);
   margin-bottom: var(--space-6);
   color: var(--ink-2);
 }
 
-/* The hobby row closes on a stated edge, like every other register on the page:
-   the hero band ends on a 1px --grid hairline and every plate closes its footnote
-   under one. This block used to end on nothing — the tallest column simply
-   stopped and 96px of ground followed — so the transition from playful figures
-   into measured ones happened in a vacuum instead of at a boundary. Declared
-   here, outside the ≥1024 block, so the single-column phone layout gets the
-   closing edge too. */
+/* The hobby row closes on a stated edge, like every other register on the page: the hero band ends on a 1px
+   --grid hairline and every plate closes its footnote under one. */
 .hobby-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -2045,12 +1476,7 @@ button.btn {
   border-bottom: var(--hairline) solid var(--grid);
 }
 
-/* One rung down on phones (2026-08-03), row gap only. At ≥1024 this grid's row
-   gap is already --space-2 (see the block below) because the cells subgrid onto
-   three named rows; below it the grid is ONE column, so the row gap is the space
-   between one hobby's figure and the next hobby's heading, and 32px is a desktop
-   measure there. The COLUMN gap is untouched by construction — there is one
-   column — and the closing hairline the comment above describes stays. */
+/* One rung down on phones (2026-08-03), row gap only. */
 @media (max-width: 639px) {
   .hobby-intro {
     margin-bottom: var(--space-5);
@@ -2065,18 +1491,11 @@ button.btn {
 @media (min-width: 1024px) {
   .hobby-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    /* Column gap stays --space-6; the ROW gap is the space between a heading
-       and its own paragraph, which wants the heading's margin, not a
-       between-columns measure. One value for both put 40px under every h3. */
+    /* Column gap stays --space-6; the row gap is the space between a heading and its own paragraph, which
+       wants the heading's margin, not a between-columns measure. */
     column-gap: var(--space-6);
     row-gap: var(--space-2);
-    /* THREE NAMED ROWS — heading, paragraph, figure — so the row reads as one
-       three-panel figure instead of three unrelated columns. Each cell subgrids
-       onto them below, which is the only way three independent flex columns can
-       share a horizontal edge: previously each figure began wherever its own
-       paragraph happened to stop (measured tops 1181 / 1258 / 1155 at 1440, 103px
-       of scatter), and an unaligned edge in this system is a bug in the spacing
-       system, not a style. */
+    /* Three named rows. */
     grid-template-rows: auto auto auto;
   }
 }
@@ -2089,9 +1508,8 @@ button.btn {
   color: var(--ink);
 }
 
-/* The blurbs are real paragraphs now (his own words about why he likes each
-   thing), so they read at body size with prose line-height, and the figure
-   below is the illustration rather than the content. */
+/* The blurbs are real paragraphs now (his own words about why he likes each thing), so they read at body size
+   with prose line-height, and the figure below is the illustration rather than the content. */
 .hobby-lead {
   margin: 0 0 var(--space-4);
   font-size: var(--fs-500);
@@ -2100,37 +1518,19 @@ button.btn {
   text-wrap: pretty;
 }
 
-/* OPT-IN, not a blanket un-cap. The rule here used to be
-   `.hobby-cell .plate:not(.climbing-route) { max-width: none }` (that class is
-   retired; the boulder now carries its own cap) — written to
-   un-kill the topo's cap, but its (0,1,1) `:not()` also stripped
-   `.keyboard-fig`'s own 440px cap (Keyboard.css: "Compact by intent: a hobby
-   figure is a marginal note"). In the single-column band that left empty plate
-   ruled past the last glyph on two of three figures — keyboard 225px @768,
-   357px @900, 480px @1023; feed 521 / 653 / 776 — beside a topo correctly
-   holding 440px with 25px, which is this world's signature of unfinished.
-   `.feed-fig` is the one hobby figure authored with no cap of its own, so it
-   gets one here, matched to its siblings. `.kb` and `.boulder`
-   now keep the caps their own files declare. Inert at >=1024, where all three
-   subgrid cells measure 304-336px. */
+/* Opt-in, not a blanket un-cap. */
 .hobby-cell > .feed-fig {
   max-width: 440px;
 }
 
-/* The UA <figure> margin (1em 40px) is live on this one, and it is the most
-   visible single defect on the page: no .feed-fig selector existed anywhere in
-   this file, so the third hobby plate rendered 256px inside its 336px cell at
-   x=960 while its two siblings ran flush at 336px from x=184 and x=552 (1440);
-   same at 1024 (224 in 304), 768 (640 in 720), 390 (278 in 358) and 320 (208 in
-   288, x=56 against siblings at x=16). Same reset .sweep and .boulder
-   already carry. */
+/* The UA <figure> margin (1em 40px) is live on this one, and it is the most visible single defect on the page:
+   no .feed-fig selector existed anywhere in this file, so the third hobby plate rendered 256px inside. */
 .feed-fig {
   margin: 0;
 }
 
-/* The feed list: topic then note, stacked. A two-column table in a
-   third-width column wrapped both cells every two words; a definition list
-   gives each note the whole measure. */
+/* The feed list: topic then note, stacked. A two-column table in a third-width column wrapped both cells every
+   two words; a definition list gives each note the whole measure. */
 .feed-list {
   margin: 0;
   display: flex;
@@ -2161,25 +1561,7 @@ button.btn {
   color: var(--ink);
 }
 
-/* PHONE: two tracks, not two lines. The stacked shape above exists because a
-   two-column TABLE in a third-width DESKTOP column wrapped both cells every two
-   words — that reason is real at ≥1024, where the cell is 304-336px wide and the
-   figure is one of three side by side. On a phone the cell is the container's
-   full measure (288-382px) and the stack spends two lines on four words: the four
-   rows measured 4 x 2 lines and 275px of a 336px plate, with the note's own line
-   never longer than 24 characters. Set as tracks they measure one line each and
-   the plate closes 96px earlier, with every topic and every note still rendered
-   in full — no truncation, no toggle.
-   SUBGRID, not a fixed first track: `max-content` on the parent sizes the topic
-   column to the longest of the four topics ("the industry"), and each row
-   inherits that one column pair, so all four notes start on ONE left edge. A
-   literal 7.5rem track was measured first and rejected — it put the four notes on
-   the same edge but wrapped "launches and reviews" at 320w, which is a fixed
-   track deciding a phone's line breaks.
-   FROM 360px UP, and the floor is measured, not guessed: at 320w the note column
-   computes to ~150px and three of the four notes wrap to two lines, which is
-   taller than the stack it replaces. Below 360 the stacked shape is correct and
-   stays; there is no width where this rule makes the plate taller. */
+/* Phone: two tracks, not two lines. */
 @media (min-width: 360px) and (max-width: 639px) {
   .feed-list {
     display: grid;
@@ -2201,27 +1583,16 @@ button.btn {
   }
 }
 
-/* Bottom-align nothing: each hobby cell is its own column, and a figure that
-   stretches to match its neighbours would distort the drawings. Instead the
-   cells share a top edge and the figures keep their natural height. */
+/* Bottom-align nothing: each hobby cell is its own column, and a figure that stretches to match its neighbours
+   would distort the drawings. */
 .hobby-cell {
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-/* Above 1024 the cell stops being an independent column and subgrids onto the
-   grid's three named rows, so h3 / paragraph / figure each share ONE line across
-   all three cells. Below 1024 the grid is a single column and none of this
-   applies, so the phone layout is untouched; a browser without subgrid falls back
-   to the flex column above, which is exactly what shipped before — it degrades to
-   no-change rather than to broken.
-
-   `align-self: start` on the figure is load-bearing and must not be dropped: a
-   subgrid row stretches its item, which would pull the 264px key tester to the
-   topo's height and distort a drawing — the one thing .hobby-cell's own comment
-   above forbids. With it, the figures share a top edge and keep their natural
-   heights. */
+/* Above 1024 the cell stops being an independent column and subgrids onto the grid's three named rows, so h3 /
+   paragraph / figure each share one line across all three cells. */
 @media (min-width: 1024px) {
   .hobby-cell {
     display: grid;
@@ -2233,27 +1604,14 @@ button.btn {
     align-self: start;
   }
 
-  /* The paragraph row is as tall as the LONGEST of the three blurbs, so a short
-     one would float in the middle of its own row and open a void above the
-     figure. Pin every paragraph to the top of the row: the ragged bottom of a
-     text column is normal typography, a floating paragraph is not. */
+  /* The paragraph row is as tall as the longest of the three blurbs, so a short one would float in the middle
+     of its own row and open a void above the figure. */
   .hobby-cell > .hobby-lead {
     align-self: start;
   }
 }
 
-/* THE COPY-EMAIL BUTTON HIDES UNTIL IT CAN WORK.
-   Two of these render on every page (contact band + footer). The pages are
-   prerendered by a real browser, so both sit in the static HTML and both are inert
-   until the bundle lands — measured with JavaScript disabled: 2 visible buttons on
-   /experience/ and /projects/, and a click on either did nothing. A control that
-   cannot act is worse than an absent one, because the reader spends a click finding
-   out.
-   `.js` is set by src/js-flag.ts only when the bundle executes, and verify.mjs
-   asserts it is NOT baked into the prerendered HTML — so this rule hides the button
-   on the static page and reveals it exactly when it becomes real. The channel never
-   depended on it anyway: the mailto button and the plain-text address are beside it.
-   Display, not visibility: the button must not hold layout it cannot use. */
+/* The copy-email button hides until IT can work. Two of these render on every page (contact band + footer). */
 .btn-copy-email {
   display: none;
 }
@@ -2290,14 +1648,7 @@ button.btn {
   font-size: var(--fs-400);
 }
 
-/* Coursework as one mono metadata line — it is provenance, not evidence, so it
-   is set like a footnote rather than a chip wall.
-   Capped at --measure-mono for the same reason .plate-footnote is: it was
-   `max-width: none` and ran 118ch at 1024, 131ch at 1440 and 2560, with 117
-   characters on its first measured line — the widest reading line on the site, in
-   the smallest type on it. Here the cap can be a plain max-width, because unlike
-   the footnote strip this element draws no rule; nothing but the text depends on
-   the box. */
+/* Coursework as one mono metadata line. */
 .edu-coursework {
   margin: var(--space-3) 0 0;
   font-family: var(--font-mono);
@@ -2307,11 +1658,7 @@ button.btn {
   max-width: var(--measure-mono);
 }
 
-/* The education card's interior, one rung down on phones (2026-08-03). The
-   --measure-mono cap above stays exactly as it is: measured at 320/360/390/414w
-   it computes to 532px against a 254-348px box, so it is inert on every phone
-   and is NOT what makes this card tall — the four 16px steps between its six
-   stacked rows were. */
+/* The education card's interior, one rung down on phones (2026-08-03). */
 @media (max-width: 639px) {
   .edu-card .edu-degree,
   .edu-card .role-meta {
@@ -2348,9 +1695,7 @@ button.btn {
   }
 }
 
-/* The skill list itself: one mono paragraph per row, interpunct-separated —
-   the same register as the plate footnotes, because a skills list is
-   metadata about the person, not evidence. */
+/* The skill list itself: one mono paragraph per row, interpunct-separated. */
 .skills-line {
   margin: 0;
   font-family: var(--font-mono);
@@ -2377,12 +1722,8 @@ button.btn {
   margin-top: var(--space-1);
 }
 
-/* "Inspect the repository →" plus its visually-hidden "(opens in new tab)" is
-   one long unbroken action label, and under text-only zoom it was the widest
-   single thing on the page: measured scrollWidth 295px against a 246px content
-   box at a 17px root, 313 at 18px, 330 at 19px, 348 at 20px, painting 30–65px
-   outside a 320px viewport. Same fix the plate footnote already carries for
-   artifact filenames — the label breaks instead of the layout. */
+/* "Inspect the repository →" plus its visually-hidden "(opens in new tab)" is one long unbroken action label,
+   and under text-only zoom it was the widest single thing on the page: measured scrollWidth 295px. */
 .project-links {
   margin-top: var(--space-3);
   font-size: var(--fs-400);
@@ -2399,17 +1740,12 @@ button.btn {
 
 .contact-layout {
   display: grid;
-  /* min() on the floor, not a bare 300px: the fixed floor could not shrink, so at
-     a 24px root on a 320px viewport the two-column band forced the whole document
-     26px wide ("Get in touch", its paragraph, and the address all overflowed
-     together). `min(300px, 100%)` keeps the intended 300px wherever there is room
-     and collapses gracefully where there is not. */
+  /* Min() on the floor, not a bare 300px: the fixed floor could not shrink, so at a 24px root on a 320px
+     viewport the two-column band forced the whole document 26px wide. */
   grid-template-columns: minmax(0, 1.2fr) minmax(min(300px, 100%), 0.8fr);
   gap: var(--space-8);
-  /* start, not center: the two columns are unequal in height (measured 127.7px
-     of copy against an 81.8px action stack), so centering pushed the Email
-     button ~23px below the copy it belongs to. Both columns share a top edge
-     instead. */
+  /* Start, not center: the two columns are unequal in height (measured 127.7px of copy against an 81.8px
+     action stack), so centering pushed the Email button ~23px below the copy it belongs to. */
   align-items: start;
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
@@ -2437,14 +1773,7 @@ button.btn {
   gap: 12px;
 }
 
-/* THE ADDRESS MUST BE ABLE TO BREAK. An email address contains no space, so
-   `overflow-wrap: normal` makes it one unbreakable token — at a 24px root on a
-   320px viewport it pushed the DOCUMENT 26px wide here and 48px in the footer,
-   and 158px at a 32px root. That is a WCAG 1.4.4 failure: text-only zoom to 200%
-   must not cost content. `anywhere` rather than `break-word` because only
-   `anywhere` lets the break shrink the element's min-content contribution, which
-   is what stops it forcing its GRID TRACK wider (break-word alone still overflowed
-   by 26px, measured). Applies to both copies of the address. */
+/* The address must BE able TO break. */
 .contact-email,
 .footer-email {
   overflow-wrap: anywhere;
@@ -2456,15 +1785,8 @@ button.btn {
   font-size: var(--fs-300);
 }
 
-/* Standalone text links used as actions (CTA bands, card .project-links):
-   44px tap target. gap restores the word-spacing that inline-flex collapses
-   between the label text and the arrow span; the visually-hidden new-tab
-   span is absolutely positioned, so it contributes no gap.
-
-   `flex-wrap: wrap` is what lets the label above actually break: an inline-flex
-   row holds its items on one line, so a label allowed to wrap inside a row that
-   is not still measured its max-content width and painted 384.7px into a 320px
-   viewport at a 20px root. */
+/* Standalone text links used as actions (cta bands, card .project-links): 44px tap target. gap restores the
+   word-spacing that inline-flex collapses between the label text and the arrow span; the visually-hidden. */
 .cta-text-link {
   display: inline-flex;
   align-items: center;
@@ -2482,9 +1804,8 @@ button.btn {
   }
 }
 
-/* One rung further down on phones (2026-08-03): the band already steps 64 → 48
-   at 768, and 48px of pad top and bottom is a desktop measure on a 390px screen.
-   Both CTAs, the address and the whole paragraph stay. */
+/* One rung further down on phones (2026-08-03): the band already steps 64 → 48 at 768, and 48px of pad top and
+   bottom is a desktop measure on a 390px screen. */
 @media (max-width: 639px) {
   .contact-layout {
     row-gap: var(--space-5);
@@ -2498,10 +1819,7 @@ button.btn {
 }
 
 /* ---------------------------------------------------------------- footer */
-/* The footer owns no vertical gap of its own. Every page either ends in a
-   .contact-band (whose own --section-gap already separates it from the content
-   above, and whose bottom hairline is the footer's top edge) or ends in a block
-   that carries its own bottom padding (.not-found). One gap, one owner. */
+/* The footer owns no vertical gap of its own. */
 .footer {
   background: var(--plate);
   border-top: none;
@@ -2563,9 +1881,7 @@ button.btn {
   margin-bottom: var(--space-4);
 }
 
-/* The 404's empty figure: real axes, no data. Small enough that the recovery
-   links stay in the first viewport. Margin longhands reset the UA <figure>
-   1em 40px, which would indent the plate off the page's alignment anchor. */
+/* The 404's empty figure: real axes, no data. Small enough that the recovery links stay in the first viewport. */
 .not-found-plate {
   max-width: 420px;
   margin: 0 0 var(--space-6);
@@ -2600,10 +1916,8 @@ button.btn {
 .nav-brand svg { transition: transform var(--t-tap) ease; }
 .nav-brand:hover svg, .nav-brand:focus-visible svg { transform: translateY(-1px); }
 
-/* Link-bearing cards (.sheet-live added in JSX). The border goes amber and the
-   plate lifts 2px — the same two signals as the label button, because they are
-   the same promise. The lift is 2px, not 4px: a card is a heavier object than a
-   button and a 4px hop reads as a card that is falling off the page. */
+/* Link-bearing cards (.sheet-live added in jsx). The border goes amber and the plate lifts 2px — the same two
+   signals as the label button, because they are the same promise. */
 .sheet-live:hover, .sheet-live:focus-within {
   transform: translateY(-2px);
   border-color: var(--series-2);
@@ -2616,10 +1930,7 @@ button.btn {
   border-color: var(--ink-3);
 }
 
-/* Timeline nodes. The dot no longer pops on reveal (that keyframe is gone);
-   hovering a role still marks its node on the date axis, and the overshoot
-   easing goes with the rest of the retired motion — this is a sample point
-   being highlighted, not a toy being squashed. */
+/* Timeline nodes. */
 .alt-timeline-item::before { transition: transform var(--t-hover) var(--ease-out); }
 .alt-timeline-item::after  { transition: background-color var(--t-hover) ease; }
 .alt-timeline-item:hover::before, .alt-timeline-item:focus-within::before { transform: scale(1.35); }
@@ -2627,9 +1938,7 @@ button.btn {
   background: color-mix(in srgb, var(--series-2) 40%, var(--grid));
 }
 
-/* Chips are non-interactive: no lift, no cursor, no shadow — and no motion on
-   the status dot either. A label that reacts to the pointer but does nothing
-   when clicked is a false affordance. */
+/* Chips are non-interactive: no lift, no cursor, no shadow. */
 .chip, .proof-chip { transition: border-color 150ms ease, background-color 150ms ease; }
 .chip:hover {
   border-color: color-mix(in srgb, var(--series-2) 25%, var(--grid));
@@ -2648,9 +1957,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
    stretched wrapper so rows keep equal-height cards. */
 .sheet-grid > .reveal > .sheet-block { height: 100%; }
 
-/* Equal-height rows: pin the footer row (chips/links) to the card bottom so
-   short cards don't float their links mid-card. Scoped to .sheet-grid only —
-   timeline/edu cards keep normal block flow. */
+/* Equal-height rows: pin the footer row (chips/links) to the card bottom so short cards don't float their
+   links mid-card. */
 .sheet-grid .sheet-block { display: flex; flex-direction: column; }
 .sheet-grid .sheet-block > p { margin-bottom: 0; }
 .sheet-grid .sheet-block > .chip-rail:last-child,
@@ -2674,18 +1982,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   pointer-events: none;
 }
 
-/* The track is the page's x-axis: a --grid hairline carrying four ticks at the
-   quarter marks, the same object as .axis-rule.
-
-   Appearance only — the rail's own box (left/right 12px, bottom -3px, height
-   7px) is FROZEN. verify measures the rail's top edge against navBottom−3px with
-   a ±2 tolerance and the measured delta is already exactly 2.0, so there is no
-   slack: the track, the ticks and the fill are all positioned INSIDE the 7px box
-   and none of them changes it.
-
-   The track needs the full 7px (not the 1px the fill uses) because the ticks
-   hang below the axis line; a 1px-tall box clips them to nothing. So the two
-   share a position but not a height. */
+/* The track is the page's x-axis: a --grid hairline carrying four ticks at the quarter marks, the same object
+   as .axis-rule. */
 .route-progress::before,
 .route-progress-fill {
   content: "";
@@ -2695,10 +1993,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   right: 0;
 }
 
-/* Axis line on the first row of pixels, ticks hanging 4px below it. The tick
-   tile is offset so the four marks land at 25/50/75/100% of the width — a
-   tick at 0% sits under the scrub marker's resting clamp and reads as a
-   smudge instead of a mark. */
+/* Axis line on the first row of pixels, ticks hanging 4px below it. */
 .route-progress::before {
   top: 0;
   height: 7px;
@@ -2718,10 +2013,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   will-change: transform;
 }
 
-/* The scrub marker: an amber sample point riding the axis, hairline-haloed
-   against the header exactly like .sample-point. 7px, so it is the same atom as
-   every other point on the site. `top: 0` with translateY(-50%) centres the dot
-   on the axis line at y=3 without the rail's box moving. */
+/* The scrub marker: an amber sample point riding the axis, hairline-haloed against the header exactly like
+   .sample-point. */
 .route-progress-marker {
   position: absolute;
   top: 3px;
@@ -2735,9 +2028,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   will-change: left;
 }
 
-/* The legend swatch: the figure's key, parked bottom-right where a plot legend
-   sits. Flat plate, hairline border, no stacked drop edge — it behaves like the
-   label button because it is one. */
+/* The legend swatch: the figure's key, parked bottom-right where a plot legend sits. Flat plate, hairline
+   border, no stacked drop edge — it behaves like the label button because it is one. */
 .kbd-fab {
   position: fixed;
   right: 20px;
@@ -2779,18 +2071,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 }
 
 /* command-palette / help overlay */
-/* The overlay SCROLLS. A centred flex item taller than its container overflows
-   both ends equally, and `align-items: center` on an unscrollable box makes that
-   overflow unreachable: measured at 320x256 the 444px card sat at y −86..358, so
-   its title started 61.5px above the top of the screen and the Close button
-   ended 77.5px below the bottom — the dialog's name and its only visible exit,
-   both off-screen, with no way to get to either. At 1024x300 the same defect
-   measured 13.1px above and 29.1px below. Both viewports are ordinary: 400%
-   zoom on a laptop, or a short window.
-   `overflow: auto` gives the overflow somewhere to go, and `align-items: start`
-   plus `margin: auto` on the card keeps the centred rest state at full height
-   while letting the box grow past the container instead of being cut in half by
-   it (a centred flex item's top overflow is not scrollable). */
+/* The overlay scrolls. */
 .kbd-help {
   position: fixed;
   inset: 0;
@@ -2808,11 +2089,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 .kbd-help.is-open { opacity: 1; }
 .kbd-help[hidden] { display: none; }
 
-/* FIXED, not absolute: the overlay is a scroll container now, and an absolutely
-   positioned child of one is laid out at the scroll origin and then scrolls with
-   the content — so on a short screen the backdrop slid up off the top and left
-   raw page showing above the card. Anchored to the viewport it covers the screen
-   at every scroll offset, and it stays the click-to-close target verify asserts. */
+/* Fixed, not absolute: the overlay is a scroll container now, and an absolutely positioned child of one is
+   laid out at the scroll origin and then scrolls with the content — so on a short screen the backdrop slid. */
 .kbd-help-backdrop {
   position: fixed;
   inset: 0;
@@ -2821,21 +2099,16 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   -webkit-backdrop-filter: blur(2px);
 }
 
-/* The legend panel is a plate that happens to be modal: hairline boundary, flat
-   fill, and the backdrop is what separates it from the page — not a blur under
-   its own edge. */
+/* The legend panel is a plate that happens to be modal: hairline boundary, flat fill, and the backdrop is what
+   separates it from the page — not a blur under its own edge. */
 .kbd-help-card {
   position: relative;
   width: min(420px, 100%);
-  /* `margin: auto` centres the card while the overlay is a scroll container:
-     auto margins on a flex item absorb the free space when there is any, and
-     collapse to zero when there is not — which is what makes the top of a
-     too-tall card reachable instead of clipped. */
+  /* `margin: auto` centres the card while the overlay is a scroll container: auto margins on a flex item
+     absorb the free space when there is any, and collapse to zero when there is not — which is what makes the. */
   margin: auto;
-  /* The panel never exceeds the screen it is drawn on, so its hairline frame is
-     always whole and its own content is what scrolls — a plate that got taller
-     than the page, not a plate sliced by it. 100% is the overlay's content box,
-     i.e. the viewport less its 24px padding. */
+  /* The panel never exceeds the screen it is drawn on, so its hairline frame is always whole and its own
+     content is what scrolls — a plate that got taller than the page, not a plate sliced by it. */
   max-height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -2885,9 +2158,8 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 .kbd-combo { display: inline-flex; gap: var(--space-1); flex: none; }
 
-/* A <kbd> is a legend swatch for a key, so it is set like every other small
-   label in the system: mono, hairline, 2px, flat. No extruded edge — the shadow
-   was the last remnant of the retired physical-key metaphor. */
+/* A <kbd> is a legend swatch for a key, so it is set like every other small label in the system: mono,
+   hairline, 2px, flat. */
 .kbd-help kbd,
 .kbd-help-foot kbd {
   font-family: var(--font-mono);
@@ -2915,20 +2187,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
 .kbd-help-close { width: 100%; }
 
-/* scroll-reveal contract — gated on the root .js class AND no-preference:
-   without JS (no .js) or with reduced motion, .reveal has NO hidden state.
-
-   This is the whole motion system now. There are no entrance animations: the
-   hero's 7-step cascade, the page-head rise-in, the timeline dot pop, the
-   route-draw and hold-set sequences and the status-dot pop are all deleted, so
-   nothing on the site animates on load except the one scroll-reveal fade, and
-   nothing animates on interaction except hover/focus feedback and the figure's
-   user-driven crosshair. Five stacked systems on first paint was the tell.
-
-   Consequence worth knowing: this stylesheet now declares no keyframes at all —
-   every remaining motion is a transition on an interaction. Anything that wants
-   a keyframe back should first answer which animated moment it is, because the
-   site is only entitled to one and the crosshair already has it. */
+/* Scroll-reveal contract. */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal {
     opacity: 0;
@@ -2940,33 +2199,10 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 }
 
 /* ---------------------------------------------------------------- print */
-/* Scroll-reveal hides content until it enters the viewport (via the .js
-   .reveal rule above). When printing / saving to PDF from a fresh load, the
-   IntersectionObserver never fires for below-the-fold sections, so force
-   every revealable block visible and drop the injected chrome from the page. */
+/* Scroll-reveal hides content until it enters the viewport (via the .js .reveal rule above). */
 @media print {
-  /* The screen world is already light (cap beige on paper-white ink), so print
-     no longer inverts a dark theme — that premise died with the DOUBLE-SHOT
-     rebuild. What print still needs is the two things paper does differently:
-     the tinted surfaces become true white so a figure does not print as a grey
-     slab, and the two saturated roles darken enough to clear AA in ink.
-
-     These are LITERAL values on purpose, not tokens. A previous pass tokenised
-     them and the printed primary button regressed to a measured 1.59:1, because
-     any later :root remap silently reached into the print sheet. Fixed values
-     cannot be reached. Do not "fix" this by re-tokenising it.
-
-     RE-DERIVED 2026-08-07 for the warm-paper/ink-blue colorway. The token NAMES
-     changed with it — this block rebases whatever Layer 1 declares, so leaving the
-     old names here would have made every rule below match nothing and the sheet
-     would have printed in screen colours with a green build. A print rebase is
-     coupled to the raw layer by name; renaming one without the other is silent.
-
-     Measured on paper: ink #141310 18.58:1; blue #1A4269 10.36:1 with white-on-fill
-     10.36:1; terracotta #933A19 7.34:1; sublegend #4A4845 9.11:1; rule #8A8884
-     3.54:1 (above the 3:1 non-text floor). The two accents needed only a modest
-     darkening because both already clear AA on white at their screen values
-     (8.96 and 6.10) — a lighter touch than the old rust needed. */
+  /* The screen world is already light (cap beige on paper-white ink), so print no longer inverts a dark theme
+     — that premise died with the double-shot rebuild. */
   :root {
     --raw-paper: #ffffff;
     --raw-stone: #ffffff;
@@ -3011,51 +2247,19 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   .role-card,
   .edu-card {
     background: #ffffff !important;
-    /* #d8d6d0, the value the rebase block above assigns --raw-rule-soft. (History:
-       this was once #c4ccd4, a COOL blue-grey at hue 210deg inherited from a retired
-       dark palette, printed on a page whose every other value was warm — every sheet
-       border wore the old world's colour. Kept as a note because the failure mode
-       recurs: a print block's literals are invisible until someone prints.)
-       Formerly documented as: #c4ccd4 sits at
-       hue 210deg — a COOL blue-grey inherited from the retired dark palette,
-       printed on a page whose every other paper value is warm (the rebased
-       --raw-rule is 39deg, --raw-rule-soft 42deg). So every sheet border on
-       paper was the one element still wearing the old world's colour.
-       The value is the rebase block's own --raw-rule-soft,
-       written literally here for the reason that block states: a token would let
-       a later :root remap reach into the print sheet. Contrast against paper is
-       1.52:1 vs 1.62:1 — both far below any text threshold, which is correct for
-       a hairline that is structure rather than information. */
+    /* #d8d6d0, the value the rebase block above assigns --raw-rule-soft. */
     border: 1px solid #d8d6d0 !important;
     box-shadow: none !important;
     break-inside: avoid;
   }
 
   a {
-    /* #24405a, not #0b3a6b: the value the rebase block above assigns
-       --raw-slate, measured at 10.74:1 on paper (the old cool #0b3a6b was
-       11.46:1, so this costs nothing a reader can see and stops the printed
-       sheet carrying two different blues). Literal, per the rebase note. */
+    /* #24405a, not #0b3a6b: the value the rebase block above assigns --raw-slate, measured at 10.74:1 on paper. */
     color: #1a4269 !important;
     text-decoration: underline;
   }
 
-  /* Label buttons print as outlined white plates with dark ink — never as a
-     filled amber (or ochre) chip.
-
-     This override is not belt-and-braces, it is the fix for a measured cold-load
-     defect. The buttons are anchors, so the `a { color: … !important }` rule
-     above beats the primitive's own unprefixed `color: var(--btn-label)`,
-     and the primary's fill still resolved through --series-2. The result was a
-     dark-blue label on an ochre field at 1.59–1.86:1 on the first Save-as-PDF
-     from a fresh load. Fixed values, not tokens, so no later :root remap can
-     re-introduce the collision: #24405a on #ffffff is 10.7:1 and the #8a857c
-     hairline is 3.7:1 against the paper — above the 3:1 non-text floor a control
-     boundary has to clear.
-
-     Both were cool blue-greys (#0b3a6b, #6b7885 at hue 210-211deg) held over
-     from the retired dark palette; they are now the warm paper values the rebase
-     block above defines, so the printed sheet carries ONE world's colour. */
+  /* Label buttons print as outlined white plates with dark ink. */
   .btn,
   .btn-primary,
   .btn-current {
@@ -3066,27 +2270,14 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transform: none !important;
   }
 
-  /* The hero prints as ONE column. On screen it is a two-column split with the
-     figure on the right; on paper the figure is dropped (it carries no meaning
-     as a raster-free line drawing at print scale), and a vacated grid column
-     prints as a blank half page beside the name. Both the wrapper class and
-     .hero itself are listed so the collapse holds wherever the split is
-     authored. */
+  /* The hero prints as one column. */
   .hero,
   .hero-layout {
     display: block !important;
   }
 
-  /* Collapsing the grid discards its 32px row gap, and `display: block` gives
-     block children no gap primitive — so on a cold print load the three hero
-     blocks butted at a measured 0px / 0px at both 1440 and 794 (A4 at 96dpi):
-     the identity, the evidence rail and the AWS-plus-CTA block ran together as
-     one undifferentiated column on the printed first page. Restore the SAME 32px
-     the screen grid spends, as a margin on the two blocks that follow one, so the
-     paper rhythm matches the screen's without reintroducing a grid the print
-     sheet deliberately drops.
-     `:not(:first-child)` is not needed and not used: `.hero-lead` is the first
-     child and gets no rule, so nothing opens the band with dead air. */
+  /* Collapsing the grid discards its 32px row gap, and `display: block` gives block children no gap primitive
+     — so on a cold print load the three hero blocks butted at a measured 0px / 0px at both 1440 and 794. */
   .hero-side,
   .hero-tail {
     margin-top: var(--space-6) !important;
@@ -3096,23 +2287,17 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
   #progress-rail,
   .kbd-fab,
   .kbd-help,
-  /* .boulder, not .climbing-route: the retired topo's class was still listed
-     here after the drawing was replaced, so this rule matched nothing and the
-     boulder printed. A stale selector in a print block is invisible until
-     someone prints the page. */
+  /* .boulder, not .climbing-route: the retired topo's class was still listed here after the drawing was
+     replaced, so this rule matched nothing and the boulder printed. */
   .boulder,
-  /* `.about-visual` was here too and is now gone: the class is emitted by no
-     component, so it was a second stale selector sitting directly beside the
-     .climbing-route one, missed when that was fixed. Print blocks are where
-     dead selectors hide — nothing renders differently until someone prints. */
+  /* `.about-visual` was here too and is now gone: the class is emitted by no component, so it was a second
+     stale selector sitting directly beside the .climbing-route one, missed when that was fixed. */
   .system-diagram {
     display: none !important;
   }
 
-  /* Belt-and-braces: the band pseudo-element textures are deleted from the
-     stylesheet, but a future decorative ::before on either band would print as
-     a grey wash across the page's first block, which is exactly the defect
-     nobody notices until a recruiter prints it. */
+  /* Belt-and-braces: the band pseudo-element textures are deleted from the stylesheet, but a future decorative
+     ::before on either band would print as a grey wash across the page's first block, which is exactly the. */
   .hero-band::before,
   .hero-band::after,
   .page-head-band::before,
@@ -3135,15 +2320,7 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transition: none !important;
   }
 
-  /* Second lock: nothing revealable may start hidden. The hidden state is
-     already gated on no-preference and the entrance animations are gone, so
-     under `reduce` these compute opacity:1 with no help — this block states it
-     anyway, because it is the assertion verify actually makes (`.reveal,
-     .hero > *, .page-head > *` must all compute opacity:1 here) and a future
-     pass that reintroduces a fade should fail its own review, not the gate.
-
-     No !important: the .js .reveal hidden rule lives behind the no-preference
-     query, so it and this rule are never both live. */
+  /* Second lock: nothing revealable may start hidden. */
   .js .reveal,
   .hero > *,
   .page-head > * {
@@ -3167,8 +2344,5 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
     transform: none;
   }
 
-  /* The help overlay still fades in via opacity, which is allowed here.
-     The label button's hover is still never colour-only: its border goes to
-     --series-2 in the primitive's own rule, which this block does not
-     suppress — only the 1px lift is dropped. */
+  /* The help overlay still fades in via opacity, which is allowed here. */
 }
