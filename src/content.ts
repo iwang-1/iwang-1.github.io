@@ -129,14 +129,14 @@ export const featuredSystems: FeaturedSystem[] = [
       "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
     proof:
       // "zero Porcupine Illegal verdicts", not "zero linearizability violations".
-      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker.",
+      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker. Proposing queued writes together cut WAL fsyncs from 2.23 to 0.46 per write, and raised durable throughput at 64 clients from 102 to 1,408 writes per second.",
     limits:
       // "election-safety check", not "linearizability checker"
       "† The first bug the harness caught was in my own election-safety check, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
     // One plate carries an aside so the three do not read as one filled-in template. It restates the
     // footnote's checker-bug fact in plain prose; no second copy of any number.
     provenance:
-      "3 nodes · soak: 6 simulated clients, virtual time · throughput: localhost, c=8, 4 KiB fsync p50 ≈ 0.89 ms · measured 2026-07-13",
+      "3 nodes · soak: 6 simulated clients, virtual time · throughput: localhost, c=64, Apple M3 Max, 4 KiB fsync p50 ≈ 3.96 ms · measured 2026-11-13",
     repoHref: "https://github.com/iwang-1/parallax-kv",
     artifactLinks: [
       {
@@ -148,10 +148,10 @@ export const featuredSystems: FeaturedSystem[] = [
     diagram: "raft",
     // Two of the three labels are already English.
     metrics: [
-      { value: "272 w/s", label: "durable writes · c=8" },
+      { value: "1,408 w/s", label: "durable writes · c=64" },
       // p99 = the 99th percentile, i.e. all but the slowest hundredth. Names
-      // what the 41 ms IS; asserts nothing the label did not already say.
-      { value: "41 ms", label: "p99 latency · c=8", plain: "near-worst-case write time" },
+      // what the 60 ms IS; asserts nothing the label did not already say.
+      { value: "60 ms", label: "p99 latency · c=64", plain: "near-worst-case write time" },
       { value: "2.9M", label: "client operations checked" },
     ],
   },
@@ -163,7 +163,7 @@ export const featuredSystems: FeaturedSystem[] = [
       "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
     proof:
       // "sled wins every matched comparison", not "including the cases where sled wins"
-      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes. Benchmarked against sled, which wins every matched comparison on this host. Reported rather than omitted.",
+      "Fault-injection and property tests confirm that acknowledged writes survive simulated crashes, and that multi-key write batches are all-or-nothing at every crash point. Index-seeking range scans cut per-scan p50 from 22.4 ms to 0.26 ms. Benchmarked against sled, which wins every matched comparison on this host. Reported rather than omitted.",
     limits:
       "† The ~29x group-commit figure is WAL-bound. Compaction runs synchronously under the write lock, which caps full-engine throughput.",
     provenance:
@@ -191,9 +191,9 @@ export const featuredSystems: FeaturedSystem[] = [
     eyebrow: "VECTOR SEARCH · RUST",
     title: "lodestone",
     summary:
-      "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 distance kernels with runtime feature dispatch.",
+      "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 and ARM NEON distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second, about 33x the exact brute-force search at that recall, and 9 to 33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second, about 33x the exact brute-force search at that recall, and 9 to 33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core. On Apple Silicon, the NEON kernels run 6 to 12 times faster per distance call than scalar code.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance:
@@ -205,7 +205,7 @@ export const featuredSystems: FeaturedSystem[] = [
         href: "https://github.com/iwang-1/lodestone/blob/main/benchmarks/raw/bench_50k_128d.txt",
       },
     ],
-    chips: ["Rust", "HNSW", "IVF-PQ", "AVX-512 SIMD", "RAG retrieval"],
+    chips: ["Rust", "HNSW", "IVF-PQ", "AVX-512 & NEON SIMD", "RAG retrieval"],
     diagram: "ann",
     metrics: [
       // Verbatim from the hero rail's approved gloss for recall@10. "queries/sec
@@ -467,7 +467,7 @@ export const projects: Project[] = [
     license: "MIT",
     description: [
       "Predicts a professor's average star rating on PlanetTerp from the text of student reviews (VADER sentiment plus review count), without ever using the star ratings as features.",
-      "Two text-derived features in a plain linear regression explain about 79% of the variance in ratings.",
+      "On a committed, seeded snapshot, a Ridge model over the review text plus those two features explains 86% of the variance on held-out professors (test R² 0.859), against 0.771 for the original two-feature linear regression.",
     ],
     chips: ["Python", "scikit-learn", "VADER", "NLP"],
   },
