@@ -52,6 +52,14 @@ checked against the human checklist in [`FACTS.md`](FACTS.md) by
 
 ## Numbers come from committed benchmarks, not from prose
 
+To check the plotted data from a fresh checkout, run this from the repository root:
+
+```sh
+node scripts/generate-figures.mjs --check
+```
+
+This read-only check regenerates the expected figure in memory and compares it with the [committed chart module](src/generated/sweep-figure.ts). If a Lodestone checkout sits alongside the site, it also compares the two copies of the benchmark input.
+
 The recall-vs-throughput figure on the home page is **generated at build time**
 from [`benchmarks/lodestone/bench_50k_128d.txt`](benchmarks/lodestone/bench_50k_128d.txt),
 a verbatim copy of lodestone's own committed benchmark output.
