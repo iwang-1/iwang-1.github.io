@@ -129,10 +129,10 @@ export const featuredSystems: FeaturedSystem[] = [
       "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
     proof:
       // "zero Porcupine Illegal verdicts", not "zero linearizability violations".
-      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker. Proposing queued writes together cut WAL fsyncs from 2.23 to 0.46 per write, and raised durable throughput at 64 clients from 102 to 1,408 writes per second.",
+      "A deterministic stress harness ran 2.9 million client operations through partitions, crashes, message loss, delays, and snapshot churn. Zero safety violations, and zero Illegal verdicts from the linearizability checker. Proposing queued writes together cut WAL fsyncs from 2.23 to 0.46 per write, and raised durable throughput at 64 clients from 102 to 1,408 writes per second. Production log compaction keeps each node at about 1.3 MB on disk instead of 11.5 MB.",
     limits:
       // "election-safety check", not "linearizability checker"
-      "† The first bug the harness caught was in my own election-safety check, not in consensus. Not built: production snapshot scheduling or chunked streaming.",
+      "† The first bug the harness caught was in my own election-safety check, not in consensus. Not built: chunked snapshot streaming or incremental snapshots.",
     // One plate carries an aside so the three do not read as one filled-in template. It restates the
     // footnote's checker-bug fact in plain prose; no second copy of any number.
     provenance:
@@ -193,7 +193,7 @@ export const featuredSystems: FeaturedSystem[] = [
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 and ARM NEON distance kernels with runtime feature dispatch.",
     proof:
-      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second, about 33x the exact brute-force search at that recall, and 9 to 33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core. On Apple Silicon, the NEON kernels run 6 to 12 times faster per distance call than scalar code.",
+      "On 50,000 128-dimensional vectors on a single core, HNSW reached 0.976 recall@10 at about 31,800 queries per second, about 33x the exact brute-force search at that recall, and 9 to 33x across the 90%+ recall band. The baseline is the honest catch: it runs in parallel across all 48 vCPU while the search runs on one, so the two sides of that ratio are not core-for-core. On Apple Silicon, the NEON kernels run 6 to 12 times faster per distance call than scalar code, and both index types reload from checksummed files in under 100 ms instead of seconds of rebuilding.",
     limits:
       "† IVF-PQ trades accuracy for footprint: 0.975 recall@10 at 16x memory compression. Single machine, single core. Not built: distributed sharding.",
     provenance:
