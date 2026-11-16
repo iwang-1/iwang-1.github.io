@@ -1705,6 +1705,29 @@ button.btn {
   max-width: none;
 }
 
+/* Open source rows: the skills-row grid, with body-text sentences instead of a mono skill list. */
+.oss-line {
+  margin: 0;
+  max-width: var(--measure-body);
+  color: var(--ink-2);
+}
+
+.oss-line .chip {
+  margin-left: var(--space-1);
+}
+
+/* The status chip and its link read as one unit at the chip's size. On wider screens the link stays on one
+   line; on phones (and at 200% text zoom) it may wrap, so the page never overflows sideways (WCAG 1.4.4). */
+.oss-line a {
+  font-size: var(--fs-300);
+}
+
+@media (min-width: 768px) {
+  .oss-line a {
+    white-space: nowrap;
+  }
+}
+
 .skills-label {
   font-family: var(--font-mono);
   font-size: var(--fs-300);

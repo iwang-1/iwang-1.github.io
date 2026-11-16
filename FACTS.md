@@ -372,11 +372,18 @@ absent from the rendered `/projects/` DOM. Regression tripwire only — see §1f
 
 ## 6. Other projects (`projects`, content.ts:536–635 → `/projects/` "More projects")
 
-Eight cards, in this DOM order. Every one links a public repo; each renders its
-license as `<license> License`.
+Fourteen cards, in this DOM order. Every one links a public repo. The eight
+older cards render their license as `<license> License`; the six newer repos
+(the first six rows) carry no license file yet, so their cards show none.
 
 | id | Rendered title | Repo link | License | Source of the claims | Checked |
 | --- | --- | --- | --- | --- | --- |
+| `relaybench` | **RelayBench** — injected faults (a reservation that succeeds but reports a timeout), two policies on the same inventory, request and fault, deterministic replay | iwang-1/relaybench | none | `relaybench/README.md` opening, "See the failure on GitHub", "Run the demo" | **EYE (repo)** |
+| `spillway-join` | **Spillway Join** — external-memory inner equijoin in Rust under a fixed build-memory budget; partitions, recursion, bounded blocks for skewed keys; every output checked row for row against SQLite | iwang-1/spillway-join | none | `spillway-join/README.md` "How the budget changes execution" steps 1–4 and "Reproduce the evidence" (verifier compares every triple against SQLite) | **EYE (repo)** |
+| `batchwindow` | **BatchWindow** — single-request, FIFO and deadline-aware policies; on small traces, each one's gap from an exact offline optimum | iwang-1/batchwindow | none | `batchwindow/README.md`: "an exact offline reference for small traces"; "How far are the online policies from optimal?" (48 eight-request traces) | **EYE (repo)** — "on small traces" is load-bearing |
+| `leasepost` | **LeasePost** — durable single-host SQLite job queue with fenced leases; tests race concurrent claims and kill real worker processes | iwang-1/leasepost | none | `leasepost/README.md` opening (paused worker), "Reproduce the evidence" (twelve racing claims, killing a real child process) | **EYE (repo)** |
+| `minuteledger` | **MinuteLedger** — corrections and deletions after a window is published; each revision in a durable changelog consumers replay from a checkpoint | iwang-1/minuteledger | none | `minuteledger/README.md` opening and "Processing semantics" | **EYE (repo)** |
+| `testtrail` | **TestTrail** — selects tests a change could reach through imports, prints the shortest import path; for a fast first CI lane, with the full suite as the merge gate | iwang-1/testtrail | none | `testtrail/README.md` "How it works" and "Interpretation" ("keep the full suite as the merge gate") | **EYE (repo)** — do not claim a full-suite fallback; the README does not |
 | `dann` | **Unsupervised Domain Adaptation for Sentiment** | iwang-1/cross-domain-sentiment-dann | MIT | `cross-domain-sentiment-dann/README.md:6–8` (Yelp, Amazon, Twitter/X, Reddit; DistilBERT; gradient-reversal DANN) | **GATE** (partial) — `"unsupervised domain adaptation"` is a REQUIRED string; `"Unsupervised Domain Adaptation"` is a locked `/projects/` fact |
 | `dann` | "The committed CSV is a **smoke-scale artifact, so this page quotes no accuracy numbers.** The full figures live in the linked repo's team report." | `cross-domain-sentiment-dann/README.md:141` — "`results/dann_results.csv` is a smoke-test-scale local run" | **GATE** — the report figures are **un-renderable by design**: `check-facts` forbids `/74\.2\s?%\|67\.7\s?%\|64,?000/` and `/\+26%/`, and `verify.mjs` asserts `74.2%` / `67.7%` / `64,000` are absent from the DOM |
 | `fire-qnlp` | **Quantum NLP research (FIRE)** — "Four-person research project, co-built and open-sourced. My role was dataset preparation, experiment integration, and project documentation." + "compares optimizer and ansatz variants in **exact noiseless simulation** with documented methodology" | iwang-1/FIRE-QML-WINNERS-QNLP | GPL-3.0 (repo ships GPL v3) | `FIRE-QML-WINNERS-QNLP/README.md:84` (exact noiseless simulation via DisCoPy `Circuit.eval()`, JIT-compiled with JAX, 20 runs capped at 2,000 iterations) | **GATE** — `"Four-person research project, co-built and open-sourced"` and `"co-built and open-sourced"` are REQUIRED strings; `"Four-person research project"` is a locked `/projects/` fact; `check-facts` forbids any three-person spelling. **Framing lock: never "contributed to"** — `check-facts` allows that phrase in exactly one allowlisted sentence and nowhere else. |
@@ -453,16 +460,27 @@ Rendered as `<label> · item · item · …` per row, in this order:
 
 ### 7d. Section order and structure (Home)
 
-Hero → **Outside of work** (`#off-hours`, rank 2) → **Featured engineering
-work** (`#systems`, rank 1, the sweep figure then three preview plates then the
-exit link) → **Background** (`#background`, containing `#education` and
-`#skills`) → contact band.
+Hero → **Featured engineering work** (`#systems`, rank 1, the sweep figure then
+three preview plates then the exit link) → **Open source** (`#open-source`,
+rank 2) → **Background** (`#background`, containing `#education` and `#skills`)
+→ **Outside of work** (`#off-hours`, rank 2) → contact band.
 
-Hobbies come first by owner call (personality first), but the work keeps the
-page's biggest type: **order carries the personality, size carries the rank.**
-The exit link reads "Eight more — ML, NLP, statistics, and this site" → it names
-the four categories already carried by those eight cards' own titles and chips,
-and targets `/projects/#selected`.
+The work leads by owner call of 2026-11-16, reversing the earlier
+personality-first order (PRODUCT.md, constraint 2). The exit link reads
+"14 more: developer tools, data systems, ML, NLP, statistics, and this site"; the
+count is `projects.length`, so it cannot drift from the cards, and the categories
+are the ones those fourteen cards' own titles and chips carry. It targets
+`/projects/#selected`.
+
+### 7e. Open source (Home, `#open-source`, `content.ts` `openSource`)
+
+| Rendered | Source | Checked |
+| --- | --- | --- |
+| Intro: "Bugs I found and fixed in other people's projects. Each was reproduced before it was fixed." | Each row's pull request describes its reproduction (RocksDB: a crash test; Abseil: a failing `-Werror` build; SwiftNIO: an injected delay failing 3 of 3 runs; mimalloc: the UBSan report). | **EYE (repo)** |
+| Microsoft · mimalloc — **fixed upstream** — "the maintainer fixed it upstream, crediting the pull request" | microsoft/mimalloc commit `9743b2588`: "simplify mi_aligned_ptr_page0 and avoid UB, see PR #1491 by @iwang-1"; PR #1491 closed with the maintainer's comment that he fixed it directly. The PR itself was not merged, so the row says "fixed upstream", never "merged". | **EYE (repo)** |
+| Meta · RocksDB — **under review** | meta/rocksdb#15675 (open as of 2026-11-16) | **EYE (repo)** — update the status word when it changes |
+| Google · Abseil — **under review** | abseil/abseil-cpp#2501 (open as of 2026-11-16; Google CLA pending) | **EYE (repo)** — same |
+| Apple · SwiftNIO — **under review** | apple/swift-nio#3791 (open as of 2026-11-16) | **EYE (repo)** — same |
 
 **GATE**: exactly one `.contact-band` per page; every same-origin link resolves
 200 (so `#selected` cannot rot); the one-left-spine alignment gate checks

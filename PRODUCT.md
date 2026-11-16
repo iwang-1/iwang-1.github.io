@@ -68,10 +68,15 @@ it is "here is the raw file."
    project describing its own real technology is evidence and stays. This is the
    difference between "he built an LSM engine" (fine) and "he is a systems
    engineer" (not fine).
-2. **Personality leads.** "Outside of work" sits above the engineering work on the
-   home page. This is deliberate and is not a bug to fix. It is safe only because
-   the hero's readout rail already puts three measured results above the fold —
-   that rail is load-bearing and must not move below it.
+2. ~~**Personality leads.** "Outside of work" sits above the engineering work on
+   the home page. This is deliberate and is not a bug to fix.~~ **REVERSED
+   2026-11-16 by owner direction.** On a phone, the projects sat 3.5 screens down,
+   behind the three hobby figures, and the primary reader (a recruiter giving the
+   page ten to sixty seconds) often stops before that. The home page now reads:
+   hero → Featured engineering work → Open source → Background → Outside of work →
+   contact. The hobbies keep their own words and figures; only their position
+   moved. The hero's readout rail stays above the fold and is still load-bearing.
+   The earlier decision is recorded rather than deleted, as with constraint 5.
 3. **Never corny.** No jokes about the site itself, no self-aware asides, no
    aphorisms, no punchline sentences, no announced virtue ("honest",
    "thoughtful", "reproducible"). The owner has rejected these twice by name.

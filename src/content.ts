@@ -428,6 +428,60 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "relaybench",
+    title: "RelayBench",
+    repoHref: "https://github.com/iwang-1/relaybench",
+    description: [
+      "An execution lab for tool-using AI agents. It runs agents against injected faults, such as a reservation that succeeds but reports a timeout, and compares two policies on the same inventory, request, and fault. Every run can be replayed deterministically and inspected decision by decision.",
+    ],
+    chips: ["Python", "AI agents", "fault injection", "deterministic replay"],
+  },
+  {
+    id: "spillway-join",
+    title: "Spillway Join",
+    repoHref: "https://github.com/iwang-1/spillway-join",
+    description: [
+      "An external-memory inner equijoin in Rust that holds to a fixed build-memory budget: it partitions both inputs, recurses, and falls back to bounded blocks for skewed keys. Every output is checked row for row against SQLite.",
+    ],
+    chips: ["Rust", "query processing", "SQLite differential tests"],
+  },
+  {
+    id: "batchwindow",
+    title: "BatchWindow",
+    repoHref: "https://github.com/iwang-1/batchwindow",
+    description: [
+      "A trace-driven simulator for deadline-aware inference batching. It compares single-request, FIFO, and deadline-aware policies, and on small traces measures each one's gap from an exact offline optimum.",
+    ],
+    chips: ["Python", "scheduling", "inference serving"],
+  },
+  {
+    id: "leasepost",
+    title: "LeasePost",
+    repoHref: "https://github.com/iwang-1/leasepost",
+    description: [
+      "A durable single-host job queue on SQLite with fenced leases: a worker that pauses past its lease cannot publish a result after a replacement has finished the job. Tests race concurrent claims and kill real worker processes.",
+    ],
+    chips: ["Python", "SQLite", "leases", "crash recovery"],
+  },
+  {
+    id: "minuteledger",
+    title: "MinuteLedger",
+    repoHref: "https://github.com/iwang-1/minuteledger",
+    description: [
+      "Event-time window aggregation that accepts corrections and deletions after a window has been published, and records each revision in a durable changelog that consumers replay from a checkpoint.",
+    ],
+    chips: ["Python", "stream processing", "SQLite"],
+  },
+  {
+    id: "testtrail",
+    title: "TestTrail",
+    repoHref: "https://github.com/iwang-1/testtrail",
+    description: [
+      "Given two Git revisions of a Python project, selects the tests a change could reach through imports and prints the shortest import path that explains each selection. It is meant to order a fast first CI lane; the full suite stays the merge gate, since static import analysis cannot see every dependency.",
+    ],
+    chips: ["Python", "Git", "static analysis"],
+  },
+  {
     id: "dann",
     title: "Unsupervised Domain Adaptation for Sentiment",
     repoHref: "https://github.com/iwang-1/cross-domain-sentiment-dann",
@@ -513,6 +567,62 @@ export const projects: Project[] = [
     chips: ["React + TypeScript + Vite", "fact-gate in CI", "Playwright-verified", "no trackers"],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Open source (home page, #open-source). Status words are exact: "fixed upstream" only where the project's
+// own history says so, "under review" for an open pull request. Update a row when its status changes.
+
+export interface OpenSourceItem {
+  org: string;
+  project: string;
+  status: string;
+  summary: string;
+  href: string;
+  linkText: string;
+}
+
+export const openSource = {
+  title: "Open source",
+  intro: "Bugs I found and fixed in other people's projects. Each was reproduced before it was fixed.",
+  items: [
+    {
+      org: "Microsoft",
+      project: "mimalloc",
+      status: "fixed upstream",
+      summary:
+        "Found undefined behavior in free(NULL) on ARM with UBSan and submitted a fix; the maintainer fixed it upstream, crediting the pull request.",
+      href: "https://github.com/microsoft/mimalloc/commit/9743b2588",
+      linkText: "upstream commit",
+    },
+    {
+      org: "Meta",
+      project: "RocksDB",
+      status: "under review",
+      summary:
+        "Fixed a crash where changing options on a running database skipped a check that opening it runs, so the next flush crashed. Added a regression test.",
+      href: "https://github.com/meta/rocksdb/pull/15675",
+      linkText: "pull request",
+    },
+    {
+      org: "Google",
+      project: "Abseil",
+      status: "under review",
+      summary:
+        "Fixed a constructor that resolved to the wrong overload and broke builds using Abseil's own strict warning flags.",
+      href: "https://github.com/abseil/abseil-cpp/pull/2501",
+      linkText: "pull request",
+    },
+    {
+      org: "Apple",
+      project: "SwiftNIO",
+      status: "under review",
+      summary:
+        "Found and fixed a race between threads that made one of the project's tests fail intermittently on macOS.",
+      href: "https://github.com/apple/swift-nio/pull/3791",
+      linkText: "pull request",
+    },
+  ] as OpenSourceItem[],
+};
 
 // ---------------------------------------------------------------------------
 // Shared chrome.

@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 import { enableJs } from "../../js-flag";
 import "../../enhance";
 import "../../index.css";
-import { education, featuredSystems, hero, hobbies, person, skills } from "../../content";
+import { education, featuredSystems, hero, hobbies, openSource, person, projects, skills } from "../../content";
 import { ContactBand, EduCard } from "../../components/cards";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
-import { ProofChip } from "../../components/chips";
+import { Chip, ProofChip } from "../../components/chips";
 import { Boulder } from "../../components/Boulder";
 import { Footer } from "../../components/Footer";
 import { Keyboard } from "../../components/Keyboard";
@@ -82,8 +82,66 @@ function Home() {
           </div>
         </section>
 
-        {/* Personality first, by owner call (2026-07-31): the hobbies lead the page, each drawn as its own
-           small figure — the key tester you can type on, the boulder route, the feed. */}
+        <Section id="systems" title="Featured engineering work" rank={1}>
+          {/* The section opens with one figure at the full container measure. */}
+          <div className="systems-sweep">
+            <Sweep />
+          </div>
+          <div className="system-list">
+            {/* Preview, not the full sheet. */}
+            {featuredSystems.map((project, i) => (
+              <SystemFeature key={project.id} project={project} index={i} variant="preview" />
+            ))}
+          </div>
+          {/* An exit that points at what the reader has not seen. */}
+          <p className="section-exit">
+            <a className="mono" href="/projects/#selected">
+              {projects.length} more: developer tools, data systems, ML, NLP, statistics, and this site{" "}
+              <span className="arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
+        </Section>
+
+        {/* Upstream contributions, each with its exact status. */}
+        <Section id="open-source" title={openSource.title} rank={2}>
+          <p className="hobby-intro">{openSource.intro}</p>
+          <div className="oss-list">
+            {openSource.items.map((item) => (
+              <div className="skills-row" key={item.href}>
+                <span className="skills-label">
+                  {item.org} · {item.project}
+                </span>
+                <p className="oss-line">
+                  {item.summary} <Chip label={item.status} />{" "}
+                  <a className="mono" href={item.href} target="_blank" rel="noopener noreferrer">
+                    {item.linkText} <span className="arrow" aria-hidden="true">→</span>
+                  </a>
+                </p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Education and skills are one thing. */}
+        <Section id="background" title="Background" rank={2}>
+          <div id="education">
+            {education.map((e) => (
+              <EduCard key={e.school} edu={e} />
+            ))}
+          </div>
+          <div className="skills-block" id="skills">
+            {skills.map((row) => (
+              <div className="skills-row" key={row.label}>
+                <span className="skills-label">{row.label}</span>
+                <p className="skills-line">{row.items.join(" · ")}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* The hobbies, each drawn as its own small figure — the key tester you can type on, the boulder route,
+           the feed. They led the page from 2026-07-31; by owner call on 2026-11-16 they follow the work, so a
+           recruiter on a phone reaches the projects first (PRODUCT.md, positioning constraint 2). */}
         <Section id="off-hours" title={hobbies.title} rank={2}>
           <p className="hobby-intro">{hobbies.intro}</p>
           <div className="hobby-grid">
@@ -114,43 +172,6 @@ function Home() {
                 </dl>
               </figure>
             </div>
-          </div>
-        </Section>
-
-        <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The section opens with one figure at the full container measure. */}
-          <div className="systems-sweep">
-            <Sweep />
-          </div>
-          <div className="system-list">
-            {/* Preview, not the full sheet. */}
-            {featuredSystems.map((project, i) => (
-              <SystemFeature key={project.id} project={project} index={i} variant="preview" />
-            ))}
-          </div>
-          {/* An exit that points at what the reader has not seen. */}
-          <p className="section-exit">
-            <a className="mono" href="/projects/#selected">
-              Eight more: ML, NLP, statistics, and this site{" "}
-              <span className="arrow" aria-hidden="true">→</span>
-            </a>
-          </p>
-        </Section>
-
-        {/* Education and skills are one thing. */}
-        <Section id="background" title="Background" rank={2}>
-          <div id="education">
-            {education.map((e) => (
-              <EduCard key={e.school} edu={e} />
-            ))}
-          </div>
-          <div className="skills-block" id="skills">
-            {skills.map((row) => (
-              <div className="skills-row" key={row.label}>
-                <span className="skills-label">{row.label}</span>
-                <p className="skills-line">{row.items.join(" · ")}</p>
-              </div>
-            ))}
           </div>
         </Section>
 
