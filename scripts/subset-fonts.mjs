@@ -13,6 +13,9 @@ const CORE = [
   "U+00A0", // nbsp
   "U+00A9", // © footer colophon
   "U+00B0", // ° margin
+  "U+00B2", // ² ("R² 0.859")
+  "U+2191", // ↑
+  "U+2193", // ↓
   "U+00B5", // µ microseconds
   "U+00B7", // · the separator this site runs on
   "U+00D7", // × margin ("50,000 × 128-d")
@@ -34,14 +37,13 @@ const FEATURES = "kern,liga,calt,ccmp,locl,rvrn";
 
 const FAMILIES = [
   {
-    id: "martian-mono",
-    // The wdth-axis build. Its fvar default is 112.5 (min 75, max 112.5) — the width the contract names —
-    // so pinning wdth=112.5 drops an axis we never vary while keeping the drawing we chose.
-    axes: ["wght=400:700", "wdth=112.5"],
-    latin: "node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-wdth-normal.woff2",
-    ext: "node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-ext-wdth-normal.woff2",
-    out: "martian-mono-latin-400-700.woff2",
-    outExt: "martian-mono-sup-400-700.woff2",
+    id: "young-serif",
+    // A static single-weight (400) display serif: there is no variation axis to pin, so no instancing.
+    axes: [],
+    latin: "node_modules/@fontsource/young-serif/files/young-serif-latin-400-normal.woff2",
+    ext: "node_modules/@fontsource/young-serif/files/young-serif-latin-ext-400-normal.woff2",
+    out: "young-serif-latin-400.woff2",
+    outExt: "young-serif-sup-400.woff2",
   },
   {
     id: "familjen-grotesk",
@@ -54,8 +56,9 @@ const FAMILIES = [
   },
 ];
 
+const PYTHON = process.env.PYTHON || "python3";
 const py = (mod, args) =>
-  execFileSync("python3", ["-m", mod, ...args], {
+  execFileSync(PYTHON, ["-m", mod, ...args], {
     stdio: ["ignore", "pipe", "pipe"],
     // Reproducibility. woff2 writes head.modified from the clock, so without this every regeneration
     // produced four different files with identical content — measured: all four md5s changed across two back-to-back.
@@ -65,9 +68,9 @@ const py = (mod, args) =>
 function cut({ src, axes, unicodes, dest }) {
   if (!existsSync(src)) throw new Error(`missing source font: ${src} — run npm install`);
   const tmp = join("/tmp", `subset-${Math.random().toString(36).slice(2)}.ttf`);
-  py("fontTools.varLib.instancer", [src, ...axes, "--output", tmp]);
+  if (axes.length) py("fontTools.varLib.instancer", [src, ...axes, "--output", tmp]);
   py("fontTools.subset", [
-    tmp,
+    axes.length ? tmp : src,
     `--unicodes=${unicodes}`,
     `--layout-features=${FEATURES}`,
     "--flavor=woff2",
@@ -84,7 +87,7 @@ function cut({ src, axes, unicodes, dest }) {
 /** Codepoints an upstream .woff2 actually contains (not what its CSS claims). */
 function upstreamCoverage(src) {
   const out = execFileSync(
-    "python3",
+    PYTHON,
     [
       "-c",
       "import sys;from fontTools.ttLib import TTFont;print(' '.join(str(c) for c in sorted(TTFont(sys.argv[1]).getBestCmap())))",

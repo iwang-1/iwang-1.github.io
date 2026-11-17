@@ -226,7 +226,7 @@ const py = (recall) =>
   FIELD.y0 + ((YDOMAIN.max - recall) / (YDOMAIN.max - YDOMAIN.min)) * (FIELD.y1 - FIELD.y0);
 
 // Label placement.
-const ADVANCE_EM = 0.75; // Martian Mono, fixed advance
+const ADVANCE_EM = 0.75; // a conservative upper bound: the grotesk labels average well under 0.75 em, so boxes never undersize
 const TRACKING_EM = 0.02; // the labels' letter-spacing
 const LABEL_FS = 10;
 const LABEL_ASCENT = 7.6;
@@ -387,7 +387,7 @@ const LEGEND_ROWS = [
 ];
 // The title block's rows, and its box sized from them rather than from a typed width.
 const BLOCK_ROWS = [
-  "TEST CONDITIONS",
+  "Test conditions",
   `n=${group(run.n)} · d=${run.dim}`,
   `k=${run.k} · 1 core`,
   `${run.backend} · Xeon 8488C`,
@@ -691,8 +691,8 @@ ${XTICKS.map((q) => `    <text x="${r1(px(q))}" y="${FIELD.y1 + 18}">${group(q /
   <g class="sweep-tick sweep-tick-y">
 ${YTICKS.map((r) => `    <text x="${FIELD.x0 - 10}" y="${r1(py(r) + 3.5)}">${r.toFixed(2)}</text>`).join("\n")}
   </g>
-  <text class="sweep-axis-title" x="${(FIELD.x0 + FIELD.x1) / 2}" y="${VIEW.h - 20}">THROUGHPUT (QUERIES / SECOND, LOG SCALE)</text>
-  <text class="sweep-axis-title" x="26" y="${(FIELD.y0 + FIELD.y1) / 2 - 0.2}" transform="rotate(-90 26 ${(FIELD.y0 + FIELD.y1) / 2 - 0.2})">RECALL (AT k=${run.k}, 0 TO 1)</text>
+  <text class="sweep-axis-title" x="${(FIELD.x0 + FIELD.x1) / 2}" y="${VIEW.h - 20}">Throughput (queries per second, log scale)</text>
+  <text class="sweep-axis-title" x="26" y="${(FIELD.y0 + FIELD.y1) / 2 - 0.2}" transform="rotate(-90 26 ${(FIELD.y0 + FIELD.y1) / 2 - 0.2})">Recall (at k=${run.k}, 0 to 1)</text>
 
   <!-- the legend. Rows and label strings come from LEGEND_ROWS, which the
        collision solver above also reads, so the drawn legend and the obstacle it

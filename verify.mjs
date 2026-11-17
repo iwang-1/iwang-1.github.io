@@ -142,8 +142,8 @@ for (const f of [
 
 // Self-hosted font gates (double-shot, 2026-08-04).
 for (const f of [
-  "dist/fonts/martian-mono-latin-400-700.woff2",
-  "dist/fonts/martian-mono-sup-400-700.woff2",
+  "dist/fonts/young-serif-latin-400.woff2",
+  "dist/fonts/young-serif-sup-400.woff2",
   "dist/fonts/familjen-grotesk-latin-400-700.woff2",
   "dist/fonts/familjen-grotesk-sup-400-700.woff2",
 ]) {
@@ -151,8 +151,8 @@ for (const f of [
 }
 {
   const fontBytes = [
-    "dist/fonts/martian-mono-latin-400-700.woff2",
-    "dist/fonts/martian-mono-sup-400-700.woff2",
+    "dist/fonts/young-serif-latin-400.woff2",
+    "dist/fonts/young-serif-sup-400.woff2",
     "dist/fonts/familjen-grotesk-latin-400-700.woff2",
     "dist/fonts/familjen-grotesk-sup-400-700.woff2",
   ]
@@ -171,7 +171,7 @@ for (const f of [
   "dist/404.html",
 ]) {
   const html = readFileSync(f, "utf8");
-  for (const face of ["familjen-grotesk-latin-400-700", "martian-mono-latin-400-700"]) {
+  for (const face of ["familjen-grotesk-latin-400-700", "young-serif-latin-400"]) {
     const re = new RegExp(`<link[^>]*rel="preload"[^>]*${face}\\.woff2[^>]*as="font"[^>]*crossorigin`);
     if (!re.test(html)) problems.push(`${f}: missing <link rel="preload"> for ${face}.woff2`);
   }
@@ -181,7 +181,7 @@ if (/@font-face[^}]*url\(\s*['"]?https?:/i.test(builtCss))
   problems.push("built CSS loads a remote font — this site is self-hosted only (PRODUCT.md)");
 if (/font-variant-numeric\s*:\s*(tabular-nums|[^;}]*\btnum\b)/i.test(builtCss))
   problems.push(
-    "built CSS asks for tabular-nums — Martian Mono ships no tnum feature; alignment comes from its fixed 0.750 em advance",
+    "built CSS asks for tabular-nums — the self-hosted subsets keep only kern/liga/calt, so tnum is not shipped",
   );
 
 async function linkOk(href) {

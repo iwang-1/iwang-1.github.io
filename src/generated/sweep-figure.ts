@@ -16,7 +16,7 @@
 //   host        Intel(R) Xeon(R) Platinum 8488C, 48 vCPU
 //   run         n=50000 dim=128 queries=1000 k=10 backend=avx512
 //   parsed      10 samples (HNSW ef 16/32/64/128/256, IVF-PQ nprobe 1/4/8/16/32) + oracle 971 q/s
-//   palette     --ink-data=#a6431e · --ink-accent=#1e4b7a · --ink-secondary=#64625e · --rule=#807e7a · --rule-soft=#c5c3bd · --surface-figure=#e7e3da
+//   palette     --ink-data=#a3271c · --ink-accent=#2c3a52 · --ink-secondary=#535a67 · --rule=#727a87 · --rule-soft=#c4c9d1 · --surface-figure=#e0e3e8
 //               (read from src/styles/tokens.css; the markup emits var() refs,
 //                so no hex is duplicated anywhere in the source tree)
 
@@ -244,8 +244,8 @@ export const SWEEP_SVG = `<svg class="sweep-plot" viewBox="0 0 680 360" role="im
     <text x="82" y="240.7">0.60</text>
     <text x="82" y="282.7">0.50</text>
   </g>
-  <text class="sweep-axis-title" x="344" y="340">THROUGHPUT (QUERIES / SECOND, LOG SCALE)</text>
-  <text class="sweep-axis-title" x="26" y="169.8" transform="rotate(-90 26 169.8)">RECALL (AT k=10, 0 TO 1)</text>
+  <text class="sweep-axis-title" x="344" y="340">Throughput (queries per second, log scale)</text>
+  <text class="sweep-axis-title" x="26" y="169.8" transform="rotate(-90 26 169.8)">Recall (at k=10, 0 to 1)</text>
 
   <!-- the legend. Rows and label strings come from LEGEND_ROWS, which the
        collision solver above also reads, so the drawn legend and the obstacle it
@@ -342,7 +342,7 @@ export const SWEEP_SVG = `<svg class="sweep-plot" viewBox="0 0 680 360" role="im
   <g class="sweep-block">
     <rect x="432" y="230" width="163" height="65" />
     <line class="sweep-block-rule" x1="432" y1="230" x2="595" y2="230" />
-    <text class="sweep-block-key" x="440" y="245">TEST CONDITIONS</text>
+    <text class="sweep-block-key" x="440" y="245">Test conditions</text>
     <text x="440" y="259">n=50,000 · d=128</text>
     <text x="440" y="273">k=10 · 1 core</text>
     <text x="440" y="287">avx512 · Xeon 8488C</text>

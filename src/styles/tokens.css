@@ -1,19 +1,21 @@
 /* Double-shot. */
 
-/* Layer 1. */
+/* Layer 1. Keycap colorway: alpha-grey sheet, slate modifiers, one yellow Enter key. */
 :root {
-  --raw-paper: #f5f2ec; /* the sheet — the page */
-  --raw-stone: #e7e3da; /* the figure surface — every plate and figure fill */
-  --raw-stone-shade: #e3dfd6; /* Stone in shadow. */
-  --raw-ink: #1c1b18; /* body and heading ink, and every structural rule */
-  --raw-ink-blue: #1e4b7a; /* The accent, and it leads: links, buttons, the primary interaction colour. A fill as often as a text
+  --raw-enter: #f2b630; /* the Enter key: a fill only, always with --raw-ink legends (9.65:1) */
+  --raw-enter-edge: #c98f12; /* the Enter key's skirt */
+  --raw-paper: #eceef1; /* the sheet — the page */
+  --raw-stone: #e0e3e8; /* the figure surface — every plate and figure fill */
+  --raw-stone-shade: #d6dae1; /* Stone in shadow. */
+  --raw-ink: #16191f; /* body and heading ink, and every structural rule */
+  --raw-ink-blue: #2c3a52; /* The accent, and it leads: links, buttons, the primary interaction colour. A fill as often as a text
      colour, which is why white-on-blue was measured too (8.96). */
-  --raw-terracotta: #a6431e; /* The supporting warm accent. */
-  --raw-sublegend: #64625e; /* Units, secondary text. Derived: 67% ink into paper — the smallest fraction legal on both reading surfaces
+  --raw-terracotta: #a3271c; /* the Escape key red: data traces and the second series */ /* The supporting warm accent. */
+  --raw-sublegend: #535a67; /* Units, secondary text. Derived: 67% ink into paper — the smallest fraction legal on both reading surfaces
      (5.45 on paper, 4.75 on stone). */
-  --raw-rule: #807e7a; /* Structural hairline. Derived: 54% ink into paper, the smallest fraction reaching 3:1 on both surfaces
+  --raw-rule: #727a87; /* Structural hairline. Derived: 54% ink into paper, the smallest fraction reaching 3:1 on both surfaces
      (3.63 paper, 3.16 stone) — the non-text floor, so a drawn rule is a rule and not a suggestion. */
-  --raw-rule-soft: #c5c3bd; /* The quiet divider inside a figure: 22% ink into paper, 1.58 / 1.38. Deliberately below 3:1 — it separates
+  --raw-rule-soft: #c4c9d1; /* The quiet divider inside a figure: 22% ink into paper, 1.58 / 1.38. Deliberately below 3:1 — it separates
      rows of a spec column and carries nothing a reader could miss, so a structural rule must never be swapped for it. */
 }
 
@@ -40,7 +42,11 @@
 
   /* The label-on-accent rule. A blue fill takes paper as its label (8.02:1; pure white measures 8.96 and is
      not used, so the sheet colour stays the one light in the system). */
-  --on-accent: var(--raw-paper);
+  --on-accent: #ffffff;
+  --key-enter: var(--raw-enter);
+  --key-enter-edge: var(--raw-enter-edge);
+  --key-top: #f7f8fa; /* an alpha keycap's top face */
+  --key-skirt: #c3c8d1; /* an alpha keycap's skirt, the visible depth below the top */
 
   /* Legacy The outgoing world's token names, re-pointed at the new roles so the 3,200-line stylesheet keeps
      computing while the components are restyled in the steps that follow. */
@@ -65,9 +71,8 @@
   --r-chip: 999px;
 
   /* Type Self-hosted, subsetted, committed to public/fonts/. */
-  --font-display: "Martian Mono Subset", ui-monospace, "SF Mono", "Cascadia Code",
-    Menlo, Consolas, monospace;
-  --font-mono: var(--font-display);
+  --font-display: "Young Serif Subset", "Iowan Old Style", Georgia, serif;
+  --font-mono: var(--font-body); /* no monospace face: numbers and repo names set in the body grotesk */
   --font-body: "Familjen Grotesk Subset", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -120,24 +125,23 @@
    never regenerates them). */
 
 /* --- Martian Mono ---------------------------------------------------------- */
+/* --- Young Serif (display) ------------------------------------------------ */
 @font-face {
-  font-family: "Martian Mono Subset";
-  font-style: normal; /* the ONLY style. There is no italic — see below. */
-  font-weight: 400 700;
-  font-stretch: 112.5%;
+  font-family: "Young Serif Subset";
+  font-style: normal;
+  font-weight: 400;
   font-display: swap;
-  src: url("/fonts/martian-mono-latin-400-700.woff2") format("woff2");
+  src: url("/fonts/young-serif-latin-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F,
     U+2122, U+2212, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Martian Mono Subset";
+  font-family: "Young Serif Subset";
   font-style: normal;
-  font-weight: 400 700;
-  font-stretch: 112.5%;
+  font-weight: 400;
   font-display: swap;
-  src: url("/fonts/martian-mono-sup-400-700.woff2") format("woff2");
-  unicode-range: U+2020; /* † — the footnote dagger */
+  src: url("/fonts/young-serif-sup-400.woff2") format("woff2");
+  unicode-range: U+2020;
 }
 
 /* --- Familjen Grotesk ------------------------------------------------------ */

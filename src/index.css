@@ -2369,3 +2369,178 @@ a:hover .arrow, a:focus-visible .arrow { transform: translateX(4px); }
 
   /* The help overlay still fades in via opacity, which is allowed here. */
 }
+
+/* ======================================================================== keycap colorway (redesign 2026-11) */
+/* The site is set as Ivan's own keycap set: alpha-grey sheet, slate modifiers, one yellow Enter key. The one
+   bold element is the hero: the three measured results are sculpted keycaps that travel when pressed, and the
+   primary call to action is the Enter key. Everything else stays quiet. This layer sits last in the cascade
+   and only overrides; the structure above is unchanged. */
+
+/* Sentence case everywhere: no tracked all-caps labels. */
+.kicker,
+.mono,
+.skills-label,
+.alt-timeline-label,
+.alt-timeline-label span,
+.plate-label,
+.spec-col-head,
+.feed-list dt,
+.sweep-tick-y text,
+html .sweep-axis-title,
+html .sweep-readout-key {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* The hobby feed's terms are stored lower-case for the old all-caps treatment; start them with a capital. */
+.feed-list dt::first-letter {
+  text-transform: uppercase;
+}
+
+/* Panels are keycap plates: rounded, lifted off the sheet by a lighter top face, no ruled box. */
+.plate,
+.sheet-block {
+  border: 1px solid var(--key-skirt);
+  border-radius: 14px;
+  background: var(--key-top);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.hero h1 {
+  font-size: clamp(2.75rem, 7vw, 4.75rem);
+  line-height: 1;
+  margin-block: var(--space-2) var(--space-4);
+}
+
+.hero .kicker {
+  font-family: var(--font-body);
+  font-size: var(--fs-500);
+  color: var(--ink-2);
+}
+
+/* --- the three result keys --------------------------------------------------------------------------- */
+.hero-readout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: 16px;
+  background: var(--surface-inset); /* the plate the keys sit in */
+}
+
+.hero-readout-row,
+.hero-readout-row:last-child {
+  --key-depth: 6px;
+  display: flex;
+  flex-direction: column; /* DOM order is name, value, unit; `order` below shows value, unit, name */
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--key-skirt);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--key-top) 0%, #eef0f3 100%);
+  box-shadow: 0 var(--key-depth) 0 var(--key-skirt), 0 calc(var(--key-depth) + 2px) 6px rgb(22 25 31 / 0.12);
+  margin-bottom: var(--key-depth);
+  transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+
+.hero-readout-row > .hero-readout-value { order: 1; }
+.hero-readout-row > .hero-readout-unit { order: 2; }
+.hero-readout-row > .hero-readout-name { order: 3; }
+
+.hero-readout-row:hover,
+.hero-readout-row:focus-within {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--key-skirt), 0 3px 3px rgb(22 25 31 / 0.12);
+}
+
+.hero-readout-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.hero-readout-unit {
+  font-size: var(--fs-300);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.hero-readout-name {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.hero-readout-repo {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Narrow screens: the keys become a single column of wide keys (like a spacebar row) rather than three cramped ones. */
+@media (max-width: 639px) {
+  .hero-readout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-readout-row,
+  .hero-readout-row:last-child {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "value unit" "name name";
+    align-items: baseline;
+    column-gap: var(--space-3);
+  }
+  .hero-readout-row > .hero-readout-value { grid-area: value; }
+  .hero-readout-row > .hero-readout-unit { grid-area: unit; }
+  .hero-readout-row > .hero-readout-name { grid-area: name; }
+}
+
+/* --- the Enter key: the primary call to action ------------------------------------------------------- */
+.btn-primary {
+  --btn-label: var(--ink);
+  background: var(--key-enter);
+  border: 1px solid var(--key-enter-edge);
+  border-radius: 10px;
+  box-shadow: 0 5px 0 var(--key-enter-edge);
+  margin-bottom: 5px;
+  padding-inline: var(--space-5);
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  border-color: var(--key-enter-edge);
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--key-enter-edge);
+}
+
+.btn-primary:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 var(--key-enter-edge);
+}
+
+/* Secondary buttons are modifier keys: same shape, slate legend, alpha body. */
+.btn:not(.btn-primary) {
+  border-radius: 10px;
+  border-color: var(--key-skirt);
+  background: var(--key-top);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-readout-row,
+  .btn-primary {
+    transition: none;
+  }
+  .hero-readout-row:hover,
+  .hero-readout-row:focus-within {
+    transform: none;
+  }
+}

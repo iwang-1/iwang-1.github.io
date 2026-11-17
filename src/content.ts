@@ -16,7 +16,7 @@ export const person = {
 export const hero = {
   // Date-anchored: a bare "AWS SDE INTERN" silently goes stale when the
   // internship ends.
-  kicker: "UMD CS B.S./M.S. · GRADUATING MAY 2027 · AWS SDE INTERN, SUMMER 2026",
+  kicker: "UMD CS B.S./M.S., graduating May 2027. AWS SDE intern, summer 2026.",
   headline: "Ivan Wang",
   // The second sentence is gate-locked verbatim.
   subhead:
@@ -123,7 +123,7 @@ export interface FeaturedSystem {
 export const featuredSystems: FeaturedSystem[] = [
   {
     id: "parallax-kv",
-    eyebrow: "DISTRIBUTED SYSTEMS · GO",
+    eyebrow: "Distributed systems in Go",
     title: "parallax-kv",
     summary:
       "A three-node Raft key-value store built from scratch: PreVote, ReadIndex, persist-before-send ordering, snapshots, a durable WAL, a gRPC runtime.",
@@ -157,7 +157,7 @@ export const featuredSystems: FeaturedSystem[] = [
   },
   {
     id: "accretion-db",
-    eyebrow: "STORAGE ENGINE · RUST",
+    eyebrow: "Storage engine in Rust",
     title: "accretion-db",
     summary:
       "An embeddable LSM-tree storage engine: CRC-framed WAL, group commit, memtables, block SSTables, bloom filters, size-tiered compaction. The crate root forbids unsafe code, so the engine has no unsafe blocks by construction.",
@@ -188,7 +188,7 @@ export const featuredSystems: FeaturedSystem[] = [
   },
   {
     id: "lodestone",
-    eyebrow: "VECTOR SEARCH · RUST",
+    eyebrow: "Vector search in Rust",
     title: "lodestone",
     summary:
       "A vector search engine built from scratch in Rust for embeddings and RAG retrieval. An HNSW proximity graph and an IVF-PQ compressed index sit over hand-written AVX-512 and ARM NEON distance kernels with runtime feature dispatch.",
