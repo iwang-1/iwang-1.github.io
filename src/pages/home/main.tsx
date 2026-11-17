@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { enableJs } from "../../js-flag";
 import "../../enhance";
 import "../../index.css";
-import { education, featuredSystems, hero, hobbies, openSource, person, projects, skills } from "../../content";
+import { education, hero, hobbies, openSource, person, projects, skills } from "../../content";
 import { ContactBand, EduCard } from "../../components/cards";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { Chip, ProofChip } from "../../components/chips";
@@ -14,7 +14,7 @@ import { ExternalLink, LabelButton } from "../../components/LabelButton";
 import { Nav } from "../../components/Nav";
 import { Section } from "../../components/Section";
 import { Sweep } from "../../components/Sweep";
-import { SystemFeature } from "../../components/SystemFeature";
+import { ProjectSwitcher } from "../../components/ProjectSwitcher";
 
 function Home() {
   return (
@@ -83,15 +83,10 @@ function Home() {
         </section>
 
         <Section id="systems" title="Featured engineering work" rank={1}>
-          {/* The section opens with one figure at the full container measure. */}
+          <ProjectSwitcher />
+          {/* The one interactive chart, lodestone's measured trade-off, after the projects it belongs to. */}
           <div className="systems-sweep">
             <Sweep />
-          </div>
-          <div className="system-list">
-            {/* Preview, not the full sheet. */}
-            {featuredSystems.map((project, i) => (
-              <SystemFeature key={project.id} project={project} index={i} variant="preview" />
-            ))}
           </div>
           {/* An exit that points at what the reader has not seen. */}
           <p className="section-exit">

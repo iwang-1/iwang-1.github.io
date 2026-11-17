@@ -100,16 +100,18 @@ export function SystemFeature({
   project,
   index = 0,
   variant = "full",
+  reveal = true,
 }: {
   project: FeaturedSystem;
   index?: number;
   variant?: "full" | "preview";
+  /** False inside the project switcher, which shows one panel at a time and must not wait on a scroll reveal. */
+  reveal?: boolean;
 }) {
   const figureNumber = FIRST_SYSTEM_FIGURE + featuredSystems.findIndex((s) => s.id === project.id);
   const preview = variant === "preview";
   if (preview) {
-    return (
-      <Reveal delay={index}>
+    const plate = (
         <Plate
           id={project.id}
           className="system-feature system-preview sheet-block sheet-live"
@@ -141,8 +143,8 @@ export function SystemFeature({
             </p>
           </div>
         </Plate>
-      </Reveal>
     );
+    return reveal ? <Reveal delay={index}>{plate}</Reveal> : plate;
   }
   return (
     <Reveal delay={index}>

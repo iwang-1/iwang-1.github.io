@@ -2544,3 +2544,153 @@ h3 {
     transform: none;
   }
 }
+
+/* --- project switcher: one keycap per featured project ------------------------------------------------ */
+.switcher-keys {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-3);
+  border-radius: 16px;
+  background: var(--surface-inset);
+}
+
+.switch-key {
+  --key-depth: 6px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 72px;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border: 1px solid var(--key-skirt);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--key-top) 0%, #eef0f3 100%);
+  box-shadow: 0 var(--key-depth) 0 var(--key-skirt);
+  margin-bottom: var(--key-depth);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 110ms var(--ease-out), box-shadow 110ms var(--ease-out), background-color 110ms ease;
+}
+
+.switch-key:hover {
+  transform: translateY(2px);
+  box-shadow: 0 4px 0 var(--key-skirt);
+}
+
+/* The chosen project is the held-down modifier key: slate, pressed flat. */
+.switch-key.is-down {
+  transform: translateY(5px);
+  box-shadow: 0 1px 0 var(--key-skirt);
+  background: var(--ink-accent);
+  border-color: var(--ink-accent);
+  color: var(--on-accent);
+}
+
+.switch-key-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.switch-key-sub {
+  font-size: var(--fs-300);
+  color: var(--ink-2);
+}
+
+.switch-key.is-down .switch-key-sub {
+  color: color-mix(in srgb, var(--on-accent) 82%, var(--ink-accent));
+}
+
+.switch-key--more {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+  margin-bottom: var(--key-depth);
+}
+
+/* The dwell timer: a yellow strip that fills along the bottom of the held key, then the next key goes down. */
+.switch-key-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--key-enter);
+  transform-origin: left center;
+  animation-name: switch-dwell;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes switch-dwell {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.switcher-panel[hidden] {
+  display: none;
+}
+
+/* A swapped-in project settles into place: the only entrance motion on the page besides the keys themselves. */
+.switcher--live .switcher-panel:not([hidden]) {
+  animation: switch-in 260ms var(--ease-out) both;
+}
+
+@keyframes switch-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.switcher--live .system-list {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .switcher-keys {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch-key,
+  .switcher--live .switcher-panel:not([hidden]) {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* --- room to breathe ------------------------------------------------------------------------------------ */
+@media (min-width: 768px) {
+  .section {
+    padding-block: clamp(4.5rem, 9vw, 8rem);
+  }
+  .hero-band {
+    padding-block: clamp(2rem, 5vw, 4.5rem);
+  }
+  .systems-sweep {
+    margin-top: var(--space-8);
+  }
+}
+
+@media (max-width: 767px) {
+  .systems-sweep {
+    margin-top: var(--space-6);
+  }
+}
+
+/* Without JavaScript the prerendered snapshot still carries the keys and the hidden panels. The keys could
+   do nothing there, so they go, and every project shows stacked. */
+html:not(.js) .switcher-keys {
+  display: none;
+}
+html:not(.js) .switcher-panel[hidden] {
+  display: block;
+}

@@ -66,6 +66,14 @@ geometry:
   r-chip: "999px"
   hairline: "1px"
 ---
+> **SUPERSEDED 2026-11-17 by the "keycap colorway" redesign (owner direction: more human, more playful,
+> less like the generic AI look).** Palette: alpha-grey sheet `#eceef1`, slate modifier `#2c3a52`, ink
+> `#16191f`, Escape-red data `#a3271c`, one yellow Enter key `#f2b630` (fill only). Type: Young Serif
+> (display) + Familjen Grotesk (body); Martian Mono and all-caps labels removed. The hero results are
+> sculpted keycaps that travel when pressed; the primary CTA is the Enter key; featured projects sit behind a
+> keycap switcher that auto-advances every 7 s until touched (never under reduced motion; without JavaScript
+> every project shows stacked). The token *names* below still apply; their values and the font notes are
+> history. Source of truth: `src/styles/tokens.css` and the keycap layer at the end of `src/index.css`.
 
 # Design System: Warm Paper — as built
 
