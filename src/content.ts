@@ -433,6 +433,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/relaybench",
     description: [
       "An execution lab for tool-using AI agents. It runs agents against injected faults, such as a reservation that succeeds but reports a timeout, and compares two policies on the same inventory, request, and fault. Every run can be replayed deterministically and inspected decision by decision.",
+      "With a timeout that hides a committed write, a blind-retry policy double-books the reservation in 12 of 12 seeds, while a reconcile-first policy passes all 12. All 72 recorded runs replay exactly.",
     ],
     chips: ["Python", "AI agents", "fault injection", "deterministic replay"],
   },
@@ -442,6 +443,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/spillway-join",
     description: [
       "An external-memory inner equijoin in Rust that holds to a fixed build-memory budget: it partitions both inputs, recurses, and falls back to bounded blocks for skewed keys. Every output is checked row for row against SQLite.",
+      "Choosing the partition fanout from the data, instead of a fixed 16, cut median end-to-end time on a 100,000-row join from 1.227 s to 0.468 s, about 2.6x faster.",
     ],
     chips: ["Rust", "query processing", "SQLite differential tests"],
   },
@@ -451,6 +453,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/batchwindow",
     description: [
       "A trace-driven simulator for deadline-aware inference batching. It compares single-request, FIFO, and deadline-aware policies, and on small traces measures each one's gap from an exact offline optimum.",
+      "On the recorded burst trace, deadline-aware batching left 4 of 12 requests late, against all 12 for FIFO batching, while using 30% less device time.",
     ],
     chips: ["Python", "scheduling", "inference serving"],
   },
@@ -460,6 +463,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/leasepost",
     description: [
       "A durable single-host job queue on SQLite with fenced leases: a worker that pauses past its lease cannot publish a result after a replacement has finished the job. Tests race concurrent claims and kill real worker processes.",
+      "A recorded contention run validated 256 job histories across eight worker processes, and eight racing redrives of one dead job extend its attempts exactly once.",
     ],
     chips: ["Python", "SQLite", "leases", "crash recovery"],
   },
@@ -469,6 +473,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/minuteledger",
     description: [
       "Event-time window aggregation that accepts corrections and deletions after a window has been published, and records each revision in a durable changelog that consumers replay from a checkpoint.",
+      "600 seeded updates match an independent offline computation, and 40 trials that crash it twice before chosen database writes all recover to the uninterrupted result.",
     ],
     chips: ["Python", "stream processing", "SQLite"],
   },
@@ -478,6 +483,7 @@ export const projects: Project[] = [
     repoHref: "https://github.com/iwang-1/testtrail",
     description: [
       "Given two Git revisions of a Python project, selects the tests a change could reach through imports and prints the shortest import path that explains each selection. It is meant to order a fast first CI lane; the full suite stays the merge gate, since static import analysis cannot see every dependency.",
+      "On faults injected into a real project, it selected all five failing test pairs out of six and skipped the one that passed.",
     ],
     chips: ["Python", "Git", "static analysis"],
   },
